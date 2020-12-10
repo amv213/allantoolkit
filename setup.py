@@ -27,10 +27,19 @@ setuptools.setup(
     install_requires=[
         'matplotlib',
         'numpy',
-        'pytest',
         'scipy',
         'setuptools',
     ],
+    extras_require={
+        "dev": [
+            'pytest',
+        ],
+        "doc": [
+            'myst-parser',
+            'sphinx',
+            'sphinx-book-theme',
+        ],
+    },
 )
 
 # to build the package run the following:

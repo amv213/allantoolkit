@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>allantoolkit.realtime &#8212; AllanToolkit Documentation</title>
+    
+  <link rel="stylesheet" href="../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../../index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">AllanToolkit Documentation</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../index.html">
+   Welcome to allantoolkit’s documentation!
+  </a>
+ </li>
+</ul>
+</nav>
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://gitlab.com/amv213/allantoolkit"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2F_modules/allantoolkit/realtime.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <h1>Source code for allantoolkit.realtime</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Real-time statistics</span>
+<span class="sd">    ====================</span>
+
+<span class="sd">    **Author:** Anders Wallin (anders.e.e.wallin &quot;at&quot; gmail.com)</span>
+
+<span class="sd">    Statistics are computed &#39;on-the-fly&#39; from a stream of phase/frequency samples</span>
+<span class="sd">    Initial version 2019 July, Anders E. E. Wallin.</span>
+
+<span class="sd">    This file is part of allantoolkit, see https://github.com/aewallin/allantools</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="c1"># Spawn module-level logger</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="dev_realtime"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.dev_realtime">[docs]</a><span class="k">class</span> <span class="nc">dev_realtime</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Base-class for real-time statistics &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">afs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tau0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">auto_afs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pts_per_decade</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>                         <span class="c1"># phase time-series</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span>                      <span class="c1"># averaging factor, tau = af*tau0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_afs</span> <span class="o">=</span> <span class="n">auto_afs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">af_taus</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">pts_per_decade</span><span class="o">+</span><span class="mi">1</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># will fail at &gt;=6 (?), need to remove duplicates?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">af_idx</span> <span class="o">=</span> <span class="mi">0</span>       <span class="c1"># logspace index, to keep track of afs in auto-af mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">af_decade</span> <span class="o">=</span> <span class="mi">0</span>    <span class="c1"># logspace decade</span>
+        <span class="k">if</span> <span class="n">auto_afs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">afs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">afs</span><span class="p">))</span>    <span class="c1"># resulting xDEV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau0</span> <span class="o">=</span> <span class="n">tau0</span>                     <span class="c1"># time-interval between points</span>
+
+<div class="viewcode-block" id="dev_realtime.update_af"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.dev_realtime.update_af">[docs]</a>    <span class="k">def</span> <span class="nf">update_af</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; used in auto-AF mode,</span>
+<span class="sd">            - check if we can add another AF</span>
+<span class="sd">            - if yes, add it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">next_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">af_idx</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">next_decade</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">af_decade</span>
+        <span class="k">if</span> <span class="n">next_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">af_taus</span><span class="p">):</span>
+            <span class="n">next_idx</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">next_decade</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">af_decade</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">next_af</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">next_decade</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">af_taus</span><span class="p">[</span><span class="n">next_idx</span><span class="p">]))</span> <span class="c1"># next possible AF</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">next_af</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span> <span class="c1"># can compute next AF</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">afs</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">,</span> <span class="n">next_af</span><span class="p">)</span> <span class="c1"># new AF</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_af</span><span class="p">()</span> <span class="c1"># tell subclass to update internal variables</span>
+            <span class="c1"># self.S = numpy.append(self.S, 0) # new S,  # FIXME: S defined in subclass!</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># new dev</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">af_idx</span> <span class="o">=</span> <span class="n">next_idx</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">af_decade</span> <span class="o">=</span> <span class="n">next_decade</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+            <span class="c1">#print &quot;no new AF &quot;</span>
+
+<div class="viewcode-block" id="dev_realtime.add_frequency"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.dev_realtime.add_frequency">[docs]</a>    <span class="k">def</span> <span class="nf">add_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; add new frequency point, in units of Hz &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">:</span> <span class="c1"># empty sequence</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_phase</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># initialize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_phase</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">f</span><span class="p">)</span> <span class="c1"># integration</span></div>
+
+<div class="viewcode-block" id="dev_realtime.taus"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.dev_realtime.taus">[docs]</a>    <span class="k">def</span> <span class="nf">taus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; return taus, in unit of seconds &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau0</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="dev_realtime.add_af"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.dev_realtime.add_af">[docs]</a>    <span class="k">def</span> <span class="nf">add_af</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span> <span class="c1"># define in subclass!</span></div>
+
+<div class="viewcode-block" id="dev_realtime.devs"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.dev_realtime.devs">[docs]</a>    <span class="k">def</span> <span class="nf">devs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; return deviation &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev</span></div></div>
+
+<div class="viewcode-block" id="oadev_realtime"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.oadev_realtime">[docs]</a><span class="k">class</span> <span class="nc">oadev_realtime</span><span class="p">(</span><span class="n">dev_realtime</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Overlapping Allan deviation in real-time from a stream of phase/frequency samples.</span>
+
+<span class="sd">        Dobrogowski &amp; Kasznia</span>
+<span class="sd">        https://doi.org/10.1109/FREQ.2007.4319204</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">afs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tau0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">auto_afs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pts_per_decade</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">oadev_realtime</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">,</span> <span class="n">tau0</span><span class="o">=</span><span class="n">tau0</span><span class="p">,</span> <span class="n">auto_afs</span><span class="o">=</span><span class="n">auto_afs</span><span class="p">,</span> <span class="n">pts_per_decade</span><span class="o">=</span><span class="n">pts_per_decade</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">afs</span><span class="p">))</span>      <span class="c1"># sum-of-squares</span>
+
+<div class="viewcode-block" id="oadev_realtime.add_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.oadev_realtime.add_phase">[docs]</a>    <span class="k">def</span> <span class="nf">add_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xnew</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; add new phase point, in units of seconds &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xnew</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">af</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">af</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_S</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_afs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_af</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="oadev_realtime.update_S"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.oadev_realtime.update_S">[docs]</a>    <span class="k">def</span> <span class="nf">update_S</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; update S, sum-of-squares &quot;&quot;&quot;</span>
+        <span class="n">af</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="c1"># last pt</span>
+        <span class="n">S_new</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">af</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">af</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">S_new</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">af</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">tau0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">af</span><span class="p">)))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="oadev_realtime.add_af"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.oadev_realtime.add_af">[docs]</a>    <span class="k">def</span> <span class="nf">add_af</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="ohdev_realtime"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.ohdev_realtime">[docs]</a><span class="k">class</span> <span class="nc">ohdev_realtime</span><span class="p">(</span><span class="n">dev_realtime</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.</span>
+
+<span class="sd">        [Dobrogowski2007]_</span>
+<span class="sd">        Dobrogowski &amp; Kasznia</span>
+<span class="sd">        https://doi.org/10.1109/FREQ.2007.4319204</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">afs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tau0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">auto_afs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pts_per_decade</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ohdev_realtime</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">,</span> <span class="n">tau0</span><span class="o">=</span><span class="n">tau0</span><span class="p">,</span> <span class="n">auto_afs</span><span class="o">=</span><span class="n">auto_afs</span><span class="p">,</span> <span class="n">pts_per_decade</span><span class="o">=</span><span class="n">pts_per_decade</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">afs</span><span class="p">))</span>      <span class="c1"># sum-of-squares</span>
+
+<div class="viewcode-block" id="ohdev_realtime.add_af"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.ohdev_realtime.add_af">[docs]</a>    <span class="k">def</span> <span class="nf">add_af</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ohdev_realtime.add_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.ohdev_realtime.add_phase">[docs]</a>    <span class="k">def</span> <span class="nf">add_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xnew</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; add new phase point &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xnew</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">af</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="o">*</span><span class="n">af</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_S</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_afs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_af</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ohdev_realtime.update_S"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.ohdev_realtime.update_S">[docs]</a>    <span class="k">def</span> <span class="nf">update_S</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; update S, sum-of-squares &quot;&quot;&quot;</span>
+        <span class="n">af</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="c1"># last pt</span>
+        <span class="c1">#print i,self.x</span>
+        <span class="n">S_new</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">af</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">af</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">af</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">S_new</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="mf">6.0</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">af</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">tau0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mf">1.0</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">af</span><span class="p">)))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span></div></div>
+
+<div class="viewcode-block" id="tdev_realtime"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.tdev_realtime">[docs]</a><span class="k">class</span> <span class="nc">tdev_realtime</span><span class="p">(</span><span class="n">dev_realtime</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Time deviation and Modified Allan deviation in real-time from a stream of phase/frequency samples.</span>
+
+<span class="sd">        Dobrogowski &amp; Kasznia</span>
+<span class="sd">        https://doi.org/10.1109/FREQ.2007.4319204</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">afs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tau0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">auto_afs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pts_per_decade</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">tdev_realtime</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">,</span> <span class="n">tau0</span><span class="o">=</span><span class="n">tau0</span><span class="p">,</span> <span class="n">auto_afs</span><span class="o">=</span><span class="n">auto_afs</span><span class="p">,</span> <span class="n">pts_per_decade</span><span class="o">=</span><span class="n">pts_per_decade</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">afs</span><span class="p">))</span>      <span class="c1"># sum-of-squares</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">So</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">afs</span><span class="p">))</span>      <span class="c1"># overall sum-of-squares</span>
+
+<div class="viewcode-block" id="tdev_realtime.add_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.tdev_realtime.add_phase">[docs]</a>    <span class="k">def</span> <span class="nf">add_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xnew</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; add new phase point &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xnew</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">af</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="o">*</span><span class="n">af</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>  <span class="c1"># 3n+1 samples measured</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_S</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="o">*</span><span class="n">af</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span> <span class="c1"># 2n+1 samples measured</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_S3n</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_afs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_af</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="tdev_realtime.add_af"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.tdev_realtime.add_af">[docs]</a>    <span class="k">def</span> <span class="nf">add_af</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">So</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">So</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="tdev_realtime.update_S3n"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.tdev_realtime.update_S3n">[docs]</a>    <span class="k">def</span> <span class="nf">update_S3n</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; eqn (13) of paper &quot;&quot;&quot;</span>
+        <span class="n">af</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="c1"># last pt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="n">af</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">af</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="o">*</span><span class="n">af</span><span class="p">:</span>
+            <span class="c1"># last call to this fctn</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">So</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_dev</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="tdev_realtime.update_dev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.tdev_realtime.update_dev">[docs]</a>    <span class="k">def</span> <span class="nf">update_dev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="c1"># Eqn (14)</span>
+        <span class="n">num_pts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">af</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">6.0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="n">num_pts</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">af</span><span class="o">+</span><span class="mf">1.0</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="nb">pow</span><span class="p">(</span><span class="n">af</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">So</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="tdev_realtime.update_S"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.tdev_realtime.update_S">[docs]</a>    <span class="k">def</span> <span class="nf">update_S</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; update S, sum-of-squares &quot;&quot;&quot;</span>
+        <span class="n">af</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="o">*</span><span class="n">af</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="c1"># last pt</span>
+        <span class="c1"># Eqn (12)</span>
+        <span class="n">S_new</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">af</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">af</span><span class="p">]</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">af</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">S_new</span>
+        <span class="c1"># Eqn (11)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">So</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">So</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="nb">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span> <span class="c1">#??? S_(i-1) in paper for TDEV-sqrt?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_dev</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="tdev_realtime.mdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.realtime.tdev_realtime.mdev">[docs]</a>    <span class="k">def</span> <span class="nf">mdev</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; scale tdev to output mdev &quot;&quot;&quot;</span>
+        <span class="n">mdev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">af</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">):</span>
+            <span class="n">mdev</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdev</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">af</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">tau0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mdev</span></div></div>
+
+<span class="c1"># end of file realtime.py</span>
+</pre></div>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Alvise Vianello<br/>
+        
+            &copy; Copyright 2020, Alvise Vianello.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>

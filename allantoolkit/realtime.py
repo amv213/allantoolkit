@@ -46,7 +46,7 @@ class dev_realtime(object):
         if len(self.x) >= (2*next_af+1): # can compute next AF
             self.afs = numpy.append(self.afs, next_af) # new AF
             self.add_af() # tell subclass to update internal variables
-            #self.S = numpy.append(self.S, 0) # new S, FIXME: S defined in subclass!
+            # self.S = numpy.append(self.S, 0) # new S,  # FIXME: S defined in subclass!
             self.dev = numpy.append(self.dev, 0) # new dev
             self.af_idx = next_idx
             self.af_decade = next_decade

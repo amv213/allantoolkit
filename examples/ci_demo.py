@@ -21,7 +21,7 @@
 import numpy
 import matplotlib.pyplot as plt  # only for plotting, not required for calculations
 
-import allantools as at
+import allantoolkit as at
 
 # this demonstrates how to calculate confidence intervals for ADEV
 # using the algorithms from Greenhall2004

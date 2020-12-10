@@ -1,5 +1,5 @@
 """
-    Test for allantools (https://github.com/aewallin/allantools)
+    Test for allantoolkit (https://github.com/aewallin/allantools)
 
     Auto-AF mode: new afs are added automatically as we add more phase points.
 """
@@ -8,7 +8,7 @@ import time
 import sys
 import pytest
 
-import allantools as at
+import allantoolkit as at
 import numpy
 
 n_pts = pow(2,12)

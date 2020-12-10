@@ -1,10 +1,10 @@
 """
-    This file is part of allantools https://github.com/aewallin/allantools
+    This file is part of allantoolkit https://github.com/aewallin/allantools
     
     Benchmark for real-time statistics computations
     
 """
-import allantools as at
+import allantoolkit as at
 import numpy
 import time
 

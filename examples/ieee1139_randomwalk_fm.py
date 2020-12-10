@@ -1,5 +1,5 @@
-import allantools
-import allantools.noise as noise
+import allantoolkit
+import allantoolkit.noise as noise
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
@@ -24,7 +24,7 @@ N=10*4096 # number of samples
 v0 = 1.2345e6 # nominal oscillator frequency
 
 y = noise.brown(num_points=N, b2=h2, fs=fs) # fractional frequency
-x = allantools.frequency2phase(y,fs) # phase in seconds
+x = allantoolkit.frequency2phase(y, fs) # phase in seconds
 fi = [2*math.pi*v0*xx for xx in x] # phase in radians
 t = np.linspace(0, (1.0/fs)*N, len(y)) # time-series time axis
 
@@ -90,8 +90,8 @@ plt.grid()
 
 plt.figure()
 taus=[tt for tt in np.logspace(-2.2,4,100)]
-(taus_y, devs_y, errs_y, ns_y) = allantools.oadev(y, rate=fs, data_type='freq',  taus=taus)
-(taus_x, devs_x, errs_x, ns_x) = allantools.oadev(x, rate=fs, taus=taus)
+(taus_y, devs_y, errs_y, ns_y) = allantoolkit.oadev(y, rate=fs, data_type='freq', taus=taus)
+(taus_x, devs_x, errs_x, ns_x) = allantoolkit.oadev(x, rate=fs, taus=taus)
 plt.loglog(taus_y, devs_y, 'o', label='ADEV from y')
 plt.loglog(taus_x, devs_x, '*', label='ADEV from x')
 

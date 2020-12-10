@@ -1,4 +1,4 @@
-import allantools.noise as noise
+import allantoolkit.noise as noise
 import numpy as np
 import matplotlib.pyplot as plt
 

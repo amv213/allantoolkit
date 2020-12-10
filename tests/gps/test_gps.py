@@ -1,5 +1,5 @@
 """
-  Test for allantools (https://github.com/aewallin/allantools)
+  Test for allantoolkit (https://github.com/aewallin/allantools)
   Stable32 was used to calculate the deviations we compare against.
 
   GPS tests, AW2016-03-17
@@ -9,13 +9,13 @@ import math
 import sys
 sys.path.append("..")
 sys.path.append("../..") # hack to import from parent directory
-# remove if you have allantools installed in your python path
+# remove if you have allantoolkit installed in your python path
 import os
 import time
 import pytest
 import numpy as np
 
-import allantools as allan
+import allantoolkit as allan
 import testutils
 
 def print_elapsed(start):

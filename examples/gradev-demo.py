@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import allantools as allan
+import allantoolkit as allan
 
 # FIXME: /usr/lib/python2.7/dist-packages/numpy/lib/nanfunctions.py:514: 
 # FutureWarning: In Numpy 1.9 the sum along empty slices will be zero.

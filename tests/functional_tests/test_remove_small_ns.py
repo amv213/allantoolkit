@@ -1,5 +1,5 @@
 import pytest
-import allantools.allantools as at
+import allantoolkit.allantools as at
 import numpy as np
 
 minimum_ns = 1

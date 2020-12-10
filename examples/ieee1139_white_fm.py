@@ -1,5 +1,5 @@
-import allantools
-import allantools.noise as noise
+import allantoolkit
+import allantoolkit.noise as noise
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -23,7 +23,7 @@ N=16*4096
 v0 = 1e6 # nominal oscillator frequency
 
 y = noise.white(num_points=N,b0=h0,fs=fs) # fractional frequency
-x = allantools.frequency2phase(y,fs) # phase in seconds
+x = allantoolkit.frequency2phase(y, fs) # phase in seconds
 fi = [2*math.pi*v0*xx for xx in x] # phase in radians
 t = np.linspace(0, (1.0/fs)*N, len(y))
 
@@ -68,8 +68,8 @@ plt.ylabel('one-sided PSD / S_x(f)')
 
 plt.figure()
 taus=[tt for tt in np.logspace(-2.2,4,100)]
-(taus_y, devs_y, errs_y, ns_y) = allantools.oadev(y, data_type='freq',rate=fs, taus=taus)
-(taus_x, devs_x, errs_x, ns_x) = allantools.oadev(x, data_type='phase',rate=fs, taus=taus)
+(taus_y, devs_y, errs_y, ns_y) = allantoolkit.oadev(y, data_type='freq', rate=fs, taus=taus)
+(taus_x, devs_x, errs_x, ns_x) = allantoolkit.oadev(x, data_type='phase', rate=fs, taus=taus)
 plt.loglog(taus_y,devs_y,'o',label='ADEV from y')
 plt.loglog(taus_x,devs_x,'*',label='ADEV from x')
 

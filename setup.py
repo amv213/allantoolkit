@@ -28,6 +28,7 @@ setuptools.setup(
         'matplotlib',
         'numpy',
         'pytest',
+        'scipy',
         'setuptools',
     ],
 )

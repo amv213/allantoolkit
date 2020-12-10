@@ -1,4 +1,4 @@
-import allantools as allan
+import allantoolkit as allan
 import numpy
 import math
 import matplotlib.pyplot as plt
@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append("..")
 sys.path.append("../..") # hack to import from parent directory
-# remove if you have allantools installed in your python path
+# remove if you have allantoolkit installed in your python path
 
 def read_datafile(filename,column=1):
     p=[]

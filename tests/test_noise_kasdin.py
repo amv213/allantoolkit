@@ -1,11 +1,11 @@
-#from allantools.dataset import Dataset
-#from allantools import noise
-import allantools as at
+#from allantoolkit.dataset import Dataset
+#from allantoolkit import noise
+import allantoolkit as at
 import pytest
 import numpy as np
 
 """
-    unit-tests for allantools.Noise() Kasdin & Walter
+    unit-tests for allantoolkit.Noise() Kasdin & Walter
     noise-generator
 """
 

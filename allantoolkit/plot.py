@@ -28,18 +28,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
+import logging
 
-class Plot():
+# Spawn module-level logger
+logger = logging.getLogger(__name__)
+
+
+class Plot:
     """ A class for plotting data once computed by Allantools
 
     :Example:
         ::
 
-            import allantools
+            import allantoolkit
             import numpy as np
-            a = allantools.Dataset(data=np.random.rand(1000))
+            a = allantoolkit.Dataset(data=np.random.rand(1000))
             a.compute("mdev")
-            b = allantools.Plot()
+            b = allantoolkit.Plot()
             b.plot(a)
             b.show()
 
@@ -75,7 +80,7 @@ class Plot():
 
         Parameters
         ----------
-        atDataset : allantools.Dataset()
+        atDataset : allantoolkit.Dataset()
             a dataset with computed data
         errorbars : boolean
             Plot errorbars. Defaults to False

@@ -103,6 +103,18 @@ compiling numpy and scipy.
 ::
 
     $ virtualenv tmp
+        $ tmp/bin/pip install dist/AllanTools-2016.2.tar.gz
+        $ tmp/bin/python
+        >>> import allantoolkit
+
+    Uploading to PyPi.
+    (requries a ~/.pypirc with username and password)
+        $ tmp/bin/pip install dist/AllanTools-2016.2.tar.gz
+        $ tmp/bin/python
+        >>> import allantoolkit
+
+    Uploading to PyPi.
+    (requries a ~/.pypirc with username and password)
     $ tmp/bin/pip install dist/AllanTools-2016.2.tar.gz 
     $ tmp/bin/python
     >>> import allantools

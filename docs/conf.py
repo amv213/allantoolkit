@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# allantools documentation build configuration file, created by
+# allantoolkit documentation build configuration file, created by
 # sphinx-quickstart on Fri Jul  3 14:39:58 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -39,7 +39,7 @@ sys.path.insert(0, os.path.abspath(os.getcwd()))
 # Get some metadata from common source
 pkginfo_path = os.path.join(os.path.dirname(__file__),
                             os.pardir,
-                            'allantools',
+                            'allantoolkit',
                             'allantools_info.json')
 pkginfo = json.load(open(pkginfo_path))
 
@@ -269,8 +269,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'allantools.tex', u'allantools Documentation',
-   u'by the allantools team', 'manual'),
+  (master_doc, 'allantoolkit.tex', u'allantoolkit Documentation',
+   u'by the allantoolkit team', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -299,7 +299,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'allantools', u'allantools Documentation',
+    (master_doc, 'allantoolkit', u'allantoolkit Documentation',
      [author], 1)
 ]
 
@@ -313,8 +313,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'allantools', u'allantools Documentation',
-   author, 'allantools', 'One line description of project.',
+  (master_doc, 'allantoolkit', u'allantoolkit Documentation',
+   author, 'allantoolkit', 'One line description of project.',
    'Miscellaneous'),
 ]
 

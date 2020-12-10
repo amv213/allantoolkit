@@ -67,13 +67,13 @@ Version history
 
 **v1.1** 2014 August
 - Danny Price converted the library to use numpy.
-- many functions in allantools are now 100x faster than before.
+- many functions in allantoolkit are now 100x faster than before.
 - see http://www.anderswallin.net/2014/08/faster-allantools-with-numpy/
 
 **v1.01** 2014 August
 - PEP8 compliance improvements by Danny Price.
 
-**v1.00** 2014 January, first version of allantools.
+**v1.00** 2014 January, first version of allantoolkit.
 - see http://www.anderswallin.net/2014/01/allantools/
 
 License
@@ -94,20 +94,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-import os
-import json
+import logging
 import numpy as np
-#import scipy.stats # used in confidence_intervals()
-#import scipy.signal # decimation in lag-1 acf
+from . import ci  # edf, confidence intervals
 
-from . import ci # edf, confidence intervals
-
-# Get version number from json metadata
-pkginfo_path = os.path.join(os.path.dirname(__file__),
-                            'allantools_info.json')
-with open(pkginfo_path) as fp:
-    pkginfo = json.load(fp)
-__version__ = pkginfo["version"]
+# Spawn module-level logger
+logger = logging.getLogger(__name__)
 
 
 def tdev(data, rate=1.0, data_type="phase", taus=None):
@@ -1631,8 +1623,8 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
         The sampling rate for phase, in Hz
     taus: np.array
         The tau values for deviations, in seconds
-    function: allantools deviation function
-        The type of statistic to compute, e.g. allantools.oadev
+    function: allantoolkit deviation function
+        The type of statistic to compute, e.g. allantoolkit.oadev
 
     Returns
     -------
@@ -1762,4 +1754,4 @@ def frequency2fractional(frequency, mean_frequency=-1):
     y = [(x-mu)/mu for x in frequency]
     return y
 
-# end of file allantools.py
+# end of file allantoolkit.py

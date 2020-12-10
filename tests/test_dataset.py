@@ -1,5 +1,5 @@
-from allantools.dataset import Dataset
-from allantools import noise
+from allantoolkit.dataset import Dataset
+from allantoolkit import noise
 import tempfile
 import pytest
 

@@ -1,5 +1,5 @@
 """
-  Test for allantools (https://github.com/aewallin/allantools)
+  Test for allantoolkit (https://github.com/aewallin/allantools)
   Stable32 was used to calculate the deviations we compare against.
 
   The 5071A_phase.txt is a dataset collected with a time-interval-counter
@@ -22,9 +22,9 @@ import sys
 import pytest
 sys.path.append("..")
 sys.path.append("../..") # hack to import from parent directory
-# remove if you have allantools installed in your python path
+# remove if you have allantoolkit installed in your python path
 
-import allantools as allan
+import allantoolkit as allan
 import testutils
 
 import os

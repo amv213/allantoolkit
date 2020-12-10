@@ -21,17 +21,17 @@
 import numpy
 import matplotlib.pyplot as plt  # only for plotting, not required for calculations
 
-import allantools
-from allantools import noise
+import allantoolkit
+from allantoolkit import noise
 
 
 def plotallan(plt, y, rate, taus, style, label=""):
-    (t2, ad, ade, adn) = allantools.mdev(y, data_type='freq', rate=rate, taus=taus)
+    (t2, ad, ade, adn) = allantoolkit.mdev(y, data_type='freq', rate=rate, taus=taus)
     plt.loglog(t2, ad, style,label=label)
 
 
 def plotallan_phase(plt, y, rate, taus, style, label="",alpha=1.0):
-    (t2, ad, ade, adn) = allantools.mdev(y,data_type='phase', rate=rate, taus=taus)
+    (t2, ad, ade, adn) = allantoolkit.mdev(y, data_type='phase', rate=rate, taus=taus)
     plt.loglog(t2, ad, style, label=label,alpha=alpha)
 
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     plotallan(plt, freq_w, 1, t, 'r.')
     plotline(plt, -1.5, t, 'r',label="f^(-3/2)")
     
-    plt.title('allantools noise type demo')
+    plt.title('allantoolkit noise type demo')
     plt.xlabel('Tau')
     plt.ylabel('Modified Allan deviation')
     print("Done.")

@@ -1,38 +1,25 @@
 """
-
-this file is part of allantools, https://github.com/aewallin/allantools
+this file is part of allantoolkit, https://github.com/aewallin/allantools
 
 - functions for confidence intervals
 - functions for noise identification
 - functions for computing equivalent degrees of freedom
-
-
-License
--------
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 """
 
+import logging
 import numpy as np
-import scipy.stats # used in confidence_intervals()
-import scipy.signal # decimation in lag-1 acf
+import scipy.special
+import scipy.stats  # used in confidence_intervals()
+import scipy.signal  # decimation in lag-1 acf
+from . import allantools
 
-########################################################################
+# Spawn module-level logger
+logger = logging.getLogger(__name__)
+
 # Confidence Intervals
 ONE_SIGMA_CI = scipy.special.erf(1/np.sqrt(2))
 #    = 0.68268949213708585
+
 
 def confidence_interval(dev, edf, ci=ONE_SIGMA_CI):
     """ returns confidence interval (dev_min, dev_max)
@@ -136,9 +123,9 @@ def rn(x, af, rate):
 
         ratio of MVAR to AVAR
     """
-    (taus, devs, errs, ns) = at.adev(x, taus=[af*rate], data_type='phase', rate=rate)
+    (taus, devs, errs, ns) = allantools.adev(x, taus=[af*rate], data_type='phase', rate=rate)
     oadev_x = devs[0]
-    (mtaus, mdevs, errs, ns) = at.mdev(x, taus=[af*rate], data_type='phase', rate=rate)
+    (mtaus, mdevs, errs, ns) = allantools.mdev(x, taus=[af*rate], data_type='phase', rate=rate)
     mdev_x = mdevs[0]
     return pow(mdev_x/oadev_x, 2)
 
@@ -174,7 +161,7 @@ def rn_boundary(af, b_hi):
     R(n) ratio boundary for selecting between [b_hi-1, b_hi]
     alpha = b + 2
     """
-    return np.sqrt(rn_theory(af, b)*rn_theory(af, b-1)) # geometric mean
+    return np.sqrt(rn_theory(af, b_hi)*rn_theory(af, b_hi-1))  # geometric mean
 
 ########################################################################
 # Noise Identification using B1
@@ -193,7 +180,7 @@ def b1(x, af, rate):
         Barnes, 1974
         https://tf.nist.gov/general/pdf/11.pdf
     """
-    (taus, devs, errs, ns) = adev(x, taus=[af*rate], data_type="phase", rate=rate)
+    (taus, devs, errs, ns) = allantools.adev(x, taus=[af*rate], data_type="phase", rate=rate)
     oadev_x = devs[0]
     avar = pow(oadev_x, 2.0)
 

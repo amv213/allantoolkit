@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-  top-level test-script for allantools
+  top-level test-script for allantoolkit
   https://github.com/aewallin/allantools
 
   this files runs all the tests defined in the /tests/ subdirectories
@@ -8,7 +8,7 @@
   More datasets along with known deviations (or calculated with 
   known-good programs) are welcome.
   
-  results from allantools seem correct, they agree to within 4 to 6 digits 
+  results from allantoolkit seem correct, they agree to within 4 to 6 digits
   of precision with other ADEV tools.
 """
 

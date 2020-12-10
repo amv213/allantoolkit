@@ -1,5 +1,5 @@
 """
-  NBS14 test for allantools (https://github.com/aewallin/allantools)
+  NBS14 test for allantoolkit (https://github.com/aewallin/allantools)
 
   nbs14 datasets are from http://www.ieee-uffc.org/frequency-control/learning-riley.asp
   
@@ -21,7 +21,7 @@ import sys
 import pytest
 import numpy
 
-import allantools as allan
+import allantoolkit as allan
 
 # 1000 point deviations from:
 # http://www.ieee-uffc.org/frequency-control/learning-riley.asp    Table III

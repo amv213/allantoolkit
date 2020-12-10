@@ -5,39 +5,39 @@
 ##########################
 
 """ 
-import allantools
+import allantoolkit
 from pylab import figure,show,plot
 from stable32plot import sigmaplot,dataplot#import 2 functions: sigmaplot,dataplot
 
 
 """#------------generate random data and cal adev-----------------"""
-x1 = allantools.noise.white(1000)
-(taus, adevs, errors, ns) = allantools.adev(x1)
-(taust, adevst, errorst, nst) = allantools.tdev(x1)
-(tauso, adevso, errorso, nso) = allantools.oadev(x1)
+x1 = allantoolkit.noise.white(1000)
+(taus, adevs, errors, ns) = allantoolkit.adev(x1)
+(taust, adevst, errorst, nst) = allantoolkit.tdev(x1)
+(tauso, adevso, errorso, nso) = allantoolkit.oadev(x1)
 
-x2=allantools.noise.white(1000,0.6)
-(taus2,adevs2,errors2,ns2)=allantools.oadev(x2)
+x2=allantoolkit.noise.white(1000, 0.6)
+(taus2,adevs2,errors2,ns2)=allantoolkit.oadev(x2)
 
-x3=allantools.noise.white(1000,0.5)
-(taus3,adevs3,errors3,ns3)=allantools.oadev(x3)
+x3=allantoolkit.noise.white(1000, 0.5)
+(taus3,adevs3,errors3,ns3)=allantoolkit.oadev(x3)
 
-x4=allantools.noise.white(1000,0.4)
-(taus4,adevs4,errors4,ns4)=allantools.oadev(x4)
+x4=allantoolkit.noise.white(1000, 0.4)
+(taus4,adevs4,errors4,ns4)=allantoolkit.oadev(x4)
 
-x5=allantools.noise.white(1000,0.3)
-(taus5,adevs5,errors5,ns5)=allantools.oadev(x5)
+x5=allantoolkit.noise.white(1000, 0.3)
+(taus5,adevs5,errors5,ns5)=allantoolkit.oadev(x5)
 
-x6=allantools.noise.white(1000,0.2)
-(taus6,adevs6,errors6,ns6)=allantools.oadev(x6)
+x6=allantoolkit.noise.white(1000, 0.2)
+(taus6,adevs6,errors6,ns6)=allantoolkit.oadev(x6)
 
-xn=allantools.noise.white(1000,0.1)
-(tausn,adevsn,errorsn,nsn)=allantools.oadev(xn)
+xn=allantoolkit.noise.white(1000, 0.1)
+(tausn,adevsn,errorsn,nsn)=allantoolkit.oadev(xn)
 
-xf=allantools.noise.white(1000,1e-9)
+xf=allantoolkit.noise.white(1000, 1e-9)
 
-xp1=allantools.noise.brown(1000,1e-9)
-xp2=allantools.noise.brown(500,1e-10)
+xp1=allantoolkit.noise.brown(1000, 1e-9)
+xp2=allantoolkit.noise.brown(500, 1e-10)
 
 
 """#--------------eg1: plot single adev curve with text list----------------"""

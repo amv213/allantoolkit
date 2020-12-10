@@ -3,7 +3,7 @@
 import sys
 sys.path.append("..")
 
-from allantools import noise
+from allantoolkit import noise
 import numpy
 import pytest
 

@@ -1,5 +1,5 @@
 """
-  PHASE.DAT test for allantools (https://github.com/aewallin/allantools)
+  PHASE.DAT test for allantoolkit (https://github.com/aewallin/allantools)
   Stable32 was used to calculate the deviations we compare against.
 
   PHASE.DAT comes with Stable32 (version 1.53 was used in this case)
@@ -12,9 +12,9 @@ import pytest
 
 sys.path.append("..")
 sys.path.append("../..") # hack to import from parent directory
-# remove if you have allantools installed in your python path
+# remove if you have allantoolkit installed in your python path
 
-import allantools as allan
+import allantoolkit as allan
 import testutils
 
 import os

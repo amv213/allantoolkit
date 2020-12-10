@@ -2,7 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-import allantools as at
+import allantoolkit as at
 import math
 # note that latex requires e.g. a texlive installation and dvipng
 plt.rc('text', usetex=True) # for latex

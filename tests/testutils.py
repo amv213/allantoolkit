@@ -1,5 +1,5 @@
 """
- Useful collection of functions for the allantools test-suite
+ Useful collection of functions for the allantoolkit test-suite
 
 """
 
@@ -94,10 +94,10 @@ def test_row_by_row(function, datafile, datarate, resultfile, verbose=False, tol
     s32rows = read_stable32(resultfile, datarate)
     print("test of function ", function )
     if verbose:
-        print("Tau N  \t DEV(Stable32) \t DEV(allantools) \t rel.error\t bias")
+        print("Tau N  \t DEV(Stable32) \t DEV(allantoolkit) \t rel.error\t bias")
     
     n_errors=0
-    # run allantools algorithm, row by row
+    # run allantoolkit algorithm, row by row
     for s32data in s32rows:
         if frequency:
             (taus2, devs2, errs2, ns2) = function(data, rate=datarate,

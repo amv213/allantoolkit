@@ -3,8 +3,8 @@
 import sys
 sys.path.append("..")
 
-import allantools as allan
-from allantools import noise
+import allantoolkit as allan
+from allantoolkit import noise
 import numpy
 
 def _test( function, data, rate, taus):

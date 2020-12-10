@@ -3,7 +3,7 @@
 import sys
 sys.path.append("..")
 
-import allantools as at
+import allantoolkit as at
 import numpy
 import pytest
 

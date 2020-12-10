@@ -1,5 +1,5 @@
 """
-  Pink frequency noise test for allantools (https://github.com/aewallin/allantools)
+  Pink frequency noise test for allantoolkit (https://github.com/aewallin/allantools)
   Stable32 was used to calculate the deviations we compare against.
 
   the pink_frequency.txt was generated with noise.py, for documentation see that file.
@@ -12,9 +12,9 @@ import pytest
 
 sys.path.append("..")
 sys.path.append("../..") # hack to import from parent directory
-# remove if you have allantools installed in your python path
+# remove if you have allantoolkit installed in your python path
 
-import allantools as allan
+import allantoolkit as allan
 import testutils
 
 def change_to_test_dir():

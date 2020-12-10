@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import allantools as at
+import allantoolkit as at
 import numpy as np
 
 N = 128

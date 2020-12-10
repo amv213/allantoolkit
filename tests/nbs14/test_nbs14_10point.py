@@ -1,5 +1,5 @@
 """
-  NBS14 test for allantools (https://github.com/aewallin/allantools)
+  NBS14 test for allantoolkit (https://github.com/aewallin/allantools)
 
   nbs14 datasets are from http://www.ieee-uffc.org/frequency-control/learning-riley.asp
   
@@ -20,7 +20,7 @@ import time
 import sys
 import pytest
 
-import allantools as allan
+import allantoolkit as allan
 
 # 10-point dataset and deviations
 nbs14_phase = [ 0.00000, 103.11111, 123.22222, 157.33333, 166.44444, 48.55555,-96.33333,-2.22222, 111.88889, 0.00000 ]
@@ -80,7 +80,7 @@ class TestNBS14_10Point():
     def test_htotdev(self):
         # NOTE:
         # for tau=1, ohdev() is used instead of htotdev()
-        # for tau=2 no bias correction is applied by allantools
+        # for tau=2 no bias correction is applied by allantoolkit
         #           instead we correct the reference value
         #           by multiplication with sqrt(0.995)
         htotdev1,htotdev2 = nbs14_devs[9]

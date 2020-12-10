@@ -3,24 +3,16 @@ Allan deviation tools, Functions for generating noise
 initial version Anders Wallin, 2014 January
 
 See: http://en.wikipedia.org/wiki/Colors_of_noise
-
-This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU Lesser General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GGNU Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import logging
 import math
 import numpy
-import scipy.signal # for welch PSD
+import scipy.signal  # for welch PSD
+
+# Spawn module-level logger
+logger = logging.getLogger(__name__)
+
 
 def numpy_psd(x, f_sample=1.0):
     """ calculate power spectral density of input signal x
@@ -34,12 +26,14 @@ def numpy_psd(x, f_sample=1.0):
     f_axis = numpy.linspace(0, f_sample/2.0, len(psd_of_x)) # frequency axis
     return f_axis, psd_of_x
 
+
 def scipy_psd(x, f_sample=1.0, nr_segments=4):
     """ PSD routine from scipy
         we can compare our own numpy result against this one
     """
     f_axis, psd_of_x = scipy.signal.welch(x, f_sample, nperseg=len(x)/nr_segments)
     return f_axis, psd_of_x
+
 
 def white(num_points=1024, b0=1.0, fs=1.0):
     """ generate time series with white noise that has constant PSD = b0,
@@ -52,6 +46,7 @@ def white(num_points=1024, b0=1.0, fs=1.0):
         The PSD is at 'height' b0 and extends from 0 Hz up to the nyquist frequency fs/2
     """
     return math.sqrt(b0*fs/2.0)*numpy.random.randn(num_points)
+
 
 def brown(num_points=1024, b2=1.0, fs=1.0):
     """ Brownian or random walk (diffusion) noise with 1/f^2 PSD
@@ -66,10 +61,12 @@ def brown(num_points=1024, b2=1.0, fs=1.0):
     """
     return (1.0/float(fs))*numpy.cumsum(white(num_points, b0=b2*(4.0*math.pi*math.pi), fs=fs))
 
+
 def violet(num_points=1024):
     """ violet noise with f^2 PSD """
     # diff() reduces number of points by one.
     return numpy.diff(numpy.random.randn(num_points+1))
+
 
 def pink(num_points=1024, depth=80):
     """
@@ -78,7 +75,7 @@ def pink(num_points=1024, depth=80):
     """
     a = []
     s = iterpink(depth)
-    for n in range(num_points): # FIXME: num_points is unused here.
+    for n in range(num_points):  # FIXME: num_points is unused here.
         a.append(next(s))
     return numpy.array(a)
 

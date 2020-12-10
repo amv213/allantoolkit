@@ -1,29 +1,37 @@
-#!/usr/bin/env python
+import setuptools
 
-from setuptools import setup
-from io import open
-import json
-import os
+with open("README.md", "r", encoding='utf-8') as fh:
+    long_description = fh.read()
 
-pkginfo_path = os.path.join(os.path.dirname(__file__),
-                            'allantools',
-                            'allantools_info.json')
-pkginfo = json.load(open(pkginfo_path))
+setuptools.setup(
+    name="allantoolkit",
+    version="0.0.1",
+    description="A fork of Anders E.E. Wallin's [AllanTools](https://github.com/aewallin/allantools): "
+                "Allan deviation and related time/frequency statistics toolkit",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author="Alvise Vianello",
+    author_email="alvise@vianello.ai",
+    url="https://gitlab.com/amv213/allantoolkit",
+    classifiers=[
+        "Development Status :: 1 - Planning",
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: GNU General Public License v3 or later " 
+        "(GPLv3+)",
+        "Topic :: Scientific/Engineering",
+        "Intended Audience :: End Users/Desktop",
+        "Intended Audience :: Science/Research",
+        ],
+    packages=setuptools.find_packages(),
+    python_requires='>=3.8',
+    install_requires=[
+        'matplotlib',
+        'numpy',
+        'pytest',
+        'setuptools',
+    ],
+)
 
-# this info comes from allantools_info.json
-setup(name=pkginfo['name'],
-      version=pkginfo['version'],
-      description=pkginfo['description'],
-      author=pkginfo['main_author'],
-      author_email=pkginfo['main_author_email'],
-      url=pkginfo['url'],
-      license=pkginfo['license'],
-      packages=['allantools', ],
-      package_data={'allantools': ['allantools_info.json']},
-      install_requires=['numpy', 'scipy'],
-      requires=['numpy', 'scipy'],
-      # include_dirs=[numpy.get_include()],
-      setup_requires=['pytest-runner'],
-      tests_require=['pytest', 'numpy'],
-      long_description=open('README.rst', 'r', encoding='utf8').read(),
-      )
+# to build the package run the following:
+# python setup.py sdist bdist_wheel
+# twine check dist/*

@@ -1,3 +1,15 @@
+"""
+ieee1139-table for random walk (Brownian) FM produces synthetic dataset with
+given PSD and compares against the predicted S_y, S_fi, S_x, and ADEV
+given in the table AW 2015-08-06
+
+from the ieee1139 table [IEEE1139]
+PSD_y(f)    = h2 * f^-2                     fractional frequency PSD
+PSD_fi(f)   = h2 * vo^2 * f^-4              phase (radians) PSD
+PSD_x(f)    = h2 * (2 pi)^-2 * f^-4         phase (time) PSD
+ADEV_y(tau) = sqrt{ 2*pi^2/3 * h2 * tau }   Allan deviation
+"""
+
 import allantoolkit
 import allantoolkit.noise as noise
 import numpy as np
@@ -5,18 +17,6 @@ import matplotlib.pyplot as plt
 from scipy import signal
 
 import math
-
-# ieee1139-table for random walk (Brownian) FM
-# produces synthetic dataset with given PSD and compares against
-# the predicted S_y, S_fi, S_x, and ADEV given in the table
-# AW 2015-08-06
-
-# from the ieee1139 table
-# PSD_y(f)    = h2 * f^-2                     fractional frequency PSD
-# PSD_fi(f)   = h2 * vo^2 * f^-4              phase (radians) PSD
-# PSD_x(f)    = h2 * (2 pi)^-2 * f^-4         phase (time) PSD
-# ADEV_y(tau) = sqrt{ 2*pi^2/3 * h2 * tau }   Allan deviation
-
 
 fs=12.8    # sampling frequency in Hz (code should work for any non-zero value here)
 h2=2e-20 # PSD f^-2 coefficient

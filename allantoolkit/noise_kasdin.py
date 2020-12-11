@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class Noise(object):
     """ Generate discrete colored noise
 
-    Python / Numpy implementation of:
+    Python / Numpy implementation of [Kasdin1992]_:
     Kasdin, N.J., Walter, T., "Discrete simulation of power law noise [for
     oscillator stability evaluation]," Frequency Control Symposium, 1992.
     46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992

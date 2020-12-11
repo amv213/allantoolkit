@@ -969,7 +969,7 @@ def calc_htotdev_freq(freq, m):
 def theo1(data, rate=1.0, data_type="phase", taus=None):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Theo1 is a two-sample variance with improved confidence and
-        extended averaging factor range.
+        extended averaging factor range. [Howe_theo1]_
 
         .. math::
 
@@ -1329,6 +1329,7 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
         stride = mj for nonoverlapping allan deviation
         stride = 1 for overlapping allan deviation
 
+        [wikipedia_adev]_
         see http://en.wikipedia.org/wiki/Allan_variance
 
     .. math::
@@ -1492,7 +1493,7 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
 
     taus2 = m / float(rate)
 
-    if even: # used by Theo1
+    if even:  # used by Theo1
         m_even_mask = ((m % 2) == 0)
         m = m[m_even_mask]
         taus2 = taus2[m_even_mask]

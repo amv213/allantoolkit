@@ -15,22 +15,24 @@ Papers
     
 .. [Barnes1974] Barnes, 1974
     https://tf.nist.gov/general/pdf/11.pdf
-    
-.. [Benkler2015] Benkler, Lisdat, Sterr, On the relation between uncertainties of weighted frequency 
-    averages and the various types of Allan deviations.
-    Metrologia, Volume 52, Number 4, 2015.
-    https://doi.org/10.1088/0026-1394/52/4/565
-    https://arxiv.org/abs/1504.00466
-    
+
+.. .. [Benkler2015] Benkler, Lisdat, Sterr, On the relation between
+       uncertainties of weighted frequency
+       averages and the various types of Allan deviations.
+       Metrologia, Volume 52, Number 4, 2015.
+       https://doi.org/10.1088/0026-1394/52/4/565
+       https://arxiv.org/abs/1504.00466
+
 .. [Bregni2001] S. BREGNI, Fast Algorithms for TVAR and MTIE Computation in Characterization of
     Network Synchronization Performance. 
     http://home.deib.polimi.it/bregni/papers/cscc2001_fastalgo.pdf
-    
-.. [Dawkins2007] S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
-    the measurement of the stability of oscillators with frequency
-    counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
-    Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
-    doi: 10.1109/TUFFC.2007.337
+
+.. .. [Dawkins2007] S. T. Dawkins, J. J. McFerran and A. N. Luiten,
+       "Considerations on
+       the measurement of the stability of oscillators with frequency
+       counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
+       Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
+       doi: 10.1109/TUFFC.2007.337
 
 .. [Dobrogowski2007] Dobrogowski & Kasznia
     Real-time Assessment of Allan Deviation and Time Deviation
@@ -45,16 +47,17 @@ Papers
     THEO1: CHARACTERIZATION OF VERY LONG-TERM FREQUENCY STABILITY
     http://tf.nist.gov/general/pdf/1990.pdf
 
-.. [Howe2000] Howe, Beard, Greenhall, Riley,
-    A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
-    32nd PTTI, 2000
-    https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
-
 .. [Howe1999] D.A. Howe and F. Vernotte, "Generalization of the Total Variance 
         Approach to the Modified Allan Variance," Proc.
         31 st PTTI Meeting, pp. 267-276, Dec. 1999.
 
-.. [Howe2000] David A. Howe, The total deviation approach to long-term characterization
+.. .. [Howe2000a] Howe, Beard, Greenhall, Riley,
+    A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
+    32nd PTTI, 2000
+    https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
+
+.. .. [Howe2000b] David A. Howe, The total deviation approach to long-term
+    characterization
     of frequency stability, IEEE tr. UFFC vol 47 no 5 (2000)
     http://dx.doi.org/10.1109/58.869040    
 

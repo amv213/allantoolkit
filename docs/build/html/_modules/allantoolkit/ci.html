@@ -365,7 +365,7 @@
 <span class="sd">        32nd PTTI, 2000</span>
 <span class="sd">        https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf</span>
 
-<span class="sd">        Barnes, 1974</span>
+<span class="sd">        [Barnes1974]_</span>
 <span class="sd">        https://tf.nist.gov/general/pdf/11.pdf</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">errs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">adev</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="p">[</span><span class="n">af</span><span class="o">*</span><span class="n">rate</span><span class="p">],</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
@@ -601,7 +601,7 @@
 
 
 <div class="viewcode-block" id="edf_greenhall_simple"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.edf_greenhall_simple">[docs]</a><span class="k">def</span> <span class="nf">edf_greenhall_simple</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Eqn (13) from Greenhall2004 &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Eqn (13) from [Greenhall2004]_ &quot;&quot;&quot;</span>
     <span class="n">L</span> <span class="o">=</span> <span class="n">m</span><span class="o">/</span><span class="n">F</span><span class="o">+</span><span class="n">m</span><span class="o">*</span><span class="n">d</span> <span class="c1"># length of filter applied to phase samples</span>
     <span class="n">M</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">S</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="n">L</span><span class="p">)</span> <span class="o">/</span> <span class="n">m</span><span class="p">)</span>
     <span class="n">J</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="p">(</span><span class="n">d</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">S</span><span class="p">)</span>
@@ -755,7 +755,7 @@
 
 
 <div class="viewcode-block" id="greenhall_BasicSum"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.greenhall_BasicSum">[docs]</a><span class="k">def</span> <span class="nf">greenhall_BasicSum</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Eqn (10) from Greenhall2004 &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Eqn (10) from [Greenhall2004]_ &quot;&quot;&quot;</span>
     <span class="n">first</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">greenhall_sz</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">second</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">J</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">M</span><span class="p">))</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">greenhall_sz</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">J</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">third</span> <span class="o">=</span> <span class="mi">0</span>
@@ -765,7 +765,7 @@
 
 
 <div class="viewcode-block" id="greenhall_sz"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.greenhall_sz">[docs]</a><span class="k">def</span> <span class="nf">greenhall_sz</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Eqn (9) from Greenhall2004 &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Eqn (9) from [Greenhall2004]_ &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">a</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">greenhall_sx</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">greenhall_sx</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
@@ -792,7 +792,7 @@
 
 
 <div class="viewcode-block" id="greenhall_sx"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.greenhall_sx">[docs]</a><span class="k">def</span> <span class="nf">greenhall_sx</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Eqn (8) from Greenhall2004</span>
+    <span class="sd">&quot;&quot;&quot; Eqn (8) from [Greenhall2004]_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">F</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">greenhall_sw</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">alpha</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
@@ -804,7 +804,7 @@
 
 
 <div class="viewcode-block" id="greenhall_sw"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.greenhall_sw">[docs]</a><span class="k">def</span> <span class="nf">greenhall_sw</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Eqn (7) from Greenhall2004</span>
+    <span class="sd">&quot;&quot;&quot; Eqn (7) from [Greenhall2004]_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">alpha</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>

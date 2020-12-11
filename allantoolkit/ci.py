@@ -183,7 +183,7 @@ def b1(x, af, rate):
         32nd PTTI, 2000
         https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
 
-        Barnes, 1974
+        [Barnes1974]_
         https://tf.nist.gov/general/pdf/11.pdf
     """
     (taus, devs, errs, ns) = allantools.adev(x, taus=[af*rate], data_type="phase", rate=rate)
@@ -419,7 +419,7 @@ def detrend(x, deg=1):
 
 
 def edf_greenhall_simple(alpha, d, m, S, F, N):
-    """ Eqn (13) from Greenhall2004 """
+    """ Eqn (13) from [Greenhall2004]_ """
     L = m/F+m*d # length of filter applied to phase samples
     M = 1 + np.floor(S*(N-L) / m)
     J = min(M, (d+1)*S)
@@ -573,7 +573,7 @@ def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=Fal
 
 
 def greenhall_BasicSum(J, M, S, F, alpha, d):
-    """ Eqn (10) from Greenhall2004 """
+    """ Eqn (10) from [Greenhall2004]_ """
     first = pow(greenhall_sz(0, F, alpha, d), 2)
     second = (1-float(J)/float(M))*pow(greenhall_sz(float(J)/float(S), F, alpha, d), 2)
     third = 0
@@ -583,7 +583,7 @@ def greenhall_BasicSum(J, M, S, F, alpha, d):
 
 
 def greenhall_sz(t, F, alpha, d):
-    """ Eqn (9) from Greenhall2004 """
+    """ Eqn (9) from [Greenhall2004]_ """
     if d == 1:
         a = 2*greenhall_sx(t, F, alpha)
         b = greenhall_sx(t-1.0, F, alpha)
@@ -610,7 +610,7 @@ def greenhall_sz(t, F, alpha, d):
 
 
 def greenhall_sx(t, F, alpha):
-    """ Eqn (8) from Greenhall2004
+    """ Eqn (8) from [Greenhall2004]_
     """
     if F == float('inf'):
         return greenhall_sw(t, alpha+2)
@@ -622,7 +622,7 @@ def greenhall_sx(t, F, alpha):
 
 
 def greenhall_sw(t, alpha):
-    """ Eqn (7) from Greenhall2004
+    """ Eqn (7) from [Greenhall2004]_
     """
     alpha = int(alpha)
     if alpha == 2:

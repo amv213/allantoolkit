@@ -6,20 +6,12 @@
 
 """
 
-import os
 import allantoolkit.ci
 import allantoolkit.allantools as allan
 import allantoolkit.testutils as testutils
 
 
-def change_to_test_dir():
-    # hack to run script from its own directory
-    abspath = os.path.abspath(__file__)
-    dname = os.path.dirname(abspath)
-    os.chdir(dname)
-
-
-data_file = 'pink_frequency.txt'
+data_file = '../assets/pink_frequency/pink_frequency.txt'
 verbose = 1
 tolerance = 1e-4 # relative tolerance
 rate = 1/float(42.0) # stable32 runs were done with this data-interval
@@ -50,7 +42,7 @@ class TestPink:
 
     @staticmethod
     def generic_test(datafile=data_file, result="", fct=None):
-        change_to_test_dir()
+        testutils.change_to_test_dir()
         testutils.test_row_by_row( fct, datafile, rate, result,
                                    verbose=verbose, tolerance=tolerance,
                                    frequency=True, normalize=False)

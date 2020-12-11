@@ -16,14 +16,8 @@ import allantoolkit
 import allantoolkit.allantools as allan
 import allantoolkit.testutils as testutils
 
-data_file = 'ocxo_frequency.txt'
-import os
-def change_to_test_dir():
-    # hack to run script from its own directory
-    abspath = os.path.abspath(__file__)
-    dname = os.path.dirname(abspath)
-    os.chdir(dname)
-    
+data_file = '../assets/ocxo/ocxo_frequency.txt'
+
 verbose = 1
 tolerance = 1e-4 # relative tolerance
 rate = 1/float(1.0) # stable32 runs were done with this data-interval
@@ -32,7 +26,7 @@ class TestOCXO():
 
     def test_adev_ci(self):
         """ ADEV with confidence intervals, fixed alpha (no noise-ID) """
-        change_to_test_dir()
+        testutils.change_to_test_dir()
         s32rows = testutils.read_stable32(resultfile='adev_octave.txt',
                                           datarate=1.0)
         for row in s32rows:
@@ -54,7 +48,7 @@ class TestOCXO():
 
     def test_adev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
-        change_to_test_dir()
+        testutils.change_to_test_dir()
         s32rows = testutils.read_stable32(resultfile='adev_octave.txt', datarate=1.0)
         for row in s32rows:
             data = testutils.read_datafile(data_file)

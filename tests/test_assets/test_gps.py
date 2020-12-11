@@ -14,23 +14,10 @@ import allantoolkit.allantools as allan
 import allantoolkit.testutils as testutils
 
 
-def print_elapsed(start):
-    end = time.clock()
-    print(" %.2f s" % (end-start))
-    return time.clock()
-
-
-def change_to_test_dir():
-    # hack to run script from its own directory
-    abspath = os.path.abspath(__file__)
-    dname = os.path.dirname(abspath)
-    os.chdir(dname)
-
-
-data_file = 'gps_1pps_phase_data.txt.gz'
+data_file = '../assets/gps/gps_1pps_phase_data.txt.gz'
 verbose = 1
-tolerance = 1e-4 # relative tolerance
-rate = 1/float(1.0) # 1 PPS measurements, data interval is 1 s
+tolerance = 1e-4  # relative tolerance
+rate = 1/float(1.0)  # 1 PPS measurements, data interval is 1 s
 
 
 class TestGPS:
@@ -59,7 +46,8 @@ class TestGPS:
     def test_noise_id(self):
         """ test for noise-identification """
         s32_rows = testutils.read_stable32('stable32_ADEV_decade.txt', rate)
-        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+        phase = testutils.read_datafile(
+            '../assets/gps/gps_1pps_phase_data.txt.gz')
         # test noise-ID
         for s32 in s32_rows:
             tau, alpha, AF = s32['tau'], s32['alpha'], int(s32['m'])
@@ -72,8 +60,9 @@ class TestGPS:
 
     def test_adev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
-        change_to_test_dir()
-        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+        testutils.change_to_test_dir()
+        phase = testutils.read_datafile(
+            '../assets/gps/gps_1pps_phase_data.txt.gz')
         
         s32rows = testutils.read_stable32(resultfile='stable32_ADEV_decade.txt', datarate=1.0)
         s32taus = [row['tau'] for row in s32rows]
@@ -97,8 +86,9 @@ class TestGPS:
 
     def test_oadev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
-        change_to_test_dir()
-        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+        testutils.change_to_test_dir()
+        phase = testutils.read_datafile(
+            '../assets/gps/gps_1pps_phase_data.txt.gz')
         s32rows = testutils.read_stable32(resultfile='stable32_OADEV_octave.txt', datarate=1.0)
         s32taus = [row['tau'] for row in s32rows]
         (taus, devs, errs, ns) = allan.oadev(phase, rate=rate, data_type="phase",
@@ -120,8 +110,9 @@ class TestGPS:
 
     def test_mdev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
-        change_to_test_dir()
-        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+        testutils.change_to_test_dir()
+        phase = testutils.read_datafile(
+            '../assets/gps/gps_1pps_phase_data.txt.gz')
         s32rows = testutils.read_stable32(resultfile='stable32_MDEV_octave.txt', datarate=1.0)
         s32taus = [row['tau'] for row in s32rows]
         (taus, devs, errs, ns) = allan.mdev(phase, rate=rate, data_type="phase",
@@ -149,8 +140,9 @@ class TestGPS:
 
     def test_tdev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
-        change_to_test_dir()
-        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+        testutils.change_to_test_dir()
+        phase = testutils.read_datafile(
+            '../assets/gps/gps_1pps_phase_data.txt.gz')
         s32rows = testutils.read_stable32(resultfile='stable32_TDEV_octave.txt', datarate=1.0)
         s32taus = [row['tau'] for row in s32rows]
         (taus, devs, errs, ns) = allan.tdev(phase, rate=rate, data_type="phase",
@@ -178,8 +170,9 @@ class TestGPS:
 
     def test_hdev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
-        change_to_test_dir()
-        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+        testutils.change_to_test_dir()
+        phase = testutils.read_datafile(
+            '../assets/gps/gps_1pps_phase_data.txt.gz')
         s32rows = testutils.read_stable32(resultfile='stable32_HDEV_octave.txt', datarate=1.0)
         s32taus = [row['tau'] for row in s32rows]
         (taus, devs, errs, ns) = allan.hdev(phase, rate=rate, data_type="phase",
@@ -207,8 +200,9 @@ class TestGPS:
 
     def test_ohdev_ci_and_noiseID(self):
         """ ADEV with confidence intervals, including noise-ID """
-        change_to_test_dir()
-        phase = testutils.read_datafile('gps_1pps_phase_data.txt.gz')
+        testutils.change_to_test_dir()
+        phase = testutils.read_datafile(
+            '../assets/gps/gps_1pps_phase_data.txt.gz')
         s32rows = testutils.read_stable32(resultfile='stable32_OHDEV_octave.txt', datarate=1.0)
         s32taus = [row['tau'] for row in s32rows]
         (taus, devs, errs, ns) = allan.ohdev(phase, rate=rate, data_type="phase",
@@ -235,7 +229,7 @@ class TestGPS:
                 pass
 
     def generic_test(self, datafile=data_file, result="", fct=None):
-        change_to_test_dir()
+        testutils.change_to_test_dir()
         testutils.test_row_by_row(fct, datafile, 1.0, result,
                                   verbose=verbose, tolerance=tolerance)
 

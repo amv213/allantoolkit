@@ -4,9 +4,12 @@ import os.path
 
 # Taken from examples
 f = 1
-x = np.loadtxt(os.path.join(os.path.dirname(__file__), "x.dat"))
-y = np.loadtxt(os.path.join(os.path.dirname(__file__), "y.dat"))
-y_gap = np.loadtxt(os.path.join(os.path.dirname(__file__), "y_gap.dat"))
+x = np.loadtxt(os.path.join(os.path.dirname(__file__),
+                            "../assets/gradev/x.dat"))
+y = np.loadtxt(os.path.join(os.path.dirname(__file__),
+                            "../assets/gradev/y.dat"))
+y_gap = np.loadtxt(os.path.join(os.path.dirname(__file__),
+                                "../assets/gradev/y_gap.dat"))
 
 
 def test_gradev():

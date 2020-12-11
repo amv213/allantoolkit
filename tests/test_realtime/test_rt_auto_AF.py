@@ -3,13 +3,9 @@
 
     Auto-AF mode: new afs are added automatically as we add more phase points.
 """
-import math
-import time
-import sys
-import pytest
 
 import allantoolkit as at
-import numpy
+
 
 n_pts = pow(2,12)
 x_series = at.noise.white(n_pts)

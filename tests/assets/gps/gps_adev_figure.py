@@ -1,35 +1,12 @@
-import allantoolkit as allan
+import allantoolkit.allantools as allan
+import allantoolkit.testutils as testutils
 import numpy
-import math
 import matplotlib.pyplot as plt
 import gzip
-import sys
-
-sys.path.append("../..")
-sys.path.append("../../..") # hack to import from parent directory
-# remove if you have allantoolkit installed in your python path
-
-def read_datafile(filename,column=1):
-    p=[]
-    with gzip.open(filename) as f:
-        for line in f:
-            
-            if line.startswith("#"): # skip comments
-                pass
-            else:
-                line = line.split()
-                p.append( float(line[column]) )
-    return p
-
-def to_fractional(flist,f0):
-    out=[]
-    for f in flist:
-        out.append( f/float(f0) - 1.0 )
-    return out
 
 fname = "gps_1pps_phase_data.txt.gz"
-phase = read_datafile(fname,column=0)
-print len(phase), " values read: ", len(phase)/3600.0 , " hours"
+phase = testutils.read_datafile(fname, column=0)
+print(len(phase), " values read: ", len(phase)/3600.0 , " hours")
 
 #f = to_fractional(f10MHz, 10e6 ) # convert to fractional frequency
 my_taus = numpy.logspace(1,6,60) # log-spaced tau values from 10s and upwards

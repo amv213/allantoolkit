@@ -21,11 +21,6 @@ import time
 import os
 
 
-def print_elapsed(label, start, start0):
-	end = time.clock()
-	print("%s test done in %.2f s, elapsed= %.2f min"% ( label, end-start, (end-start0)/60 ))
-	return time.clock()
-
 def run():
 	# hack to run script from its own directory
 	abspath = os.path.abspath(__file__)
@@ -53,37 +48,37 @@ def run():
 	print("")
 	verbose = 0
 	start0 = time.clock()
-	start = print_elapsed('Starting..', time.clock(), start0)
+	start = testutils.print_elapsed('Starting..', time.clock(), start0)
 	
 	testutils.test_row_by_row( allan.adev, data_file, rate, adev_result , verbose, tolerance)   # 1.34 s
-	start = print_elapsed('ADEV', start, start0)
+	start = testutils.print_elapsed('ADEV', start, start0)
 	
 	testutils.test_row_by_row( allan.hdev, data_file, rate, hdev_result, verbose, tolerance ) # 1.9 s
-	start = print_elapsed('HDEV', start, start0)
+	start = testutils.print_elapsed('HDEV', start, start0)
 	
 	testutils.test_row_by_row( allan.mtie, data_file, rate, mtie_result, verbose, tolerance ) # 13 s
-	start = print_elapsed('MTIE', start, start0)
+	start = testutils.print_elapsed('MTIE', start, start0)
 	
 	testutils.test_row_by_row( allan.oadev, data_file, rate, oadev_result, verbose, tolerance ) # 63 s
-	start = print_elapsed('OADEV', start, start0)
+	start = testutils.print_elapsed('OADEV', start, start0)
 	
 	testutils.test_row_by_row( allan.ohdev, data_file, rate, ohdev_result, verbose, tolerance ) # 88 s
-	start = print_elapsed('OHDEV', start, start0)
+	start = testutils.print_elapsed('OHDEV', start, start0)
 	
 	testutils.test_row_by_row( allan.mdev, data_file, rate, mdev_result, verbose, tolerance ) # 98 s
-	start = print_elapsed('MDEV', start, start0)
+	start = testutils.print_elapsed('MDEV', start, start0)
 	
 	testutils.test_row_by_row( allan.tdev, data_file, rate, tdev_result, verbose, tolerance ) # 99 s
-	start = print_elapsed('TDEV', start, start0)
+	start = testutils.print_elapsed('TDEV', start, start0)
 	
 	testutils.test_row_by_row( allan.tierms, data_file, rate, tierms_result, verbose, tolerance ) # 117 s
-	start = print_elapsed('TIERMS', start, start0)
+	start = testutils.print_elapsed('TIERMS', start, start0)
 	
 	testutils.test_row_by_row( allan.totdev, data_file, rate, totdev_result, verbose, tolerance ) # 245 s
-	start = print_elapsed('TOTDEV', start, start0)
-	
-	
+	start = testutils.print_elapsed('TOTDEV', start, start0)
+
 	end = time.clock()
+
 	print("Tests done in %2.3f s" % (end-start0)) # total time 470s on i7 CPU (without mtie!)
 
 

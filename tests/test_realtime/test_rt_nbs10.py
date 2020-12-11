@@ -15,10 +15,6 @@
   http://tf.nist.gov/general/pdf/2220.pdf
   around page 107
 """
-import math
-import time
-import sys
-import pytest
 
 import allantoolkit as at
 import numpy

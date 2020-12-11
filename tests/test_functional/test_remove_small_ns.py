@@ -1,4 +1,3 @@
-import pytest
 import allantoolkit.allantools as at
 import numpy as np
 

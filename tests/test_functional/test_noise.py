@@ -1,11 +1,5 @@
-#!/usr/bin/python
-
-import sys
-sys.path.append("..")
-
 from allantoolkit import noise
 import numpy
-import pytest
 
 
 def test_noise():
@@ -25,6 +19,4 @@ def test_noise():
     # check output type
     for x in [w, b, v, p]:
         assert type(x) == numpy.ndarray, "%s is not numpy.ndarray" % (type(x))
-        
-if __name__ == "__main__":
-    test_noise()
+

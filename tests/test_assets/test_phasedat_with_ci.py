@@ -8,13 +8,12 @@
   
 """
 
-import sys
 import numpy as np
 import allantoolkit
 import allantoolkit.allantools as allan
 import allantoolkit.testutils as testutils
 
-data_file = 'PHASE.DAT'
+data_file = '../assets/phasedat/PHASE.DAT'
 tolerance = 1e-4 # relative tolerance for pass/fail against Stable32 values
 verbose = 1
 
@@ -26,7 +25,8 @@ class TestPhaseDatCI:
     """
     def test_phasedat_adev(self):
         s32_rows = testutils.read_stable32( 'phase_dat_adev_octave.txt' , 1.0 )
-        phase = np.array( testutils.read_datafile('PHASE.DAT') )
+        phase = np.array(testutils.read_datafile(
+            '../assets/phasedat/PHASE.DAT'))
         (taus,devs,errs,ns) = allan.adev(phase, taus=[s32['tau'] for s32 in s32_rows])
         
         # separate CI computation
@@ -70,7 +70,7 @@ class TestPhaseDatCI:
 
     def test_phasedat_oadev(self):
         s32_rows = testutils.read_stable32( 'phase_dat_oadev_octave.txt' , 1.0 )
-        phase = testutils.read_datafile('PHASE.DAT')
+        phase = testutils.read_datafile('../assets/phasedat/PHASE.DAT')
         (taus,devs,errs,ns) = allan.oadev(phase, taus=[s32['tau'] for s32 in s32_rows])
         
         # CI computation
@@ -104,7 +104,7 @@ class TestPhaseDatCI:
     
     def test_phasedat_mdev(self):
         s32_rows = testutils.read_stable32( 'phase_dat_mdev_octave.txt' , 1.0 )
-        phase = testutils.read_datafile('PHASE.DAT')
+        phase = testutils.read_datafile('../assets/phasedat/PHASE.DAT')
         (taus,devs,errs,ns) = allan.mdev(phase, taus=[s32['tau'] for s32 in s32_rows])
         
         # CI computation
@@ -139,7 +139,7 @@ class TestPhaseDatCI:
 
     def test_phasedat_hdev(self):
         s32_rows = testutils.read_stable32( 'phase_dat_hdev_octave.txt' , 1.0 )
-        phase = testutils.read_datafile('PHASE.DAT')
+        phase = testutils.read_datafile('../assets/phasedat/PHASE.DAT')
         (taus,devs,errs,ns) = allan.hdev(phase, taus=[s32['tau'] for s32 in s32_rows])
         
         # CI computation
@@ -172,7 +172,7 @@ class TestPhaseDatCI:
             
     def test_phasedat_ohdev(self):
         s32_rows = testutils.read_stable32( 'phase_dat_ohdev_octave.txt' , 1.0 )
-        phase = testutils.read_datafile('PHASE.DAT')
+        phase = testutils.read_datafile('../assets/phasedat/PHASE.DAT')
         (taus,devs,errs,ns) = allan.ohdev(phase, taus=[s32['tau'] for s32 in s32_rows])
         
         # CI computation
@@ -207,7 +207,7 @@ class TestPhaseDatCI:
             
     def test_phasedat_tdev(self):
         s32_rows = testutils.read_stable32( 'phase_dat_tdev_octave.txt' , 1.0 )
-        phase = testutils.read_datafile('PHASE.DAT')
+        phase = testutils.read_datafile('../assets/phasedat/PHASE.DAT')
         (taus, devs, errs, ns) = allan.tdev(phase, taus=[
             s32['tau'] for s32 in s32_rows])
         
@@ -243,7 +243,7 @@ class TestPhaseDatCI:
 
     def test_phasedat_totdev(self):
         s32_rows = testutils.read_stable32( 'phase_dat_totdev_octave.txt' , 1.0 )
-        phase = testutils.read_datafile('PHASE.DAT')
+        phase = testutils.read_datafile('../assets/phasedat/PHASE.DAT')
         (taus,devs,errs,ns) = allan.totdev(phase, taus=[s32['tau'] for s32 in s32_rows])
 
         los=[]
@@ -269,7 +269,7 @@ class TestPhaseDatCI:
     def test_noise_id(self):
         """ test for noise-identification """
         s32_rows = testutils.read_stable32( 'phase_dat_oadev_octave.txt' , 1.0 )
-        phase = testutils.read_datafile('PHASE.DAT')
+        phase = testutils.read_datafile('../assets/phasedat/PHASE.DAT')
         for s32 in s32_rows:
             tau, alpha, af = s32['tau'], s32['alpha'], int(s32['m'])
             try:
@@ -284,7 +284,7 @@ class TestPhaseDatCI:
     # FIXME: failing test that we don't run
     def slow_failing_phasedat_mtotdev(self):
         s32_rows = testutils.read_stable32( 'phase_dat_mtotdev_octave_alpha0.txt' , 1.0 )
-        phase = testutils.read_datafile('PHASE.DAT')
+        phase = testutils.read_datafile('../assets/phasedat/PHASE.DAT')
         (taus,devs,errs,ns) = allan.mtotdev(phase, taus=[s32['tau'] for s32 in s32_rows])
         
         los=[]

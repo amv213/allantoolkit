@@ -11,16 +11,9 @@ import pytest
 import allantoolkit.allantools as allan
 import allantoolkit.testutils as testutils
 
-data_file = 'PHASE.DAT'
+data_file = '../assets/phasedat/PHASE.DAT'
 tolerance = 1e-4
 verbose = 1
-
-
-def change_to_test_dir():
-    # hack to run script from its own directory
-    abspath = os.path.abspath(__file__)
-    dname = os.path.dirname(abspath)
-    os.chdir(dname)
 
 
 class TestPhaseDat:
@@ -68,5 +61,5 @@ class TestPhaseDat:
         self.generic_test( result='phase_dat_tierms.txt' , fct= allan.tierms )
     
     def generic_test(self, datafile = data_file, result="", fct=None, verbose=False):
-        change_to_test_dir()
+        testutils.change_to_test_dir()
         testutils.test_row_by_row( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance)

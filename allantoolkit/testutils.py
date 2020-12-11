@@ -3,18 +3,22 @@
 
 """
 
+import os
+import time
 import gzip
 import numpy
 import logging
+from pathlib import Path
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
 
 
 # read a simple data-file with phase or frequency numbers on each line
-def read_datafile(filename):
+def read_datafile(filename: Path):
+
     p = []
-    if filename[-2:] == 'gz':
+    if filename.suffix == '.gz':
         with gzip.open(filename, mode='rt') as f:
             for line in f:
                 if not line.startswith("#"):  # skip comments
@@ -75,6 +79,7 @@ def read_stable32(resultfile, datarate):
             rows.append(d)
     return rows
 
+
 def to_fractional(data):
     mu = numpy.mean(data)
     return [(x-mu)/mu for x in data]
@@ -90,7 +95,7 @@ def test_row_by_row(function, datafile, datarate, resultfile, verbose=False, tol
 
     data = read_datafile(datafile)
 
-    if normalize: # convert frequencies in Hz to fractional frequencies
+    if normalize:  # convert frequencies in Hz to fractional frequencies
         data = to_fractional(data)
 
     print("Read ", len(data), " values from ", datafile)
@@ -141,3 +146,22 @@ def check_approx_equal(a1,a2, tolerance=1e-4, verbose=False):
         print("ERROR %0.6g \t %0.6g \t rel_err = %0.6f \t %0.4f" % ( a1, a2, rel_error, bias))
         assert(0)
         return 1
+
+
+def print_elapsed(label, start, start0=None):
+
+    end = time.clock()
+    start0 = start0 if start0 is not None else start
+
+    logger.info("%s test done in %.2f s, elapsed= %.2f min",
+                (label, end-start, (end-start0)/60))
+
+    return time.clock()
+
+
+def change_to_test_dir():
+    # hack to run script from its own directory
+    abspath = os.path.abspath(__file__)
+    print(abspath)
+    dname = os.path.dirname(abspath)
+    os.chdir(dname)

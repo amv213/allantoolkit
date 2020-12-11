@@ -61,7 +61,7 @@ def check_devs(dev2, dev1, soft=False):
 class TestNBS14_10Point:
 
     def test_adev(self):
-        self.generic_test( allan.adev, nbs14_devs[0] )
+        self.generic_test(allan.adev, nbs14_devs[0])
 
     def test_oadev(self):
         self.generic_test( allan.oadev, nbs14_devs[1] )
@@ -101,8 +101,9 @@ class TestNBS14_10Point:
     #def test_htotdev2(self):
     #    # compare against Stable32 values - fixme!
     #    self.generic_test( allan.htotdev, nbs14_devs[10] )  
-    
-    def generic_test(self, function, ref_devs):
+
+    @staticmethod
+    def generic_test(function, ref_devs):
         taus = [1, 2]
         tol = 1e-4
         (taus1,adevs1,aerrs1,ns1) = function(nbs14_phase, rate=1.0, taus=taus)

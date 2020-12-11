@@ -11,21 +11,14 @@ import allantoolkit.allantools as allan
 import allantoolkit.testutils as testutils
 
 
-def change_to_test_dir():
-    # hack to run script from its own directory
-    abspath = os.path.abspath(__file__)
-    dname = os.path.dirname(abspath)
-    os.chdir(dname)
-
-
-data_file = 'tic_phase.txt'  # input data file
+data_file = '../assets/Keysight53230A_ti_noise_floor/tic_phase.txt'  # input data file
 verbose = 1
 tolerance = 1e-4
 rate = 1/float(1.0)  # stable32 runs were done with this data-interval
 
 
 def generic_test(datafile=data_file, result="", fct=None):
-    change_to_test_dir()
+    testutils.change_to_test_dir()
     testutils.test_row_by_row(fct, datafile, 1.0, result,
                               verbose=verbose, tolerance=tolerance)
 

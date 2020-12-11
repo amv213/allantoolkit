@@ -337,6 +337,7 @@ def calc_adev_phase(phase, rate, mj, stride):
 
     References
     ----------
+    [wikipedia_adev]_
     * http://en.wikipedia.org/wiki/Allan_variance
     * http://www.leapsecond.com/tools/adev_lib.c
 

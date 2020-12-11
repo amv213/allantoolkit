@@ -7,6 +7,7 @@
 
    Modules <modules.rst>
    Functions <functions.rst>
+   API <api.rst>
    References <references.rst>
 ```
 

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>allantoolkit.dataset &#8212; AllanToolkit Documentation</title>
+    <title>allantools.dataset &#8212; AllanToolkit Documentation</title>
     
   <link rel="stylesheet" href="../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -161,7 +161,7 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2F_modules/allantoolkit/dataset.html&body=Your%20issue%20content%20here."><button
+            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2F_modules/allantools/dataset.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -189,22 +189,41 @@
         
               <div>
                 
-  <h1>Source code for allantoolkit.dataset</h1><div class="highlight"><pre>
+  <h1>Source code for allantools.dataset</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Allantools dataset object</span>
 
 <span class="sd">**Authors:** Frederic Meynadier (frederic.meynadier &quot;at&quot; gmail.com),</span>
 <span class="sd">    Mike DePalatis (http://mike.depalatis.net)</span>
+
+<span class="sd">Version history</span>
+<span class="sd">---------------</span>
+
+<span class="sd">**2019.07**</span>
+<span class="sd">- Initial release</span>
+
+<span class="sd">License</span>
+<span class="sd">-------</span>
+
+<span class="sd">This program is free software: you can redistribute it and/or modify</span>
+<span class="sd">it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
+<span class="sd">(at your option) any later version.</span>
+
+<span class="sd">This program is distributed in the hope that it will be useful,</span>
+<span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="sd">GNU Lesser General Public License for more details.</span>
+
+<span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
+<span class="sd">along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">allantools</span>
 
-<span class="c1"># Spawn module-level logger</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">:</span>
+<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../api.html#allantools.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Dataset class for Allantools</span>
 
 <span class="sd">    :Example:</span>
@@ -212,7 +231,7 @@
 
 <span class="sd">            import numpy as np</span>
 <span class="sd">            # Load random data</span>
-<span class="sd">            a = allantoolkit.Dataset(data=np.random.rand(1000))</span>
+<span class="sd">            a = allantools.Dataset(data=np.random.rand(1000))</span>
 <span class="sd">            # compute mdev</span>
 <span class="sd">            a.compute(&quot;mdev&quot;)</span>
 <span class="sd">            print(a.out[&quot;stat&quot;])</span>
@@ -222,7 +241,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Dataset.__init__"><a class="viewcode-back" href="../../api.html#allantools.Dataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initialize object with input data</span>
 
 <span class="sd">        Parameters</span>
@@ -261,9 +280,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">taus</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">taus</span></div>
 
-<div class="viewcode-block" id="Dataset.set_input"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.set_input">[docs]</a>    <span class="k">def</span> <span class="nf">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span>
+<div class="viewcode-block" id="Dataset.set_input"><a class="viewcode-back" href="../../api.html#allantools.Dataset.set_input">[docs]</a>    <span class="k">def</span> <span class="nf">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span>
                   <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Optionnal method if you chose not to set inputs on init</span>
 
@@ -285,7 +304,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">taus</span></div>
 
-<div class="viewcode-block" id="Dataset.compute"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+<div class="viewcode-block" id="Dataset.compute"><a class="viewcode-back" href="../../api.html#allantools.Dataset.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate the passed function with the supplied data.</span>
 
 <span class="sd">        Stores result in self.out.</span>
@@ -293,7 +312,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        function: str</span>
-<span class="sd">            Name of the :mod:`allantoolkit` function to evaluate</span>
+<span class="sd">            Name of the :mod:`allantools` function to evaluate</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -304,7 +323,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">function</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;function must be defined in allantoolkit&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;function must be defined in allantools&quot;</span><span class="p">)</span>
 
         <span class="n">whitelisted</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;theo1&quot;</span><span class="p">,</span> <span class="s2">&quot;mtie&quot;</span><span class="p">,</span> <span class="s2">&quot;tierms&quot;</span><span class="p">]</span>
 
@@ -320,7 +339,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="Dataset.write_results"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.write_results">[docs]</a>    <span class="k">def</span> <span class="nf">write_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">header_params</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="Dataset.write_results"><a class="viewcode-back" href="../../api.html#allantools.Dataset.write_results">[docs]</a>    <span class="k">def</span> <span class="nf">write_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">header_params</span><span class="o">=</span><span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot; Output result to text</span>
 
 <span class="sd">        Save calculation results to disk. Will overwrite any existing file.</span>

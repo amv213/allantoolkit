@@ -65,53 +65,58 @@ Papers
     oscillator stability evaluation]," Frequency Control Symposium, 1992.
     46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992
     http://dx.doi.org/10.1109/FREQ.1992.270003
-    
-
 
 .. [wikipedia_adev] http://en.wikipedia.org/wiki/Allan_variance
 
 .. [SP1065] NIST Special Publication 1065
     http://tf.nist.gov/timefreq/general/pdf/2220.pdf
 
-.. [IEEE1139] 1139-2008 - IEEE Standard Definitions of Physical Quantities for 
-    Fundamental Frequency and Time Metrology - Random Instabilities 
-    http://dx.doi.org/10.1109/IEEESTD.2008.4797525
+.. .. [IEEE1139] 1139-2008 - IEEE Standard Definitions of Physical Quantities
+       for Fundamental Frequency and Time Metrology - Random Instabilities
+       http://dx.doi.org/10.1109/IEEESTD.2008.4797525
 
-.. [Riley_Stable32] http://www.stable32.com/Handbook.pdf
+..  .. [Riley_Stable32] http://www.stable32.com/Handbook.pdf
 
-.. [Riley_CI] Confidence Intervals and Bias Corrections  for the Stable32  Variance Functions
-    W.J. Riley, Hamilton Technical Services
-    http://www.wriley.com/CI2.pdf
+..  .. [Riley_CI] Confidence Intervals and Bias Corrections  for the Stable32
+        Variance Functions
+        W.J. Riley, Hamilton Technical Services
+        http://www.wriley.com/CI2.pdf
 
-.. [Riley2004] Riley,W.J. et al., Power law noise identification using the lag 1 autocorrelation
-    18th European Frequency and Time Forum (EFTF 2004)
-    https://ieeexplore.ieee.org/document/5075021
+.. .. [Riley2004] Riley,W.J. et al., Power law noise identification using the
+       lag 1 autocorrelation
+       18th European Frequency and Time Forum (EFTF 2004)
+       https://ieeexplore.ieee.org/document/5075021
 
-.. [Riley_1] W.J.Riley, "THE CALCULATION OF TIME DOMAIN FREQUENCY STABILITY" 
-    http://www.wriley.com/paper1ht.htm
+.. .. [Riley_1] W.J.Riley, "THE CALCULATION OF TIME DOMAIN FREQUENCY
+       STABILITY"
+       http://www.wriley.com/paper1ht.htm
 
-.. [Rubiola2015] The Omega Counter, a Frequency Counter Based on the Linear Regression
-    https://arxiv.org/abs/1506.05009    
-
-
-.. [Stein1985] S. Stein, Frequency and Time - Their Measurement and Characterization. 
-    Precision Frequency Control Vol 2, 1985, pp 191-416. 
-    http://tf.boulder.nist.gov/general/pdf/666.pdf
-
+.. .. [Rubiola2015] The Omega Counter, a Frequency Counter Based on the Linear
+       Regression
+       https://arxiv.org/abs/1506.05009
 
 
-.. [Sesia2011] SESIA I., GALLEANI L., TAVELLA P., Application of the Dynamic Allan Variance 
-    for the Characterization of Space Clock Behavior, 
-    http://dx.doi.org/10.1109/TAES.2011.5751232
+.. .. [Stein1985] S. Stein, Frequency and Time - Their Measurement and
+       Characterization.
+       Precision Frequency Control Vol 2, 1985, pp 191-416.
+       http://tf.boulder.nist.gov/general/pdf/666.pdf
 
 
-.. [Sesia2008] Ilaria Sesia and Patrizia Tavella, Estimating the Allan variance in the 
-    presence of long periods of missing data and outliers.
-    2008 Metrologia 45 S134 http://dx.doi.org/10.1088/0026-1394/45/6/S19
 
-.. [Vernotte2011] F. Vernotte, "Variance Measurements", 2011 IFCS & EFTF
-    http://www.ieee-uffc.org/frequency-control/learning/pdf/Vernotte-Varience_Measurements.pdf
+.. .. [Sesia2011] SESIA I., GALLEANI L., TAVELLA P., Application of the
+       Dynamic Allan Variance for the Characterization of Space Clock
+       Behavior,
+       http://dx.doi.org/10.1109/TAES.2011.5751232
 
-.. [Vernotte2015] The Parabolic Variance (PVAR): A Wavelet Variance Based on the Least-Square Fit
-    https://ieeexplore.ieee.org/document/7323846
-    https://arxiv.org/abs/1506.00687
+
+.. .. [Sesia2008] Ilaria Sesia and Patrizia Tavella, Estimating the Allan
+       variance in the presence of long periods of missing data and outliers.
+       2008 Metrologia 45 S134 http://dx.doi.org/10.1088/0026-1394/45/6/S19
+
+.. .. [Vernotte2011] F. Vernotte, "Variance Measurements", 2011 IFCS & EFTF
+       http://www.ieee-uffc.org/frequency-control/learning/pdf/Vernotte-Varience_Measurements.pdf
+
+.. .. [Vernotte2015] The Parabolic Variance (PVAR): A Wavelet Variance Based
+       on the Least-Square Fit
+       https://ieeexplore.ieee.org/document/7323846
+       https://arxiv.org/abs/1506.00687

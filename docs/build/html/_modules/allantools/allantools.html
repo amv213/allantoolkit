@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>allantoolkit.allantools &#8212; AllanToolkit Documentation</title>
+    <title>allantools.allantools &#8212; AllanToolkit Documentation</title>
     
   <link rel="stylesheet" href="../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -156,7 +156,7 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2F_modules/allantoolkit/allantools.html&body=Your%20issue%20content%20here."><button
+            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2F_modules/allantools/allantools.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -184,7 +184,7 @@
         
               <div>
                 
-  <h1>Source code for allantoolkit.allantools</h1><div class="highlight"><pre>
+  <h1>Source code for allantools.allantools</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Allan deviation tools</span>
 <span class="sd">=====================</span>
@@ -194,11 +194,15 @@
 <span class="sd">Version history</span>
 <span class="sd">---------------</span>
 
-<span class="sd">**2019.07**</span>
+<span class="sd">**2019.09** 2019 September</span>
+<span class="sd">- packaging changes, for conda package</span>
+
+<span class="sd">**2019.07** 2019 August 3</span>
 <span class="sd">- move edf-functions and noise-ID functions to ci.py</span>
 <span class="sd">- mtotdev() htotdev() speed improvements</span>
-<span class="sd">- save dataset results to file</span>
+<span class="sd">- save dataset results to text file</span>
 <span class="sd">- real-time adev/mdev/hdev</span>
+<span class="sd">- travis testing on Linux, OSX, and Windows</span>
 
 <span class="sd">**2018.03** 2018 March 27</span>
 <span class="sd">- change license to LGPL v3 or later</span>
@@ -228,11 +232,11 @@
 <span class="sd">- improve documentation and add __version__</span>
 <span class="sd">- added Theo1 deviation theo1()</span>
 <span class="sd">- added Hadamard Total Deviatio htotdev()</span>
-<span class="sd">- added Modified Total Deviation mtotdev(), and Time Total Deviation</span>
-<span class="sd">ttotdev() http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/</span>
+<span class="sd">- added Modified Total Deviation mtotdev(), and Time Total Deviation ttotdev()</span>
+<span class="sd">  http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/</span>
 <span class="sd">- automatic tau-lists:  taus=[ &quot;all&quot; | &quot;octave&quot; | &quot;decade&quot; ]</span>
-<span class="sd">- merge adev() and adev_phase() into one, requiring phase= or frequency=</span>
-<span class="sd">argument</span>
+<span class="sd">- merge adev() and adev_phase() into one, requiring phase= or</span>
+<span class="sd">  frequency= argument</span>
 <span class="sd">- add GPS dataset as example and test</span>
 
 <span class="sd">**2016.2** 2016 February</span>
@@ -248,19 +252,19 @@
 
 <span class="sd">**v1.2** 2014 November, Cantwell G. Carson conrtibuted:</span>
 <span class="sd">- A gap-robust version of ADEV based on the paper by Sesia et al.</span>
-<span class="sd">gradev_phase() and gradev()</span>
-<span class="sd">- Improved uncertainty estimates: uncertainty_estimate() This introduces a</span>
-<span class="sd">new dependency: scipy.stats.chi2()</span>
+<span class="sd">   gradev_phase() and gradev()</span>
+<span class="sd">- Improved uncertainty estimates: uncertainty_estimate()</span>
+<span class="sd">  This introduces a new dependency: scipy.stats.chi2()</span>
 
 <span class="sd">**v1.1** 2014 August</span>
 <span class="sd">- Danny Price converted the library to use numpy.</span>
-<span class="sd">- many functions in allantoolkit are now 100x faster than before.</span>
+<span class="sd">- many functions in allantools are now 100x faster than before.</span>
 <span class="sd">- see http://www.anderswallin.net/2014/08/faster-allantools-with-numpy/</span>
 
 <span class="sd">**v1.01** 2014 August</span>
 <span class="sd">- PEP8 compliance improvements by Danny Price.</span>
 
-<span class="sd">**v1.00** 2014 January, first version of allantoolkit.</span>
+<span class="sd">**v1.00** 2014 January, first version of allantools.</span>
 <span class="sd">- see http://www.anderswallin.net/2014/01/allantools/</span>
 
 <span class="sd">License</span>
@@ -281,15 +285,23 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ci</span>  <span class="c1"># edf, confidence intervals</span>
+<span class="c1">#import scipy.stats # used in confidence_intervals()</span>
+<span class="c1">#import scipy.signal # decimation in lag-1 acf</span>
 
-<span class="c1"># Spawn module-level logger</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ci</span> <span class="c1"># edf, confidence intervals</span>
+
+<span class="c1"># Get version number from json metadata</span>
+<span class="n">pkginfo_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span>
+                            <span class="s1">&#39;allantools_info.json&#39;</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pkginfo_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+    <span class="n">pkginfo</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="n">pkginfo</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="tdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.tdev">[docs]</a><span class="k">def</span> <span class="nf">tdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="tdev"><a class="viewcode-back" href="../../functions.html#allantools.tdev">[docs]</a><span class="k">def</span> <span class="nf">tdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Time deviation.</span>
 <span class="sd">        Based on modified Allan variance.</span>
 
@@ -339,8 +351,7 @@
     <span class="n">tde</span> <span class="o">=</span> <span class="n">td</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">taus</span><span class="p">,</span> <span class="n">td</span><span class="p">,</span> <span class="n">tde</span><span class="p">,</span> <span class="n">ns</span></div>
 
-
-<div class="viewcode-block" id="mdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.mdev">[docs]</a><span class="k">def</span> <span class="nf">mdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="mdev"><a class="viewcode-back" href="../../functions.html#allantools.mdev">[docs]</a><span class="k">def</span> <span class="nf">mdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;  Modified Allan deviation.</span>
 <span class="sd">         Used to distinguish between White and Flicker Phase Modulation.</span>
 
@@ -427,8 +438,7 @@
 
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">md</span><span class="p">,</span> <span class="n">mderr</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="adev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.adev">[docs]</a><span class="k">def</span> <span class="nf">adev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="adev"><a class="viewcode-back" href="../../functions.html#allantools.adev">[docs]</a><span class="k">def</span> <span class="nf">adev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Allan deviation.</span>
 <span class="sd">        Classic - use only if required - relatively poor confidence.</span>
 
@@ -495,7 +505,7 @@
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">ade</span><span class="p">,</span> <span class="n">adn</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="calc_adev_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.calc_adev_phase">[docs]</a><span class="k">def</span> <span class="nf">calc_adev_phase</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">stride</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">calc_adev_phase</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">stride</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;  Main algorithm for adev() (stride=mj) and oadev() (stride=1)</span>
 
 <span class="sd">        see http://www.leapsecond.com/tools/adev_lib.c</span>
@@ -526,7 +536,6 @@
 <span class="sd">    ----------</span>
 <span class="sd">    * http://en.wikipedia.org/wiki/Allan_variance</span>
 <span class="sd">    * http://www.leapsecond.com/tools/adev_lib.c</span>
-
 <span class="sd">    NIST [SP1065]_ eqn (7) and (11) page 16</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mj</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj</span><span class="p">)</span>
@@ -547,10 +556,9 @@
     <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">n</span><span class="p">))</span> <span class="o">/</span> <span class="n">mj</span>  <span class="o">*</span> <span class="n">rate</span>
     <span class="n">deverr</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">dev</span><span class="p">,</span> <span class="n">deverr</span><span class="p">,</span> <span class="n">n</span></div>
+    <span class="k">return</span> <span class="n">dev</span><span class="p">,</span> <span class="n">deverr</span><span class="p">,</span> <span class="n">n</span>
 
-
-<div class="viewcode-block" id="oadev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.oadev">[docs]</a><span class="k">def</span> <span class="nf">oadev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="oadev"><a class="viewcode-back" href="../../functions.html#allantools.oadev">[docs]</a><span class="k">def</span> <span class="nf">oadev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; overlapping Allan deviation.</span>
 <span class="sd">        General purpose - most widely used - first choice</span>
 
@@ -605,8 +613,7 @@
 
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">ade</span><span class="p">,</span> <span class="n">adn</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="ohdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.ohdev">[docs]</a><span class="k">def</span> <span class="nf">ohdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ohdev"><a class="viewcode-back" href="../../functions.html#allantools.ohdev">[docs]</a><span class="k">def</span> <span class="nf">ohdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Overlapping Hadamard deviation.</span>
 <span class="sd">        Better confidence than normal Hadamard.</span>
 
@@ -659,8 +666,7 @@
 
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">hdevs</span><span class="p">,</span> <span class="n">hdeverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="hdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.hdev">[docs]</a><span class="k">def</span> <span class="nf">hdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="hdev"><a class="viewcode-back" href="../../functions.html#allantools.hdev">[docs]</a><span class="k">def</span> <span class="nf">hdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Hadamard deviation.</span>
 <span class="sd">        Rejects frequency drift, and handles divergent noise.</span>
 
@@ -702,7 +708,7 @@
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">hdevs</span><span class="p">,</span> <span class="n">hdeverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="calc_hdev_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.calc_hdev_phase">[docs]</a><span class="k">def</span> <span class="nf">calc_hdev_phase</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">stride</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">calc_hdev_phase</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">stride</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; main calculation fungtion for HDEV and OHDEV</span>
 
 <span class="sd">    Parameters</span>
@@ -724,11 +730,9 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    http://www.leapsecond.com/tools/adev_lib.c</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \\sigma^2_{y}(t) = { 1 \\over 6\\tau^2 (N-3m) }</span>
-<span class="sd">            \\sum_{i=1}^{N-3} [ x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2</span>
+<span class="sd">                         1        N-3</span>
+<span class="sd">         s2y(t) = --------------- sum [x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2</span>
+<span class="sd">                  6*tau^2 (N-3m)  i=1</span>
 
 <span class="sd">        N=M+1 phase measurements</span>
 <span class="sd">        m is averaging factor</span>
@@ -755,9 +759,9 @@
 
     <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s</span> <span class="o">/</span> <span class="mf">6.0</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">tau0</span> <span class="o">*</span> <span class="n">mj</span><span class="p">)</span>
     <span class="n">e</span> <span class="o">=</span> <span class="n">h</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">h</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">n</span></div>
+    <span class="k">return</span> <span class="n">h</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">n</span>
 
-<div class="viewcode-block" id="totdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.totdev">[docs]</a><span class="k">def</span> <span class="nf">totdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="totdev"><a class="viewcode-back" href="../../functions.html#allantools.totdev">[docs]</a><span class="k">def</span> <span class="nf">totdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Total deviation.</span>
 <span class="sd">        Better confidence at long averages for Allan deviation.</span>
 
@@ -842,7 +846,7 @@
 
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ttotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.ttotdev">[docs]</a><span class="k">def</span> <span class="nf">ttotdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ttotdev"><a class="viewcode-back" href="../../functions.html#allantools.ttotdev">[docs]</a><span class="k">def</span> <span class="nf">ttotdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Time Total Deviation</span>
 
 <span class="sd">        Modified total variance scaled by tau^2 / 3</span>
@@ -856,7 +860,7 @@
     <span class="n">tde</span> <span class="o">=</span> <span class="n">td</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">taus</span><span class="p">,</span> <span class="n">td</span><span class="p">,</span> <span class="n">tde</span><span class="p">,</span> <span class="n">ns</span></div>
 
-<div class="viewcode-block" id="mtotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.mtotdev">[docs]</a><span class="k">def</span> <span class="nf">mtotdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="mtotdev"><a class="viewcode-back" href="../../functions.html#allantools.mtotdev">[docs]</a><span class="k">def</span> <span class="nf">mtotdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
 <span class="sd">        Modified Total deviation.</span>
 <span class="sd">        Better confidence at long averages for modified Allan</span>
@@ -900,25 +904,24 @@
 
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="calc_mtotdev_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.calc_mtotdev_phase">[docs]</a><span class="k">def</span> <span class="nf">calc_mtotdev_phase</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">calc_mtotdev_phase</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
-<span class="sd">    calculation of mtotdev for one averaging factor m; tau = m*tau0</span>
-<span class="sd">        </span>
-<span class="sd">    NIST [SP1065]_ Eqn (27), page 25.</span>
-<span class="sd">        </span>
-<span class="sd">    Computed from a set of N - 3m + 1 subsequences of 3m points.</span>
+<span class="sd">        calculation of mtotdev for one averaging factor m</span>
+<span class="sd">        tau = m*tau0</span>
 
-<span class="sd">    1. A linear trend (frequency offset) is removed from the subsequence by</span>
-<span class="sd">    averaging the first and last halves of the subsequence and dividing by</span>
-<span class="sd">    half the interval.</span>
-<span class="sd">    2. The offset-removed subsequence is extended at both ends by</span>
-<span class="sd">    uninverted, even reflection.</span>
+<span class="sd">        NIST [SP1065]_ Eqn (27), page 25.</span>
 
-<span class="sd">    [Howe1999]_</span>
-<span class="sd">    D.A. Howe and F. Vernotte, &quot;Generalization of the Total Variance</span>
-<span class="sd">    Approach to the Modified Allan Variance,&quot; Proc.</span>
-<span class="sd">    31 st PTTI Meeting, pp. 267-276, Dec. 1999.</span>
+<span class="sd">        Computed from a set of N - 3m + 1 subsequences of 3m points.</span>
+<span class="sd">        1. A linear trend (frequency offset) is removed from the subsequence</span>
+<span class="sd">           by averaging the first and last halves of the subsequence and</span>
+<span class="sd">           dividing by half the interval.</span>
+<span class="sd">        2. The offset-removed subsequence is extended at both ends</span>
+<span class="sd">           by uninverted, even reflection.</span>
+
+<span class="sd">        [Howe1999]_</span>
+<span class="sd">        D.A. Howe and F. Vernotte, &quot;Generalization of the Total Variance</span>
+<span class="sd">        Approach to the Modified Allan Variance,&quot; Proc.</span>
+<span class="sd">        31 st PTTI Meeting, pp. 267-276, Dec. 1999.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tau0</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">rate</span>
     <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="c1"># phase data, N points</span>
@@ -953,10 +956,10 @@
         <span class="c1"># remove the linear trend</span>
         <span class="n">x0</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">-</span> <span class="n">slope</span><span class="o">*</span><span class="n">idx</span><span class="o">*</span><span class="n">tau0</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xs</span><span class="p">)]</span>
         <span class="n">x0_flip</span> <span class="o">=</span> <span class="n">x0</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># left-right flipped version of array</span>
-        
+
         <span class="c1"># Step 2.</span>
         <span class="c1"># extend sequence, by uninverted even reflection</span>
-        <span class="c1"># extended sequence xstar, of length 9m, </span>
+        <span class="c1"># extended sequence xstar, of length 9m,</span>
         <span class="n">xstar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">x0_flip</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x0_flip</span><span class="p">))</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">xstar</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span><span class="o">*</span><span class="n">m</span>
 
@@ -966,8 +969,7 @@
         <span class="c1"># one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2</span>
         <span class="n">squaresum</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="c1">#print(&#39;m=%d 9m=%d maxj+3*m=%d&#39; %( m, len(xstar), 6*int(m)+3*int(m)) )</span>
-        
-        
+
         <span class="c1"># below we want the following sums (averages, see squaresum where we divide by m)</span>
         <span class="c1"># xmean1=np.sum(xstar[j     :   j+m])</span>
         <span class="c1"># xmean2=np.sum(xstar[j+m   : j+2*m])</span>
@@ -978,16 +980,16 @@
             <span class="c1"># faster inner sum, based on Stable32 MTC.c code</span>
             <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># intialize the sum</span>
-                <span class="n">xmean1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">xstar</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">m</span><span class="p">]</span> <span class="p">)</span>
-                <span class="n">xmean2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">xstar</span><span class="p">[</span><span class="n">m</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">]</span> <span class="p">)</span>
-                <span class="n">xmean3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">xstar</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="n">m</span><span class="p">]</span> <span class="p">)</span>
+                <span class="n">xmean1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">m</span><span class="p">])</span>
+                <span class="n">xmean2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="n">m</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">])</span>
+                <span class="n">xmean3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="n">m</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># j&gt;=1, subtract old point, add new point</span>
                 <span class="n">xmean1</span> <span class="o">=</span> <span class="n">xmean1</span> <span class="o">-</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#</span>
                 <span class="n">xmean2</span> <span class="o">=</span> <span class="n">xmean2</span> <span class="o">-</span> <span class="n">xstar</span><span class="p">[</span><span class="n">m</span><span class="o">+</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#</span>
                 <span class="n">xmean3</span> <span class="o">=</span> <span class="n">xmean3</span> <span class="o">-</span> <span class="n">xstar</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">+</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">3</span><span class="o">*</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#</span>
 
-            <span class="n">squaresum</span> <span class="o">+=</span> <span class="nb">pow</span><span class="p">(</span> <span class="p">(</span><span class="n">xmean1</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">xmean2</span> <span class="o">+</span> <span class="n">xmean3</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">squaresum</span> <span class="o">+=</span> <span class="nb">pow</span><span class="p">((</span><span class="n">xmean1</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">xmean2</span> <span class="o">+</span> <span class="n">xmean3</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="n">squaresum</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="mf">6.0</span><span class="o">*</span><span class="n">m</span><span class="p">))</span> <span class="o">*</span> <span class="n">squaresum</span>
         <span class="n">dev</span> <span class="o">+=</span> <span class="n">squaresum</span>
@@ -998,14 +1000,14 @@
     <span class="n">dev</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">*</span> <span class="mf">1.0</span><span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">m</span><span class="o">*</span><span class="n">tau0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
     <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
     <span class="n">error</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="htotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.htotdev">[docs]</a><span class="k">def</span> <span class="nf">htotdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="htotdev"><a class="viewcode-back" href="../../functions.html#allantools.htotdev">[docs]</a><span class="k">def</span> <span class="nf">htotdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
 <span class="sd">        Hadamard Total deviation.</span>
 <span class="sd">        Better confidence at long averages for Hadamard deviation</span>
-<span class="sd">        </span>
+
 <span class="sd">        Computed for N fractional frequency points y_i with sampling</span>
 <span class="sd">        period tau0, analyzed at tau = m*tau0</span>
 <span class="sd">        1. remove linear trend by averaging first and last half and divide by interval</span>
@@ -1069,7 +1071,7 @@
 
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="calc_htotdev_freq"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.calc_htotdev_freq">[docs]</a><span class="k">def</span> <span class="nf">calc_htotdev_freq</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">calc_htotdev_freq</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
 <span class="sd">        calculation of htotdev for one averaging factor m</span>
 <span class="sd">        tau = m*tau0</span>
@@ -1129,17 +1131,17 @@
             <span class="c1"># new faster way of doing the sums</span>
             <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># intialize the sum</span>
-                <span class="n">xmean1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">xstar</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">m</span><span class="p">]</span> <span class="p">)</span>
-                <span class="n">xmean2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">xstar</span><span class="p">[</span><span class="n">m</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">]</span> <span class="p">)</span>
-                <span class="n">xmean3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">xstar</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="n">m</span><span class="p">]</span> <span class="p">)</span>
+                <span class="n">xmean1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">m</span><span class="p">])</span>
+                <span class="n">xmean2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="n">m</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">])</span>
+                <span class="n">xmean3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="n">m</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># j&gt;=1, subtract old point, add new point</span>
                 <span class="n">xmean1</span> <span class="o">=</span> <span class="n">xmean1</span> <span class="o">-</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#</span>
                 <span class="n">xmean2</span> <span class="o">=</span> <span class="n">xmean2</span> <span class="o">-</span> <span class="n">xstar</span><span class="p">[</span><span class="n">m</span><span class="o">+</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#</span>
                 <span class="n">xmean3</span> <span class="o">=</span> <span class="n">xmean3</span> <span class="o">-</span> <span class="n">xstar</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">+</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">3</span><span class="o">*</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#</span>
 
-            <span class="n">squaresum</span> <span class="o">+=</span> <span class="nb">pow</span><span class="p">(</span> <span class="p">(</span><span class="n">xmean1</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">xmean2</span> <span class="o">+</span> <span class="n">xmean3</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
-            
+            <span class="n">squaresum</span> <span class="o">+=</span> <span class="nb">pow</span><span class="p">((</span><span class="n">xmean1</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">xmean2</span> <span class="o">+</span> <span class="n">xmean3</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
             <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span>
         <span class="k">assert</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">6</span><span class="o">*</span><span class="n">m</span> <span class="c1"># check number of terms in the sum</span>
         <span class="n">squaresum</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="mf">6.0</span><span class="o">*</span><span class="n">k</span><span class="p">))</span> <span class="o">*</span> <span class="n">squaresum</span>
@@ -1151,12 +1153,12 @@
     <span class="n">dev</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">*</span> <span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
     <span class="n">error</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
 
-<div class="viewcode-block" id="theo1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.theo1">[docs]</a><span class="k">def</span> <span class="nf">theo1</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="theo1"><a class="viewcode-back" href="../../functions.html#allantools.theo1">[docs]</a><span class="k">def</span> <span class="nf">theo1</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
 <span class="sd">        Theo1 is a two-sample variance with improved confidence and</span>
-<span class="sd">        extended averaging factor range. [Howe_theo1]_</span>
+<span class="sd">        extended averaging factor range.</span>
 
 <span class="sd">        .. math::</span>
 
@@ -1224,7 +1226,7 @@
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="tierms"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.tierms">[docs]</a><span class="k">def</span> <span class="nf">tierms</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="tierms"><a class="viewcode-back" href="../../functions.html#allantools.tierms">[docs]</a><span class="k">def</span> <span class="nf">tierms</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Time Interval Error RMS.</span>
 
 <span class="sd">    Parameters</span>
@@ -1269,7 +1271,7 @@
 
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="mtie_rolling_window"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.mtie_rolling_window">[docs]</a><span class="k">def</span> <span class="nf">mtie_rolling_window</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">mtie_rolling_window</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make an ndarray with a rolling window of the last dimension, from</span>
 <span class="sd">    http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html</span>
@@ -1285,7 +1287,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    Array that is a view of the original array with a added dimension</span>
 <span class="sd">    of size window.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Note</span>
 <span class="sd">    ----</span>
 <span class="sd">    This may consume large amounts of memory. See discussion:</span>
@@ -1299,9 +1301,9 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`window` is too long.&quot;</span><span class="p">)</span>
     <span class="n">shape</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">window</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
     <span class="n">strides</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">strides</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">stride_tricks</span><span class="o">.</span><span class="n">as_strided</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">strides</span><span class="o">=</span><span class="n">strides</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">stride_tricks</span><span class="o">.</span><span class="n">as_strided</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">strides</span><span class="o">=</span><span class="n">strides</span><span class="p">)</span>
 
-<div class="viewcode-block" id="mtie"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.mtie">[docs]</a><span class="k">def</span> <span class="nf">mtie</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="mtie"><a class="viewcode-back" href="../../functions.html#allantools.mtie">[docs]</a><span class="k">def</span> <span class="nf">mtie</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Maximum Time Interval Error.</span>
 
 <span class="sd">    Parameters</span>
@@ -1376,7 +1378,7 @@
 <span class="c1"># FIXME: mtie_phase_fast() is incomplete.</span>
 <span class="c1"># !!!!!!!</span>
 <span class="c1">#</span>
-<div class="viewcode-block" id="mtie_phase_fast"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.mtie_phase_fast">[docs]</a><span class="k">def</span> <span class="nf">mtie_phase_fast</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">mtie_phase_fast</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; fast binary decomposition algorithm for MTIE</span>
 
 <span class="sd">        See: [Bregni2001]_ STEFANO BREGNI &quot;Fast Algorithms for TVAR and MTIE Computation in</span>
@@ -1431,7 +1433,7 @@
     <span class="n">devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">devs</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;devs N=&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">devs</span><span class="p">),</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">devs</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;taus N=&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">taus_used</span><span class="p">),</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">taus_used</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span>
 
 
 <span class="c1">########################################################################</span>
@@ -1439,7 +1441,7 @@
 <span class="c1">#  gap resistant Allan deviation</span>
 <span class="c1">#</span>
 
-<div class="viewcode-block" id="gradev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.gradev">[docs]</a><span class="k">def</span> <span class="nf">gradev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">gradev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
            <span class="n">ci</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">noisetype</span><span class="o">=</span><span class="s1">&#39;wp&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; gap resistant overlapping Allan deviation</span>
 
@@ -1508,21 +1510,17 @@
         <span class="n">adn</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span>
 
     <span class="c1"># Note that errors are split in 2 arrays</span>
-    <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="p">[</span><span class="n">ade_l</span><span class="p">,</span> <span class="n">ade_h</span><span class="p">],</span> <span class="n">adn</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="p">[</span><span class="n">ade_l</span><span class="p">,</span> <span class="n">ade_h</span><span class="p">],</span> <span class="n">adn</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="calc_gradev_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.calc_gradev_phase">[docs]</a><span class="k">def</span> <span class="nf">calc_gradev_phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">confidence</span><span class="p">,</span> <span class="n">noisetype</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">calc_gradev_phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">confidence</span><span class="p">,</span> <span class="n">noisetype</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; see http://www.leapsecond.com/tools/adev_lib.c</span>
 <span class="sd">        stride = mj for nonoverlapping allan deviation</span>
 <span class="sd">        stride = 1 for overlapping allan deviation</span>
 
-<span class="sd">        [wikipedia_adev]_</span>
 <span class="sd">        see http://en.wikipedia.org/wiki/Allan_variance</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \\sigma^2_{y}(t) = { 1 \\over ( 2 \\tau^2 } sum [x(i+2) - 2x(i+1) + x(i) ]^2</span>
-
+<span class="sd">             1       1</span>
+<span class="sd">         s2y(t) = --------- sum [x(i+2) - 2x(i+1) + x(i) ]^2</span>
+<span class="sd">                  2*tau^2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">d2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj</span><span class="p">)::</span><span class="nb">int</span><span class="p">(</span><span class="n">stride</span><span class="p">)]</span>
@@ -1560,7 +1558,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">deverr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">dev</span><span class="p">,</span> <span class="n">deverr</span><span class="p">,</span> <span class="n">n</span></div>
+    <span class="k">return</span> <span class="n">dev</span><span class="p">,</span> <span class="n">deverr</span><span class="p">,</span> <span class="n">n</span>
 
 
 <span class="c1">########################################################################</span>
@@ -1568,7 +1566,7 @@
 <span class="c1">#  Various helper functions and utilities</span>
 <span class="c1">#</span>
 
-<div class="viewcode-block" id="input_to_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.input_to_phase">[docs]</a><span class="k">def</span> <span class="nf">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Take either phase or frequency as input and return phase</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;phase&quot;</span><span class="p">:</span>
@@ -1576,9 +1574,9 @@
     <span class="k">elif</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;freq&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">frequency2phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;unknown data_type: &quot;</span> <span class="o">+</span> <span class="n">data_type</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;unknown data_type: &quot;</span> <span class="o">+</span> <span class="n">data_type</span><span class="p">)</span>
 
-<div class="viewcode-block" id="tau_generator"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.tau_generator">[docs]</a><span class="k">def</span> <span class="nf">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">even</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">maximum_m</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">even</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">maximum_m</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; pre-processing of the tau-list given by the user (Helper function)</span>
 
 <span class="sd">    Does sanity checks, sorts data, removes duplicates and invalid values.</span>
@@ -1620,17 +1618,17 @@
     <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Warning! rate==0&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">taus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># empty or no tau-list supplied</span>
+    <span class="k">if</span> <span class="n">taus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># empty or no tau-list supplied</span>
         <span class="n">taus</span> <span class="o">=</span> <span class="s2">&quot;octave&quot;</span> <span class="c1"># default to octave</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">taus</span> <span class="o">==</span> <span class="p">[]:</span>
         <span class="n">taus</span> <span class="o">=</span> <span class="s2">&quot;octave&quot;</span>
 
-    <span class="k">if</span> <span class="n">taus</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">taus</span> <span class="ow">is</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
         <span class="n">taus</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">rate</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">taus</span> <span class="o">==</span> <span class="s2">&quot;octave&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">taus</span> <span class="ow">is</span> <span class="s2">&quot;octave&quot;</span><span class="p">:</span>
         <span class="n">maxn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
         <span class="n">taus</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">rate</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">maxn</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">maxn</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">base</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">taus</span> <span class="o">==</span> <span class="s2">&quot;decade&quot;</span><span class="p">:</span> <span class="c1"># 1, 2, 4, 10, 20, 40, spacing similar to Stable32</span>
+    <span class="k">elif</span> <span class="n">taus</span> <span class="ow">is</span> <span class="s2">&quot;decade&quot;</span><span class="p">:</span> <span class="c1"># 1, 2, 4, 10, 20, 40, spacing similar to Stable32</span>
         <span class="n">maxn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
         <span class="n">taus</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">maxn</span><span class="o">+</span><span class="mi">1</span><span class="p">)):</span>
@@ -1680,14 +1678,14 @@
 
     <span class="n">taus2</span> <span class="o">=</span> <span class="n">m</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">even</span><span class="p">:</span>  <span class="c1"># used by Theo1</span>
+    <span class="k">if</span> <span class="n">even</span><span class="p">:</span> <span class="c1"># used by Theo1</span>
         <span class="n">m_even_mask</span> <span class="o">=</span> <span class="p">((</span><span class="n">m</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">m</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">m_even_mask</span><span class="p">]</span>
         <span class="n">taus2</span> <span class="o">=</span> <span class="n">taus2</span><span class="p">[</span><span class="n">m_even_mask</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">taus2</span></div>
+    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">taus2</span>
 
-<div class="viewcode-block" id="tau_reduction"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.tau_reduction">[docs]</a><span class="k">def</span> <span class="nf">tau_reduction</span><span class="p">(</span><span class="n">ms</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">n_per_decade</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">tau_reduction</span><span class="p">(</span><span class="n">ms</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">n_per_decade</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reduce the number of taus to maximum of n per decade (Helper function)</span>
 
 <span class="sd">    takes in a tau list and reduces the number of taus to a maximum amount per</span>
@@ -1728,9 +1726,9 @@
     <span class="n">ms</span> <span class="o">=</span> <span class="n">ms</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
     <span class="n">taus</span> <span class="o">=</span> <span class="n">ms</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">ms</span><span class="p">,</span> <span class="n">taus</span></div>
+    <span class="k">return</span> <span class="n">ms</span><span class="p">,</span> <span class="n">taus</span>
 
-<div class="viewcode-block" id="remove_small_ns"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.remove_small_ns">[docs]</a><span class="k">def</span> <span class="nf">remove_small_ns</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">remove_small_ns</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Remove results with small number of samples.</span>
 <span class="sd">        If n is small (==1), reject the result</span>
 
@@ -1766,10 +1764,10 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;remove_small_ns() nothing remains!?&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">UserWarning</span>
 
-    <span class="k">return</span> <span class="n">o_taus</span><span class="p">,</span> <span class="n">o_devs</span><span class="p">,</span> <span class="n">o_deverrs</span><span class="p">,</span> <span class="n">o_ns</span></div>
+    <span class="k">return</span> <span class="n">o_taus</span><span class="p">,</span> <span class="n">o_devs</span><span class="p">,</span> <span class="n">o_deverrs</span><span class="p">,</span> <span class="n">o_ns</span>
 
 
-<div class="viewcode-block" id="trim_data"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.trim_data">[docs]</a><span class="k">def</span> <span class="nf">trim_data</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">trim_data</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Trim leading and trailing NaNs from dataset</span>
 <span class="sd">    This is done by browsing the array from each end and store the index of the</span>
@@ -1782,9 +1780,9 @@
     <span class="n">last</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">last</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]):</span>
         <span class="n">last</span> <span class="o">-=</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">first</span><span class="p">:</span><span class="n">last</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">first</span><span class="p">:</span><span class="n">last</span><span class="p">]</span>
 
-<div class="viewcode-block" id="three_cornered_hat_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.three_cornered_hat_phase">[docs]</a><span class="k">def</span> <span class="nf">three_cornered_hat_phase</span><span class="p">(</span><span class="n">phasedata_ab</span><span class="p">,</span> <span class="n">phasedata_bc</span><span class="p">,</span>
+<div class="viewcode-block" id="three_cornered_hat_phase"><a class="viewcode-back" href="../../functions.html#allantools.three_cornered_hat_phase">[docs]</a><span class="k">def</span> <span class="nf">three_cornered_hat_phase</span><span class="p">(</span><span class="n">phasedata_ab</span><span class="p">,</span> <span class="n">phasedata_bc</span><span class="p">,</span>
                              <span class="n">phasedata_ca</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Three Cornered Hat Method</span>
@@ -1824,8 +1822,8 @@
 <span class="sd">        The sampling rate for phase, in Hz</span>
 <span class="sd">    taus: np.array</span>
 <span class="sd">        The tau values for deviations, in seconds</span>
-<span class="sd">    function: allantoolkit deviation function</span>
-<span class="sd">        The type of statistic to compute, e.g. allantoolkit.oadev</span>
+<span class="sd">    function: allantools deviation function</span>
+<span class="sd">        The type of statistic to compute, e.g. allantools.oadev</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1866,7 +1864,7 @@
 <span class="c1"># simple conversions between frequency, phase(seconds), phase(radians)</span>
 <span class="c1">#</span>
 
-<div class="viewcode-block" id="frequency2phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.frequency2phase">[docs]</a><span class="k">def</span> <span class="nf">frequency2phase</span><span class="p">(</span><span class="n">freqdata</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+<div class="viewcode-block" id="frequency2phase"><a class="viewcode-back" href="../../functions.html#allantools.frequency2phase">[docs]</a><span class="k">def</span> <span class="nf">frequency2phase</span><span class="p">(</span><span class="n">freqdata</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; integrate fractional frequency data and output phase data</span>
 
 <span class="sd">    Parameters</span>
@@ -1896,7 +1894,7 @@
     <span class="c1"># so that phase starts at zero and len(phase)=len(freq)+1 ??</span>
     <span class="k">return</span> <span class="n">phasedata</span></div>
 
-<div class="viewcode-block" id="phase2radians"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.phase2radians">[docs]</a><span class="k">def</span> <span class="nf">phase2radians</span><span class="p">(</span><span class="n">phasedata</span><span class="p">,</span> <span class="n">v0</span><span class="p">):</span>
+<div class="viewcode-block" id="phase2radians"><a class="viewcode-back" href="../../functions.html#allantools.phase2radians">[docs]</a><span class="k">def</span> <span class="nf">phase2radians</span><span class="p">(</span><span class="n">phasedata</span><span class="p">,</span> <span class="n">v0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert phase in seconds to phase in radians</span>
 
 <span class="sd">    Parameters</span>
@@ -1914,7 +1912,7 @@
     <span class="n">fi</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">v0</span><span class="o">*</span><span class="n">xx</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">phasedata</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">fi</span></div>
 
-<div class="viewcode-block" id="phase2frequency"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.phase2frequency">[docs]</a><span class="k">def</span> <span class="nf">phase2frequency</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+<div class="viewcode-block" id="phase2frequency"><a class="viewcode-back" href="../../functions.html#allantools.phase2frequency">[docs]</a><span class="k">def</span> <span class="nf">phase2frequency</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert phase in seconds to fractional frequency</span>
 
 <span class="sd">    Parameters</span>
@@ -1932,7 +1930,7 @@
     <span class="n">y</span> <span class="o">=</span> <span class="n">rate</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">y</span></div>
 
-<div class="viewcode-block" id="frequency2fractional"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.frequency2fractional">[docs]</a><span class="k">def</span> <span class="nf">frequency2fractional</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="n">mean_frequency</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">frequency2fractional</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="n">mean_frequency</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert frequency in Hz to fractional frequency</span>
 
 <span class="sd">    Parameters</span>
@@ -1953,9 +1951,9 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mu</span> <span class="o">=</span> <span class="n">mean_frequency</span>
     <span class="n">y</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">mu</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">y</span></div>
+    <span class="k">return</span> <span class="n">y</span>
 
-<span class="c1"># end of file allantoolkit.py</span>
+<span class="c1"># end of file allantools.py</span>
 </pre></div>
 
               </div>

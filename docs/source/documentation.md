@@ -6,6 +6,7 @@
    :maxdepth: 4
 
    Modules <modules.rst>
+   Functions <functions.rst>
    References <references.rst>
 ```
 

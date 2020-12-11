@@ -218,11 +218,11 @@
 <span class="sd">- improve documentation and add __version__</span>
 <span class="sd">- added Theo1 deviation theo1()</span>
 <span class="sd">- added Hadamard Total Deviatio htotdev()</span>
-<span class="sd">- added Modified Total Deviation mtotdev(), and Time Total Deviation ttotdev()</span>
-<span class="sd">  http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/</span>
+<span class="sd">- added Modified Total Deviation mtotdev(), and Time Total Deviation</span>
+<span class="sd">ttotdev() http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/</span>
 <span class="sd">- automatic tau-lists:  taus=[ &quot;all&quot; | &quot;octave&quot; | &quot;decade&quot; ]</span>
-<span class="sd">- merge adev() and adev_phase() into one, requiring phase= or</span>
-<span class="sd">  frequency= argument</span>
+<span class="sd">- merge adev() and adev_phase() into one, requiring phase= or frequency=</span>
+<span class="sd">argument</span>
 <span class="sd">- add GPS dataset as example and test</span>
 
 <span class="sd">**2016.2** 2016 February</span>
@@ -238,9 +238,9 @@
 
 <span class="sd">**v1.2** 2014 November, Cantwell G. Carson conrtibuted:</span>
 <span class="sd">- A gap-robust version of ADEV based on the paper by Sesia et al.</span>
-<span class="sd">   gradev_phase() and gradev()</span>
-<span class="sd">- Improved uncertainty estimates: uncertainty_estimate()</span>
-<span class="sd">  This introduces a new dependency: scipy.stats.chi2()</span>
+<span class="sd">gradev_phase() and gradev()</span>
+<span class="sd">- Improved uncertainty estimates: uncertainty_estimate() This introduces a</span>
+<span class="sd">new dependency: scipy.stats.chi2()</span>
 
 <span class="sd">**v1.1** 2014 August</span>
 <span class="sd">- Danny Price converted the library to use numpy.</span>
@@ -329,6 +329,7 @@
     <span class="n">tde</span> <span class="o">=</span> <span class="n">td</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">taus</span><span class="p">,</span> <span class="n">td</span><span class="p">,</span> <span class="n">tde</span><span class="p">,</span> <span class="n">ns</span></div>
 
+
 <div class="viewcode-block" id="mdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.mdev">[docs]</a><span class="k">def</span> <span class="nf">mdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;  Modified Allan deviation.</span>
 <span class="sd">         Used to distinguish between White and Flicker Phase Modulation.</span>
@@ -415,6 +416,7 @@
         <span class="n">ns</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span>
 
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">md</span><span class="p">,</span> <span class="n">mderr</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="adev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.adev">[docs]</a><span class="k">def</span> <span class="nf">adev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Allan deviation.</span>
@@ -514,6 +516,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    * http://en.wikipedia.org/wiki/Allan_variance</span>
 <span class="sd">    * http://www.leapsecond.com/tools/adev_lib.c</span>
+
 <span class="sd">    NIST [SP1065]_ eqn (7) and (11) page 16</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mj</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj</span><span class="p">)</span>
@@ -535,6 +538,7 @@
     <span class="n">deverr</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">dev</span><span class="p">,</span> <span class="n">deverr</span><span class="p">,</span> <span class="n">n</span></div>
+
 
 <div class="viewcode-block" id="oadev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.oadev">[docs]</a><span class="k">def</span> <span class="nf">oadev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; overlapping Allan deviation.</span>
@@ -591,6 +595,7 @@
 
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">ade</span><span class="p">,</span> <span class="n">adn</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="ohdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.ohdev">[docs]</a><span class="k">def</span> <span class="nf">ohdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Overlapping Hadamard deviation.</span>
 <span class="sd">        Better confidence than normal Hadamard.</span>
@@ -643,6 +648,7 @@
          <span class="n">ns</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">=</span> <span class="n">calc_hdev_phase</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">hdevs</span><span class="p">,</span> <span class="n">hdeverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="hdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.hdev">[docs]</a><span class="k">def</span> <span class="nf">hdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Hadamard deviation.</span>
@@ -708,9 +714,11 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    http://www.leapsecond.com/tools/adev_lib.c</span>
-<span class="sd">                         1        N-3</span>
-<span class="sd">         s2y(t) = --------------- sum [x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2</span>
-<span class="sd">                  6*tau^2 (N-3m)  i=1</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^2_{y}(t) = { 1 \\over 6\\tau^2 (N-3m) }</span>
+<span class="sd">            \\sum_{i=1}^{N-3} [ x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2</span>
 
 <span class="sd">        N=M+1 phase measurements</span>
 <span class="sd">        m is averaging factor</span>
@@ -882,23 +890,25 @@
 
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="calc_mtotdev_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.calc_mtotdev_phase">[docs]</a><span class="k">def</span> <span class="nf">calc_mtotdev_phase</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
-<span class="sd">        calculation of mtotdev for one averaging factor m</span>
-<span class="sd">        tau = m*tau0</span>
+<span class="sd">    calculation of mtotdev for one averaging factor m; tau = m*tau0</span>
 <span class="sd">        </span>
-<span class="sd">        NIST [SP1065]_ Eqn (27), page 25.</span>
+<span class="sd">    NIST [SP1065]_ Eqn (27), page 25.</span>
 <span class="sd">        </span>
-<span class="sd">        Computed from a set of N - 3m + 1 subsequences of 3m points.</span>
-<span class="sd">        1. A linear trend (frequency offset) is removed from the subsequence </span>
-<span class="sd">           by averaging the first and last halves of the subsequence and dividing by half the interval.</span>
-<span class="sd">        2. The offset-removed subsequence is extended at both ends</span>
-<span class="sd">           by uninverted, even reflection.</span>
+<span class="sd">    Computed from a set of N - 3m + 1 subsequences of 3m points.</span>
 
-<span class="sd">        [Howe1999]_</span>
-<span class="sd">        D.A. Howe and F. Vernotte, &quot;Generalization of the Total Variance </span>
-<span class="sd">        Approach to the Modified Allan Variance,&quot; Proc.</span>
-<span class="sd">        31 st PTTI Meeting, pp. 267-276, Dec. 1999.</span>
+<span class="sd">    1. A linear trend (frequency offset) is removed from the subsequence by</span>
+<span class="sd">    averaging the first and last halves of the subsequence and dividing by</span>
+<span class="sd">    half the interval.</span>
+<span class="sd">    2. The offset-removed subsequence is extended at both ends by</span>
+<span class="sd">    uninverted, even reflection.</span>
+
+<span class="sd">    [Howe1999]_</span>
+<span class="sd">    D.A. Howe and F. Vernotte, &quot;Generalization of the Total Variance</span>
+<span class="sd">    Approach to the Modified Allan Variance,&quot; Proc.</span>
+<span class="sd">    31 st PTTI Meeting, pp. 267-276, Dec. 1999.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tau0</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">rate</span>
     <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="c1"># phase data, N points</span>
@@ -1490,15 +1500,18 @@
     <span class="c1"># Note that errors are split in 2 arrays</span>
     <span class="k">return</span> <span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="p">[</span><span class="n">ade_l</span><span class="p">,</span> <span class="n">ade_h</span><span class="p">],</span> <span class="n">adn</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="calc_gradev_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.calc_gradev_phase">[docs]</a><span class="k">def</span> <span class="nf">calc_gradev_phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">confidence</span><span class="p">,</span> <span class="n">noisetype</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; see http://www.leapsecond.com/tools/adev_lib.c</span>
 <span class="sd">        stride = mj for nonoverlapping allan deviation</span>
 <span class="sd">        stride = 1 for overlapping allan deviation</span>
 
 <span class="sd">        see http://en.wikipedia.org/wiki/Allan_variance</span>
-<span class="sd">             1       1</span>
-<span class="sd">         s2y(t) = --------- sum [x(i+2) - 2x(i+1) + x(i) ]^2</span>
-<span class="sd">                  2*tau^2</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^2_{y}(t) = { 1 \\over ( 2 \\tau^2 } sum [x(i+2) - 2x(i+1) + x(i) ]^2</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">d2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj</span><span class="p">)::</span><span class="nb">int</span><span class="p">(</span><span class="n">stride</span><span class="p">)]</span>
@@ -1596,17 +1609,17 @@
     <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Warning! rate==0&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">taus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># empty or no tau-list supplied</span>
+    <span class="k">if</span> <span class="n">taus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># empty or no tau-list supplied</span>
         <span class="n">taus</span> <span class="o">=</span> <span class="s2">&quot;octave&quot;</span> <span class="c1"># default to octave</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">taus</span> <span class="o">==</span> <span class="p">[]:</span>
         <span class="n">taus</span> <span class="o">=</span> <span class="s2">&quot;octave&quot;</span>
 
-    <span class="k">if</span> <span class="n">taus</span> <span class="ow">is</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">taus</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
         <span class="n">taus</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">rate</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">taus</span> <span class="ow">is</span> <span class="s2">&quot;octave&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">taus</span> <span class="o">==</span> <span class="s2">&quot;octave&quot;</span><span class="p">:</span>
         <span class="n">maxn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
         <span class="n">taus</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">rate</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">maxn</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">maxn</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">base</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">taus</span> <span class="ow">is</span> <span class="s2">&quot;decade&quot;</span><span class="p">:</span> <span class="c1"># 1, 2, 4, 10, 20, 40, spacing similar to Stable32</span>
+    <span class="k">elif</span> <span class="n">taus</span> <span class="o">==</span> <span class="s2">&quot;decade&quot;</span><span class="p">:</span> <span class="c1"># 1, 2, 4, 10, 20, 40, spacing similar to Stable32</span>
         <span class="n">maxn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
         <span class="n">taus</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">maxn</span><span class="o">+</span><span class="mi">1</span><span class="p">)):</span>

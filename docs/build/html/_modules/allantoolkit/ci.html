@@ -190,8 +190,6 @@
 <span class="kn">import</span> <span class="nn">scipy.signal</span>  <span class="c1"># decimation in lag-1 acf</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">allantools</span>
 
-<span class="c1"># Spawn module-level logger</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="c1"># Confidence Intervals</span>
 <span class="n">ONE_SIGMA_CI</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">erf</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
@@ -229,7 +227,9 @@
     <span class="n">variance</span> <span class="o">=</span> <span class="n">dev</span><span class="o">*</span><span class="n">dev</span>
     <span class="n">var_l</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">edf</span><span class="p">)</span> <span class="o">*</span> <span class="n">variance</span> <span class="o">/</span> <span class="n">chi2_h</span>  <span class="c1"># NIST SP1065 eqn (45)</span>
     <span class="n">var_h</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">edf</span><span class="p">)</span> <span class="o">*</span> <span class="n">variance</span> <span class="o">/</span> <span class="n">chi2_l</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_l</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_h</span><span class="p">))</span></div>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_l</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_h</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="confidence_interval_noiseID"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.confidence_interval_noiseID">[docs]</a><span class="k">def</span> <span class="nf">confidence_interval_noiseID</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">af</span><span class="p">,</span> <span class="n">dev_type</span><span class="o">=</span><span class="s2">&quot;adev&quot;</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">ci</span><span class="o">=</span><span class="n">ONE_SIGMA_CI</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; returns confidence interval (dev_min, dev_max)</span>
@@ -262,26 +262,27 @@
 <span class="sd">    (dev_min, dev_max): (float, float)</span>
 <span class="sd">        Confidence interval</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="c1"># 1) noise ID</span>
     <span class="n">dmax</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">dev_type</span> <span class="ow">is</span> <span class="s2">&quot;hdev&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">dev_type</span> <span class="ow">is</span> <span class="s2">&quot;ohdev&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">dev_type</span> <span class="o">==</span> <span class="s2">&quot;hdev&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">dev_type</span> <span class="o">==</span> <span class="s2">&quot;ohdev&quot;</span><span class="p">):</span>
         <span class="n">dmax</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">alpha_int</span> <span class="o">=</span> <span class="n">autocorr_noise_id</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">af</span><span class="p">),</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">dmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dmax</span><span class="o">=</span><span class="n">dmax</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="c1"># 2) EDF</span>
-    <span class="k">if</span> <span class="n">dev_type</span> <span class="ow">is</span> <span class="s2">&quot;adev&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s2">&quot;adev&quot;</span><span class="p">:</span>
         <span class="n">edf</span> <span class="o">=</span> <span class="n">edf_greenhall</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha_int</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">af</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
                             <span class="n">overlapping</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">modified</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">dev_type</span> <span class="ow">is</span> <span class="s2">&quot;oadev&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s2">&quot;oadev&quot;</span><span class="p">:</span>
         <span class="n">edf</span> <span class="o">=</span> <span class="n">edf_greenhall</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha_int</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">af</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
                             <span class="n">overlapping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">modified</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">dev_type</span> <span class="ow">is</span> <span class="s2">&quot;mdev&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">dev_type</span> <span class="ow">is</span> <span class="s2">&quot;tdev&quot;</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">dev_type</span> <span class="o">==</span> <span class="s2">&quot;mdev&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">dev_type</span> <span class="o">==</span> <span class="s2">&quot;tdev&quot;</span><span class="p">):</span>
         <span class="n">edf</span> <span class="o">=</span> <span class="n">edf_greenhall</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha_int</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">af</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
                             <span class="n">overlapping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">modified</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">dev_type</span> <span class="ow">is</span> <span class="s2">&quot;hdev&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s2">&quot;hdev&quot;</span><span class="p">:</span>
         <span class="n">edf</span> <span class="o">=</span> <span class="n">edf_greenhall</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha_int</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">af</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
                             <span class="n">overlapping</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">modified</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">dev_type</span> <span class="ow">is</span> <span class="s2">&quot;ohdev&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s2">&quot;ohdev&quot;</span><span class="p">:</span>
         <span class="n">edf</span> <span class="o">=</span> <span class="n">edf_greenhall</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha_int</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">af</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
                             <span class="n">overlapping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">modified</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -289,7 +290,8 @@
 
     <span class="c1"># 3) confidence interval</span>
     <span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span> <span class="o">=</span> <span class="n">confidence_interval</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">edf</span><span class="p">,</span> <span class="n">ci</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span></div>
+
+    <span class="k">return</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span></div>
 
 
 <span class="c1">########################################################################</span>
@@ -300,17 +302,21 @@
 
 <span class="sd">        ratio of MVAR to AVAR</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">errs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">adev</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="p">[</span><span class="n">af</span><span class="o">*</span><span class="n">rate</span><span class="p">],</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
     <span class="n">oadev_x</span> <span class="o">=</span> <span class="n">devs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="p">(</span><span class="n">mtaus</span><span class="p">,</span> <span class="n">mdevs</span><span class="p">,</span> <span class="n">errs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">mdev</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="p">[</span><span class="n">af</span><span class="o">*</span><span class="n">rate</span><span class="p">],</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
     <span class="n">mdev_x</span> <span class="o">=</span> <span class="n">mdevs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
     <span class="k">return</span> <span class="nb">pow</span><span class="p">(</span><span class="n">mdev_x</span><span class="o">/</span><span class="n">oadev_x</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="rn_theory"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.rn_theory">[docs]</a><span class="k">def</span> <span class="nf">rn_theory</span><span class="p">(</span><span class="n">af</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; R(n) ratio expected from theory for given noise type</span>
 
 <span class="sd">        alpha = b + 2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="c1"># From IEEE1139-2008</span>
     <span class="c1">#   alpha   beta    ADEV_mu MDEV_mu Rn_mu</span>
     <span class="c1">#   -2      -4       1       1       0      Random Walk FM</span>
@@ -333,6 +339,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">pow</span><span class="p">(</span><span class="n">af</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="rn_boundary"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.rn_boundary">[docs]</a><span class="k">def</span> <span class="nf">rn_boundary</span><span class="p">(</span><span class="n">af</span><span class="p">,</span> <span class="n">b_hi</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    R(n) ratio boundary for selecting between [b_hi-1, b_hi]</span>
@@ -342,6 +349,7 @@
 
 <span class="c1">########################################################################</span>
 <span class="c1"># Noise Identification using B1</span>
+
 
 <div class="viewcode-block" id="b1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.b1">[docs]</a><span class="k">def</span> <span class="nf">b1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">af</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; B1 ratio for noise identification</span>
@@ -370,6 +378,7 @@
     <span class="n">var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">y_averaged</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">var</span><span class="o">/</span><span class="n">avar</span></div>
+
 
 <div class="viewcode-block" id="b1_theory"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.b1_theory">[docs]</a><span class="k">def</span> <span class="nf">b1_theory</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Expected B1 ratio for given time-series length N and exponent mu</span>
@@ -406,9 +415,8 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">up</span> <span class="o">=</span> <span class="n">N</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="nb">pow</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">mu</span><span class="p">))</span>
         <span class="n">down</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="nb">pow</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">mu</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">up</span><span class="o">/</span><span class="n">down</span>
+        <span class="k">return</span> <span class="n">up</span><span class="o">/</span><span class="n">down</span></div>
 
-    <span class="k">assert</span> <span class="kc">False</span> <span class="c1"># we should never get here</span></div>
 
 <div class="viewcode-block" id="b1_boundary"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.b1_boundary">[docs]</a><span class="k">def</span> <span class="nf">b1_boundary</span><span class="p">(</span><span class="n">b_hi</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -419,9 +427,10 @@
     <span class="n">b1_lo</span> <span class="o">=</span> <span class="n">b1_theory</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">b_to_mu</span><span class="p">(</span><span class="n">b_lo</span><span class="p">))</span>
     <span class="n">b1_hi</span> <span class="o">=</span> <span class="n">b1_theory</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">b_to_mu</span><span class="p">(</span><span class="n">b_hi</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">b1_lo</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">4</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">b1_lo</span><span class="o">*</span><span class="n">b1_hi</span><span class="p">)</span> <span class="c1"># geometric mean</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">b1_lo</span><span class="o">*</span><span class="n">b1_hi</span><span class="p">)</span>  <span class="c1"># geometric mean</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">b1_lo</span><span class="o">+</span><span class="n">b1_hi</span><span class="p">)</span> <span class="c1"># arithemtic mean</span></div>
+        <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">b1_lo</span><span class="o">+</span><span class="n">b1_hi</span><span class="p">)</span>  <span class="c1"># arithemtic mean</span></div>
+
 
 <div class="viewcode-block" id="b_to_mu"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.b_to_mu">[docs]</a><span class="k">def</span> <span class="nf">b_to_mu</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -447,6 +456,7 @@
 
 <span class="c1">########################################################################</span>
 <span class="c1"># Noise Identification using ACF</span>
+
 
 <div class="viewcode-block" id="lag1_acf"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.lag1_acf">[docs]</a><span class="k">def</span> <span class="nf">lag1_acf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">detrend_deg</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Lag-1 autocorrelation function</span>
@@ -474,10 +484,11 @@
     <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
         <span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span>
-    <span class="c1">#for n in range(len(x)):</span>
+    <span class="c1"># for n in range(len(x)):</span>
     <span class="k">for</span> <span class="n">xn</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">+</span><span class="nb">pow</span><span class="p">(</span><span class="n">xn</span><span class="o">-</span><span class="n">mu</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">a</span><span class="o">/</span><span class="n">b</span></div>
+
 
 <div class="viewcode-block" id="autocorr_noise_id"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.autocorr_noise_id">[docs]</a><span class="k">def</span> <span class="nf">autocorr_noise_id</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">af</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">dmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dmax</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Lag-1 autocorrelation based noise identification</span>
@@ -521,18 +532,18 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># number of differentiations</span>
     <span class="n">lag</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="n">data_type</span> <span class="ow">is</span> <span class="s2">&quot;phase&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;phase&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">af</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="c1">#x = scipy.signal.decimate(x, af, n=1, ftype=&#39;fir&#39;)</span>
+            <span class="c1"># x = scipy.signal.decimate(x, af, n=1, ftype=&#39;fir&#39;)</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">):</span><span class="n">af</span><span class="p">]</span> <span class="c1"># decimate by averaging factor</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">detrend</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># remove quadratic trend (frequency offset and drift)</span>
-    <span class="k">elif</span> <span class="n">data_type</span> <span class="ow">is</span> <span class="s2">&quot;freq&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;freq&quot;</span><span class="p">:</span>
         <span class="c1"># average by averaging factor</span>
         <span class="n">y_cut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">%</span><span class="n">af</span><span class="p">)])</span> <span class="c1"># cut to length</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_cut</span><span class="p">)</span><span class="o">%</span><span class="n">af</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_cut</span><span class="p">)</span> <span class="o">%</span> <span class="n">af</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="n">y_shaped</span> <span class="o">=</span> <span class="n">y_cut</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_cut</span><span class="p">)</span><span class="o">/</span><span class="n">af</span><span class="p">),</span> <span class="n">af</span><span class="p">))</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">y_shaped</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># average</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">detrend</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># remove frequency drift</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">detrend</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove frequency drift</span>
 
     <span class="c1"># require minimum length for time-series</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">:</span>
@@ -548,7 +559,7 @@
             <span class="c1">#assert r1 &lt; 0</span>
             <span class="c1">#assert r1 &gt; -1.0/2.0</span>
             <span class="n">phase_add2</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">if</span> <span class="n">data_type</span> <span class="ow">is</span> <span class="s2">&quot;phase&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;phase&quot;</span><span class="p">:</span>
                 <span class="n">phase_add2</span> <span class="o">=</span> <span class="mi">2</span>
             <span class="n">alpha</span> <span class="o">=</span> <span class="n">p</span><span class="o">+</span><span class="n">phase_add2</span>
             <span class="n">alpha_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">rho</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">d</span><span class="p">)</span> <span class="o">+</span> <span class="n">phase_add2</span>
@@ -556,8 +567,8 @@
             <span class="k">return</span> <span class="n">alpha_int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">rho</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="k">assert</span> <span class="kc">False</span> <span class="c1"># we should not get here ever.</span></div>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">1</span></div>
+
 
 <div class="viewcode-block" id="detrend"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.detrend">[docs]</a><span class="k">def</span> <span class="nf">detrend</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -584,14 +595,15 @@
 <span class="c1">########################################################################</span>
 <span class="c1"># Equivalent Degrees of Freedom</span>
 
+
 <div class="viewcode-block" id="edf_greenhall_simple"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.edf_greenhall_simple">[docs]</a><span class="k">def</span> <span class="nf">edf_greenhall_simple</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Eqn (13) from Greenhall2004 &quot;&quot;&quot;</span>
     <span class="n">L</span> <span class="o">=</span> <span class="n">m</span><span class="o">/</span><span class="n">F</span><span class="o">+</span><span class="n">m</span><span class="o">*</span><span class="n">d</span> <span class="c1"># length of filter applied to phase samples</span>
     <span class="n">M</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">S</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="n">L</span><span class="p">)</span> <span class="o">/</span> <span class="n">m</span><span class="p">)</span>
     <span class="n">J</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="p">(</span><span class="n">d</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">S</span><span class="p">)</span>
-    <span class="n">inv_edf</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="n">greenhall_sz</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">M</span><span class="p">))</span><span class="o">*</span> \
-               <span class="n">greenhall_BasicSum</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+    <span class="n">inv_edf</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="n">greenhall_sz</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">M</span><span class="p">))</span> <span class="o">*</span> <span class="n">greenhall_BasicSum</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
     <span class="k">return</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">inv_edf</span></div>
+
 
 <div class="viewcode-block" id="edf_greenhall"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.edf_greenhall">[docs]</a><span class="k">def</span> <span class="nf">edf_greenhall</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">overlapping</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">modified</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; returns Equivalent degrees of freedom</span>
@@ -734,8 +746,9 @@
             <span class="k">return</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">inv_edf</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;greenhall_edf() no matching case!&quot;</span><span class="p">)</span>
+
     <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
-    <span class="c1">#assert(0) # ERROR</span>
+
 
 <div class="viewcode-block" id="greenhall_BasicSum"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.greenhall_BasicSum">[docs]</a><span class="k">def</span> <span class="nf">greenhall_BasicSum</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Eqn (10) from Greenhall2004 &quot;&quot;&quot;</span>
@@ -745,6 +758,7 @@
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">J</span><span class="p">)):</span>
         <span class="n">third</span> <span class="o">+=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">M</span><span class="p">))</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">greenhall_sz</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">first</span><span class="o">+</span><span class="n">second</span><span class="o">+</span><span class="n">third</span></div>
+
 
 <div class="viewcode-block" id="greenhall_sz"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.greenhall_sz">[docs]</a><span class="k">def</span> <span class="nf">greenhall_sz</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Eqn (9) from Greenhall2004 &quot;&quot;&quot;</span>
@@ -770,7 +784,7 @@
         <span class="n">g</span> <span class="o">=</span> <span class="n">greenhall_sx</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">a</span><span class="o">-</span><span class="n">b</span><span class="o">-</span><span class="n">c</span><span class="o">+</span><span class="n">dd</span><span class="o">+</span><span class="n">e</span><span class="o">-</span><span class="n">f</span><span class="o">-</span><span class="n">g</span>
 
-    <span class="k">assert</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># ERROR</span></div>
+    <span class="k">assert</span> <span class="mi">0</span>  <span class="c1"># ERROR</span></div>
 
 
 <div class="viewcode-block" id="greenhall_sx"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.greenhall_sx">[docs]</a><span class="k">def</span> <span class="nf">greenhall_sx</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
@@ -783,6 +797,7 @@
     <span class="n">c</span> <span class="o">=</span> <span class="n">greenhall_sw</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="mf">1.0</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">F</span><span class="p">),</span> <span class="n">alpha</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="nb">pow</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="n">b</span><span class="o">-</span><span class="n">c</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="greenhall_sw"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.greenhall_sw">[docs]</a><span class="k">def</span> <span class="nf">greenhall_sw</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Eqn (7) from Greenhall2004</span>
@@ -812,7 +827,8 @@
     <span class="k">elif</span> <span class="n">alpha</span> <span class="o">==</span> <span class="o">-</span><span class="mi">4</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 
-    <span class="k">assert</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># ERROR</span></div>
+    <span class="k">assert</span> <span class="mi">0</span>  <span class="c1"># ERROR</span></div>
+
 
 <div class="viewcode-block" id="greenhall_table3"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.greenhall_table3">[docs]</a><span class="k">def</span> <span class="nf">greenhall_table3</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Table 3 from Greenhall 2004 &quot;&quot;&quot;</span>
@@ -821,36 +837,41 @@
     <span class="n">table3</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">15.23</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">47.8</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">table3</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
 
+
 <div class="viewcode-block" id="greenhall_table2"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.greenhall_table2">[docs]</a><span class="k">def</span> <span class="nf">greenhall_table2</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Table 2 from Greenhall 2004 &quot;&quot;&quot;</span>
     <span class="n">row_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="o">-</span><span class="n">alpha</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># map 2-&gt; row0 and -4-&gt; row6</span>
     <span class="k">assert</span><span class="p">(</span><span class="n">row_idx</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
     <span class="n">col_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">table2</span> <span class="o">=</span> <span class="p">[[(</span><span class="mf">3.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">35.0</span><span class="o">/</span><span class="mf">18.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">231.0</span><span class="o">/</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)],</span> <span class="c1"># alpha=+2</span>
+    <span class="n">table2</span> <span class="o">=</span> <span class="p">[[(</span><span class="mf">3.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">35.0</span><span class="o">/</span><span class="mf">18.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">231.0</span><span class="o">/</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)],</span>  <span class="c1"># alpha=+2</span>
               <span class="p">[(</span><span class="mf">78.6</span><span class="p">,</span> <span class="mf">25.2</span><span class="p">),</span> <span class="p">(</span><span class="mf">790.0</span><span class="p">,</span> <span class="mf">410.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">9950.0</span><span class="p">,</span> <span class="mf">6520.0</span><span class="p">)],</span>
-              <span class="p">[(</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">6.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.0</span><span class="o">/</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)],</span> <span class="c1"># alpha=0</span>
-              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.852</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.997</span><span class="p">,</span> <span class="mf">0.617</span><span class="p">)],</span> <span class="c1"># -1</span>
-              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.079</span><span class="p">,</span> <span class="mf">0.368</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.033</span><span class="p">,</span> <span class="mf">0.607</span><span class="p">)],</span> <span class="c1">#-2</span>
-              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.053</span><span class="p">,</span> <span class="mf">0.553</span><span class="p">)],</span> <span class="c1">#-3</span>
-              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.302</span><span class="p">,</span> <span class="mf">0.535</span><span class="p">)],</span> <span class="c1"># alpha=-4</span>
-             <span class="p">]</span>
-    <span class="c1">#print(&quot;table2 = &quot;, table2[row_idx][col_idx])</span>
+              <span class="p">[(</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">6.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.0</span><span class="o">/</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)],</span>  <span class="c1"># alpha=0</span>
+              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.852</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.997</span><span class="p">,</span> <span class="mf">0.617</span><span class="p">)],</span>  <span class="c1"># -1</span>
+              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.079</span><span class="p">,</span> <span class="mf">0.368</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.033</span><span class="p">,</span> <span class="mf">0.607</span><span class="p">)],</span>  <span class="c1"># -2</span>
+              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.053</span><span class="p">,</span> <span class="mf">0.553</span><span class="p">)],</span>  <span class="c1"># -3</span>
+              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.302</span><span class="p">,</span> <span class="mf">0.535</span><span class="p">)],</span>  <span class="c1"># alpha=-4</span>
+              <span class="p">]</span>
+
+    <span class="c1"># print(&quot;table2 = &quot;, table2[row_idx][col_idx])</span>
     <span class="k">return</span> <span class="n">table2</span><span class="p">[</span><span class="n">row_idx</span><span class="p">][</span><span class="n">col_idx</span><span class="p">]</span></div>
+
 
 <div class="viewcode-block" id="greenhall_table1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.greenhall_table1">[docs]</a><span class="k">def</span> <span class="nf">greenhall_table1</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Table 1 from Greenhall 2004 &quot;&quot;&quot;</span>
     <span class="n">row_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="o">-</span><span class="n">alpha</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># map 2-&gt; row0 and -4-&gt; row6</span>
     <span class="n">col_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">table1</span> <span class="o">=</span> <span class="p">[[(</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.0</span><span class="o">/</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">22.0</span><span class="o">/</span><span class="mf">25.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)],</span> <span class="c1"># alpha=+2</span>
+    <span class="n">table1</span> <span class="o">=</span> <span class="p">[[(</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.0</span><span class="o">/</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">22.0</span><span class="o">/</span><span class="mf">25.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)],</span>  <span class="c1"># alpha=+2</span>
               <span class="p">[(</span><span class="mf">0.840</span><span class="p">,</span> <span class="mf">0.345</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.997</span><span class="p">,</span> <span class="mf">0.616</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.141</span><span class="p">,</span> <span class="mf">0.843</span><span class="p">)],</span>
               <span class="p">[(</span><span class="mf">1.079</span><span class="p">,</span> <span class="mf">0.368</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.033</span><span class="p">,</span> <span class="mf">0.607</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.184</span><span class="p">,</span> <span class="mf">0.848</span><span class="p">)],</span>
-              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.048</span><span class="p">,</span> <span class="mf">0.534</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.180</span><span class="p">,</span> <span class="mf">0.816</span><span class="p">)],</span> <span class="c1"># -1</span>
-              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.302</span><span class="p">,</span> <span class="mf">0.535</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.175</span><span class="p">,</span> <span class="mf">0.777</span><span class="p">)],</span> <span class="c1">#-2</span>
-              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.194</span><span class="p">,</span> <span class="mf">0.703</span><span class="p">)],</span> <span class="c1">#-3</span>
-              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.489</span><span class="p">,</span> <span class="mf">0.702</span><span class="p">)],</span> <span class="c1"># alpha=-4</span>
-             <span class="p">]</span>
-    <span class="c1">#print(&quot;table1 = &quot;, table1[row_idx][col_idx])</span>
+              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.048</span><span class="p">,</span> <span class="mf">0.534</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.180</span><span class="p">,</span> <span class="mf">0.816</span><span class="p">)],</span>  <span class="c1"># -1</span>
+              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.302</span><span class="p">,</span> <span class="mf">0.535</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.175</span><span class="p">,</span> <span class="mf">0.777</span><span class="p">)],</span>  <span class="c1">#-2</span>
+              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.194</span><span class="p">,</span> <span class="mf">0.703</span><span class="p">)],</span>  <span class="c1">#-3</span>
+              <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.489</span><span class="p">,</span> <span class="mf">0.702</span><span class="p">)],</span>  <span class="c1"># alpha=-4</span>
+              <span class="p">]</span>
+
+    <span class="c1"># print(&quot;table1 = &quot;, table1[row_idx][col_idx])</span>
     <span class="k">return</span> <span class="n">table1</span><span class="p">[</span><span class="n">row_idx</span><span class="p">][</span><span class="n">col_idx</span><span class="p">]</span></div>
+
 
 <div class="viewcode-block" id="edf_totdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.edf_totdev">[docs]</a><span class="k">def</span> <span class="nf">edf_totdev</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Equivalent degrees of freedom for Total Deviation</span>
@@ -869,6 +890,7 @@
     <span class="c1"># alpha outside 0, -1, -2:</span>
     <span class="k">return</span> <span class="n">edf_simple</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="edf_mtotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.edf_mtotdev">[docs]</a><span class="k">def</span> <span class="nf">edf_mtotdev</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Equivalent degrees of freedom for Modified Total Deviation</span>
 
@@ -876,11 +898,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span><span class="p">(</span><span class="n">alpha</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">])</span>
     <span class="n">NIST_SP1065_table8</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">1.90</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.20</span><span class="p">,</span> <span class="mf">1.40</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.10</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.50</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.31</span><span class="p">)]</span>
-    <span class="c1">#(b, c) = NIST_SP1065_table8[ abs(alpha-2) ]</span>
+    <span class="c1"># (b, c) = NIST_SP1065_table8[ abs(alpha-2) ]</span>
     <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="n">NIST_SP1065_table8</span><span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">alpha</span><span class="o">-</span><span class="mi">2</span><span class="p">)]</span>
     <span class="n">edf</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">))</span><span class="o">-</span><span class="n">c</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mtotdev b,c= &quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">),</span> <span class="s2">&quot; edf=&quot;</span><span class="p">,</span> <span class="n">edf</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">edf</span></div>
+
 
 <div class="viewcode-block" id="edf_simple"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.edf_simple">[docs]</a><span class="k">def</span> <span class="nf">edf_simple</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Equivalent degrees of freedom.</span>
@@ -915,6 +938,8 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">edf</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># default value</span>
+
     <span class="n">N</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
     <span class="n">m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]:</span>
@@ -945,7 +970,6 @@
             <span class="n">edf</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">c</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">edf</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Noise type not recognized. Defaulting to N - 1 degrees of freedom.&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">edf</span></div>

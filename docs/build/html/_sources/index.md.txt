@@ -23,6 +23,7 @@ Welcome to `allantoolkit`!
 :caption: MAIN DOCS
 :maxdepth: 2
 
+Readme <readme_copy>
 Documentation <documentation.md>
 ```
 

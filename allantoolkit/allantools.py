@@ -41,11 +41,11 @@ Version history
 - improve documentation and add __version__
 - added Theo1 deviation theo1()
 - added Hadamard Total Deviatio htotdev()
-- added Modified Total Deviation mtotdev(), and Time Total Deviation ttotdev()
-  http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/
+- added Modified Total Deviation mtotdev(), and Time Total Deviation
+ttotdev() http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/
 - automatic tau-lists:  taus=[ "all" | "octave" | "decade" ]
-- merge adev() and adev_phase() into one, requiring phase= or
-  frequency= argument
+- merge adev() and adev_phase() into one, requiring phase= or frequency=
+argument
 - add GPS dataset as example and test
 
 **2016.2** 2016 February
@@ -61,9 +61,9 @@ Version history
 
 **v1.2** 2014 November, Cantwell G. Carson conrtibuted:
 - A gap-robust version of ADEV based on the paper by Sesia et al.
-   gradev_phase() and gradev()
-- Improved uncertainty estimates: uncertainty_estimate()
-  This introduces a new dependency: scipy.stats.chi2()
+gradev_phase() and gradev()
+- Improved uncertainty estimates: uncertainty_estimate() This introduces a
+new dependency: scipy.stats.chi2()
 
 **v1.1** 2014 August
 - Danny Price converted the library to use numpy.
@@ -152,6 +152,7 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
     tde = td / np.sqrt(ns)
     return taus, td, tde, ns
 
+
 def mdev(data, rate=1.0, data_type="phase", taus=None):
     """  Modified Allan deviation.
          Used to distinguish between White and Flicker Phase Modulation.
@@ -238,6 +239,7 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
         ns[idx] = n
 
     return remove_small_ns(taus_used, md, mderr, ns)
+
 
 def adev(data, rate=1.0, data_type="phase", taus=None):
     """ Allan deviation.
@@ -337,6 +339,7 @@ def calc_adev_phase(phase, rate, mj, stride):
     ----------
     * http://en.wikipedia.org/wiki/Allan_variance
     * http://www.leapsecond.com/tools/adev_lib.c
+
     NIST [SP1065]_ eqn (7) and (11) page 16
     """
     mj = int(mj)
@@ -358,6 +361,7 @@ def calc_adev_phase(phase, rate, mj, stride):
     deverr = dev / np.sqrt(n)
 
     return dev, deverr, n
+
 
 def oadev(data, rate=1.0, data_type="phase", taus=None):
     """ overlapping Allan deviation.
@@ -414,6 +418,7 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
 
     return remove_small_ns(taus_used, ad, ade, adn)
 
+
 def ohdev(data, rate=1.0, data_type="phase", taus=None):
     """ Overlapping Hadamard deviation.
         Better confidence than normal Hadamard.
@@ -466,6 +471,7 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
          ns[idx]) = calc_hdev_phase(phase, rate, mj, 1)
 
     return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
+
 
 def hdev(data, rate=1.0, data_type="phase", taus=None):
     """ Hadamard deviation.
@@ -531,9 +537,11 @@ def calc_hdev_phase(phase, rate, mj, stride):
     Notes
     -----
     http://www.leapsecond.com/tools/adev_lib.c
-                         1        N-3
-         s2y(t) = --------------- sum [x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2
-                  6*tau^2 (N-3m)  i=1
+
+    .. math::
+
+        \\sigma^2_{y}(t) = { 1 \\over 6\\tau^2 (N-3m) }
+            \\sum_{i=1}^{N-3} [ x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2
 
         N=M+1 phase measurements
         m is averaging factor
@@ -705,23 +713,25 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
 
     return remove_small_ns(taus_used, devs, deverrs, ns)
 
+
 def calc_mtotdev_phase(phase, rate, m):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
-        calculation of mtotdev for one averaging factor m
-        tau = m*tau0
+    calculation of mtotdev for one averaging factor m; tau = m*tau0
         
-        NIST [SP1065]_ Eqn (27), page 25.
+    NIST [SP1065]_ Eqn (27), page 25.
         
-        Computed from a set of N - 3m + 1 subsequences of 3m points.
-        1. A linear trend (frequency offset) is removed from the subsequence 
-           by averaging the first and last halves of the subsequence and dividing by half the interval.
-        2. The offset-removed subsequence is extended at both ends
-           by uninverted, even reflection.
+    Computed from a set of N - 3m + 1 subsequences of 3m points.
 
-        [Howe1999]_
-        D.A. Howe and F. Vernotte, "Generalization of the Total Variance 
-        Approach to the Modified Allan Variance," Proc.
-        31 st PTTI Meeting, pp. 267-276, Dec. 1999.
+    1. A linear trend (frequency offset) is removed from the subsequence by
+    averaging the first and last halves of the subsequence and dividing by
+    half the interval.
+    2. The offset-removed subsequence is extended at both ends by
+    uninverted, even reflection.
+
+    [Howe1999]_
+    D.A. Howe and F. Vernotte, "Generalization of the Total Variance
+    Approach to the Modified Allan Variance," Proc.
+    31 st PTTI Meeting, pp. 267-276, Dec. 1999.
     """
     tau0 = 1.0/rate
     N = len(phase) # phase data, N points
@@ -1313,15 +1323,18 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
     # Note that errors are split in 2 arrays
     return remove_small_ns(taus_used, ad, [ade_l, ade_h], adn)
 
+
 def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
     """ see http://www.leapsecond.com/tools/adev_lib.c
         stride = mj for nonoverlapping allan deviation
         stride = 1 for overlapping allan deviation
 
         see http://en.wikipedia.org/wiki/Allan_variance
-             1       1
-         s2y(t) = --------- sum [x(i+2) - 2x(i+1) + x(i) ]^2
-                  2*tau^2
+
+    .. math::
+
+        \\sigma^2_{y}(t) = { 1 \\over ( 2 \\tau^2 } sum [x(i+2) - 2x(i+1) + x(i) ]^2
+
     """
 
     d2 = data[2 * int(mj)::int(stride)]
@@ -1419,17 +1432,17 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
     if rate == 0:
         raise RuntimeError("Warning! rate==0")
 
-    if taus is None: # empty or no tau-list supplied
+    if taus is None:  # empty or no tau-list supplied
         taus = "octave" # default to octave
     elif isinstance(taus, list) and taus == []:
         taus = "octave"
 
-    if taus is "all":
+    if taus == "all":
         taus = (1.0/rate)*np.linspace(1.0, len(data), len(data))
-    elif taus is "octave":
+    elif taus == "octave":
         maxn = np.floor(np.log2(len(data)))
         taus = (1.0/rate)*np.logspace(0, int(maxn), int(maxn+1), base=2.0)
-    elif taus is "decade": # 1, 2, 4, 10, 20, 40, spacing similar to Stable32
+    elif taus == "decade": # 1, 2, 4, 10, 20, 40, spacing similar to Stable32
         maxn = np.floor(np.log10(len(data)))
         taus = []
         for k in range(int(maxn+1)):

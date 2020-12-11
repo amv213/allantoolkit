@@ -40,6 +40,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="References" href="references.html" />
+    <link rel="prev" title="allantoolkit" href="modules.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -70,10 +72,46 @@
     <ul class="nav sidenav_l1">
  <li class="toctree-l1">
   <a class="reference internal" href="index.html">
-   Welcome to allantoolkit’s documentation!
+   📑 Welcome to AllanToolkit!
   </a>
  </li>
 </ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  MAIN DOCS
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1 current active collapsible-parent">
+  <a class="reference internal" href="documentation.html">
+   Documentation
+  </a>
+  <ul class="current collapse-ul">
+   <li class="toctree-l2 current active collapsible-parent">
+    <a class="reference internal" href="modules.html">
+     Modules
+    </a>
+    <ul class="current collapse-ul">
+     <li class="toctree-l3 current active">
+      <a class="current reference internal" href="#">
+       allantoolkit package
+      </a>
+     </li>
+    </ul>
+    <i class="fas fa-chevron-down">
+    </i>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="references.html">
+     References
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+</ul>
+
 </nav>
 </div>
 
@@ -291,16 +329,12 @@
 - improve documentation and add __version__
 - added Theo1 deviation theo1()
 - added Hadamard Total Deviatio htotdev()
-- added Modified Total Deviation mtotdev(), and Time Total Deviation ttotdev()</p>
-<blockquote>
-<div><p><a class="reference external" href="http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/">http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/</a></p>
-</div></blockquote>
-<ul class="simple">
-<li><p>automatic tau-lists:  taus=[ “all” | “octave” | “decade” ]</p></li>
-<li><p>merge adev() and adev_phase() into one, requiring phase= or
-frequency= argument</p></li>
-<li><p>add GPS dataset as example and test</p></li>
-</ul>
+- added Modified Total Deviation mtotdev(), and Time Total Deviation
+ttotdev() <a class="reference external" href="http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/">http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/</a>
+- automatic tau-lists:  taus=[ “all” | “octave” | “decade” ]
+- merge adev() and adev_phase() into one, requiring phase= or frequency=
+argument
+- add GPS dataset as example and test</p>
 <p><strong>2016.2</strong> 2016 February
 - update release on PyPi <a class="reference external" href="https://pypi.python.org/pypi/AllanTools">https://pypi.python.org/pypi/AllanTools</a>
 - pytest and coverage
@@ -311,14 +345,10 @@ frequency= argument</p></li>
 - IPython notebook examples
 - sphinx documentation, auto-built on readthedocs</p>
 <p><strong>v1.2</strong> 2014 November, Cantwell G. Carson conrtibuted:
-- A gap-robust version of ADEV based on the paper by Sesia et al.</p>
-<blockquote>
-<div><p>gradev_phase() and gradev()</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>Improved uncertainty estimates: uncertainty_estimate()
-This introduces a new dependency: scipy.stats.chi2()</p></li>
-</ul>
+- A gap-robust version of ADEV based on the paper by Sesia et al.
+gradev_phase() and gradev()
+- Improved uncertainty estimates: uncertainty_estimate() This introduces a
+new dependency: scipy.stats.chi2()</p>
 <p><strong>v1.1</strong> 2014 August
 - Danny Price converted the library to use numpy.
 - many functions in allantoolkit are now 100x faster than before.
@@ -360,7 +390,7 @@ by the measurement interval <span class="math notranslate nohighlight">\(\tau\)<
 \langle ( \bar{y}_{n+1} - \bar{y}_n )^2 \rangle\]</div>
 <p>where <span class="math notranslate nohighlight">\(\bar{y}_n\)</span> is the time-series of fractional frequency
 at averaging time <span class="math notranslate nohighlight">\(\tau\)</span></p>
-<p>NIST <span id="id1">[SP1065]</span> eqn (6) and (7), pages 14 and 15.</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id1"><span>[SP1065]</span></a> eqn (6) and (7), pages 14 and 15.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -418,25 +448,20 @@ stride = 1 for overlapping Allan deviation</p>
 <li><p><a class="reference external" href="http://en.wikipedia.org/wiki/Allan_variance">http://en.wikipedia.org/wiki/Allan_variance</a></p></li>
 <li><p><a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p></li>
 </ul>
-<p>NIST <span id="id2">[SP1065]</span> eqn (7) and (11) page 16</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id2"><span>[SP1065]</span></a> eqn (7) and (11) page 16</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="allantoolkit.allantools.calc_gradev_phase">
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">calc_gradev_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">mj</span></em>, <em class="sig-param"><span class="n">stride</span></em>, <em class="sig-param"><span class="n">confidence</span></em>, <em class="sig-param"><span class="n">noisetype</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#calc_gradev_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.calc_gradev_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>see <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a>
-stride = mj for nonoverlapping allan deviation
+<dd><dl>
+<dt>see <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></dt><dd><p>stride = mj for nonoverlapping allan deviation
 stride = 1 for overlapping allan deviation</p>
-<dl>
-<dt>see <a class="reference external" href="http://en.wikipedia.org/wiki/Allan_variance">http://en.wikipedia.org/wiki/Allan_variance</a></dt><dd><blockquote>
-<div><p>1       1</p>
-</div></blockquote>
-<dl class="simple">
-<dt>s2y(t) = ——— sum [x(i+2) - 2x(i+1) + x(i) ]^2</dt><dd><p>2*tau^2</p>
+<p>see <a class="reference external" href="http://en.wikipedia.org/wiki/Allan_variance">http://en.wikipedia.org/wiki/Allan_variance</a></p>
 </dd>
 </dl>
-</dd>
-</dl>
+<div class="math notranslate nohighlight">
+\[\sigma^2_{y}(t) = { 1 \over ( 2 \tau^2 } sum [x(i+2) - 2x(i+1) + x(i) ]^2\]</div>
 </dd></dl>
 
 <dl class="py function">
@@ -460,21 +485,12 @@ stride = 1 for overlapping allan deviation</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<dl>
-<dt><a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></dt><dd><blockquote>
-<div><blockquote>
-<div><p>1        N-3</p>
-</div></blockquote>
-<dl class="simple">
-<dt>s2y(t) = ————— sum [x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2</dt><dd><p>6*tau^2 (N-3m)  i=1</p>
-</dd>
-</dl>
-</div></blockquote>
-<p>N=M+1 phase measurements
-m is averaging factor</p>
-</dd>
-</dl>
-<p>NIST <span id="id3">[SP1065]</span> eqn (18) and (20) pages 20 and 21</p>
+<p><a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\sigma^2_{y}(t) = { 1 \over 6\tau^2 (N-3m) }
+    \sum_{i=1}^{N-3} [ x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2\\N=M+1 phase measurements
+m is averaging factor\end{aligned}\end{align} \]</div>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id3"><span>[SP1065]</span></a> eqn (18) and (20) pages 20 and 21</p>
 </dd></dl>
 
 <dl class="py function">
@@ -497,19 +513,15 @@ tau = m*tau0</p>
 <dt id="allantoolkit.allantools.calc_mtotdev_phase">
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">calc_mtotdev_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#calc_mtotdev_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.calc_mtotdev_phase" title="Permalink to this definition">¶</a></dt>
 <dd><p>PRELIMINARY - REQUIRES FURTHER TESTING.
-calculation of mtotdev for one averaging factor m
-tau = m*tau0</p>
-<p>NIST <span id="id4">[SP1065]</span> Eqn (27), page 25.</p>
-<p>Computed from a set of N - 3m + 1 subsequences of 3m points.
-1. A linear trend (frequency offset) is removed from the subsequence</p>
-<blockquote>
-<div><p>by averaging the first and last halves of the subsequence and dividing by half the interval.</p>
-</div></blockquote>
-<ol class="arabic simple" start="2">
-<li><p>The offset-removed subsequence is extended at both ends
-by uninverted, even reflection.</p></li>
-</ol>
-<p><span id="id5">[Howe1999]</span>
+calculation of mtotdev for one averaging factor m; tau = m*tau0</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id4"><span>[SP1065]</span></a> Eqn (27), page 25.</p>
+<p>Computed from a set of N - 3m + 1 subsequences of 3m points.</p>
+<p>1. A linear trend (frequency offset) is removed from the subsequence by
+averaging the first and last halves of the subsequence and dividing by
+half the interval.
+2. The offset-removed subsequence is extended at both ends by
+uninverted, even reflection.</p>
+<p><a class="reference internal" href="references.html#howe1999" id="id5"><span>[Howe1999]</span></a>
 D.A. Howe and F. Vernotte, “Generalization of the Total Variance
 Approach to the Modified Allan Variance,” Proc.
 31 st PTTI Meeting, pp. 267-276, Dec. 1999.</p>
@@ -611,7 +623,7 @@ distances from the the estimated two sample variance.</p></li>
 \sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} - x_{i} )^2\]</div>
 <p>where <span class="math notranslate nohighlight">\(x_i\)</span> is the time-series of phase observations, spaced
 by the measurement interval <span class="math notranslate nohighlight">\(\tau\)</span>, and with length <span class="math notranslate nohighlight">\(N\)</span>.</p>
-<p>NIST <span id="id6">[SP1065]</span> eqn (17) and (18), page 20</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id6"><span>[SP1065]</span></a> eqn (17) and (18), page 20</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -679,7 +691,7 @@ tau-list generation.</p></li>
 \sum_{j=1}^{N-3m+1} \lbrace
 \sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \rbrace^2\]</div>
 <p>see <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p>
-<p>NIST <span id="id7">[SP1065]</span> eqn (14), page 17.</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id7"><span>[SP1065]</span></a> eqn (14), page 17.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -732,7 +744,7 @@ dataset is extended somehow?</p>
 <dt id="allantoolkit.allantools.mtie_phase_fast">
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">mtie_phase_fast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#mtie_phase_fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.mtie_phase_fast" title="Permalink to this definition">¶</a></dt>
 <dd><p>fast binary decomposition algorithm for MTIE</p>
-<p>See: <span id="id8">[Bregni2001]</span> STEFANO BREGNI “Fast Algorithms for TVAR and MTIE Computation in
+<p>See: <a class="reference internal" href="references.html#bregni2001" id="id8"><span>[Bregni2001]</span></a> STEFANO BREGNI “Fast Algorithms for TVAR and MTIE Computation in
 Characterization of Network Synchronization Performance”</p>
 </dd></dl>
 
@@ -810,7 +822,7 @@ tau-list generation.</p></li>
 deviation at an averaging time of <span class="math notranslate nohighlight">\(\tau=m\tau_0\)</span>, and
 <span class="math notranslate nohighlight">\(x_n\)</span> is the time-series of phase observations, spaced by the
 measurement interval <span class="math notranslate nohighlight">\(\tau_0\)</span>, with length <span class="math notranslate nohighlight">\(N\)</span>.</p>
-<p>NIST <span id="id10">[SP1065]</span> eqn (11), page 16.</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id10"><span>[SP1065]</span></a> eqn (11), page 16.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1016,7 +1028,7 @@ is 1/rate seconds. Used to convert to taus.</p></li>
 \[\sigma^2_{TDEV}( \tau ) = { \tau^2 \over 3 }
 \sigma^2_{MDEV}( \tau )\]</div>
 <p>Note that TDEV has a unit of seconds.</p>
-<p>NIST <span id="id11">[SP1065]</span> eqn (15), page 18.</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id11"><span>[SP1065]</span></a> eqn (15), page 18.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1058,7 +1070,7 @@ extended averaging factor range.</p>
         (x_{i+m}- x_{i+\delta +m/2}) \rbrace^2\]</div>
 <p>Where <span class="math notranslate nohighlight">\(10&lt;=m&lt;=N-1\)</span> is even.</p>
 <p>FIXME: bias correction</p>
-<p>NIST <span id="id12">[SP1065]</span> eq (30) page 29</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id12"><span>[SP1065]</span></a> eq (30) page 29</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -1154,7 +1166,7 @@ x*(i)   = x(i)            for i=1..N
 x*(N+j) = 2x(N) - x(N-j)  for j=1..N-2
 x* has length 3N-4
 tau = m*tau0</p>
-<p>NIST <span id="id13">[SP1065]</span> eqn (25) page 23</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id13"><span>[SP1065]</span></a> eqn (25) page 23</p>
 <p>FIXME: bias correction <a class="reference external" href="http://www.wriley.com/CI2.pdf">http://www.wriley.com/CI2.pdf</a> page 5</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1182,7 +1194,7 @@ first non-NaN in each case, the return the appropriate slice of the array</p>
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">ttotdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#ttotdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.ttotdev" title="Permalink to this definition">¶</a></dt>
 <dd><p>Time Total Deviation</p>
 <p>Modified total variance scaled by tau^2 / 3</p>
-<p>NIST <span id="id14">[SP1065]</span> eqn (28) page 26.  Note that <span id="id15">[SP1065]</span> erroneously has tau-cubed here (!).</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id14"><span>[SP1065]</span></a> eqn (28) page 26.  Note that <a class="reference internal" href="references.html#sp1065" id="id15"><span>[SP1065]</span></a> erroneously has tau-cubed here (!).</p>
 </dd></dl>
 
 </div>
@@ -2135,7 +2147,7 @@ Initial version 2019 July, Anders E. E. Wallin.</p>
 <em class="property">class </em><code class="sig-prename descclassname">allantoolkit.realtime.</code><code class="sig-name descname">ohdev_realtime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">afs</span><span class="o">=</span><span class="default_value">[1]</span></em>, <em class="sig-param"><span class="n">tau0</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">auto_afs</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">pts_per_decade</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/realtime.html#ohdev_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.realtime.ohdev_realtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#allantoolkit.realtime.dev_realtime" title="allantoolkit.realtime.dev_realtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">allantoolkit.realtime.dev_realtime</span></code></a></p>
 <p>Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.</p>
-<p><span id="id18">[Dobrogowski2007]</span>
+<p><a class="reference internal" href="references.html#dobrogowski2007" id="id18"><span>[Dobrogowski2007]</span></a>
 Dobrogowski &amp; Kasznia
 <a class="reference external" href="https://doi.org/10.1109/FREQ.2007.4319204">https://doi.org/10.1109/FREQ.2007.4319204</a></p>
 <dl class="py method">
@@ -2216,6 +2228,8 @@ Dobrogowski &amp; Kasznia
     
     <div class='prev-next-bottom'>
         
+    <a class='left-prev' id="prev-link" href="modules.html" title="previous page">allantoolkit</a>
+    <a class='right-next' id="next-link" href="references.html" title="next page">References</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

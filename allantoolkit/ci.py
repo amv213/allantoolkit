@@ -13,8 +13,6 @@ import scipy.stats  # used in confidence_intervals()
 import scipy.signal  # decimation in lag-1 acf
 from . import allantools
 
-# Spawn module-level logger
-logger = logging.getLogger(__name__)
 
 # Confidence Intervals
 ONE_SIGMA_CI = scipy.special.erf(1/np.sqrt(2))
@@ -52,7 +50,9 @@ def confidence_interval(dev, edf, ci=ONE_SIGMA_CI):
     variance = dev*dev
     var_l = float(edf) * variance / chi2_h  # NIST SP1065 eqn (45)
     var_h = float(edf) * variance / chi2_l
-    return (np.sqrt(var_l), np.sqrt(var_h))
+
+    return np.sqrt(var_l), np.sqrt(var_h)
+
 
 def confidence_interval_noiseID(x, dev, af, dev_type="adev", data_type="phase", ci=ONE_SIGMA_CI):
     """ returns confidence interval (dev_min, dev_max)
@@ -85,26 +85,27 @@ def confidence_interval_noiseID(x, dev, af, dev_type="adev", data_type="phase", 
     (dev_min, dev_max): (float, float)
         Confidence interval
     """
+
     # 1) noise ID
     dmax = 2
-    if (dev_type is "hdev") or (dev_type is "ohdev"):
+    if (dev_type == "hdev") or (dev_type == "ohdev"):
         dmax = 3
     alpha_int = autocorr_noise_id(x, int(af), data_type=data_type, dmin=0, dmax=dmax)[0]
 
     # 2) EDF
-    if dev_type is "adev":
+    if dev_type == "adev":
         edf = edf_greenhall(alpha=alpha_int, d=2, m=af, N=len(x),
                             overlapping=False, modified=False)
-    elif dev_type is "oadev":
+    elif dev_type == "oadev":
         edf = edf_greenhall(alpha=alpha_int, d=2, m=af, N=len(x),
                             overlapping=True, modified=False)
-    elif (dev_type is "mdev") or (dev_type is "tdev"):
+    elif (dev_type == "mdev") or (dev_type == "tdev"):
         edf = edf_greenhall(alpha=alpha_int, d=2, m=af, N=len(x),
                             overlapping=True, modified=True)
-    elif dev_type is "hdev":
+    elif dev_type == "hdev":
         edf = edf_greenhall(alpha=alpha_int, d=3, m=af, N=len(x),
                             overlapping=False, modified=False)
-    elif dev_type is "ohdev":
+    elif dev_type == "ohdev":
         edf = edf_greenhall(alpha=alpha_int, d=3, m=af, N=len(x),
                             overlapping=True, modified=False)
     else:
@@ -112,7 +113,8 @@ def confidence_interval_noiseID(x, dev, af, dev_type="adev", data_type="phase", 
 
     # 3) confidence interval
     (low, high) = confidence_interval(dev, edf, ci)
-    return (low, high)
+
+    return low, high
 
 
 ########################################################################
@@ -123,17 +125,21 @@ def rn(x, af, rate):
 
         ratio of MVAR to AVAR
     """
+
     (taus, devs, errs, ns) = allantools.adev(x, taus=[af*rate], data_type='phase', rate=rate)
     oadev_x = devs[0]
     (mtaus, mdevs, errs, ns) = allantools.mdev(x, taus=[af*rate], data_type='phase', rate=rate)
     mdev_x = mdevs[0]
+
     return pow(mdev_x/oadev_x, 2)
+
 
 def rn_theory(af, b):
     """ R(n) ratio expected from theory for given noise type
 
         alpha = b + 2
     """
+
     # From IEEE1139-2008
     #   alpha   beta    ADEV_mu MDEV_mu Rn_mu
     #   -2      -4       1       1       0      Random Walk FM
@@ -156,6 +162,7 @@ def rn_theory(af, b):
     else:
         return pow(af, 0)
 
+
 def rn_boundary(af, b_hi):
     """
     R(n) ratio boundary for selecting between [b_hi-1, b_hi]
@@ -165,6 +172,7 @@ def rn_boundary(af, b_hi):
 
 ########################################################################
 # Noise Identification using B1
+
 
 def b1(x, af, rate):
     """ B1 ratio for noise identification
@@ -193,6 +201,7 @@ def b1(x, af, rate):
     var = np.var(y_averaged, ddof=1)
 
     return var/avar
+
 
 def b1_theory(N, mu):
     """ Expected B1 ratio for given time-series length N and exponent mu
@@ -231,7 +240,6 @@ def b1_theory(N, mu):
         down = 2*(N-1.0)*(1-pow(2.0, mu))
         return up/down
 
-    assert False # we should never get here
 
 def b1_boundary(b_hi, N):
     """
@@ -242,9 +250,10 @@ def b1_boundary(b_hi, N):
     b1_lo = b1_theory(N, b_to_mu(b_lo))
     b1_hi = b1_theory(N, b_to_mu(b_hi))
     if b1_lo >= -4:
-        return np.sqrt(b1_lo*b1_hi) # geometric mean
+        return np.sqrt(b1_lo*b1_hi)  # geometric mean
     else:
-        return 0.5*(b1_lo+b1_hi) # arithemtic mean
+        return 0.5*(b1_lo+b1_hi)  # arithemtic mean
+
 
 def b_to_mu(b):
     """
@@ -270,6 +279,7 @@ def b_to_mu(b):
 
 ########################################################################
 # Noise Identification using ACF
+
 
 def lag1_acf(x, detrend_deg=1):
     """ Lag-1 autocorrelation function
@@ -297,10 +307,11 @@ def lag1_acf(x, detrend_deg=1):
     b = 0
     for n in range(len(x)-1):
         a = a + (x[n]-mu)*(x[n+1]-mu)
-    #for n in range(len(x)):
+    # for n in range(len(x)):
     for xn in x:
         b = b+pow(xn-mu, 2)
     return a/b
+
 
 def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
     """ Lag-1 autocorrelation based noise identification
@@ -344,18 +355,18 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
     """
     d = 0 # number of differentiations
     lag = 1
-    if data_type is "phase":
+    if data_type == "phase":
         if af > 1:
-            #x = scipy.signal.decimate(x, af, n=1, ftype='fir')
+            # x = scipy.signal.decimate(x, af, n=1, ftype='fir')
             x = x[0:len(x):af] # decimate by averaging factor
         x = detrend(x, deg=2) # remove quadratic trend (frequency offset and drift)
-    elif data_type is "freq":
+    elif data_type == "freq":
         # average by averaging factor
         y_cut = np.array(x[:len(x)-(len(x)%af)]) # cut to length
-        assert len(y_cut)%af == 0
+        assert len(y_cut) % af == 0
         y_shaped = y_cut.reshape((int(len(y_cut)/af), af))
         x = np.average(y_shaped, axis=1) # average
-        x = detrend(x, deg=1) # remove frequency drift
+        x = detrend(x, deg=1)  # remove frequency drift
 
     # require minimum length for time-series
     if len(x) < 30:
@@ -371,7 +382,7 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
             #assert r1 < 0
             #assert r1 > -1.0/2.0
             phase_add2 = 0
-            if data_type is "phase":
+            if data_type == "phase":
                 phase_add2 = 2
             alpha = p+phase_add2
             alpha_int = int(-1.0*np.round(2*rho) - 2.0*d) + phase_add2
@@ -380,7 +391,7 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
         else:
             x = np.diff(x)
             d = d + 1
-    assert False # we should not get here ever.
+
 
 def detrend(x, deg=1):
     """
@@ -407,14 +418,15 @@ def detrend(x, deg=1):
 ########################################################################
 # Equivalent Degrees of Freedom
 
+
 def edf_greenhall_simple(alpha, d, m, S, F, N):
     """ Eqn (13) from Greenhall2004 """
     L = m/F+m*d # length of filter applied to phase samples
     M = 1 + np.floor(S*(N-L) / m)
     J = min(M, (d+1)*S)
-    inv_edf = (1.0/(pow(greenhall_sz(0, F, alpha, d), 2)*M))* \
-               greenhall_BasicSum(J, M, S, F, alpha, d)
+    inv_edf = (1.0/(pow(greenhall_sz(0, F, alpha, d), 2)*M)) * greenhall_BasicSum(J, M, S, F, alpha, d)
     return 1.0/inv_edf
+
 
 def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=False):
     """ returns Equivalent degrees of freedom
@@ -557,8 +569,9 @@ def edf_greenhall(alpha, d, m, N, overlapping=False, modified=False, verbose=Fal
             return 1.0/inv_edf
 
     print("greenhall_edf() no matching case!")
+
     raise NotImplementedError
-    #assert(0) # ERROR
+
 
 def greenhall_BasicSum(J, M, S, F, alpha, d):
     """ Eqn (10) from Greenhall2004 """
@@ -568,6 +581,7 @@ def greenhall_BasicSum(J, M, S, F, alpha, d):
     for j in range(1, int(J)):
         third += 2*(1.0-float(j)/float(M))*pow(greenhall_sz(float(j)/float(S), F, alpha, d), 2)
     return first+second+third
+
 
 def greenhall_sz(t, F, alpha, d):
     """ Eqn (9) from Greenhall2004 """
@@ -593,7 +607,7 @@ def greenhall_sz(t, F, alpha, d):
         g = greenhall_sx(t+3.0, F, alpha)
         return a-b-c+dd+e-f-g
 
-    assert(0) # ERROR
+    assert 0  # ERROR
 
 
 def greenhall_sx(t, F, alpha):
@@ -606,6 +620,7 @@ def greenhall_sx(t, F, alpha):
     c = greenhall_sw(t+1.0/float(F), alpha)
 
     return pow(F, 2)*(a-b-c)
+
 
 def greenhall_sw(t, alpha):
     """ Eqn (7) from Greenhall2004
@@ -635,7 +650,8 @@ def greenhall_sw(t, alpha):
     elif alpha == -4:
         return np.abs(pow(t, 7))
 
-    assert(0) # ERROR
+    assert 0  # ERROR
+
 
 def greenhall_table3(alpha, d):
     """ Table 3 from Greenhall 2004 """
@@ -644,36 +660,41 @@ def greenhall_table3(alpha, d):
     table3 = [(6.0, 4.0), (15.23, 12.0), (47.8, 40.0)]
     return table3[idx]
 
+
 def greenhall_table2(alpha, d):
     """ Table 2 from Greenhall 2004 """
     row_idx = int(-alpha+2) # map 2-> row0 and -4-> row6
     assert(row_idx in [0, 1, 2, 3, 4, 5])
     col_idx = int(d-1)
-    table2 = [[(3.0/2.0, 1.0/2.0), (35.0/18.0, 1.0), (231.0/100.0, 3.0/2.0)], # alpha=+2
+    table2 = [[(3.0/2.0, 1.0/2.0), (35.0/18.0, 1.0), (231.0/100.0, 3.0/2.0)],  # alpha=+2
               [(78.6, 25.2), (790.0, 410.0), (9950.0, 6520.0)],
-              [(2.0/3.0, 1.0/6.0), (2.0/3.0, 1.0/3.0), (7.0/9.0, 1.0/2.0)], # alpha=0
-              [(-1, -1), (0.852, 0.375), (0.997, 0.617)], # -1
-              [(-1, -1), (1.079, 0.368), (1.033, 0.607)], #-2
-              [(-1, -1), (-1, -1), (1.053, 0.553)], #-3
-              [(-1, -1), (-1, -1), (1.302, 0.535)], # alpha=-4
-             ]
-    #print("table2 = ", table2[row_idx][col_idx])
+              [(2.0/3.0, 1.0/6.0), (2.0/3.0, 1.0/3.0), (7.0/9.0, 1.0/2.0)],  # alpha=0
+              [(-1, -1), (0.852, 0.375), (0.997, 0.617)],  # -1
+              [(-1, -1), (1.079, 0.368), (1.033, 0.607)],  # -2
+              [(-1, -1), (-1, -1), (1.053, 0.553)],  # -3
+              [(-1, -1), (-1, -1), (1.302, 0.535)],  # alpha=-4
+              ]
+
+    # print("table2 = ", table2[row_idx][col_idx])
     return table2[row_idx][col_idx]
+
 
 def greenhall_table1(alpha, d):
     """ Table 1 from Greenhall 2004 """
     row_idx = int(-alpha+2) # map 2-> row0 and -4-> row6
     col_idx = int(d-1)
-    table1 = [[(2.0/3.0, 1.0/3.0), (7.0/9.0, 1.0/2.0), (22.0/25.0, 2.0/3.0)], # alpha=+2
+    table1 = [[(2.0/3.0, 1.0/3.0), (7.0/9.0, 1.0/2.0), (22.0/25.0, 2.0/3.0)],  # alpha=+2
               [(0.840, 0.345), (0.997, 0.616), (1.141, 0.843)],
               [(1.079, 0.368), (1.033, 0.607), (1.184, 0.848)],
-              [(-1, -1), (1.048, 0.534), (1.180, 0.816)], # -1
-              [(-1, -1), (1.302, 0.535), (1.175, 0.777)], #-2
-              [(-1, -1), (-1, -1), (1.194, 0.703)], #-3
-              [(-1, -1), (-1, -1), (1.489, 0.702)], # alpha=-4
-             ]
-    #print("table1 = ", table1[row_idx][col_idx])
+              [(-1, -1), (1.048, 0.534), (1.180, 0.816)],  # -1
+              [(-1, -1), (1.302, 0.535), (1.175, 0.777)],  #-2
+              [(-1, -1), (-1, -1), (1.194, 0.703)],  #-3
+              [(-1, -1), (-1, -1), (1.489, 0.702)],  # alpha=-4
+              ]
+
+    # print("table1 = ", table1[row_idx][col_idx])
     return table1[row_idx][col_idx]
+
 
 def edf_totdev(N, m, alpha):
     """ Equivalent degrees of freedom for Total Deviation
@@ -692,6 +713,7 @@ def edf_totdev(N, m, alpha):
     # alpha outside 0, -1, -2:
     return edf_simple(N, m, alpha)
 
+
 def edf_mtotdev(N, m, alpha):
     """ Equivalent degrees of freedom for Modified Total Deviation
 
@@ -699,11 +721,12 @@ def edf_mtotdev(N, m, alpha):
     """
     assert(alpha in [2, 1, 0, -1, -2])
     NIST_SP1065_table8 = [(1.90, 2.1), (1.20, 1.40), (1.10, 1.2), (0.85, 0.50), (0.75, 0.31)]
-    #(b, c) = NIST_SP1065_table8[ abs(alpha-2) ]
+    # (b, c) = NIST_SP1065_table8[ abs(alpha-2) ]
     (b, c) = NIST_SP1065_table8[abs(alpha-2)]
     edf = b*(float(N)/float(m))-c
     print("mtotdev b,c= ", (b, c), " edf=", edf)
     return edf
+
 
 def edf_simple(N, m, alpha):
     """Equivalent degrees of freedom.
@@ -738,6 +761,8 @@ def edf_simple(N, m, alpha):
 
     """
 
+    edf = (N - 1)  # default value
+
     N = float(N)
     m = float(m)
     if alpha in [2, 1, 0, -1, -2]:
@@ -768,7 +793,6 @@ def edf_simple(N, m, alpha):
             edf = a * (b - c + d)
 
     else:
-        edf = (N - 1)
         print("Noise type not recognized. Defaulting to N - 1 degrees of freedom.")
 
     return edf

@@ -15,13 +15,9 @@
   http://tf.nist.gov/general/pdf/2220.pdf
   around page 107
 """
-import math
-import time
-import sys
-import pytest
-import numpy
 
-import allantoolkit.allantools as allan
+import numpy
+import allantoolkit as allan
 
 # 1000 point deviations from:
 # http://www.ieee-uffc.org/frequency-control/learning-riley.asp    Table III
@@ -66,11 +62,13 @@ def nbs14_1000():
     return n
 
 nbs14_f = nbs14_1000()
-nbs14_phase = allan.frequency2phase(nbs14_f, 1.0)
+nbs14_phase = allan.allantools.frequency2phase(nbs14_f, 1.0)
+
 
 def check_dev(name, tau, a, b):
     print(name," tau=",tau, " ", a ," == ", b)
     assert( numpy.isclose( a, b) )
+
 
 def test_oadev_rt_nbs14_1k():
     oadev_rt = allan.realtime.oadev_realtime(afs=[1,10,100],tau0=1.0)
@@ -79,6 +77,7 @@ def test_oadev_rt_nbs14_1k():
     for n in range(3):
         check_dev('OADEV', oadev_rt.taus()[n], oadev_rt.dev[n], nbs14_1000_devs[1][n])
 
+
 def test_ohdev_rt_nbs14_1k():
     dev_rt = allan.realtime.ohdev_realtime(afs=[1,10,100],tau0=1.0)
     for x in nbs14_phase:
@@ -86,14 +85,10 @@ def test_ohdev_rt_nbs14_1k():
     for n in range(3):
         check_dev('OHDEV', dev_rt.taus()[n], dev_rt.dev[n], nbs14_1000_devs[6][n])
 
+
 def test_tdev_rt_nbs14_1k():
     dev_rt = allan.realtime.tdev_realtime(afs=[1,10,100],tau0=1.0)
     for x in nbs14_phase:
         dev_rt.add_phase(x)
     for n in range(3):
         check_dev('TDEV', dev_rt.taus()[n], dev_rt.dev[n], nbs14_1000_devs[5][n])
-            
-if __name__ == "__main__":
-    test_oadev_rt_nbs14_1k()
-    test_ohdev_rt_nbs14_1k()
-    test_tdev_rt_nbs14_1k()

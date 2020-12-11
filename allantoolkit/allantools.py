@@ -1415,27 +1415,28 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
         Cleaned up list of tau values
     """
 
-
     if rate == 0:
         raise RuntimeError("Warning! rate==0")
 
     if taus is None:  # empty or no tau-list supplied
-        taus = "octave" # default to octave
+        taus = "octave"  # default to octave
     elif isinstance(taus, list) and taus == []:
         taus = "octave"
 
-    if taus == "all":
-        taus = (1.0/rate)*np.linspace(1.0, len(data), len(data))
-    elif taus == "octave":
-        maxn = np.floor(np.log2(len(data)))
-        taus = (1.0/rate)*np.logspace(0, int(maxn), int(maxn+1), base=2.0)
-    elif taus == "decade": # 1, 2, 4, 10, 20, 40, spacing similar to Stable32
-        maxn = np.floor(np.log10(len(data)))
-        taus = []
-        for k in range(int(maxn+1)):
-            taus.append(1.0*(1.0/rate)*pow(10.0, k))
-            taus.append(2.0*(1.0/rate)*pow(10.0, k))
-            taus.append(4.0*(1.0/rate)*pow(10.0, k))
+    if isinstance(taus, str):
+        
+        if taus == "all":
+            taus = (1.0/rate)*np.linspace(1.0, len(data), len(data))
+        elif taus == "octave":
+            maxn = np.floor(np.log2(len(data)))
+            taus = (1.0/rate)*np.logspace(0, int(maxn), int(maxn+1), base=2.0)
+        elif taus == "decade": # 1, 2, 4, 10, 20, 40, spacing similar to Stable32
+            maxn = np.floor(np.log10(len(data)))
+            taus = []
+            for k in range(int(maxn+1)):
+                taus.append(1.0*(1.0/rate)*pow(10.0, k))
+                taus.append(2.0*(1.0/rate)*pow(10.0, k))
+                taus.append(4.0*(1.0/rate)*pow(10.0, k))
 
     data, taus = np.array(data), np.array(taus)
     rate = float(rate)
@@ -1485,6 +1486,7 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
         taus2 = taus2[m_even_mask]
 
     return data, m, taus2
+
 
 def tau_reduction(ms: np.ndarray, rate: float, n_per_decade: int) -> Tuple[
     np.ndarray, np.ndarray]:

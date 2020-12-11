@@ -20,7 +20,7 @@ import time
 import sys
 import pytest
 
-import allantoolkit as allan
+import allantoolkit.allantools as allan
 
 # 1000 point deviations from:
 # http://www.ieee-uffc.org/frequency-control/learning-riley.asp    Table III

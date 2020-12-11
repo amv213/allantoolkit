@@ -5,9 +5,11 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setuptools.setup(
     name="allantoolkit",
-    version="0.0.1",
-    description="A fork of Anders E.E. Wallin's [AllanTools](https://github.com/aewallin/allantools): "
-                "Allan deviation and related time/frequency statistics toolkit",
+    version='0.0.1',
+    description="A fork of Anders E.E. Wallin's "
+                "[AllanTools](https://github.com/aewallin/allantools): "
+                "Allan deviation and related time/frequency statistics "
+                "toolkit",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Alvise Vianello",

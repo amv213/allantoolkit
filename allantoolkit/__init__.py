@@ -8,6 +8,7 @@ import allantoolkit.noise_kasdin
 import allantoolkit.plot
 import allantoolkit.realtime
 
+# Setting package root-logger
 logger = logging.getLogger(__name__)
 logger.setLevel("WARNING")  # (default) best practice
 

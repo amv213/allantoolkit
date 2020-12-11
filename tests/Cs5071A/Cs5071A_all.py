@@ -14,13 +14,7 @@
   AW2014-02-07
 """
 
-import math
-import sys
-sys.path.append("..")
-sys.path.append("../..") # hack to import from parent directory
-# remove if you have allantoolkit installed in your python path
-
-import allantoolkit as allan
+import allantoolkit.allantools as allan
 import testutils
 
 import time

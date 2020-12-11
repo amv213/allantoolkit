@@ -3,7 +3,6 @@
 
 """
 
-import sys
 import gzip
 import numpy
 

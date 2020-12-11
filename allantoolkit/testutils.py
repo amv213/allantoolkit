@@ -9,6 +9,7 @@ import gzip
 import numpy
 import logging
 from pathlib import Path
+from contextlib import contextmanager
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -165,3 +166,29 @@ def change_to_test_dir():
     print(abspath)
     dname = os.path.dirname(abspath)
     os.chdir(dname)
+
+
+@contextmanager
+def working_directory(path):
+    """Changes working directory and returns to previous on exit."""
+    prev_cwd = Path.cwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(prev_cwd)
+
+
+@contextmanager
+def this_working_directory():
+    """Changes working directory to directory calling function and returns to
+    previous on exit."""
+
+    this_dir = Path(__file__).parent
+
+    prev_cwd = Path.cwd()
+    os.chdir(this_dir)
+    try:
+        yield
+    finally:
+        os.chdir(prev_cwd)

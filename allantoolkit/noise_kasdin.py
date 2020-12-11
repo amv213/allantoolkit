@@ -73,15 +73,15 @@ class Noise(object):
         b: float
             noise type:
                 0 : White Phase Modulation (WPM)
-               -1 : Flicker Phase Modulation (FPM)
-               -2 : White Frequency Modulation (WFM)
-               -3 : Flicker Frequency Modulation (FFM)
-               -4 : Random Walk Frequency Modulation (RWFM)
-
+                -1 : Flicker Phase Modulation (FPM)
+                -2 : White Frequency Modulation (WFM)
+                -3 : Flicker Frequency Modulation (FFM)
+                -4 : Random Walk Frequency Modulation (RWFM)
         """
         self.nr = nr
         self.qd = qd
         self.b = b
+
 
     def generateNoise(self):
         """ Generate noise time series based on input parameters
@@ -189,32 +189,39 @@ class Noise(object):
             return -3.0
 
     def adev_from_qd(self, tau0=1.0, tau=1.0):
-        """ prefactor for Allan deviation for noise
-            type defined by (qd, b, tau0)
+        """ prefactor for Allan deviation for noise type defined by (qd, b,
+        tau0)
 
-            Colored noise generated with (qd, b, tau0) parameters will
-            show an Allan variance of:
+        Colored noise generated with (qd, b, tau0) parameters will
+        show an Allan variance of:
 
-            AVAR = prefactor * h_a * tau^c
+        AVAR = prefactor * h_a * tau^c
 
-            where a = b + 2 is the slope of the frequency PSD.
-            and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a
+        where a = b + 2 is the slope of the frequency PSD.
+        and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a
 
-            The relation between a, b, c is:
-            a   b   c(AVAR) c(MVAR)
-            -----------------------
-            -2  -4   1       1
-            -1  -3   0       0
-             0  -2  -1      -1
-            +1  -1  -2      -2
-            +2   0  -2      -3
+        The relation between a, b, c is:
 
-            Coefficients from:
-            S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
-            the measurement of the stability of oscillators with frequency
-            counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
-            Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
-            doi: 10.1109/TUFFC.2007.337
+        +---------+---------+---------+---------+
+        |    a    |    b    | c(AVAR) | c(MVAR) |
+        +=========+=========+=========+=========+
+        |   -2    |   -4    |    1    |    1    |
+        +---------+---------+---------+---------+
+        |   -1    |   -3    |    0    |    0    |
+        +---------+---------+---------+---------+
+        |    0    |   -2    |   -1    |   -1    |
+        +---------+---------+---------+---------+
+        |   +1    |   -1    |   -2    |   -2    |
+        +---------+---------+---------+---------+
+        |   +2    |    0    |   -2    |   -3    |
+        +---------+---------+---------+---------+
+
+        Coefficients from:
+        S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
+        the measurement of the stability of oscillators with frequency
+        counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
+        Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
+        doi: 10.1109/TUFFC.2007.337
 
         """
         g_b = self.phase_psd_from_qd(tau0)
@@ -235,31 +242,38 @@ class Noise(object):
     def mdev_from_qd(self, tau0=1.0, tau=1.0):
         # FIXME: tau is unused here - can we remove it?
         """ prefactor for Modified Allan deviation for noise
-            type defined by (qd, b, tau0)
+        type defined by (qd, b, tau0)
 
-            Colored noise generated with (qd, b, tau0) parameters will
-            show an Modified Allan variance of:
+        Colored noise generated with (qd, b, tau0) parameters will
+        show an Modified Allan variance of:
 
-            MVAR = prefactor * h_a * tau^c
+        MVAR = prefactor * h_a * tau^c
 
-            where a = b + 2 is the slope of the frequency PSD.
-            and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a
+        where a = b + 2 is the slope of the frequency PSD.
+        and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a
 
-            The relation between a, b, c is:
-            a   b   c(AVAR) c(MVAR)
-            -----------------------
-            -2  -4   1       1
-            -1  -3   0       0
-             0  -2  -1      -1
-            +1  -1  -2      -2
-            +2   0  -2      -3
+        The relation between a, b, c is:
 
-            Coefficients from:
-            S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
-            the measurement of the stability of oscillators with frequency
-            counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
-            Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
-            doi: 10.1109/TUFFC.2007.337
+        +---------+---------+---------+---------+
+        |    a    |    b    | c(AVAR) | c(MVAR) |
+        +=========+=========+=========+=========+
+        |   -2    |   -4    |    1    |    1    |
+        +---------+---------+---------+---------+
+        |   -1    |   -3    |    0    |    0    |
+        +---------+---------+---------+---------+
+        |    0    |   -2    |   -1    |   -1    |
+        +---------+---------+---------+---------+
+        |   +1    |   -1    |   -2    |   -2    |
+        +---------+---------+---------+---------+
+        |   +2    |    0    |   -2    |   -3    |
+        +---------+---------+---------+---------+
+
+        Coefficients from:
+        S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
+        the measurement of the stability of oscillators with frequency
+        counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
+        Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
+        doi: 10.1109/TUFFC.2007.337
 
         """
         g_b = self.phase_psd_from_qd(tau0)

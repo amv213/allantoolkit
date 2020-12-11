@@ -80,6 +80,11 @@
  </span>
 </p>
 <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../readme_copy.html">
+   Readme
+  </a>
+ </li>
  <li class="toctree-l1 collapsible-parent">
   <a class="reference internal" href="../../documentation.html">
    Documentation
@@ -250,15 +255,15 @@
 <span class="sd">        b: float</span>
 <span class="sd">            noise type:</span>
 <span class="sd">                0 : White Phase Modulation (WPM)</span>
-<span class="sd">               -1 : Flicker Phase Modulation (FPM)</span>
-<span class="sd">               -2 : White Frequency Modulation (WFM)</span>
-<span class="sd">               -3 : Flicker Frequency Modulation (FFM)</span>
-<span class="sd">               -4 : Random Walk Frequency Modulation (RWFM)</span>
-
+<span class="sd">                -1 : Flicker Phase Modulation (FPM)</span>
+<span class="sd">                -2 : White Frequency Modulation (WFM)</span>
+<span class="sd">                -3 : Flicker Frequency Modulation (FFM)</span>
+<span class="sd">                -4 : Random Walk Frequency Modulation (RWFM)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nr</span> <span class="o">=</span> <span class="n">nr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qd</span> <span class="o">=</span> <span class="n">qd</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">b</span></div>
+
 
 <div class="viewcode-block" id="Noise.generateNoise"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise_kasdin.Noise.generateNoise">[docs]</a>    <span class="k">def</span> <span class="nf">generateNoise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Generate noise time series based on input parameters</span>
@@ -366,32 +371,39 @@
             <span class="k">return</span> <span class="o">-</span><span class="mf">3.0</span></div>
 
 <div class="viewcode-block" id="Noise.adev_from_qd"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise_kasdin.Noise.adev_from_qd">[docs]</a>    <span class="k">def</span> <span class="nf">adev_from_qd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; prefactor for Allan deviation for noise</span>
-<span class="sd">            type defined by (qd, b, tau0)</span>
+        <span class="sd">&quot;&quot;&quot; prefactor for Allan deviation for noise type defined by (qd, b,</span>
+<span class="sd">        tau0)</span>
 
-<span class="sd">            Colored noise generated with (qd, b, tau0) parameters will</span>
-<span class="sd">            show an Allan variance of:</span>
+<span class="sd">        Colored noise generated with (qd, b, tau0) parameters will</span>
+<span class="sd">        show an Allan variance of:</span>
 
-<span class="sd">            AVAR = prefactor * h_a * tau^c</span>
+<span class="sd">        AVAR = prefactor * h_a * tau^c</span>
 
-<span class="sd">            where a = b + 2 is the slope of the frequency PSD.</span>
-<span class="sd">            and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</span>
+<span class="sd">        where a = b + 2 is the slope of the frequency PSD.</span>
+<span class="sd">        and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</span>
 
-<span class="sd">            The relation between a, b, c is:</span>
-<span class="sd">            a   b   c(AVAR) c(MVAR)</span>
-<span class="sd">            -----------------------</span>
-<span class="sd">            -2  -4   1       1</span>
-<span class="sd">            -1  -3   0       0</span>
-<span class="sd">             0  -2  -1      -1</span>
-<span class="sd">            +1  -1  -2      -2</span>
-<span class="sd">            +2   0  -2      -3</span>
+<span class="sd">        The relation between a, b, c is:</span>
 
-<span class="sd">            Coefficients from:</span>
-<span class="sd">            S. T. Dawkins, J. J. McFerran and A. N. Luiten, &quot;Considerations on</span>
-<span class="sd">            the measurement of the stability of oscillators with frequency</span>
-<span class="sd">            counters,&quot; in IEEE Transactions on Ultrasonics, Ferroelectrics, and</span>
-<span class="sd">            Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.</span>
-<span class="sd">            doi: 10.1109/TUFFC.2007.337</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |    a    |    b    | c(AVAR) | c(MVAR) |</span>
+<span class="sd">        +=========+=========+=========+=========+</span>
+<span class="sd">        |   -2    |   -4    |    1    |    1    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |   -1    |   -3    |    0    |    0    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |    0    |   -2    |   -1    |   -1    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |   +1    |   -1    |   -2    |   -2    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |   +2    |    0    |   -2    |   -3    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+
+<span class="sd">        Coefficients from:</span>
+<span class="sd">        S. T. Dawkins, J. J. McFerran and A. N. Luiten, &quot;Considerations on</span>
+<span class="sd">        the measurement of the stability of oscillators with frequency</span>
+<span class="sd">        counters,&quot; in IEEE Transactions on Ultrasonics, Ferroelectrics, and</span>
+<span class="sd">        Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.</span>
+<span class="sd">        doi: 10.1109/TUFFC.2007.337</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">g_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_psd_from_qd</span><span class="p">(</span><span class="n">tau0</span><span class="p">)</span>
@@ -412,31 +424,38 @@
 <div class="viewcode-block" id="Noise.mdev_from_qd"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise_kasdin.Noise.mdev_from_qd">[docs]</a>    <span class="k">def</span> <span class="nf">mdev_from_qd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
         <span class="c1"># FIXME: tau is unused here - can we remove it?</span>
         <span class="sd">&quot;&quot;&quot; prefactor for Modified Allan deviation for noise</span>
-<span class="sd">            type defined by (qd, b, tau0)</span>
+<span class="sd">        type defined by (qd, b, tau0)</span>
 
-<span class="sd">            Colored noise generated with (qd, b, tau0) parameters will</span>
-<span class="sd">            show an Modified Allan variance of:</span>
+<span class="sd">        Colored noise generated with (qd, b, tau0) parameters will</span>
+<span class="sd">        show an Modified Allan variance of:</span>
 
-<span class="sd">            MVAR = prefactor * h_a * tau^c</span>
+<span class="sd">        MVAR = prefactor * h_a * tau^c</span>
 
-<span class="sd">            where a = b + 2 is the slope of the frequency PSD.</span>
-<span class="sd">            and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</span>
+<span class="sd">        where a = b + 2 is the slope of the frequency PSD.</span>
+<span class="sd">        and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</span>
 
-<span class="sd">            The relation between a, b, c is:</span>
-<span class="sd">            a   b   c(AVAR) c(MVAR)</span>
-<span class="sd">            -----------------------</span>
-<span class="sd">            -2  -4   1       1</span>
-<span class="sd">            -1  -3   0       0</span>
-<span class="sd">             0  -2  -1      -1</span>
-<span class="sd">            +1  -1  -2      -2</span>
-<span class="sd">            +2   0  -2      -3</span>
+<span class="sd">        The relation between a, b, c is:</span>
 
-<span class="sd">            Coefficients from:</span>
-<span class="sd">            S. T. Dawkins, J. J. McFerran and A. N. Luiten, &quot;Considerations on</span>
-<span class="sd">            the measurement of the stability of oscillators with frequency</span>
-<span class="sd">            counters,&quot; in IEEE Transactions on Ultrasonics, Ferroelectrics, and</span>
-<span class="sd">            Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.</span>
-<span class="sd">            doi: 10.1109/TUFFC.2007.337</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |    a    |    b    | c(AVAR) | c(MVAR) |</span>
+<span class="sd">        +=========+=========+=========+=========+</span>
+<span class="sd">        |   -2    |   -4    |    1    |    1    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |   -1    |   -3    |    0    |    0    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |    0    |   -2    |   -1    |   -1    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |   +1    |   -1    |   -2    |   -2    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |   +2    |    0    |   -2    |   -3    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+
+<span class="sd">        Coefficients from:</span>
+<span class="sd">        S. T. Dawkins, J. J. McFerran and A. N. Luiten, &quot;Considerations on</span>
+<span class="sd">        the measurement of the stability of oscillators with frequency</span>
+<span class="sd">        counters,&quot; in IEEE Transactions on Ultrasonics, Ferroelectrics, and</span>
+<span class="sd">        Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.</span>
+<span class="sd">        doi: 10.1109/TUFFC.2007.337</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">g_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_psd_from_qd</span><span class="p">(</span><span class="n">tau0</span><span class="p">)</span>

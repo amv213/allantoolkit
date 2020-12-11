@@ -1,0 +1,458 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AllanTools &#8212; AllanToolkit Documentation</title>
+    
+  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="📚 Documentation" href="documentation.html" />
+    <link rel="prev" title="📑 Welcome to AllanToolkit!" href="index.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">AllanToolkit Documentation</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="index.html">
+   📑 Welcome to AllanToolkit!
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  MAIN DOCS
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Readme
+  </a>
+ </li>
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="documentation.html">
+   Documentation
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2 collapsible-parent">
+    <a class="reference internal" href="modules.html">
+     Modules
+    </a>
+    <ul class="collapse-ul">
+     <li class="toctree-l3">
+      <a class="reference internal" href="allantoolkit.html">
+       allantoolkit package
+      </a>
+     </li>
+    </ul>
+    <i class="fas fa-chevron-down">
+    </i>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="references.html">
+     References
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/readme_copy.rst.txt"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.rst</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://gitlab.com/amv213/allantoolkit"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2Freadme_copy.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        <a class="edit-button" href="https://github.com/amv213/allantoolkit/edit/master/docs/source/readme_copy.rst"><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#installation">
+   Installation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#basic-usage">
+   Basic usage
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#minimal-example-phase-data">
+     Minimal example, phase data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#frequency-data-example">
+     Frequency data example
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#jupyter-notebooks-with-examples">
+   Jupyter notebooks with examples
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#authors">
+   Authors
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="allantools">
+<h1>AllanTools<a class="headerlink" href="#allantools" title="Permalink to this headline">¶</a></h1>
+<a class="reference external image-reference" href="https://badge.fury.io/py/AllanTools"><img alt="https://badge.fury.io/py/AllanTools.svg" src="https://badge.fury.io/py/AllanTools.svg" /></a>
+<a class="reference external image-reference" href="https://anaconda.org/conda-forge/allantools"><img alt="https://img.shields.io/conda/vn/conda-forge/allantools.svg" src="https://img.shields.io/conda/vn/conda-forge/allantools.svg" /></a>
+<a class="reference external image-reference" href="https://anaconda.org/conda-forge/allantools"><img alt="https://img.shields.io/conda/dn/conda-forge/allantools.svg" src="https://img.shields.io/conda/dn/conda-forge/allantools.svg" /></a>
+<a class="reference external image-reference" href="https://travis-ci.org/aewallin/allantools"><img alt="https://travis-ci.org/aewallin/allantools.svg?branch=master" src="https://travis-ci.org/aewallin/allantools.svg?branch=master" /></a>
+<a class="reference external image-reference" href="http://allantools.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="http://readthedocs.org/projects/allantools/badge/?version=latest" /></a>
+<a class="reference external image-reference" href="https://coveralls.io/github/aewallin/allantools?branch=master"><img alt="https://coveralls.io/repos/github/aewallin/allantools/badge.svg?branch=master" src="https://coveralls.io/repos/github/aewallin/allantools/badge.svg?branch=master" /></a>
+<p>A python library for calculating Allan deviation and related
+time &amp; frequency statistics. <a class="reference external" href="https://www.gnu.org/licenses/lgpl.html">LGPL v3+ license</a>.</p>
+<ul class="simple">
+<li><p>Development at <a class="reference external" href="https://github.com/aewallin/allantools">https://github.com/aewallin/allantools</a></p></li>
+<li><p>Installation package at <a class="reference external" href="https://pypi.python.org/pypi/AllanTools">https://pypi.python.org/pypi/AllanTools</a></p></li>
+<li><p>Discussion group at <a class="reference external" href="https://groups.google.com/d/forum/allantools">https://groups.google.com/d/forum/allantools</a></p></li>
+<li><p>Documentation available at <a class="reference external" href="https://allantools.readthedocs.org">https://allantools.readthedocs.org</a></p></li>
+</ul>
+<p>Input data should be evenly spaced observations of either fractional frequency,
+or phase in seconds. Deviations are calculated for given tau values in seconds.</p>
+<table class="table">
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 58%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">adev()</span></code></p></td>
+<td><p>Allan deviation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oadev()</span></code></p></td>
+<td><p>Overlapping Allan deviation</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mdev()</span></code></p></td>
+<td><p>Modified Allan deviation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tdev()</span></code></p></td>
+<td><p>Time deviation</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hdev()</span></code></p></td>
+<td><p>Hadamard deviation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ohdev()</span></code></p></td>
+<td><p>Overlapping Hadamard deviation</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">totdev()</span></code></p></td>
+<td><p>Total deviation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mtotdev()</span></code></p></td>
+<td><p>Modified total deviation</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ttotdev()</span></code></p></td>
+<td><p>Time total deviation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">htotdev()</span></code></p></td>
+<td><p>Hadamard total deviation</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">theo1()</span></code></p></td>
+<td><p>Theo1 deviation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mtie()</span></code></p></td>
+<td><p>Maximum Time Interval Error</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tierms()</span></code></p></td>
+<td><p>Time Interval Error RMS</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gradev()</span></code></p></td>
+<td><p>Gap resistant overlapping Allan deviation</p></td>
+</tr>
+</tbody>
+</table>
+<p>Noise generators for creating synthetic datasets are also included:</p>
+<ul class="simple">
+<li><p>violet noise with f^2 PSD</p></li>
+<li><p>white noise with f^0 PSD</p></li>
+<li><p>pink noise with f^-1 PSD</p></li>
+<li><p>Brownian or random walk noise with f^-2 PSD</p></li>
+</ul>
+<p>More details on available statistics and noise generators : <a class="reference external" href="functions.html">full list of available functions</a></p>
+<p>see /tests for tests that compare allantools output to other
+(e.g. Stable32) programs. More test data, benchmarks, ipython notebooks,
+and comparisons to known-good algorithms are welcome!</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Install from pypi:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">allantools</span>
+</pre></div>
+</div>
+<p>Latest version + examples, tests, test data, iPython notebooks : clone from github, then install</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p>(see <cite>python setup.py –help install</cite> for install options)</p>
+<p>These commands should be run as root for system-wide installation, or
+you can use the <cite>–user</cite> option to install for your account only.
+Exact command names may vary depending on your OS / package manager / target python version.</p>
+</div>
+<div class="section" id="basic-usage">
+<h2>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="minimal-example-phase-data">
+<h3>Minimal example, phase data<a class="headerlink" href="#minimal-example-phase-data" title="Permalink to this headline">¶</a></h3>
+<p>We can call allantools with only one parameter - an array of phase data.
+This is suitable for time-interval measurements at 1 Hz, for example
+from a time-interval-counter measuring the 1PPS output of two clocks.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">allantools</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>        <span class="c1"># Generate some phase data, in seconds.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="n">adevs</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>when only one input parameter is given, phase data in seconds is assumed
+when no rate parameter is given, rate=1.0 is the default
+when no taus parameter is given, taus=’octave’ is the default</p>
+</div>
+<div class="section" id="frequency-data-example">
+<h3>Frequency data example<a class="headerlink" href="#frequency-data-example" title="Permalink to this headline">¶</a></h3>
+<p>Note that allantools assumes non-dimensional frequency data input.
+Normalization, by e.g. dividing all data points with the average
+frequency, is left to the user.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">allantools</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>  <span class="c1"># tau values from 1 to 1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>  <span class="c1"># Generate some frequency data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="mf">12.3</span>  <span class="c1"># sample rate in Hz of the input data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">ade</span><span class="p">,</span> <span class="n">adn</span><span class="p">)</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>  <span class="c1"># Compute the overlapping ADEV</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="n">ad</span><span class="p">)</span> <span class="c1"># Plot the results</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># plt.show()</span>
+</pre></div>
+</div>
+<p><em>New in 2016.11</em> : simple top-level <a class="reference external" href="api.html">API</a>, using dedicated classes for data handling and plotting.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantools</span> <span class="c1"># https://github.com/aewallin/allantools/</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># Compute a deviation using the Dataset class</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>
+<span class="n">a</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="s2">&quot;mdev&quot;</span><span class="p">)</span>
+
+<span class="c1"># New in 2019.7 : write results to file</span>
+<span class="n">a</span><span class="o">.</span><span class="n">write_results</span><span class="p">(</span><span class="s2">&quot;output.dat&quot;</span><span class="p">)</span>
+
+<span class="c1"># Plot it using the Plot class</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">Plot</span><span class="p">()</span>
+<span class="c1"># New in 2019.7 : additional keyword arguments are passed to</span>
+<span class="c1"># matplotlib.pyplot.plot()</span>
+<span class="n">b</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">errorbars</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># You can override defaults before &quot;show&quot; if needed</span>
+<span class="n">b</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Tau (s)&quot;</span><span class="p">)</span>
+<span class="n">b</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="jupyter-notebooks-with-examples">
+<h2>Jupyter notebooks with examples<a class="headerlink" href="#jupyter-notebooks-with-examples" title="Permalink to this headline">¶</a></h2>
+<p>Jupyter notebooks are interactive python scripts, embedded in a browser,
+allowing you to manipulate data and display plots like easily. For guidance
+on installing jupyter, please refer to <a class="reference external" href="https://jupyter.org/install">https://jupyter.org/install</a>.</p>
+<p>See /examples for some examples in notebook format.</p>
+<p>github formats the notebooks into nice web-pages, for example</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb">https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb</a></p></li>
+<li><p><a class="reference external" href="https://github.com/aewallin/allantools/blob/master/examples/three-cornered-hat-demo.ipynb">https://github.com/aewallin/allantools/blob/master/examples/three-cornered-hat-demo.ipynb</a></p></li>
+</ul>
+</div>
+<div class="section" id="authors">
+<h2>Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Anders E.E. Wallin, anders.e.e.wallin “at” gmail.com , <a class="reference external" href="https://github.com/aewallin">https://github.com/aewallin</a></p></li>
+<li><p>Danny Price, <a class="reference external" href="https://github.com/telegraphic">https://github.com/telegraphic</a></p></li>
+<li><p>Cantwell G. Carson, carsonc “at” gmail.com</p></li>
+<li><p>Frédéric Meynadier, <a class="reference external" href="https://github.com/fmeynadier">https://github.com/fmeynadier</a></p></li>
+<li><p>Yan Xie, <a class="reference external" href="https://github.com/yxie-git">https://github.com/yxie-git</a></p></li>
+<li><p>Erik Benkler, <a class="reference external" href="https://github.com/EBenkler">https://github.com/EBenkler</a></p></li>
+</ul>
+</div>
+</div>
+
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="index.html" title="previous page">📑 Welcome to AllanToolkit!</a>
+    <a class='right-next' id="next-link" href="documentation.html" title="next page">📚 Documentation</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Alvise Vianello<br/>
+        
+            &copy; Copyright 2020, Alvise Vianello.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>

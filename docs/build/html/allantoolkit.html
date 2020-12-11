@@ -82,6 +82,11 @@
  </span>
 </p>
 <ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="readme_copy.html">
+   Readme
+  </a>
+ </li>
  <li class="toctree-l1 current active collapsible-parent">
   <a class="reference internal" href="documentation.html">
    Documentation
@@ -1269,60 +1274,21 @@ alpha = b + 2</p>
 <dt id="allantoolkit.ci.b1_theory">
 <code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">b1_theory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">mu</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#b1_theory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.b1_theory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Expected B1 ratio for given time-series length N and exponent mu</p>
-<blockquote>
-<div><p>FIXME: add reference (paper &amp; link)</p>
+<p>FIXME: add reference (paper &amp; link)</p>
 <p>The exponents are defined as
 S_y(f) = h_a f^alpha    (power spectrum of y)
 S_x(f) = g_b f^b        (power spectrum of x)
 bias = const * tau^mu</p>
 <p>and (b, alpha, mu) relate to eachother by:
 b    alpha   mu
-0    +2      -2</p>
-</div></blockquote>
-<dl class="option-list">
-<dt><kbd><span class="option">-1</span></kbd></dt>
-<dd><dl class="option-list">
-<dt><kbd><span class="option">+1</span></kbd></dt>
-<dd><dl class="option-list">
-<dt><kbd><span class="option">-2</span></kbd></dt>
-<dd><p>resolve between -2 cases with R(n)</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt><kbd><span class="option">-2</span></kbd></dt>
-<dd><p>0      -1</p>
-</dd>
-<dt><kbd><span class="option">-3</span></kbd></dt>
-<dd><dl class="option-list">
-<dt><kbd><span class="option">-1</span></kbd></dt>
-<dd><p>0</p>
-</dd>
-</dl>
-</dd>
-<dt><kbd><span class="option">-4</span></kbd></dt>
-<dd><dl class="option-list">
-<dt><kbd><span class="option">-2</span></kbd></dt>
-<dd><p>+1</p>
-</dd>
-</dl>
-</dd>
-<dt><kbd><span class="option">-5</span></kbd></dt>
-<dd><dl class="option-list">
-<dt><kbd><span class="option">-3</span></kbd></dt>
-<dd><p>+2</p>
-</dd>
-</dl>
-</dd>
-<dt><kbd><span class="option">-6</span></kbd></dt>
-<dd><dl class="option-list">
-<dt><kbd><span class="option">-4</span></kbd></dt>
-<dd><p>+3 for HDEV, by applying B1 to frequency data, and add +2 to resulting mu</p>
-</dd>
-</dl>
-</dd>
-</dl>
+0    +2      -2
+-1    +1      -2   resolve between -2 cases with R(n)
+-2     0      -1
+-3    -1       0
+-4    -2      +1
+-5    -3      +2
+-6    -4      +3 for HDEV, by applying B1 to frequency data, and add +2
+to resulting mu</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1345,12 +1311,9 @@ and degree of confidence ci.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dev</strong> (<em>float</em>) – Mean value (e.g. adev) around which we produce the confidence interval</p></li>
 <li><p><strong>edf</strong> (<em>float</em>) – Equivalent degrees of freedon</p></li>
-<li><p><strong>ci</strong> (<em>float</em><em>, </em><em>defaults to scipy.special.erf</em><em>(</em><em>1/math.sqrt</em><em>(</em><em>2</em><em>)</em><em>)</em>) – <p>for 1-sigma standard error set
-ci = scipy.special.erf(1/math.sqrt(2))</p>
-<blockquote>
-<div><p>= 0.68268949213708585</p>
-</div></blockquote>
-</p></li>
+<li><p><strong>ci</strong> (<em>float</em><em>, </em><em>defaults to scipy.special.erf</em><em>(</em><em>1/math.sqrt</em><em>(</em><em>2</em><em>)</em><em>) </em><em>for 1-sigma</em>) – </p></li>
+<li><p><strong>error set ci = scipy.special.erf</strong><strong>(</strong><strong>1/math.sqrt</strong><strong>(</strong><strong>2</strong><strong>)</strong><strong>) </strong><strong>=</strong> (<em>standard</em>) – </p></li>
+<li><p><strong>0.68268949213708585</strong> – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1381,12 +1344,9 @@ ci = scipy.special.erf(1/math.sqrt(2))</p>
 <li><p><strong>af</strong> (<em>int</em>) – averaging factor</p></li>
 <li><p><strong>dev_type</strong> (<em>string</em>) – adev, oadev, mdev, tdev, hdev, ohdev</p></li>
 <li><p><strong>data_type</strong> – “phase” or “freq”</p></li>
-<li><p><strong>ci</strong> (<em>float</em><em>, </em><em>defaults to scipy.special.erf</em><em>(</em><em>1/math.sqrt</em><em>(</em><em>2</em><em>)</em><em>)</em>) – <p>for 1-sigma standard error set
-ci = scipy.special.erf(1/math.sqrt(2))</p>
-<blockquote>
-<div><p>= 0.68268949213708585</p>
-</div></blockquote>
-</p></li>
+<li><p><strong>ci</strong> (<em>float</em><em>, </em><em>defaults to scipy.special.erf</em><em>(</em><em>1/math.sqrt</em><em>(</em><em>2</em><em>)</em><em>) </em><em>for 1-sigma</em>) – </p></li>
+<li><p><strong>error set ci = scipy.special.erf</strong><strong>(</strong><strong>1/math.sqrt</strong><strong>(</strong><strong>2</strong><strong>)</strong><strong>) </strong><strong>=</strong> (<em>standard</em>) – </p></li>
+<li><p><strong>0.68268949213708585</strong> – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1742,14 +1702,20 @@ set of these samples will tend to have a 1/f power spectrum.</p>
 <dl class="py function">
 <dt id="allantoolkit.noise.numpy_psd">
 <code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">numpy_psd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">f_sample</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#numpy_psd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.numpy_psd" title="Permalink to this definition">¶</a></dt>
-<dd><p>calculate power spectral density of input signal x
-x = signal
-f_sample = sampling frequency in Hz. i.e. 1/fs is the time-interval</p>
-<blockquote>
-<div><p>in seconds between datapoints</p>
-</div></blockquote>
-<p>scale fft so that output corresponds to 1-sided PSD
-output has units of [X^2/Hz] where X is the unit of x</p>
+<dd><p>calculate power spectral density of input signal x</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – signal</p></li>
+<li><p><strong>f_sample</strong> – sampling frequency in Hz. i.e. 1/fs is the time-interval
+in seconds between datapoints</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>scale fft so that output corresponds to 1-sided PSD output has units
+of [X^2/Hz] where X is the unit of x</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1821,37 +1787,56 @@ oscillator stability evaluation],” Frequency Control Symposium, 1992.
 <dl class="py method">
 <dt id="allantoolkit.noise_kasdin.Noise.adev_from_qd">
 <code class="sig-name descname">adev_from_qd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau0</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise.adev_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise.adev_from_qd" title="Permalink to this definition">¶</a></dt>
-<dd><p>prefactor for Allan deviation for noise
-type defined by (qd, b, tau0)</p>
+<dd><p>prefactor for Allan deviation for noise type defined by (qd, b,
+tau0)</p>
 <p>Colored noise generated with (qd, b, tau0) parameters will
 show an Allan variance of:</p>
 <p>AVAR = prefactor * h_a * tau^c</p>
 <p>where a = b + 2 is the slope of the frequency PSD.
 and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</p>
-<p>The relation between a, b, c is:
-a   b   c(AVAR) c(MVAR)
-———————–
--2  -4   1       1
--1  -3   0       0</p>
-<blockquote>
-<div><p>0  -2  -1      -1</p>
-</div></blockquote>
-<dl class="option-list">
-<dt><kbd><span class="option">+1</span></kbd></dt>
-<dd><dl class="option-list">
-<dt><kbd><span class="option">-1</span></kbd></dt>
-<dd><dl class="option-list">
-<dt><kbd><span class="option">-2</span></kbd></dt>
-<dd><p>-2</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt><kbd><span class="option">+2</span></kbd></dt>
-<dd><p>0  -2      -3</p>
-</dd>
-</dl>
+<p>The relation between a, b, c is:</p>
+<table class="table">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>a</p></th>
+<th class="head"><p>b</p></th>
+<th class="head"><p>c(AVAR)</p></th>
+<th class="head"><p>c(MVAR)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>-2</p></td>
+<td><p>-4</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>-1</p></td>
+<td><p>-3</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>-2</p></td>
+<td><p>-1</p></td>
+<td><p>-1</p></td>
+</tr>
+<tr class="row-odd"><td><p>+1</p></td>
+<td><p>-1</p></td>
+<td><p>-2</p></td>
+<td><p>-2</p></td>
+</tr>
+<tr class="row-even"><td><p>+2</p></td>
+<td><p>0</p></td>
+<td><p>-2</p></td>
+<td><p>-3</p></td>
+</tr>
+</tbody>
+</table>
 <p>Coefficients from:
 S. T. Dawkins, J. J. McFerran and A. N. Luiten, “Considerations on
 the measurement of the stability of oscillators with frequency
@@ -1918,30 +1903,49 @@ show an Modified Allan variance of:</p>
 <p>MVAR = prefactor * h_a * tau^c</p>
 <p>where a = b + 2 is the slope of the frequency PSD.
 and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</p>
-<p>The relation between a, b, c is:
-a   b   c(AVAR) c(MVAR)
-———————–
--2  -4   1       1
--1  -3   0       0</p>
-<blockquote>
-<div><p>0  -2  -1      -1</p>
-</div></blockquote>
-<dl class="option-list">
-<dt><kbd><span class="option">+1</span></kbd></dt>
-<dd><dl class="option-list">
-<dt><kbd><span class="option">-1</span></kbd></dt>
-<dd><dl class="option-list">
-<dt><kbd><span class="option">-2</span></kbd></dt>
-<dd><p>-2</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-<dt><kbd><span class="option">+2</span></kbd></dt>
-<dd><p>0  -2      -3</p>
-</dd>
-</dl>
+<p>The relation between a, b, c is:</p>
+<table class="table">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>a</p></th>
+<th class="head"><p>b</p></th>
+<th class="head"><p>c(AVAR)</p></th>
+<th class="head"><p>c(MVAR)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>-2</p></td>
+<td><p>-4</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>-1</p></td>
+<td><p>-3</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>-2</p></td>
+<td><p>-1</p></td>
+<td><p>-1</p></td>
+</tr>
+<tr class="row-odd"><td><p>+1</p></td>
+<td><p>-1</p></td>
+<td><p>-2</p></td>
+<td><p>-2</p></td>
+</tr>
+<tr class="row-even"><td><p>+2</p></td>
+<td><p>0</p></td>
+<td><p>-2</p></td>
+<td><p>-3</p></td>
+</tr>
+</tbody>
+</table>
 <p>Coefficients from:
 S. T. Dawkins, J. J. McFerran and A. N. Luiten, “Considerations on
 the measurement of the stability of oscillators with frequency
@@ -1972,11 +1976,9 @@ S_x(f) = Phase_PSD(f) = g_b * f^b</p>
 <li><p><strong>nr</strong> (<em>integer</em>) – length of generated time-series
 number must be power of two</p></li>
 <li><p><strong>qd</strong> (<em>float</em>) – discrete variance</p></li>
-<li><p><strong>b</strong> (<em>float</em>) – <dl>
-<dt>noise type:</dt><dd><blockquote>
-<div><p>0 : White Phase Modulation (WPM)</p>
-</div></blockquote>
-<p>-1 : Flicker Phase Modulation (FPM)
+<li><p><strong>b</strong> (<em>float</em>) – <dl class="simple">
+<dt>noise type:</dt><dd><p>0 : White Phase Modulation (WPM)
+-1 : Flicker Phase Modulation (FPM)
 -2 : White Frequency Modulation (WFM)
 -3 : Flicker Frequency Modulation (FFM)
 -4 : Random Walk Frequency Modulation (RWFM)</p>

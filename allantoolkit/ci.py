@@ -30,10 +30,9 @@ def confidence_interval(dev, edf, ci=ONE_SIGMA_CI):
         Mean value (e.g. adev) around which we produce the confidence interval
     edf: float
         Equivalent degrees of freedon
-    ci: float, defaults to scipy.special.erf(1/math.sqrt(2))
-        for 1-sigma standard error set
-        ci = scipy.special.erf(1/math.sqrt(2))
-            = 0.68268949213708585
+    ci: float, defaults to scipy.special.erf(1/math.sqrt(2)) for 1-sigma
+    standard error set ci = scipy.special.erf(1/math.sqrt(2)) =
+    0.68268949213708585
 
     Returns
     -------
@@ -75,10 +74,9 @@ def confidence_interval_noiseID(x, dev, af, dev_type="adev", data_type="phase", 
         adev, oadev, mdev, tdev, hdev, ohdev
     data_type:
         "phase" or "freq"
-    ci: float, defaults to scipy.special.erf(1/math.sqrt(2))
-        for 1-sigma standard error set
-        ci = scipy.special.erf(1/math.sqrt(2))
-            = 0.68268949213708585
+    ci: float, defaults to scipy.special.erf(1/math.sqrt(2)) for 1-sigma
+    standard error set ci = scipy.special.erf(1/math.sqrt(2)) =
+    0.68268949213708585
 
     Returns
     -------
@@ -206,22 +204,23 @@ def b1(x, af, rate):
 def b1_theory(N, mu):
     """ Expected B1 ratio for given time-series length N and exponent mu
 
-        FIXME: add reference (paper & link)
+    FIXME: add reference (paper & link)
 
-        The exponents are defined as
-        S_y(f) = h_a f^alpha    (power spectrum of y)
-        S_x(f) = g_b f^b        (power spectrum of x)
-        bias = const * tau^mu
+    The exponents are defined as
+    S_y(f) = h_a f^alpha    (power spectrum of y)
+    S_x(f) = g_b f^b        (power spectrum of x)
+    bias = const * tau^mu
 
-        and (b, alpha, mu) relate to eachother by:
-        b    alpha   mu
-        0    +2      -2
-       -1    +1      -2   resolve between -2 cases with R(n)
-       -2     0      -1
-       -3    -1       0
-       -4    -2      +1
-       -5    -3      +2
-       -6    -4      +3 for HDEV, by applying B1 to frequency data, and add +2 to resulting mu
+    and (b, alpha, mu) relate to eachother by:
+    b    alpha   mu
+    0    +2      -2
+    -1    +1      -2   resolve between -2 cases with R(n)
+    -2     0      -1
+    -3    -1       0
+    -4    -2      +1
+    -5    -3      +2
+    -6    -4      +3 for HDEV, by applying B1 to frequency data, and add +2
+    to resulting mu
     """
 
     # see Table 3 of Howe 2000

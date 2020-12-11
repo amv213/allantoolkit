@@ -16,11 +16,15 @@ logger = logging.getLogger(__name__)
 
 def numpy_psd(x, f_sample=1.0):
     """ calculate power spectral density of input signal x
-        x = signal
-        f_sample = sampling frequency in Hz. i.e. 1/fs is the time-interval
-             in seconds between datapoints
-        scale fft so that output corresponds to 1-sided PSD
-        output has units of [X^2/Hz] where X is the unit of x
+
+    Args:
+        x:          signal
+        f_sample:   sampling frequency in Hz. i.e. 1/fs is the time-interval
+                    in seconds between datapoints
+
+    Returns:
+        scale fft so that output corresponds to 1-sided PSD output has units
+        of [X^2/Hz] where X is the unit of x
     """
     psd_of_x = (2.0/ (float(len(x)) * f_sample)) * numpy.abs(numpy.fft.rfft(x))**2
     f_axis = numpy.linspace(0, f_sample/2.0, len(psd_of_x)) # frequency axis

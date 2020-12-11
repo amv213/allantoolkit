@@ -81,6 +81,7 @@ new dependency: scipy.stats.chi2()
 import logging
 import numpy as np
 from . import ci  # edf, confidence intervals
+from typing import List, Tuple, Union
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -1485,7 +1486,8 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
 
     return data, m, taus2
 
-def tau_reduction(ms, rate, n_per_decade):
+def tau_reduction(ms: np.ndarray, rate: float, n_per_decade: int) -> Tuple[
+    np.ndarray, np.ndarray]:
     """Reduce the number of taus to maximum of n per decade (Helper function)
 
     takes in a tau list and reduces the number of taus to a maximum amount per
@@ -1528,7 +1530,12 @@ def tau_reduction(ms, rate, n_per_decade):
 
     return ms, taus
 
-def remove_small_ns(taus, devs, deverrs, ns):
+
+def remove_small_ns(taus: np.ndarray, devs: np.ndarray,
+                    deverrs: Union[List[np.ndarray], np.ndarray],
+                    ns: np.ndarray) -> Tuple[np.ndarray, np.ndarray,
+                                             Union[List[np.ndarray], np.ndarray],
+                                             np.ndarray]:
     """ Remove results with small number of samples.
         If n is small (==1), reject the result
 

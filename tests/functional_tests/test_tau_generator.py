@@ -1,6 +1,4 @@
-#!/usr/bin/python
-
-import allantoolkit as at
+import allantoolkit.allantools as at
 import numpy as np
 import pytest
 
@@ -55,14 +53,14 @@ def test_tau_generator_numpy1234():
 
 
 def test_tau_reduction_10():
-    (ms, taus) = at.allantools.tau_reduction(ms=expected_all, rate=r,
+    (ms, taus) = at.tau_reduction(ms=expected_all, rate=r,
                                              n_per_decade=10)
     print(ms, taus)
     np.testing.assert_allclose(expected_reduced_10, ms)
 
 
 def test_tau_reduction_2():
-    (ms, taus) = at.allantools.tau_reduction(ms=expected_all, rate=r,
+    (ms, taus) = at.tau_reduction(ms=expected_all, rate=r,
                                              n_per_decade=2)
     print(ms, taus)
     np.testing.assert_allclose(expected_reduced_2, ms)
@@ -71,14 +69,3 @@ def test_tau_reduction_2():
 def test_zero_rate():
     with pytest.raises(RuntimeError):
         at.adev(d, rate=0.0)
-
-
-if __name__ == "__main__":
-    test_tau_generator_empty()
-    test_tau_generator_all()
-    test_tau_generator_octave()
-    test_tau_generator_decade()
-    test_tau_generator_1234()
-    test_tau_reduction_10()
-    test_tau_reduction_2()
-    test_zero_rate()

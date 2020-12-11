@@ -25,6 +25,7 @@ def test_4params():
     np.testing.assert_array_equal(o_deverrs, deverrs_l[:last_i])
     np.testing.assert_array_equal(o_ns, ns[:last_i])
 
+
 def test_5params():
     (o_taus, o_devs, [o_deverrs_l, o_deverrs_h], o_ns) = at.remove_small_ns(
         taus, devs, [deverrs_l, deverrs_h], ns)
@@ -34,5 +35,3 @@ def test_5params():
     np.testing.assert_array_equal(o_deverrs_h, deverrs_h[:last_i])
     np.testing.assert_array_equal(o_ns, ns[:last_i])
 
-if __name__ == "__main__":
-    pytest.main()

@@ -1,5 +1,4 @@
-#!/usr/bin/python
-import allantoolkit as at
+import allantoolkit.allantools as at
 import numpy as np
 
 N = 128
@@ -21,6 +20,3 @@ def test_array_with_holes():
     output = at.trim_data(array_with_holes)
     np.testing.assert_array_equal(expected_trimmed_array, output)
 
-if __name__ == "__main__":
-    test_full_array()
-    test_array_with_holes()

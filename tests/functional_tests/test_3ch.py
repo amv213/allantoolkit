@@ -1,6 +1,3 @@
-#!/usr/bin/python
-
-import sys
 import allantoolkit as at
 import numpy as np
 
@@ -16,10 +13,8 @@ ab = at.noise.white(N)
 bc = at.noise.white(N)
 ca = at.noise.white(N)
 
-def test_3ch_1():
-    (t,d,e,n) = at.three_cornered_hat_phase(ab, bc, ca, rate=r, 
-                                       taus='decade', function=at.oadev)
-    np.testing.assert_array_equal(t, expected_decade)
 
-if __name__ == "__main__":
-    test_3ch_1()
+def test_3ch_1():
+    (t, d, e, n) = at.allantools.three_cornered_hat_phase(
+        ab, bc, ca, rate=r, taus='decade', function=at.allantools.oadev)
+    np.testing.assert_array_equal(t, expected_decade)

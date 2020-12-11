@@ -25,6 +25,7 @@ Welcome to `allantoolkit`!
 
 Readme <readme_copy>
 Documentation <documentation.md>
+Development <dev.rst>
 ```
 
 ```{toctree}

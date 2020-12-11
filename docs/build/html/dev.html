@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>📑 Welcome to AllanToolkit! &#8212; AllanToolkit Documentation</title>
+    <title>Development &#8212; AllanToolkit Documentation</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -40,7 +40,7 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="AllanTools" href="readme_copy.html" />
+    <link rel="prev" title="References" href="references.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -57,7 +57,7 @@
 <div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
     
         <div class="navbar-brand-box">
-<a class="navbar-brand text-wrap" href="#">
+<a class="navbar-brand text-wrap" href="index.html">
   
   
   <h1 class="site-logo" id="site-title">AllanToolkit Documentation</h1>
@@ -69,8 +69,8 @@
 </form>
 <nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
     <ul class="nav sidenav_l1">
- <li class="toctree-l1 current active">
-  <a class="reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="index.html">
    📑 Welcome to AllanToolkit!
   </a>
  </li>
@@ -80,7 +80,7 @@
   MAIN DOCS
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="current nav sidenav_l1">
  <li class="toctree-l1">
   <a class="reference internal" href="readme_copy.html">
    Readme
@@ -124,8 +124,8 @@
   <i class="fas fa-chevron-down">
   </i>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="dev.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    Development
   </a>
  </li>
@@ -164,9 +164,9 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/index.md.txt"><button type="button"
+        <a class="dropdown-buttons" href="_sources/dev.rst.txt"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.md</button></a>
+                data-placement="left">.rst</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
@@ -184,10 +184,10 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2Findex.html&body=Your%20issue%20content%20here."><button
+            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2Fdev.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
-        <a class="edit-button" href="https://github.com/amv213/allantoolkit/edit/master/docs/source/index.md"><button
+        <a class="edit-button" href="https://github.com/amv213/allantoolkit/edit/master/docs/source/dev.rst"><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
     </div>
@@ -213,21 +213,24 @@
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#features">
-   🔥 Features
+  <a class="reference internal nav-link" href="#to-do-list">
+   To-do list
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#quick-start">
-   🚀 Quick Start
+  <a class="reference internal nav-link" href="#documentation-generation">
+   Documentation generation
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#table-of-contents">
-   📚 Table of Contents
+  <a class="reference internal nav-link" href="#tests">
+   Tests
   </a>
-  <ul class="nav section-nav flex-column">
-  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#notes-for-pypi">
+   Notes for Pypi
+  </a>
  </li>
 </ul>
 
@@ -240,54 +243,125 @@
         
               <div>
                 
-  <div class="section" id="welcome-to-allantoolkit">
-<h1>📑 Welcome to AllanToolkit!<a class="headerlink" href="#welcome-to-allantoolkit" title="Permalink to this headline">¶</a></h1>
-<p>Welcome to <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code>!</p>
-<div class="section" id="features">
-<h2>🔥 Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
-</div>
-<hr class="docutils" />
-<div class="section" id="quick-start">
-<h2>🚀 Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
-<ol>
-<li><p>📚 Install <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> like any other python package, using pip to download it
-from PyPI:</p>
+  <div class="section" id="development">
+<h1>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="to-do-list">
+<h2>To-do list<a class="headerlink" href="#to-do-list" title="Permalink to this headline">¶</a></h2>
+<p>Here follows an un-ordered to do list:</p>
+<ul>
+<li><p>Statistics and core algorithms</p>
 <blockquote>
-<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install allantoolkit
-</pre></div>
-</div>
+<div><ul class="simple">
+<li><p>The mtie_phase_fast approach to MTIE, using a binary tree (see BREGNI reference)</p></li>
+<li><p>TheoH</p></li>
+<li><p>Confidence intervals based on identified noise-type and equivalent degrees of freedom.</p></li>
+<li><p>Bias corrections for biased statistics (totdev, mtotdev, htotdev, theo1)</p></li>
+<li><p>Multi-threading for faster processing of (very) large datasets</p></li>
+<li><p>Faster algorithms for mtotdev() and htotdev() which are currently very slow</p></li>
+</ul>
 </div></blockquote>
 </li>
-</ol>
+<li><p>Improve documentation</p></li>
+<li><p>Improve packaging for PyPi and/or other packaging systems: Conda?, PPA for Ubuntu/Debian?</p></li>
+<li><p>Tests for different noise types according to IEEE 1139, include power-spectral-density calculations</p></li>
+<li><p>Conversion between phase noise and Allan variance</p></li>
+<li><p>Phase noise calculations and plots</p></li>
+<li><p>Comparison to other libraries such as GPSTk</p></li>
+</ul>
+<p>Make sure your patch does not break any of the tests, and does not
+significantly reduce the readability of the code.</p>
 </div>
-<div class="section" id="table-of-contents">
-<h2>📚 Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">MAIN DOCS</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="readme_copy.html">Readme</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="readme_copy.html#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="readme_copy.html#basic-usage">Basic usage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="readme_copy.html#jupyter-notebooks-with-examples">Jupyter notebooks with examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="readme_copy.html#authors">Authors</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="documentation.html">Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="documentation.html#source-allantoolkit-documentation">📔 Source AllanToolkit Documentation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="documentation.html#logging">📃 Logging</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="dev.html">Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="dev.html#to-do-list">To-do list</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dev.html#documentation-generation">Documentation generation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dev.html#tests">Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dev.html#notes-for-pypi">Notes for Pypi</a></li>
-</ul>
-</li>
+<div class="section" id="documentation-generation">
+<h2>Documentation generation<a class="headerlink" href="#documentation-generation" title="Permalink to this headline">¶</a></h2>
+<p>See /docs for documentation in sphinx format. On Ubuntu this requires
+the <strong>python-sphinx</strong> and <strong>python-numpydoc</strong> packages.
+html/pdf documentation using sphinx can be built locally with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/docs$ make html
+/docs$ make latexpdf
+</pre></div>
+</div>
+<p>this generates html documentation in docs/_build/html and pdf
+documentation in docs/_build/latex.</p>
+<p>The sphinx documentation is also auto-generated online</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://allantools.readthedocs.org">https://allantools.readthedocs.org</a></p></li>
 </ul>
 </div>
-<div class="toctree-wrapper compound">
+<div class="section" id="tests">
+<h2>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
+<p>The tests compare the output of allantools to other programs such
+as Stable32. Tests may be run using py.test (<a class="reference external" href="http://pytest.org">http://pytest.org</a>).
+Package managers may install it with different binary names (e.g. pytest-3
+for the python3 version on debian).</p>
+<p>Slow tests are marked ‘slow’ and tests failing because of a known
+reason are marked ‘fails’. To run all tests:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ py.test
+</pre></div>
 </div>
+<p>To exclude known failing tests:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ py.test -m &quot;not fails&quot; --durations=10
+</pre></div>
+</div>
+<p>To exclude tests that run slowly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ py.test -m &quot;not slow&quot; --durations=10
+</pre></div>
+</div>
+<p>To exclude both (note option change) and also check docstrings is ReST files</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ py.test -k &quot;not (slow or fails)&quot; --durations=10 --doctest-glob=&#39;*.rst&#39;
+</pre></div>
+</div>
+<p>To run the above command without installing the package:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python setup.py test --addopts &quot;-k &#39;not (fails or slow)&#39;&quot;
+</pre></div>
+</div>
+<p>Test coverage may be obtained with the
+(<a class="reference external" href="https://pypi.python.org/pypi/coverage">https://pypi.python.org/pypi/coverage</a>) module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">coverage</span> <span class="n">run</span> <span class="o">--</span><span class="n">source</span> <span class="n">allantools</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">test</span> <span class="o">--</span><span class="n">addopts</span> <span class="s2">&quot;-k &#39;not (fails or slow)&#39;&quot;</span>
+<span class="n">coverage</span> <span class="n">report</span> <span class="c1"># Reports on standard output</span>
+<span class="n">coverage</span> <span class="n">html</span> <span class="c1"># Writes annotated source code as html in ./htmlcov/</span>
+</pre></div>
+</div>
+<p>On Ubuntu this requires packages <strong>python-pytest</strong> and
+<strong>python-coverage</strong>.</p>
+<p>Testing on multiple python versions can be done with tox (<a class="reference external" href="https://testrun.org/tox">https://testrun.org/tox</a>)</p>
+<blockquote>
+<div><p>$ tox</p>
+</div></blockquote>
+<p>Tests run continuously on Travis-CI at <a class="reference external" href="https://travis-ci.org/aewallin/allantools">https://travis-ci.org/aewallin/allantools</a></p>
+</div>
+<div class="section" id="notes-for-pypi">
+<h2>Notes for Pypi<a class="headerlink" href="#notes-for-pypi" title="Permalink to this headline">¶</a></h2>
+<p>Creating a source distribution</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">sdist</span>
+</pre></div>
+</div>
+<p>This creates a package in dist/
+Testing the source distribution. The install takes a long time while
+compiling numpy and scipy.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ virtualenv tmp
+    $ tmp/bin/pip install dist/AllanTools-2016.2.tar.gz
+    $ tmp/bin/python
+    &gt;&gt;&gt; import allantoolkit
+
+Uploading to PyPi.
+(requries a ~/.pypirc with username and password)
+    $ tmp/bin/pip install dist/AllanTools-2016.2.tar.gz
+    $ tmp/bin/python
+    &gt;&gt;&gt; import allantoolkit
+
+Uploading to PyPi.
+(requries a ~/.pypirc with username and password)
+$ tmp/bin/pip install dist/AllanTools-2016.2.tar.gz
+$ tmp/bin/python
+&gt;&gt;&gt; import allantools
+</pre></div>
+</div>
+<p>Uploading to PyPi.
+(requries a ~/.pypirc with username and password)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ twine upload dist/*
+</pre></div>
+</div>
+<p>Check result at <a class="reference external" href="https://pypi.python.org/pypi/AllanTools">https://pypi.python.org/pypi/AllanTools</a></p>
 </div>
 </div>
 
@@ -300,7 +374,7 @@ from PyPI:</p>
     
     <div class='prev-next-bottom'>
         
-    <a class='right-next' id="next-link" href="readme_copy.html" title="next page">AllanTools</a>
+    <a class='left-prev' id="prev-link" href="references.html" title="previous page">References</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

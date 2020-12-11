@@ -3,11 +3,6 @@ import tempfile
 import pytest
 
 
-@pytest.fixture
-def dataset():
-    return allantoolkit.dataset.Dataset(allantoolkit.noise.white(10))
-
-
 def test_no_function_in_allantools(dataset):
     with pytest.raises(AttributeError):
         dataset.compute("nosuchfunction")

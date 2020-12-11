@@ -8,11 +8,6 @@ import numpy as np
 from typing import Tuple
 
 
-@pytest.fixture
-def noisegen():
-    return allantoolkit.noise_kasdin.Noise()
-
-
 @pytest.mark.parametrize("n", range(2, 20))
 def test_timeseries_length(noisegen, n):
     """

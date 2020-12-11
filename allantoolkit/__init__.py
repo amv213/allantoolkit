@@ -7,6 +7,7 @@ import allantoolkit.noise
 import allantoolkit.noise_kasdin
 import allantoolkit.plot
 import allantoolkit.realtime
+import allantoolkit.testutils
 
 # Setting package root-logger
 logger = logging.getLogger(__name__)

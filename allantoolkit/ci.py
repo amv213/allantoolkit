@@ -13,6 +13,8 @@ import scipy.stats  # used in confidence_intervals()
 import scipy.signal  # decimation in lag-1 acf
 from . import allantools
 
+# Spawn module-level logger
+logger = logging.getLogger(__name__)
 
 # Confidence Intervals
 ONE_SIGMA_CI = scipy.special.erf(1/np.sqrt(2))

@@ -25,7 +25,7 @@ import allantoolkit as at
 
 # this demonstrates how to calculate confidence intervals for ADEV
 # using the algorithms from Greenhall2004
-data_file = '../tests/phasedat/PHASE.DAT'
+data_file = '../tests/assets/phasedat/PHASE.DAT'
 
 def read_datafile(filename):
     p = []

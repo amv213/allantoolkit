@@ -5,23 +5,20 @@
   GPS tests, AW2016-03-17
 """
 
-import math
-import sys
-sys.path.append("..")
-sys.path.append("../..") # hack to import from parent directory
-# remove if you have allantoolkit installed in your python path
 import os
 import time
-import pytest
 import numpy as np
 
-import allantoolkit as allan
+import allantoolkit
+import allantoolkit.allantools as allan
 import testutils
+
 
 def print_elapsed(start):
     end = time.clock()
-    print(" %.2f s"%end-start)
+    print(" %.2f s" % (end-start))
     return time.clock()
+
 
 def change_to_test_dir():
     # hack to run script from its own directory
@@ -29,24 +26,33 @@ def change_to_test_dir():
     dname = os.path.dirname(abspath)
     os.chdir(dname)
 
+
 data_file = 'gps_1pps_phase_data.txt.gz'
 verbose = 1
 tolerance = 1e-4 # relative tolerance
 rate = 1/float(1.0) # 1 PPS measurements, data interval is 1 s
 
-class TestGPS():
+
+class TestGPS:
+
     def test_adev(self):
         self.generic_test(result='stable32_ADEV_decade.txt', fct=allan.adev)
+
     def test_oadev(self):
         self.generic_test(result='stable32_OADEV_octave.txt', fct=allan.oadev)
+
     def test_mdev(self):
         self.generic_test(result='stable32_MDEV_octave.txt', fct=allan.mdev)
+
     def test_tdev(self):
         self.generic_test(result='stable32_TDEV_octave.txt', fct=allan.tdev)
+
     def test_hdev(self):
         self.generic_test(result='stable32_HDEV_octave.txt', fct=allan.hdev)
+
     def test_ohdev(self):
         self.generic_test(result='stable32_OHDEV_octave.txt', fct=allan.ohdev)
+
     def test_totdev(self):
         self.generic_test(result='stable32_TOTDEV_octave.txt', fct=allan.totdev)
 
@@ -58,7 +64,7 @@ class TestGPS():
         for s32 in s32_rows:
             tau, alpha, AF = s32['tau'], s32['alpha'], int(s32['m'])
             try:
-                alpha_int = allan.autocorr_noise_id(phase, af=AF)[0]
+                alpha_int = allantoolkit.ci.autocorr_noise_id(phase, af=AF)[0]
                 print(tau, alpha, alpha_int)
                 assert alpha_int == alpha
             except NotImplementedError:
@@ -80,7 +86,8 @@ class TestGPS():
             dev = devs[idx]
             try:
                 # CI including noise-ID
-                (lo2, hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="adev", data_type="phase")
+                (lo2, hi2) = allantoolkit.ci.confidence_interval_noiseID(
+                    phase, dev, af=int(row['m']), dev_type="adev", data_type="phase")
                 assert np.isclose(lo2, row['dev_min'], rtol=1e-2, atol=0)
                 assert np.isclose(hi2, row['dev_max'], rtol=1e-2, atol=0)
                 print(" CI OK! tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']))
@@ -102,7 +109,8 @@ class TestGPS():
             # now check confidence interval
             try:
                 # CI including noise-ID
-                (lo2, hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="oadev", data_type="phase")
+                (lo2, hi2) = allantoolkit.ci.confidence_interval_noiseID(
+                    phase, dev, af=int(row['m']), dev_type="oadev", data_type="phase")
                 print(" tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']))
                 assert np.isclose(lo2, row['dev_min'], rtol=1e-2, atol=0)
                 assert np.isclose(hi2, row['dev_max'], rtol=1e-2, atol=0)
@@ -127,10 +135,14 @@ class TestGPS():
             assert np.isclose(dev, row['dev'], rtol=1e-2, atol=0)
             try:
                 # CI including noise-ID
-                (lo2, hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="mdev", data_type="phase")
+                (lo2, hi2) = allantoolkit.ci.confidence_interval_noiseID(
+                    phase, dev, af=int(row['m']),
+                    dev_type="mdev", data_type="phase")
+
                 print(" tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']))
                 assert np.isclose(lo2, row['dev_min'], rtol=1e-2, atol=0)
                 assert np.isclose(hi2, row['dev_max'], rtol=1e-2, atol=0)
+
             except NotImplementedError:
                 print("can't do CI for tau= %f"%row['tau'])
                 pass
@@ -152,10 +164,14 @@ class TestGPS():
             assert np.isclose(dev, row['dev'], rtol=1e-2, atol=0)
             try:
                 # CI including noise-ID
-                (lo2, hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="tdev", data_type="phase")
+                (lo2, hi2) = allantoolkit.ci.confidence_interval_noiseID(
+                    phase, dev, af=int(row['m']),
+                    dev_type="tdev", data_type="phase")
+
                 print(" tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']))
                 assert np.isclose(lo2, row['dev_min'], rtol=1e-2, atol=0)
                 assert np.isclose(hi2, row['dev_max'], rtol=1e-2, atol=0)
+
             except NotImplementedError:
                 print("can't do CI for tau= %f"%row['tau'])
                 pass
@@ -177,10 +193,14 @@ class TestGPS():
             assert np.isclose(dev, row['dev'], rtol=1e-2, atol=0)
             try:
                 # CI including noise-ID
-                (lo2, hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="hdev", data_type="phase")
+                (lo2, hi2) = allantoolkit.ci.confidence_interval_noiseID(
+                    phase, dev, af=int(row['m']),
+                    dev_type="hdev", data_type="phase")
+
                 print(" tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']))
                 assert np.isclose(lo2, row['dev_min'], rtol=1e-2, atol=0)
                 assert np.isclose(hi2, row['dev_max'], rtol=1e-2, atol=0)
+
             except NotImplementedError:
                 print("can't do CI for tau= %f"%row['tau'])
                 pass
@@ -202,22 +222,21 @@ class TestGPS():
             assert np.isclose(dev, row['dev'], rtol=1e-2, atol=0)
             try:
                 # CI including noise-ID
-                (lo2, hi2) = allan.confidence_interval_noiseID(phase, dev, af=int(row['m']), dev_type="ohdev", data_type="phase")
+                (lo2, hi2) = allantoolkit.ci.confidence_interval_noiseID(
+                    phase, dev, af=int(row['m']),
+                    dev_type="ohdev", data_type="phase")
+
                 print(" tau= %f  lo/s32_lo = %f hi/s32_hi = %f "% (row['tau'], lo2/row['dev_min'], hi2/row['dev_max']))
                 assert np.isclose(lo2, row['dev_min'], rtol=1e-2, atol=0)
                 assert np.isclose(hi2, row['dev_max'], rtol=1e-2, atol=0)
+
             except NotImplementedError:
                 print("can't do CI for tau= %f"%row['tau'])
                 pass
 
     def generic_test(self, datafile=data_file, result="", fct=None):
         change_to_test_dir()
-        testutils.test_row_by_row(fct, datafile, 1.0, result, verbose=verbose, tolerance=tolerance)
-
-if __name__ == "__main__":
-    t = TestGPS()
-    #t.test_ohdev_ci_and_noiseID()
-    t.test_oadev_ci_and_noiseID()
-    #pytest.main()
+        testutils.test_row_by_row(fct, datafile, 1.0, result,
+                                  verbose=verbose, tolerance=tolerance)
 
 

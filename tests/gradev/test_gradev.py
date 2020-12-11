@@ -1,5 +1,4 @@
-#!/usr/bin/python
-import allantoolkit as at
+import allantoolkit.allantools as at
 import numpy as np
 import os.path
 
@@ -20,6 +19,3 @@ def test_gradev():
         if len(i_gap[0]) > 0:
             # Seems like a loose condition
             assert(np.log(y_ax[i]/y_ax_gap[i_gap[0][0]]) < 1)
-
-if __name__ == "__main__":
-    test_gradev()

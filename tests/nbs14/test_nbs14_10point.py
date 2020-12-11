@@ -15,12 +15,11 @@
   http://tf.nist.gov/general/pdf/2220.pdf
   around page 107
 """
+
 import math
-import time
-import sys
 import pytest
 
-import allantoolkit as allan
+import allantoolkit.allantools as allan
 
 # 10-point dataset and deviations
 nbs14_phase = [ 0.00000, 103.11111, 123.22222, 157.33333, 166.44444, 48.55555,-96.33333,-2.22222, 111.88889, 0.00000 ]
@@ -42,12 +41,13 @@ nbs14_devs= [ (91.22945,115.8082),  # 0, ADEV(tau=1,tau=2)
               (45.704, 81.470)] # 10 HTOTDEV Stable32 (not sure what these are!??)
               # (100.9770, 102.6039)  # Standard Deviation (sample, not population)
 
+
 def check_devs(dev2, dev1, soft=False):
     rel_error = (dev2-dev1)/dev1
     tol = 1e-4
     verbose = 1
 
-    if ( abs(rel_error) < tol ):
+    if (abs(rel_error) < tol):
         if verbose:
             print(" OK   %0.6f \t    %0.6f \t %0.6f" % (dev1,dev2, rel_error))
         return True
@@ -58,25 +58,36 @@ def check_devs(dev2, dev1, soft=False):
             return True
         return False
 
-class TestNBS14_10Point():
+
+class TestNBS14_10Point:
+
     def test_adev(self):
         self.generic_test( allan.adev, nbs14_devs[0] )
+
     def test_oadev(self):
         self.generic_test( allan.oadev, nbs14_devs[1] )
+
     def test_mdev(self):
         self.generic_test( allan.mdev, nbs14_devs[2] )
+
     def test_totdev(self):
         self.generic_test( allan.totdev, nbs14_devs[3] )
+
     def test_hdev(self):
         self.generic_test( allan.hdev, nbs14_devs[4] )
+
     def test_tdev(self):
         self.generic_test( allan.tdev, nbs14_devs[5] )                        
+
     def test_ohdev(self):
         self.generic_test( allan.ohdev, nbs14_devs[6] )     
+
     def test_mtotdev(self):
         self.generic_test( allan.mtotdev, nbs14_devs[7] )     
+
     def test_ttotdev(self):
         self.generic_test( allan.ttotdev, nbs14_devs[8] )
+
     def test_htotdev(self):
         # NOTE:
         # for tau=1, ohdev() is used instead of htotdev()
@@ -98,14 +109,8 @@ class TestNBS14_10Point():
         (taus1,adevs1,aerrs1,ns1) = function(nbs14_phase, rate=1.0, taus=taus)
         (taus2,adevs2,aerrs2,ns2) = function(nbs14_f, rate=1.0,
                                              data_type="freq",taus=taus)
-        assert( check_devs( adevs1[0], ref_devs[0] ) ) # tau=1 from phase data
-        assert( check_devs( adevs1[1], ref_devs[1] ) ) # tau=2 from phase data
-        assert( check_devs( adevs2[0], ref_devs[0] ) ) # tau=1 from frequency data
-        assert( check_devs( adevs2[1], ref_devs[1] ) ) # tau=2 from frequency data
-
-
-if __name__ == "__main__":
-    #t=TestNBS14_10Point()
-    #t.test_htotdev()
-    pytest.main(["test_nbs14_10point.py"])
+        assert(check_devs( adevs1[0], ref_devs[0] ) ) # tau=1 from phase data
+        assert(check_devs( adevs1[1], ref_devs[1] ) ) # tau=2 from phase data
+        assert(check_devs( adevs2[0], ref_devs[0] ) ) # tau=1 from frequency data
+        assert(check_devs( adevs2[1], ref_devs[1] ) ) # tau=2 from frequency data
 

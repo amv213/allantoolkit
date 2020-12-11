@@ -15,11 +15,8 @@
   http://tf.nist.gov/general/pdf/2220.pdf
   around page 107
 """
-import math
-import time
-import sys
-import pytest
 
+import pytest
 import allantoolkit.allantools as allan
 
 # 1000 point deviations from:
@@ -45,7 +42,9 @@ nbs14_1000_devs = [ [2.922319e-01, 9.965736e-02, 3.897804e-02],  # 0 ADEV 1, 10,
                     #[1.396338e-01, 3.752293e-01, 1.320847e-00],    # 10 TTOTDEV (from published table, WITH bias correction)
                      [1.1930e-01, 3.2060e-01, 1.1285e+00 ],  # 10 TTOTDEV (from Stable 32 v1.60 decade run, NO bias correction)  
                     [1.0757e-01, 3.1789e-02, 5.0524e-03 ], ] # 11 THEO1 (tau= 10,100,1000, from Stable32, NO bias correction
-# this generates the nbs14 1000 point frequency dataset. 
+
+
+# this generates the nbs14 1000 point frequency dataset.
 # random number generator described in 
 # http://www.ieee-uffc.org/frequency-control/learning-riley.asp
 # http://tf.nist.gov/general/pdf/2220.pdf   page 107
@@ -60,35 +59,48 @@ def nbs14_1000():
     n = [x/float(2147483647) for x in n] # normalize so that n is in [0, 1]
     return n
 
+
 fdata = nbs14_1000()
 pdata = allan.frequency2phase(fdata, 1.0)
 
-class TestNBS14_1000Point():
+
+class TestNBS14_1000Point:
+
     def test_adev(self):
-        self.nbs14_tester( allan.adev, None,fdata, nbs14_1000_devs[0] ) # test with frequency data
-        self.nbs14_tester( allan.adev, pdata, None,nbs14_1000_devs[0] ) # test with phase data
+        # test with frequency data
+        self.nbs14_tester(allan.adev, None,fdata, nbs14_1000_devs[0])
+        # test with phase data
+        self.nbs14_tester(allan.adev, pdata, None,nbs14_1000_devs[0])
+
     def test_oadev(self):
-        self.nbs14_tester( allan.oadev, None,fdata, nbs14_1000_devs[1] )
-        self.nbs14_tester( allan.oadev, pdata, None,nbs14_1000_devs[1] )
+        self.nbs14_tester(allan.oadev, None,fdata, nbs14_1000_devs[1])
+        self.nbs14_tester(allan.oadev, pdata, None,nbs14_1000_devs[1])
+
     def test_mdev(self):
-        self.nbs14_tester( allan.mdev, None,fdata, nbs14_1000_devs[2] )
-        self.nbs14_tester( allan.mdev, pdata, None,nbs14_1000_devs[2] )
+        self.nbs14_tester( allan.mdev, None,fdata, nbs14_1000_devs[2])
+        self.nbs14_tester( allan.mdev, pdata, None,nbs14_1000_devs[2])
+
     def test_totdev(self):
-        self.nbs14_tester( allan.totdev, None,fdata, nbs14_1000_devs[3] )
-        self.nbs14_tester( allan.totdev, pdata, None,nbs14_1000_devs[3] )
+        self.nbs14_tester( allan.totdev, None,fdata, nbs14_1000_devs[3])
+        self.nbs14_tester( allan.totdev, pdata, None,nbs14_1000_devs[3])
+
     def test_hdev(self):
         self.nbs14_tester( allan.hdev, None,fdata, nbs14_1000_devs[4] )
         self.nbs14_tester( allan.hdev, pdata, None,nbs14_1000_devs[4] )
+
     def test_tdev(self):
         self.nbs14_tester( allan.tdev, None,fdata, nbs14_1000_devs[5] )
         self.nbs14_tester( allan.tdev, pdata, None,nbs14_1000_devs[5] )
+
     def test_ohdev(self):
         self.nbs14_tester( allan.ohdev, None,fdata, nbs14_1000_devs[6] )
         self.nbs14_tester( allan.ohdev, pdata, None,nbs14_1000_devs[6] )
-    def notest_mtotdev(self): # very slow, disable for now
-        self.nbs14_tester( allan.mtotdev, None,fdata, nbs14_1000_devs[9], soft=False )
-        self.nbs14_tester( allan.mtotdev, pdata,None, nbs14_1000_devs[9], soft=False )
-    def notest_ttotdev(self): # very slow, disable for now
+
+    def notest_mtotdev(self):  # very slow, disable for now
+        self.nbs14_tester(allan.mtotdev, None,fdata, nbs14_1000_devs[9], soft=False )
+        self.nbs14_tester(allan.mtotdev, pdata,None, nbs14_1000_devs[9], soft=False )
+
+    def notest_ttotdev(self):  # very slow, disable for now
         self.nbs14_tester( allan.ttotdev, None,fdata, nbs14_1000_devs[10], soft=False )
         self.nbs14_tester( allan.ttotdev, pdata,None, nbs14_1000_devs[10], soft=False )
         
@@ -96,7 +108,7 @@ class TestNBS14_1000Point():
         self.nbs14_tester( allan.theo1, None,fdata, nbs14_1000_devs[11], taus =[10, 100,1000] )
         self.nbs14_tester( allan.theo1, pdata, None,nbs14_1000_devs[11], taus =[10, 100,1000] )
         
-    def nbs14_tester( self, function, pdata, fdata, correct_devs, taus =[1, 10, 100], soft=False ):
+    def nbs14_tester(self, function, pdata, fdata, correct_devs, taus =[1, 10, 100], soft=False ):
         rate=1.0
         
         if pdata is not None and fdata is None:
@@ -131,8 +143,3 @@ class TestNBS14_1000Point():
             if soft:
                 return True
             return False
-
-if __name__ == "__main__":
-    t =TestNBS14_1000Point()
-    t.test_theo1()
-    pytest.main(["test_nbs14_1000point.py"])

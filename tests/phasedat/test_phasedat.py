@@ -6,22 +6,15 @@
 
 """
 
-import math
-import sys
-import pytest
-
-sys.path.append("..")
-sys.path.append("../..") # hack to import from parent directory
-# remove if you have allantoolkit installed in your python path
-
-import allantoolkit as allan
-import testutils
-
 import os
+import pytest
+import allantoolkit.allantools as allan
+import testutils
 
 data_file = 'PHASE.DAT'
 tolerance = 1e-4
 verbose = 1
+
 
 def change_to_test_dir():
     # hack to run script from its own directory
@@ -29,7 +22,8 @@ def change_to_test_dir():
     dname = os.path.dirname(abspath)
     os.chdir(dname)
 
-class TestPhaseDat():
+
+class TestPhaseDat:
     def test_phasedat_adev(self):
         self.generic_test( result= 'phase_dat_adev.txt' , fct= allan.adev, verbose=True )
         
@@ -76,8 +70,3 @@ class TestPhaseDat():
     def generic_test(self, datafile = data_file, result="", fct=None, verbose=False):
         change_to_test_dir()
         testutils.test_row_by_row( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance)
-
-if __name__ == "__main__":
-    #pytest.main()
-    t = TestPhaseDat()
-    t.test_phasedat_adev()

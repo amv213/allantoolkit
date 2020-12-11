@@ -84,8 +84,5 @@ def run():
 	
 	end = time.clock()
 	print("Tests done in %2.3f s" % (end-start0)) # total time 470s on i7 CPU (without mtie!)
-	
-if __name__ == "__main__":
-	run()
 
 

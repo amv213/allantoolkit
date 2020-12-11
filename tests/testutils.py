@@ -10,8 +10,8 @@ import numpy
 # read a simple data-file with phase or frequency numbers on each line
 def read_datafile(filename):
     p = []
-    if filename[-2:]=='gz':
-        with gzip.open(filename,mode='rt') as f:
+    if filename[-2:] == 'gz':
+        with gzip.open(filename, mode='rt') as f:
             for line in f:
                 if not line.startswith("#"):  # skip comments
                     p.append(float(line))
@@ -38,6 +38,7 @@ def read_resultfile(filename):
                     row.append(float(l2[n]))
                 rows.append(row)
     return rows
+
 
 # parse numbers from a Stable32 result-file
 # the columns are:

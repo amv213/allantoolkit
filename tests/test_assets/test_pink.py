@@ -6,60 +6,66 @@
 
 """
 
+import pytest
+import pathlib
 import allantoolkit.ci
 import allantoolkit.allantools as allan
 import allantoolkit.testutils as testutils
 
 
-data_file = '../assets/pink_frequency/pink_frequency.txt'
-verbose = 1
-tolerance = 1e-4 # relative tolerance
-rate = 1/float(42.0) # stable32 runs were done with this data-interval
+# top level directory with asset files
+ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets'
+
+# input data files, and associated verbosity, tolerance, and acquisition rate
+assets = [
+    ('pink_frequency/pink_frequency.txt', 1, 1e-4, 1/float(42.0)),
+]
 
 
-class TestPink:
+# input result files and function which should replicate them
+results = [
+    ('adev.txt', allantoolkit.allantools.adev),
+    ('oadev.txt', allantoolkit.allantools.oadev),
+    ('mdev.txt', allantoolkit.allantools.mdev),
+    ('tdev.txt', allantoolkit.allantools.tdev),
+    ('hdev.txt', allantoolkit.allantools.hdev),
+    ('ohdev.txt', allantoolkit.allantools.ohdev),
+    ('totdev_alpha0.txt', allantoolkit.allantools.totdev),
+]
 
-    def test_adev(self):
-        self.generic_test(result='adev.txt', fct=allan.adev)
 
-    def test_oadev(self):
-        self.generic_test(result='oadev.txt', fct=allan.oadev)
+@pytest.mark.slow
+@pytest.mark.parametrize('datafile, verbose, tolerance, rate', assets)
+@pytest.mark.parametrize('result, fct', results)
+def test_generic(datafile, result, fct, verbose, tolerance, rate):
 
-    def test_mdev(self):
-        self.generic_test(result='mdev.txt', fct=allan.mdev)
+    datafile = ASSETS_DIR / datafile
+    result = datafile.parent / result
 
-    def test_tdev(self):
-        self.generic_test(result='tdev.txt', fct=allan.tdev)
+    testutils.test_row_by_row(fct, datafile, rate, result,
+                              verbose=verbose, tolerance=tolerance,
+                              frequency=True, normalize=False)
 
-    def test_hdev(self):
-        self.generic_test(result='hdev.txt', fct=allan.hdev)
 
-    def test_ohdev(self):
-        self.generic_test(result='ohdev.txt', fct=allan.ohdev)
+@pytest.mark.slow
+@pytest.mark.parametrize('datafile, verbose, tolerance, rate', assets)
+def test_noise_id(datafile, verbose, tolerance, rate):
+    """ test for noise-identification """
 
-    def test_totdev(self):
-        self.generic_test(result='totdev_alpha0.txt', fct=allan.totdev)
+    datafile = ASSETS_DIR / datafile
+    result = datafile.parent / 's32_oadev_octave.txt'
 
-    @staticmethod
-    def generic_test(datafile=data_file, result="", fct=None):
-        testutils.change_to_test_dir()
-        testutils.test_row_by_row( fct, datafile, rate, result,
-                                   verbose=verbose, tolerance=tolerance,
-                                   frequency=True, normalize=False)
-    
-    def test_noise_id(self):
-        """ test for noise-identification """
-        s32_rows = testutils.read_stable32( 's32_oadev_octave.txt' , 1.0 )
-        phase = testutils.read_datafile(data_file)
-        for s32 in s32_rows:
-            tau, alpha, af = s32['tau'], s32['alpha'], int(s32['m'])
-            try:
-                alpha_int = allantoolkit.ci.autocorr_noise_id(
-                    phase, data_type='freq', af=af)[0]
+    s32_rows = testutils.read_stable32(result, 1.0)
+    phase = testutils.read_datafile(datafile)
 
-                #if len(phase)/af > 30: # noise-id only works for length 30 or longer time-series
-                assert alpha_int == alpha
-                print(tau, alpha, alpha_int)
-            except NotImplementedError:
-                print("no noise-ID: ", tau, alpha, alpha_int)
+    for s32 in s32_rows:
+        tau, alpha, af = s32['tau'], s32['alpha'], int(s32['m'])
+        try:
+            alpha_int = allantoolkit.ci.autocorr_noise_id(
+                phase, data_type='freq', af=af)[0]
 
+            # if len(phase)/af > 30: # noise-id only works for length 30 or longer time-series
+            assert alpha_int == alpha
+            print(tau, alpha, alpha_int)
+        except NotImplementedError:
+            print("no noise-ID: ", tau, alpha, alpha_int)

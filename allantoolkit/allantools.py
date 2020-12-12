@@ -1,86 +1,9 @@
-"""
-Allan deviation tools
-=====================
-
-**Author:** Anders Wallin (anders.e.e.wallin "at" gmail.com)
-
-Version history
----------------
-
-**2019.07**
-- move edf-functions and noise-ID functions to ci.py
-- mtotdev() htotdev() speed improvements
-- save dataset results to file
-- real-time adev/mdev/hdev
-
-**2018.03** 2018 March 27
-- change license to LGPL v3 or later
-- lag-1 autocorrelation noise identification function
-- B1 noise identification
-- R(n) noise identification
-- Noise() class using Kasdin & Walter algorithm
-- work on Greenhall's EDF and confidence intervals
-- tests for confidence intervals
-
-**2016.11** 2016 November 18
-- Dataset class
-- plotting with a Plot class
-- confidence intervals based on Greenhall's EDF algorithm
-- testing on multiple python versions with tox
-- continuous integration with https://travis-ci.org/aewallin/allantools
-- test coverage report on https://coveralls.io/github/aewallin/allantools?branch=master
-
-**2016.4** 2016 April 8
-- convert tests to use pytest
-- split tests into individual pytests, make them all pass
-- accept a numpy.array as taus parameter.
-- Switch to new signature (https://github.com/aewallin/allantools/issues/29)
-- remove old and slow pure-python implementation
-
-**2016.3** 2016 March
-- improve documentation and add __version__
-- added Theo1 deviation theo1()
-- added Hadamard Total Deviatio htotdev()
-- added Modified Total Deviation mtotdev(), and Time Total Deviation
-ttotdev() http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/
-- automatic tau-lists:  taus=[ "all" | "octave" | "decade" ]
-- merge adev() and adev_phase() into one, requiring phase= or frequency=
-argument
-- add GPS dataset as example and test
-
-**2016.2** 2016 February
-- update release on PyPi https://pypi.python.org/pypi/AllanTools
-- pytest and coverage
-- setuptools
-- change version number to year.month
-
-**v1.2.1** 2015 July
-- Python 3 compatibility using 2to3 tool, by kuzavas
-- IPython notebook examples
-- sphinx documentation, auto-built on readthedocs
-
-**v1.2** 2014 November, Cantwell G. Carson conrtibuted:
-- A gap-robust version of ADEV based on the paper by Sesia et al.
-gradev_phase() and gradev()
-- Improved uncertainty estimates: uncertainty_estimate() This introduces a
-new dependency: scipy.stats.chi2()
-
-**v1.1** 2014 August
-- Danny Price converted the library to use numpy.
-- many functions in allantoolkit are now 100x faster than before.
-- see http://www.anderswallin.net/2014/08/faster-allantools-with-numpy/
-
-**v1.01** 2014 August
-- PEP8 compliance improvements by Danny Price.
-
-**v1.00** 2014 January, first version of allantoolkit.
-- see http://www.anderswallin.net/2014/01/allantools/
-
-"""
-
 import logging
+
 import numpy as np
+
 from . import ci  # edf, confidence intervals
+from . import utils
 from typing import List, Tuple, Union
 
 # Spawn module-level logger
@@ -131,7 +54,7 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
     -----
     http://en.wikipedia.org/wiki/Time_deviation
     """
-    phase = input_to_phase(data, rate, data_type)
+    phase = utils.input_to_phase(data, rate, data_type)
     (taus, md, mde, ns) = mdev(phase, rate=rate, taus=taus)
     td = taus * md / np.sqrt(3.0)
     tde = td / np.sqrt(ns)
@@ -180,8 +103,8 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
         Values of N used in each mdev calculation
 
     """
-    phase = input_to_phase(data, rate, data_type)
-    (phase, ms, taus_used) = tau_generator(phase, rate, taus=taus)
+    phase = utils.input_to_phase(data, rate, data_type)
+    (phase, ms, taus_used) = utils.tau_generator(phase, rate, taus=taus)
     data, taus = np.array(phase), np.array(taus)
 
     md = np.zeros_like(ms)
@@ -223,7 +146,7 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
         mderr[idx] = (s / np.sqrt(n))
         ns[idx] = n
 
-    return remove_small_ns(taus_used, md, mderr, ns)
+    return utils.remove_small_ns(taus_used, md, mderr, ns)
 
 
 def adev(data, rate=1.0, data_type="phase", taus=None):
@@ -280,8 +203,8 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
         Values of N used in each adev calculation
 
     """
-    phase = input_to_phase(data, rate, data_type)
-    (phase, m, taus_used) = tau_generator(phase, rate, taus)
+    phase = utils.input_to_phase(data, rate, data_type)
+    (phase, m, taus_used) = utils.tau_generator(phase, rate, taus)
 
     ad = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
@@ -290,7 +213,7 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
     for idx, mj in enumerate(m):  # loop through each tau value m(j)
         (ad[idx], ade[idx], adn[idx]) = calc_adev_phase(phase, rate, mj, mj)
 
-    return remove_small_ns(taus_used, ad, ade, adn)
+    return utils.remove_small_ns(taus_used, ad, ade, adn)
 
 
 def calc_adev_phase(phase, rate, mj, stride):
@@ -393,8 +316,8 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
         Values of N used in each oadev calculation
 
     """
-    phase = input_to_phase(data, rate, data_type)
-    (phase, m, taus_used) = tau_generator(phase, rate, taus)
+    phase = utils.input_to_phase(data, rate, data_type)
+    (phase, m, taus_used) = utils.tau_generator(phase, rate, taus)
     ad = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
     adn = np.zeros_like(taus_used)
@@ -402,7 +325,7 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
     for idx, mj in enumerate(m): # stride=1 for overlapping ADEV
         (ad[idx], ade[idx], adn[idx]) = calc_adev_phase(phase, rate, mj, 1)
 
-    return remove_small_ns(taus_used, ad, ade, adn)
+    return utils.remove_small_ns(taus_used, ad, ade, adn)
 
 
 def ohdev(data, rate=1.0, data_type="phase", taus=None):
@@ -445,8 +368,8 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
         Values of N used in each hdev calculation
 
     """
-    phase = input_to_phase(data, rate, data_type)
-    (phase, m, taus_used) = tau_generator(phase, rate, taus)
+    phase = utils.input_to_phase(data, rate, data_type)
+    (phase, m, taus_used) = utils.tau_generator(phase, rate, taus)
     hdevs = np.zeros_like(taus_used)
     hdeverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
@@ -456,7 +379,7 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
          hdeverrs[idx],
          ns[idx]) = calc_hdev_phase(phase, rate, mj, 1)
 
-    return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
+    return utils.remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
 
 def hdev(data, rate=1.0, data_type="phase", taus=None):
@@ -487,8 +410,8 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
         Optionally set taus=["all"|"octave"|"decade"] for automatic
         tau-list generation.
     """
-    phase = input_to_phase(data, rate, data_type)
-    (phase, m, taus_used) = tau_generator(phase, rate, taus)
+    phase = utils.input_to_phase(data, rate, data_type)
+    (phase, m, taus_used) = utils.tau_generator(phase, rate, taus)
     hdevs = np.zeros_like(taus_used)
     hdeverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
@@ -498,7 +421,7 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
          hdeverrs[idx],
          ns[idx]) = calc_hdev_phase(phase, rate, mj, mj)  # stride = mj
 
-    return remove_small_ns(taus_used, hdevs, hdeverrs, ns)
+    return utils.remove_small_ns(taus_used, hdevs, hdeverrs, ns)
 
 
 def calc_hdev_phase(phase, rate, mj, stride):
@@ -556,6 +479,7 @@ def calc_hdev_phase(phase, rate, mj, stride):
     e = h / np.sqrt(n)
     return h, e, n
 
+
 def totdev(data, rate=1.0, data_type="phase", taus=None):
     """ Total deviation.
         Better confidence at long averages for Allan deviation.
@@ -595,8 +519,8 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
         Array of tau values for which to compute measurement
 
     """
-    phase = input_to_phase(data, rate, data_type)
-    (phase, m, taus_used) = tau_generator(phase, rate, taus)
+    phase = utils.input_to_phase(data, rate, data_type)
+    (phase, m, taus_used) = utils.tau_generator(phase, rate, taus)
     N = len(phase)
 
     # totdev requires a new dataset
@@ -639,7 +563,8 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
         deverrs[idx] = dev / np.sqrt(mid)
         ns[idx] = mid
 
-    return remove_small_ns(taus_used, devs, deverrs, ns)
+    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
+
 
 def ttotdev(data, rate=1.0, data_type="phase", taus=None):
     """ Time Total Deviation
@@ -654,6 +579,7 @@ def ttotdev(data, rate=1.0, data_type="phase", taus=None):
     td = taus*mtotdevs / np.sqrt(3.0)
     tde = td / np.sqrt(ns)
     return taus, td, tde, ns
+
 
 def mtotdev(data, rate=1.0, data_type="phase", taus=None):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
@@ -687,8 +613,8 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
     NIST [SP1065]_ eqn (27) page 25
 
     """
-    phase = input_to_phase(data, rate, data_type)
-    (phase, ms, taus_used) = tau_generator(phase, rate, taus,
+    phase = utils.input_to_phase(data, rate, data_type)
+    (phase, ms, taus_used) = utils.tau_generator(phase, rate, taus,
                                            maximum_m=float(len(phase))/3.0)
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
@@ -697,7 +623,7 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
     for idx, mj in enumerate(ms):
         devs[idx], deverrs[idx], ns[idx] = calc_mtotdev_phase(phase, rate, mj)
 
-    return remove_small_ns(taus_used, devs, deverrs, ns)
+    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
 
 
 def calc_mtotdev_phase(phase, rate, m):
@@ -835,15 +761,15 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
     """
     if data_type == "phase":
         phase = data
-        freq = phase2frequency(phase, rate)
+        freq = utils.phase2frequency(phase, rate)
     elif data_type == "freq":
-        phase = frequency2phase(data, rate)
+        phase = utils.frequency2phase(data, rate)
         freq = data
     else:
         raise Exception("unknown data_type: " + data_type)
 
     rate = float(rate)
-    (freq, ms, taus_used) = tau_generator(freq, rate, taus,
+    (freq, ms, taus_used) = utils.tau_generator(freq, rate, taus,
                                           maximum_m=float(len(freq))/3.0)
     phase = np.array(phase)
     freq = np.array(freq)
@@ -866,7 +792,8 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
              deverrs[idx],
              ns[idx]) = calc_htotdev_freq(freq, mj)
 
-    return remove_small_ns(taus_used, devs, deverrs, ns)
+    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
+
 
 def calc_htotdev_freq(freq, m):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
@@ -952,6 +879,7 @@ def calc_htotdev_freq(freq, m):
     error = dev / np.sqrt(n)
     return (dev, error, n)
 
+
 def theo1(data, rate=1.0, data_type="phase", taus=None):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Theo1 is a two-sample variance with improved confidence and
@@ -987,10 +915,10 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
         tau-list generation.
 
     """
-    phase = input_to_phase(data, rate, data_type)
+    phase = utils.input_to_phase(data, rate, data_type)
 
     tau0 = 1.0/rate
-    (phase, ms, taus_used) = tau_generator(phase, rate, taus, even=True)
+    (phase, ms, taus_used) = utils.tau_generator(phase, rate, taus, even=True)
 
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
@@ -1020,7 +948,7 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
         deverrs[idx] = devs[idx] / np.sqrt(N-m)
         ns[idx] = n
 
-    return remove_small_ns(taus_used, devs, deverrs, ns)
+    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
 
 
 def tierms(data, rate=1.0, data_type="phase", taus=None):
@@ -1041,8 +969,8 @@ def tierms(data, rate=1.0, data_type="phase", taus=None):
         tau-list generation.
 
     """
-    phase = input_to_phase(data, rate, data_type)
-    (data, m, taus_used) = tau_generator(phase, rate, taus)
+    phase = utils.input_to_phase(data, rate, data_type)
+    (data, m, taus_used) = utils.tau_generator(phase, rate, taus)
 
     count = len(phase)
 
@@ -1066,7 +994,8 @@ def tierms(data, rate=1.0, data_type="phase", taus=None):
         deverrs[idx] = 0 / np.sqrt(ncount) # TODO! I THINK THIS IS WRONG!
         ns[idx] = ncount
 
-    return remove_small_ns(taus_used, devs, deverrs, ns)
+    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
+
 
 def mtie_rolling_window(a, window):
     """
@@ -1100,6 +1029,7 @@ def mtie_rolling_window(a, window):
     strides = a.strides + (a.strides[-1],)
     return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
 
+
 def mtie(data, rate=1.0, data_type="phase", taus=None):
     """ Maximum Time Interval Error.
 
@@ -1123,8 +1053,8 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
     Stable32 also has "Decade" and "Octave" modes where the
     dataset is extended somehow?
     """
-    phase = input_to_phase(data, rate, data_type)
-    (phase, m, taus_used) = tau_generator(phase, rate, taus)
+    phase = utils.input_to_phase(data, rate, data_type)
+    (phase, m, taus_used) = utils.tau_generator(phase, rate, taus)
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
@@ -1168,7 +1098,7 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
         deverrs[idx] = dev / np.sqrt(ncount)
         ns[idx] = ncount
 
-    return remove_small_ns(taus_used, devs, deverrs, ns)
+    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
 
 #
 # !!!!!!!
@@ -1230,7 +1160,7 @@ def mtie_phase_fast(phase, rate=1.0, data_type="phase", taus=None):
     devs = np.array(devs)
     print("devs N=", len(devs), " ", devs)
     print("taus N=", len(taus_used), " ", taus_used)
-    return remove_small_ns(taus_used, devs, deverrs, ns)
+    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
 
 
 ########################################################################
@@ -1285,8 +1215,8 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
     """
     if data_type == "freq":
         print("Warning : phase data is preferred as input to gradev()")
-    phase = input_to_phase(data, rate, data_type)
-    (data, m, taus_used) = tau_generator(phase, rate, taus)
+    phase = utils.input_to_phase(data, rate, data_type)
+    (data, m, taus_used) = utils.tau_generator(phase, rate, taus)
 
     ad = np.zeros_like(taus_used)
     ade_l = np.zeros_like(taus_used)
@@ -1307,7 +1237,7 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
         adn[idx] = n
 
     # Note that errors are split in 2 arrays
-    return remove_small_ns(taus_used, ad, [ade_l, ade_h], adn)
+    return utils.remove_small_ns(taus_used, ad, [ade_l, ade_h], adn)
 
 
 def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
@@ -1362,404 +1292,4 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
     return dev, deverr, n
 
 
-########################################################################
-#
-#  Various helper functions and utilities
-#
 
-def input_to_phase(data, rate, data_type):
-    """ Take either phase or frequency as input and return phase
-    """
-    if data_type == "phase":
-        return data
-    elif data_type == "freq":
-        return frequency2phase(data, rate)
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
-def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
-    """ pre-processing of the tau-list given by the user (Helper function)
-
-    Does sanity checks, sorts data, removes duplicates and invalid values.
-    Generates a tau-list based on keywords 'all', 'decade', 'octave'.
-    Uses 'octave' by default if no taus= argument is given.
-
-    Parameters
-    ----------
-    data: np.array
-        data array
-    rate: float
-        Sample rate of data in Hz. Time interval between measurements
-        is 1/rate seconds.
-    taus: np.array
-        Array of tau values for which to compute measurement.
-        Alternatively one of the keywords: "all", "octave", "decade".
-        Defaults to "octave" if omitted.
-    v:
-        verbose output if True
-    even:
-        require even m, where tau=m*tau0, for Theo1 statistic
-    maximum_m:
-        limit m, where tau=m*tau0, to this value.
-        used by mtotdev() and htotdev() to limit maximum tau.
-
-    Returns
-    -------
-    (data, m, taus): tuple
-        List of computed values
-    data: np.array
-        Data
-    m: np.array
-        Tau in units of data points
-    taus: np.array
-        Cleaned up list of tau values
-    """
-
-    if rate == 0:
-        raise RuntimeError("Warning! rate==0")
-
-    if taus is None:  # empty or no tau-list supplied
-        taus = "octave"  # default to octave
-    elif isinstance(taus, list) and taus == []:
-        taus = "octave"
-
-    if isinstance(taus, str):
-
-        if taus == "all":
-            taus = (1.0/rate)*np.linspace(1.0, len(data), len(data))
-        elif taus == "octave":
-            maxn = np.floor(np.log2(len(data)))
-            taus = (1.0/rate)*np.logspace(0, int(maxn), int(maxn+1), base=2.0)
-        elif taus == "decade": # 1, 2, 4, 10, 20, 40, spacing similar to Stable32
-            maxn = np.floor(np.log10(len(data)))
-            taus = []
-            for k in range(int(maxn+1)):
-                taus.append(1.0*(1.0/rate)*pow(10.0, k))
-                taus.append(2.0*(1.0/rate)*pow(10.0, k))
-                taus.append(4.0*(1.0/rate)*pow(10.0, k))
-
-    data, taus = np.array(data), np.array(taus)
-    rate = float(rate)
-    m = [] # integer averaging factor. tau = m*tau0
-
-    if maximum_m == -1: # if no limit given
-        maximum_m = len(data)
-    # FIXME: should we use a "stop-ratio" like Stable32
-    # found in Table III, page 9 of "Evolution of frequency stability analysis software"
-    # max(AF) = len(phase)/stop_ratio, where
-    # function  stop_ratio
-    # adev      5
-    # oadev     4
-    # mdev      4
-    # tdev      4
-    # hdev      5
-    # ohdev     4
-    # totdev    2
-    # tierms    4
-    # htotdev   3
-    # mtie      2
-    # theo1     1
-    # theoH     1
-    # mtotdev   2
-    # ttotdev   2
-
-    taus_valid1 = taus < (1 / float(rate)) * float(len(data))
-    taus_valid2 = taus > 0
-    taus_valid3 = taus <= (1 / float(rate)) * float(maximum_m)
-    taus_valid = taus_valid1 & taus_valid2 & taus_valid3
-    m = np.floor(taus[taus_valid] * rate)
-    m = m[m != 0]       # m is tau in units of datapoints
-    m = np.unique(m)    # remove duplicates and sort
-
-    if v:
-        print("tau_generator: ", m)
-
-    if len(m) == 0:
-        print("Warning: sanity-check on tau failed!")
-        print("   len(data)=", len(data), " rate=", rate, "taus= ", taus)
-
-    taus2 = m / float(rate)
-
-    if even:  # used by Theo1
-        m_even_mask = ((m % 2) == 0)
-        m = m[m_even_mask]
-        taus2 = taus2[m_even_mask]
-
-    return data, m, taus2
-
-
-def tau_reduction(ms: np.ndarray, rate: float, n_per_decade: int) -> Tuple[
-    np.ndarray, np.ndarray]:
-    """Reduce the number of taus to maximum of n per decade (Helper function)
-
-    takes in a tau list and reduces the number of taus to a maximum amount per
-    decade. This is only useful if more than the "decade" and "octave" but
-    less than the "all" taus are wanted. E.g. to show certain features of
-    the data one might want 100 points per decade.
-
-    NOTE: The algorithm is slightly inaccurate for ms under n_per_decade, and
-    will also remove some points in this range, which is usually fine.
-
-    Typical use would be something like:
-    (data,m,taus)=tau_generator(data,rate,taus="all")
-    (m,taus)=tau_reduction(m,rate,n_per_decade)
-
-    Parameters
-    ----------
-    ms: array of integers
-        List of m values (assumed to be an "all" list) to remove points from.
-    rate: float
-        Sample rate of data in Hz. Time interval between measurements
-        is 1/rate seconds. Used to convert to taus.
-    n_per_decade: int
-        Number of ms/taus to keep per decade.
-
-    Returns
-    -------
-    m: np.array
-        Reduced list of m values
-    taus: np.array
-        Reduced list of tau values
-    """
-    ms = np.int64(ms)
-    keep = np.bool8(np.rint(n_per_decade*np.log10(ms[1:])) -
-                    np.rint(n_per_decade*np.log10(ms[:-1])))
-    # Adjust ms size to fit above-defined mask
-    ms = ms[:-1]
-    assert len(ms) == len(keep)
-    ms = ms[keep]
-    taus = ms/float(rate)
-
-    return ms, taus
-
-
-def remove_small_ns(taus: np.ndarray, devs: np.ndarray,
-                    deverrs: Union[List[np.ndarray], np.ndarray],
-                    ns: np.ndarray) -> Tuple[np.ndarray, np.ndarray,
-                                             Union[List[np.ndarray], np.ndarray],
-                                             np.ndarray]:
-    """ Remove results with small number of samples.
-        If n is small (==1), reject the result
-
-    Parameters
-    ----------
-    taus: array
-        List of tau values for which deviation were computed
-    devs: array
-        List of deviations
-    deverrs: array or list of arrays
-        List of estimated errors (possibly a list containing two arrays :
-        upper and lower values)
-    ns: array
-        Number of samples for each point
-
-    Returns
-    -------
-    (taus, devs, deverrs, ns): tuple
-        Identical to input, except that values with low ns have been removed.
-
-    """
-    ns_big_enough = ns > 1
-
-    o_taus = taus[ns_big_enough]
-    o_devs = devs[ns_big_enough]
-    o_ns = ns[ns_big_enough]
-    if isinstance(deverrs, list):
-        assert len(deverrs) < 3
-        o_deverrs = [deverrs[0][ns_big_enough], deverrs[1][ns_big_enough]]
-    else:
-        o_deverrs = deverrs[ns_big_enough]
-    if len(o_devs) == 0:
-        print("remove_small_ns() nothing remains!?")
-        raise UserWarning
-
-    return o_taus, o_devs, o_deverrs, o_ns
-
-
-def trim_data(x):
-    """
-    Trim leading and trailing NaNs from dataset
-    This is done by browsing the array from each end and store the index of the
-    first non-NaN in each case, the return the appropriate slice of the array
-    """
-    # Find indices for first and last valid data
-    first = 0
-    while np.isnan(x[first]):
-        first += 1
-    last = len(x)
-    while np.isnan(x[last - 1]):
-        last -= 1
-    return x[first:last]
-
-def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
-                             phasedata_ca, rate, taus, function):
-    """
-    Three Cornered Hat Method
-
-    Given three clocks A, B, C, we seek to find their variances
-    :math:`\\sigma^2_A`, :math:`\\sigma^2_B`, :math:`\\sigma^2_C`.
-    We measure three phase differences, assuming no correlation between
-    the clocks, the measurements have variances:
-
-    .. math::
-
-        \\sigma^2_{AB} = \\sigma^2_{A} + \\sigma^2_{B}
-
-        \\sigma^2_{BC} = \\sigma^2_{B} + \\sigma^2_{C}
-
-        \\sigma^2_{CA} = \\sigma^2_{C} + \\sigma^2_{A}
-
-    Which allows solving for the variance of one clock as:
-
-    .. math::
-
-        \\sigma^2_{A}  = {1 \\over 2} ( \\sigma^2_{AB} +
-        \\sigma^2_{CA} - \\sigma^2_{BC} )
-
-    and similarly cyclic permutations for :math:`\\sigma^2_B` and
-    :math:`\\sigma^2_C`
-
-    Parameters
-    ----------
-    phasedata_ab: np.array
-        phase measurements between clock A and B, in seconds
-    phasedata_bc: np.array
-        phase measurements between clock B and C, in seconds
-    phasedata_ca: np.array
-        phase measurements between clock C and A, in seconds
-    rate: float
-        The sampling rate for phase, in Hz
-    taus: np.array
-        The tau values for deviations, in seconds
-    function: allantoolkit deviation function
-        The type of statistic to compute, e.g. allantoolkit.oadev
-
-    Returns
-    -------
-    tau_ab: np.array
-        Tau values corresponding to output deviations
-    dev_a: np.array
-        List of computed values for clock A
-
-    References
-    ----------
-    http://www.wriley.com/3-CornHat.htm
-    """
-
-    (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab,
-                                               data_type='phase',
-                                               rate=rate, taus=taus)
-    (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc,
-                                               data_type='phase',
-                                               rate=rate, taus=taus)
-    (tau_ca, dev_ca, err_ca, ns_ca) = function(phasedata_ca,
-                                               data_type='phase',
-                                               rate=rate, taus=taus)
-
-    var_ab = dev_ab * dev_ab
-    var_bc = dev_bc * dev_bc
-    var_ca = dev_ca * dev_ca
-    assert len(var_ab) == len(var_bc) == len(var_ca)
-    var_a = 0.5 * (var_ab + var_ca - var_bc)
-
-    var_a[var_a < 0] = 0 # don't return imaginary deviations (?)
-    dev_a = np.sqrt(var_a)
-    err_a = [d/np.sqrt(nn) for (d, nn) in zip(dev_a, ns_ab)]
-
-    return tau_ab, dev_a, err_a, ns_ab
-
-########################################################################
-#
-# simple conversions between frequency, phase(seconds), phase(radians)
-#
-
-def frequency2phase(freqdata, rate):
-    """ integrate fractional frequency data and output phase data
-
-    Parameters
-    ----------
-    freqdata: np.array
-        Data array of fractional frequency measurements (nondimensional)
-    rate: float
-        The sampling rate for phase or frequency, in Hz
-
-    Returns
-    -------
-    phasedata: np.array
-        Time integral of fractional frequency data, i.e. phase (time) data
-        in units of seconds.
-        For phase in units of radians, see phase2radians()
-    """
-    dt = 1.0 / float(rate)
-    # Protect against NaN values in input array (issue #60)
-    # Reintroduces data trimming as in commit 503cb82
-    freqdata = trim_data(freqdata)
-    # Erik Benkler (PTB): Subtract mean value before cumsum in order to
-    # avoid precision issues when we have small frequency fluctuations on
-    # a large average frequency
-    freqdata = freqdata - np.nanmean(freqdata)
-    phasedata = np.cumsum(freqdata) * dt
-    phasedata = np.insert(phasedata, 0, 0) # FIXME: why do we do this?
-    # so that phase starts at zero and len(phase)=len(freq)+1 ??
-    return phasedata
-
-def phase2radians(phasedata, v0):
-    """ Convert phase in seconds to phase in radians
-
-    Parameters
-    ----------
-    phasedata: np.array
-        Data array of phase in seconds
-    v0: float
-        Nominal oscillator frequency in Hz
-
-    Returns
-    -------
-    fi:
-        phase data in radians
-    """
-    fi = [2*np.pi*v0*xx for xx in phasedata]
-    return fi
-
-def phase2frequency(phase, rate):
-    """ Convert phase in seconds to fractional frequency
-
-    Parameters
-    ----------
-    phase: np.array
-        Data array of phase in seconds
-    rate: float
-        The sampling rate for phase, in Hz
-
-    Returns
-    -------
-    y:
-        Data array of fractional frequency
-    """
-    y = rate*np.diff(phase)
-    return y
-
-def frequency2fractional(frequency, mean_frequency=-1):
-    """ Convert frequency in Hz to fractional frequency
-
-    Parameters
-    ----------
-    frequency: np.array
-        Data array of frequency in Hz
-    mean_frequency: float
-        (optional) The nominal mean frequency, in Hz
-        if omitted, defaults to mean frequency=np.mean(frequency)
-
-    Returns
-    -------
-    y:
-        Data array of fractional frequency
-    """
-    if mean_frequency == -1:
-        mu = np.mean(frequency)
-    else:
-        mu = mean_frequency
-    y = [(x-mu)/mu for x in frequency]
-    return y
-
-# end of file allantoolkit.py

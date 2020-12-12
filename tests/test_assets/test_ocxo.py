@@ -55,7 +55,7 @@ def test_generic_ci(datafile, result, fct, verbose, tolerance, rate,
 
     for row in s32rows:
         data = testutils.read_datafile(datafile)
-        data = allantoolkit.allantools.frequency2fractional(
+        data = allantoolkit.utils.frequency2fractional(
             data, mean_frequency=1.0e7)
         (taus, devs, errs, ns) = fct(data, rate=rate, data_type="freq",
                                      taus=[row['tau']])
@@ -90,7 +90,7 @@ def test_totdev_ci(datafile, verbose, tolerance, rate):
 
     for row in s32rows:
         data = testutils.read_datafile(datafile)
-        data = allantoolkit.allantools.frequency2fractional(
+        data = allantoolkit.utils.frequency2fractional(
             data, mean_frequency=1.0e7)
         (taus, devs, errs, ns) = allantoolkit.allantools.totdev(
             data, rate=rate, data_type="freq", taus=[row['tau']])
@@ -121,7 +121,7 @@ def test_noise_id(datafile, verbose, tolerance, rate):
     s32_rows = testutils.read_stable32(result, rate)
 
     freq = testutils.read_datafile(datafile)
-    phase = allantoolkit.allantools.frequency2phase(freq, rate)
+    phase = allantoolkit.utils.frequency2phase(freq, rate)
 
     for s32 in s32_rows:
         s32_tau, s32_alpha, s32_AF = s32['tau'], s32['alpha'], int(

@@ -16,6 +16,7 @@
   around page 107
 """
 
+import allantoolkit.utils
 import allantoolkit.allantools as allan
 
 # 1000 point deviations from:
@@ -60,7 +61,7 @@ def nbs14_1000():
 
 
 fdata = nbs14_1000()
-pdata = allan.frequency2phase(fdata, 1.0)
+pdata = allantoolkit.utils.frequency2phase(fdata, 1.0)
 
 
 class TestNBS14_1000Point:

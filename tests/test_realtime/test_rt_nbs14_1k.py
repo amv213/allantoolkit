@@ -17,7 +17,7 @@
 """
 
 import numpy
-import allantoolkit as allan
+import allantoolkit
 
 # 1000 point deviations from:
 # http://www.ieee-uffc.org/frequency-control/learning-riley.asp    Table III
@@ -62,7 +62,7 @@ def nbs14_1000():
     return n
 
 nbs14_f = nbs14_1000()
-nbs14_phase = allan.allantools.frequency2phase(nbs14_f, 1.0)
+nbs14_phase = allantoolkit.utils.frequency2phase(nbs14_f, 1.0)
 
 
 def check_dev(name, tau, a, b):
@@ -71,7 +71,7 @@ def check_dev(name, tau, a, b):
 
 
 def test_oadev_rt_nbs14_1k():
-    oadev_rt = allan.realtime.oadev_realtime(afs=[1,10,100],tau0=1.0)
+    oadev_rt = allantoolkit.realtime.oadev_realtime(afs=[1,10,100],tau0=1.0)
     for x in nbs14_phase:
         oadev_rt.add_phase(x)
     for n in range(3):
@@ -79,7 +79,7 @@ def test_oadev_rt_nbs14_1k():
 
 
 def test_ohdev_rt_nbs14_1k():
-    dev_rt = allan.realtime.ohdev_realtime(afs=[1,10,100],tau0=1.0)
+    dev_rt = allantoolkit.realtime.ohdev_realtime(afs=[1,10,100],tau0=1.0)
     for x in nbs14_phase:
         dev_rt.add_phase(x)
     for n in range(3):
@@ -87,7 +87,7 @@ def test_ohdev_rt_nbs14_1k():
 
 
 def test_tdev_rt_nbs14_1k():
-    dev_rt = allan.realtime.tdev_realtime(afs=[1,10,100],tau0=1.0)
+    dev_rt = allantoolkit.realtime.tdev_realtime(afs=[1,10,100],tau0=1.0)
     for x in nbs14_phase:
         dev_rt.add_phase(x)
     for n in range(3):

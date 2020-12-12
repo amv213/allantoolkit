@@ -273,6 +273,16 @@
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-allantoolkit.utils">
+   allantoolkit.utils module
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-allantoolkit.testutils">
+   allantoolkit.testutils module
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#module-allantoolkit">
    Module contents
   </a>
@@ -1905,6 +1915,313 @@ Dobrogowski &amp; Kasznia
 </dd></dl>
 
 </div>
+</div>
+<div class="section" id="module-allantoolkit.utils">
+<span id="allantoolkit-utils-module"></span><h2>allantoolkit.utils module<a class="headerlink" href="#module-allantoolkit.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="allantoolkit.utils.frequency2fractional">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2fractional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frequency</span></em>, <em class="sig-param"><span class="n">mean_frequency</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2fractional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2fractional" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert frequency in Hz to fractional frequency</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frequency</strong> (<em>np.array</em>) – Data array of frequency in Hz</p></li>
+<li><p><strong>mean_frequency</strong> (<em>float</em>) – (optional) The nominal mean frequency, in Hz
+if omitted, defaults to mean frequency=np.mean(frequency)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Data array of fractional frequency</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>y</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.utils.frequency2phase">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frequency_data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integrates fractional frequency data to output phase data.</p>
+<p>Frequency to phase conversion is done by piecewise  integration  using
+the  averaging  time  as  the  integration  interval
+<a class="reference internal" href="references.html#rileystable32manual" id="id27"><span>[RileyStable32Manual]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[x_{i+1} = x_i + y_i \tau\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frequency_data</strong> – data array of fractional frequency measurements</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>time integral of fractional frequency data, i.e. phase (time) data
+in units of seconds. For phase in units of radians, see
+<cite>phase2radians()</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.utils.input_to_phase">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">input_to_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#input_to_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.input_to_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes either phase or frequency data as input and returns phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – data array of input measurements.</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz</p></li>
+<li><p><strong>data_type</strong> – input data type. Either <cite>phase</cite> or <cite>freq</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array of phase data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.utils.phase2frequency">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2frequency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">rate</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#phase2frequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert phase in seconds to fractional frequency</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phase</strong> (<em>np.array</em>) – Data array of phase in seconds</p></li>
+<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for phase, in Hz</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Data array of fractional frequency</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>y</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.utils.phase2radians">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2radians</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phasedata</span></em>, <em class="sig-param"><span class="n">v0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#phase2radians"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2radians" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert phase in seconds to phase in radians</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phasedata</strong> (<em>np.array</em>) – Data array of phase in seconds</p></li>
+<li><p><strong>v0</strong> (<em>float</em>) – Nominal oscillator frequency in Hz</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>phase data in radians</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>fi</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.utils.remove_small_ns">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">remove_small_ns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">devs</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">deverrs</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>List<span class="p">[</span>numpy.ndarray<span class="p">]</span><span class="p">, </span>numpy.ndarray<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">ns</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>Union<span class="p">[</span>List<span class="p">[</span>numpy.ndarray<span class="p">]</span><span class="p">, </span>numpy.ndarray<span class="p">]</span><span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#remove_small_ns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.remove_small_ns" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Remove results with small number of samples.</dt><dd><p>If n is small (==1), reject the result</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>taus</strong> (<em>array</em>) – List of tau values for which deviation were computed</p></li>
+<li><p><strong>devs</strong> (<em>array</em>) – List of deviations</p></li>
+<li><p><strong>deverrs</strong> (<em>array</em><em> or </em><em>list of arrays</em>) – List of estimated errors (possibly a list containing two arrays :
+upper and lower values)</p></li>
+<li><p><strong>ns</strong> (<em>array</em>) – Number of samples for each point</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>(taus, devs, deverrs, ns)</strong> – Identical to input, except that values with low ns have been removed.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.utils.tau_generator">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">tau_generator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">v</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">even</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">maximum_m</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#tau_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.tau_generator" title="Permalink to this definition">¶</a></dt>
+<dd><p>pre-processing of the tau-list given by the user (Helper function)</p>
+<p>Does sanity checks, sorts data, removes duplicates and invalid values.
+Generates a tau-list based on keywords ‘all’, ‘decade’, ‘octave’.
+Uses ‘octave’ by default if no taus= argument is given.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.array</em>) – data array</p></li>
+<li><p><strong>rate</strong> (<em>float</em>) – Sample rate of data in Hz. Time interval between measurements
+is 1/rate seconds.</p></li>
+<li><p><strong>taus</strong> (<em>np.array</em>) – Array of tau values for which to compute measurement.
+Alternatively one of the keywords: “all”, “octave”, “decade”.
+Defaults to “octave” if omitted.</p></li>
+<li><p><strong>v</strong> – verbose output if True</p></li>
+<li><p><strong>even</strong> – require even m, where tau=m*tau0, for Theo1 statistic</p></li>
+<li><p><strong>maximum_m</strong> – limit m, where tau=m*tau0, to this value.
+used by mtotdev() and htotdev() to limit maximum tau.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>(data, m, taus)</strong> (<em>tuple</em>) – List of computed values</p></li>
+<li><p><strong>data</strong> (<em>np.array</em>) – Data</p></li>
+<li><p><strong>m</strong> (<em>np.array</em>) – Tau in units of data points</p></li>
+<li><p><strong>taus</strong> (<em>np.array</em>) – Cleaned up list of tau values</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.utils.tau_reduction">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">tau_reduction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ms</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">n_per_decade</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#tau_reduction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.tau_reduction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reduce the number of taus to maximum of n per decade (Helper function)</p>
+<p>takes in a tau list and reduces the number of taus to a maximum amount per
+decade. This is only useful if more than the “decade” and “octave” but
+less than the “all” taus are wanted. E.g. to show certain features of
+the data one might want 100 points per decade.</p>
+<p>NOTE: The algorithm is slightly inaccurate for ms under n_per_decade, and
+will also remove some points in this range, which is usually fine.</p>
+<p>Typical use would be something like:
+(data,m,taus)=tau_generator(data,rate,taus=”all”)
+(m,taus)=tau_reduction(m,rate,n_per_decade)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ms</strong> (<em>array of integers</em>) – List of m values (assumed to be an “all” list) to remove points from.</p></li>
+<li><p><strong>rate</strong> (<em>float</em>) – Sample rate of data in Hz. Time interval between measurements
+is 1/rate seconds. Used to convert to taus.</p></li>
+<li><p><strong>n_per_decade</strong> (<em>int</em>) – Number of ms/taus to keep per decade.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>m</strong> (<em>np.array</em>) – Reduced list of m values</p></li>
+<li><p><strong>taus</strong> (<em>np.array</em>) – Reduced list of tau values</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.utils.three_cornered_hat_phase">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phasedata_ab</span></em>, <em class="sig-param"><span class="n">phasedata_bc</span></em>, <em class="sig-param"><span class="n">phasedata_ca</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">taus</span></em>, <em class="sig-param"><span class="n">function</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#three_cornered_hat_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Three Cornered Hat Method</p>
+<p>Given three clocks A, B, C, we seek to find their variances
+<span class="math notranslate nohighlight">\(\sigma^2_A\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_B\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_C\)</span>.
+We measure three phase differences, assuming no correlation between
+the clocks, the measurements have variances:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\sigma^2_{AB} = \sigma^2_{A} + \sigma^2_{B}\\\sigma^2_{BC} = \sigma^2_{B} + \sigma^2_{C}\\\sigma^2_{CA} = \sigma^2_{C} + \sigma^2_{A}\end{aligned}\end{align} \]</div>
+<p>Which allows solving for the variance of one clock as:</p>
+<div class="math notranslate nohighlight">
+\[\sigma^2_{A}  = {1 \over 2} ( \sigma^2_{AB} +
+\sigma^2_{CA} - \sigma^2_{BC} )\]</div>
+<p>and similarly cyclic permutations for <span class="math notranslate nohighlight">\(\sigma^2_B\)</span> and
+<span class="math notranslate nohighlight">\(\sigma^2_C\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phasedata_ab</strong> (<em>np.array</em>) – phase measurements between clock A and B, in seconds</p></li>
+<li><p><strong>phasedata_bc</strong> (<em>np.array</em>) – phase measurements between clock B and C, in seconds</p></li>
+<li><p><strong>phasedata_ca</strong> (<em>np.array</em>) – phase measurements between clock C and A, in seconds</p></li>
+<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for phase, in Hz</p></li>
+<li><p><strong>taus</strong> (<em>np.array</em>) – The tau values for deviations, in seconds</p></li>
+<li><p><strong>function</strong> (<em>allantoolkit deviation function</em>) – The type of statistic to compute, e.g. allantoolkit.oadev</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>tau_ab</strong> (<em>np.array</em>) – Tau values corresponding to output deviations</p></li>
+<li><p><strong>dev_a</strong> (<em>np.array</em>) – List of computed values for clock A</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p><a class="reference external" href="http://www.wriley.com/3-CornHat.htm">http://www.wriley.com/3-CornHat.htm</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.utils.trim_data">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">trim_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#trim_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.trim_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trim leading and trailing NaNs from dataset
+This is done by browsing the array from each end and store the index of the
+first non-NaN in each case, the return the appropriate slice of the array</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-allantoolkit.testutils">
+<span id="allantoolkit-testutils-module"></span><h2>allantoolkit.testutils module<a class="headerlink" href="#module-allantoolkit.testutils" title="Permalink to this headline">¶</a></h2>
+<p>Useful collection of functions for the allantoolkit test-suite</p>
+<dl class="py function">
+<dt id="allantoolkit.testutils.change_to_test_dir">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">change_to_test_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#change_to_test_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.change_to_test_dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.testutils.check_approx_equal">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">check_approx_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a1</span></em>, <em class="sig-param"><span class="n">a2</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#check_approx_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.check_approx_equal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.testutils.check_equal">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">check_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#check_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.check_equal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.testutils.print_elapsed">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">print_elapsed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span></em>, <em class="sig-param"><span class="n">start</span></em>, <em class="sig-param"><span class="n">start0</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#print_elapsed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.print_elapsed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.testutils.read_datafile">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">read_datafile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#read_datafile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.read_datafile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.testutils.read_resultfile">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">read_resultfile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#read_resultfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.read_resultfile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.testutils.read_stable32">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">read_stable32</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">resultfile</span></em>, <em class="sig-param"><span class="n">datarate</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#read_stable32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.read_stable32" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.testutils.test_row_by_row">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">test_row_by_row</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">function</span></em>, <em class="sig-param"><span class="n">datafile</span></em>, <em class="sig-param"><span class="n">datarate</span></em>, <em class="sig-param"><span class="n">resultfile</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">frequency</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#test_row_by_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.test_row_by_row" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.testutils.this_working_directory">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">this_working_directory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#this_working_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.this_working_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes working directory to directory calling function and returns to
+previous on exit.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.testutils.to_fractional">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">to_fractional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#to_fractional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.to_fractional" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.testutils.working_directory">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">working_directory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#working_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.working_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes working directory and returns to previous on exit.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-allantoolkit">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-allantoolkit" title="Permalink to this headline">¶</a></h2>

@@ -78,7 +78,7 @@ Papers
 ..  .. [Riley_Stable32] http://www.stable32.com/Handbook.pdf
 
 
-..  .. [Riley_Stable32_Manual] http://stable32.com/Manual154.pdf
+.. [RileyStable32Manual] http://stable32.com/Manual154.pdf
 
 ..  .. [Riley_CI] Confidence Intervals and Bias Corrections  for the Stable32
         Variance Functions

@@ -14,7 +14,7 @@ def frequency2phase(frequency_data: Array, rate: float) -> Array:
 
     Frequency to phase conversion is done by piecewise  integration  using
     the  averaging  time  as  the  integration  interval
-    [Riley_Stable32_Manual]_:
+    [RileyStable32Manual]_:
 
     .. math:: x_{i+1} = x_i + y_i \\tau
 

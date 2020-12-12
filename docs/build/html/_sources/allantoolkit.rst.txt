@@ -60,6 +60,24 @@ allantoolkit.realtime module
    :undoc-members:
    :show-inheritance:
 
+
+allantoolkit.utils module
+----------------------------
+
+.. automodule:: allantoolkit.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+allantoolkit.testutils module
+-----------------------------
+
+.. automodule:: allantoolkit.testutils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

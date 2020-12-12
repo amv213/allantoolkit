@@ -5,66 +5,58 @@
   AW2015-03-29
 """
 
-import os
+import pytest
+import pathlib
 import allantoolkit
-import allantoolkit.allantools as allan
 import allantoolkit.testutils as testutils
 
 
-data_file = '../assets/Keysight53230A_ti_noise_floor/tic_phase.txt'  # input data file
-verbose = 1
-tolerance = 1e-4
-rate = 1/float(1.0)  # stable32 runs were done with this data-interval
+# top level directory with asset files
+ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets'
+
+# input data files, and associated verbosity, tolerance, and acquisition rate
+assets = [
+    ('Keysight53230A_ti_noise_floor/tic_phase.txt', 1, 1e-4, 1.),
+]
+
+# input result files and function which should replicate them
+results = [
+    ('tic_adev.txt', allantoolkit.allantools.adev),
+    ('tic_oadev.txt', allantoolkit.allantools.oadev),
+    ('tic_mdev.txt', allantoolkit.allantools.mdev),
+    ('tic_tdev.txt', allantoolkit.allantools.tdev),
+    ('tic_hdev.txt', allantoolkit.allantools.hdev),
+    ('tic_ohdev.txt', allantoolkit.allantools.ohdev),
+    ('tic_totdev.txt', allantoolkit.allantools.totdev),
+    ('tic_tierms.txt', allantoolkit.allantools.tierms),
+]
 
 
-def generic_test(datafile=data_file, result="", fct=None):
-    testutils.change_to_test_dir()
-    testutils.test_row_by_row(fct, datafile, 1.0, result,
+@pytest.mark.slow
+@pytest.mark.parametrize('datafile, verbose, tolerance, rate', assets)
+@pytest.mark.parametrize('result, fct', results)
+def test_generic(datafile, result, fct, verbose, tolerance, rate):
+
+    datafile = ASSETS_DIR / datafile
+    result = datafile.parent / result
+
+    testutils.test_row_by_row(fct, datafile, rate, result,
                               verbose=verbose, tolerance=tolerance)
 
 
-def test_adev():
-    generic_test(result='tic_adev.txt', fct=allan.adev)
-
-
-def test_oadev():
-    generic_test(result='tic_oadev.txt', fct=allan.oadev)
-
-
-def test_mdev():
-    generic_test(result='tic_mdev.txt', fct=allan.mdev)
-
-
-def test_tdev():
-    generic_test(result='tic_tdev.txt', fct=allan.tdev)
-
-
-def test_hdev():
-    generic_test(result='tic_hdev.txt', fct=allan.hdev)
-
-
-def test_ohdev():
-    generic_test(result='tic_ohdev.txt', fct= allan.ohdev)
-
-
-def test_totdev():
-    generic_test(result='tic_totdev.txt', fct=allan.totdev)
-
-
-# def test_mtie(self):
-#    self.generic_test( result='mtie_fast.txt' , fct= allan.mtie )
-
-
-def test_tierms():
-    generic_test(result='tic_tierms.txt', fct=allan.tierms )
-
-
-def test_noise_id():
+@pytest.mark.parametrize('datafile, verbose, tolerance, rate', assets)
+def test_noise_id(datafile, verbose, tolerance, rate):
     """ test for noise-identification """
-    s32_rows = testutils.read_stable32( 'tic_oadev.txt' , 1.0 )
-    phase = testutils.read_datafile(data_file)
+
+    datafile = ASSETS_DIR / datafile
+    result = datafile.parent / 'tic_oadev.txt'
+
+    s32_rows = testutils.read_stable32(result, rate)
+    phase = testutils.read_datafile(datafile)
+
     for s32 in s32_rows:
         tau, alpha, af = s32['tau'], s32['alpha'], int(s32['m'])
+
         try:
             alpha_int = allantoolkit.ci.autocorr_noise_id(
                 phase, af=af)[0]

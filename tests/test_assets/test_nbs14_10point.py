@@ -16,29 +16,34 @@
   around page 107
 """
 
+import numpy as np
 import math
-
 import allantoolkit.allantools as allan
 
 # 10-point dataset and deviations
-nbs14_phase = [ 0.00000, 103.11111, 123.22222, 157.33333, 166.44444, 48.55555,-96.33333,-2.22222, 111.88889, 0.00000 ]
-nbs14_f     = [892.0,809.0,823.0,798.0,671.0,644.0,883.0,903.0,677.0]
+nbs14_phase = np.array(
+    [0.00000, 103.11111, 123.22222, 157.33333, 166.44444,
+     48.55555, -96.33333, -2.22222, 111.88889, 0.00000])
 
-nbs14_devs= [ (91.22945,115.8082),  # 0, ADEV(tau=1,tau=2)
-              (91.22945, 85.95287), # 1, OADEV 
-              (91.22945,74.78849),  # 2, MDEV
-              #(91.22945,98.31100),  # TOTDEV, http://www.ieee-uffc.org/frequency-control/learning-riley.asp
-              (91.22945, 93.90379), # 3, TOTDEV, http://tf.nist.gov/general/pdf/2220.pdf page 107
-              (70.80608,116.7980),  # 4, HDEV
-              (52.67135,86.35831),  # 5, TDEV 
-              (70.80607, 85.61487), # 6, OHDEV
-              #(75.50203, 75.83606),  # 7, MTOTDEV (published table, WFM bias correction)
-              (6.4509e+01, 6.4794e+01), # MTOTDEV Stable32 v1.60, no bias-correction
-              #(43.59112, 87.56794 ), # 8, TTOTDEV (published table, WFM bias correction)
-              (3.7244e+01, 7.4818e+01), # TTOTDEV Stable32 v1.60, no bias-correction
-              (70.80607, 91.16396 ), # 9 HTOTDEV (published table)
-              (45.704, 81.470)] # 10 HTOTDEV Stable32 (not sure what these are!??)
-              # (100.9770, 102.6039)  # Standard Deviation (sample, not population)
+nbs14_f = np.array([892.0, 809.0, 823.0, 798.0, 671.0, 644.0, 883.0, 903.0,
+                    677.0])
+
+nbs14_devs = np.array(
+    [ (91.22945,115.8082),  # 0, ADEV(tau=1,tau=2)
+      (91.22945, 85.95287),  # 1, OADEV
+      (91.22945,74.78849),  # 2, MDEV
+      # (91.22945,98.31100),  # TOTDEV, http://www.ieee-uffc.org/frequency-control/learning-riley.asp
+      (91.22945, 93.90379),  # 3, TOTDEV, http://tf.nist.gov/general/pdf/2220.pdf page 107
+      (70.80608, 116.7980),  # 4, HDEV
+      (52.67135, 86.35831),  # 5, TDEV
+      (70.80607, 85.61487),  # 6, OHDEV
+      # (75.50203, 75.83606),  # 7, MTOTDEV (published table, WFM bias correction)
+      (6.4509e+01, 6.4794e+01),  # MTOTDEV Stable32 v1.60, no bias-correction
+      # (43.59112, 87.56794 ), # 8, TTOTDEV (published table, WFM bias correction)
+      (3.7244e+01, 7.4818e+01),  # TTOTDEV Stable32 v1.60, no bias-correction
+      (70.80607, 91.16396),  # 9 HTOTDEV (published table)
+      (45.704, 81.470)])  # 10 HTOTDEV Stable32 (not sure what these are!??)
+    # (100.9770, 102.6039)  # Standard Deviation (sample, not population)
 
 
 def check_devs(dev2, dev1, soft=False):

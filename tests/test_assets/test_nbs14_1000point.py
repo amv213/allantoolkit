@@ -18,6 +18,7 @@
 
 import allantoolkit.utils
 import allantoolkit.allantools as allan
+import numpy as np
 
 # 1000 point deviations from:
 # http://www.ieee-uffc.org/frequency-control/learning-riley.asp    Table III
@@ -60,7 +61,7 @@ def nbs14_1000():
     return n
 
 
-fdata = nbs14_1000()
+fdata = np.array(nbs14_1000())
 pdata = allantoolkit.utils.frequency2phase(fdata, 1.0)
 
 

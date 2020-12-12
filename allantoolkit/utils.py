@@ -1,6 +1,6 @@
 import logging
 import numpy as np
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Callable
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -9,14 +9,94 @@ logger = logging.getLogger(__name__)
 Array = np.ndarray
 
 
+def trim_data(x: Array) -> Array:
+    """
+    Trim leading and trailing NaNs from dataset
+    This is done by browsing the array from each end and store the index of the
+    first non-NaN in each case, the return the appropriate slice of the array
+    """
+
+    # Find indices for first and last valid data
+    first = 0
+    while np.isnan(x[first]):
+        first += 1
+    last = len(x)
+    while np.isnan(x[last - 1]):
+        last -= 1
+    return x[first:last]
+
+
+def nan_helper(y: Array) -> Tuple[Array, Callable]:
+    """Helper to handle indices and logical indices of NaNs.
+
+    https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array#6520696
+
+    Args:
+        y: 1d numpy array with possible NaNs
+
+    Returns:
+        logical indices of NaNs and a function, with signature indices = index(
+        logical_indices), to convert logical indices of NaNs to 'equivalent'
+        indices
+
+    Usage:
+
+        .. code-block:: python
+
+           # linear interpolation of NaNs
+           nans, x = nan_helper(y)
+           y[nans] = np.interp(x(nans), x(~nans), y[~nans])
+
+    """
+
+    return np.isnan(y), lambda z: z.nonzero()[0]
+
+
+def fill_gaps(data: Array) -> Array:
+    """Fill gaps in phase or frequency data by interpolation.
+
+    Gaps may be filled in phase or frequency data by replacing them with
+    interpolated values, by first removing any leading and trailing gaps,
+    and then using the two values immediately before and after any interior
+    gaps to determine linearly interpolated values within the gap
+    [RileyStable32]_ (pg. 107).
+
+    Args:
+        data:   data array of frequency or phase measurements, with gaps
+                represented as NaNs
+
+    Returns:
+        data array with leading and trailing gaps removed, and interior gaps
+        filled via linear interpolation.
+    """
+
+    nans, x = nan_helper(data)
+
+    try:
+        data[nans] = np.interp(x=x(nans), xp=x(~nans), fp=data[~nans],
+                               left=0, right=0)
+    except ValueError:
+        logger.exception("Error raised when interpolating gaps in data")
+        # Not enough values to interpolate, return empty dataset
+        data = np.array([])
+
+    # Trim leading and trailing gaps
+    data = np.trim_zeros(data)
+
+    return data
+
+
 def frequency2phase(frequency_data: Array, rate: float) -> Array:
-    """Integrates fractional frequency data to output phase data.
+    """Integrates fractional frequency data to output phase data (with
+    arbitrary initial value).
 
     Frequency to phase conversion is done by piecewise  integration  using
     the  averaging  time  as  the  integration  interval
-    [RileyStable32Manual]_:
+    [RileyStable32Manual]_ (pg. 174):
 
     .. math:: x_{i+1} = x_i + y_i \\tau
+
+    Any gaps in the frequency data are filled to obtain phase continuity.
 
     Args:
         frequency_data: data array of fractional frequency measurements
@@ -32,7 +112,7 @@ def frequency2phase(frequency_data: Array, rate: float) -> Array:
 
     # Protect against NaN values in input array (issue #60)
     # Reintroduces data trimming as in commit 503cb82
-    frequency_data = trim_data(frequency_data)
+    frequency_data = fill_gaps(frequency_data)
 
     # Erik Benkler (PTB): Subtract mean value before cumsum in order to
     # avoid precision issues when we have small frequency fluctuations on
@@ -268,23 +348,6 @@ def remove_small_ns(taus: np.ndarray, devs: np.ndarray,
 
     return o_taus, o_devs, o_deverrs, o_ns
 
-
-def trim_data(x):
-    """
-    Trim leading and trailing NaNs from dataset
-    This is done by browsing the array from each end and store the index of the
-    first non-NaN in each case, the return the appropriate slice of the array
-    """
-    # Find indices for first and last valid data
-    first = 0
-    while np.isnan(x[first]):
-        first += 1
-    last = len(x)
-    while np.isnan(x[last - 1]):
-        last -= 1
-    return x[first:last]
-
-
 def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
                              phasedata_ca, rate, taus, function):
     """
@@ -406,7 +469,7 @@ def phase2frequency(phase, rate):
     return y
 
 
-def frequency2fractional(frequency, mean_frequency=-1):
+def frequency2fractional(frequency, mean_frequency=-1) -> Array:
     """ Convert frequency in Hz to fractional frequency
 
     Parameters
@@ -427,4 +490,4 @@ def frequency2fractional(frequency, mean_frequency=-1):
     else:
         mu = mean_frequency
     y = [(x-mu)/mu for x in frequency]
-    return y
+    return np.array(y)

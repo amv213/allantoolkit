@@ -75,7 +75,7 @@ Papers
        for Fundamental Frequency and Time Metrology - Random Instabilities
        http://dx.doi.org/10.1109/IEEESTD.2008.4797525
 
-..  .. [Riley_Stable32] http://www.stable32.com/Handbook.pdf
+.. [RileyStable32] http://www.stable32.com/Handbook.pdf
 
 
 .. [RileyStable32Manual] http://stable32.com/Manual154.pdf

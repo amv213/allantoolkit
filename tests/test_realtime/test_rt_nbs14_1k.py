@@ -16,7 +16,7 @@
   around page 107
 """
 
-import numpy
+import numpy as np
 import allantoolkit
 
 # 1000 point deviations from:
@@ -61,13 +61,13 @@ def nbs14_1000():
     n = [x/float(2147483647) for x in n] # normalize so that n is in [0, 1]
     return n
 
-nbs14_f = nbs14_1000()
+nbs14_f = np.array(nbs14_1000())
 nbs14_phase = allantoolkit.utils.frequency2phase(nbs14_f, 1.0)
 
 
 def check_dev(name, tau, a, b):
     print(name," tau=",tau, " ", a ," == ", b)
-    assert( numpy.isclose( a, b) )
+    assert(np.isclose( a, b) )
 
 
 def test_oadev_rt_nbs14_1k():

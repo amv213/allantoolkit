@@ -197,7 +197,7 @@
   <h1>Source code for allantoolkit.utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
 
 <span class="c1"># Spawn module-level logger</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -206,14 +206,94 @@
 <span class="n">Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 
 
+<div class="viewcode-block" id="trim_data"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.trim_data">[docs]</a><span class="k">def</span> <span class="nf">trim_data</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Trim leading and trailing NaNs from dataset</span>
+<span class="sd">    This is done by browsing the array from each end and store the index of the</span>
+<span class="sd">    first non-NaN in each case, the return the appropriate slice of the array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Find indices for first and last valid data</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">first</span><span class="p">]):</span>
+        <span class="n">first</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">last</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]):</span>
+        <span class="n">last</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">first</span><span class="p">:</span><span class="n">last</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="nan_helper"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.nan_helper">[docs]</a><span class="k">def</span> <span class="nf">nan_helper</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Helper to handle indices and logical indices of NaNs.</span>
+
+<span class="sd">    https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array#6520696</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y: 1d numpy array with possible NaNs</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        logical indices of NaNs and a function, with signature indices = index(</span>
+<span class="sd">        logical_indices), to convert logical indices of NaNs to &#39;equivalent&#39;</span>
+<span class="sd">        indices</span>
+
+<span class="sd">    Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">           # linear interpolation of NaNs</span>
+<span class="sd">           nans, x = nan_helper(y)</span>
+<span class="sd">           y[nans] = np.interp(x(nans), x(~nans), y[~nans])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">z</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="fill_gaps"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.fill_gaps">[docs]</a><span class="k">def</span> <span class="nf">fill_gaps</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Fill gaps in phase or frequency data by interpolation.</span>
+
+<span class="sd">    Gaps may be filled in phase or frequency data by replacing them with</span>
+<span class="sd">    interpolated values, by first removing any leading and trailing gaps,</span>
+<span class="sd">    and then using the two values immediately before and after any interior</span>
+<span class="sd">    gaps to determine linearly interpolated values within the gap</span>
+<span class="sd">    [RileyStable32]_ (pg. 107).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   data array of frequency or phase measurements, with gaps</span>
+<span class="sd">                represented as NaNs</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        data array with leading and trailing gaps removed, and interior gaps</span>
+<span class="sd">        filled via linear interpolation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">nans</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nan_helper</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">nans</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">(</span><span class="n">nans</span><span class="p">),</span> <span class="n">xp</span><span class="o">=</span><span class="n">x</span><span class="p">(</span><span class="o">~</span><span class="n">nans</span><span class="p">),</span> <span class="n">fp</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">],</span>
+                               <span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Error raised when interpolating gaps in data&quot;</span><span class="p">)</span>
+        <span class="c1"># Not enough values to interpolate, return empty dataset</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+    <span class="c1"># Trim leading and trailing gaps</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trim_zeros</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
 <div class="viewcode-block" id="frequency2phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2phase">[docs]</a><span class="k">def</span> <span class="nf">frequency2phase</span><span class="p">(</span><span class="n">frequency_data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Integrates fractional frequency data to output phase data.</span>
+    <span class="sd">&quot;&quot;&quot;Integrates fractional frequency data to output phase data (with</span>
+<span class="sd">    arbitrary initial value).</span>
 
 <span class="sd">    Frequency to phase conversion is done by piecewise  integration  using</span>
 <span class="sd">    the  averaging  time  as  the  integration  interval</span>
-<span class="sd">    [RileyStable32Manual]_:</span>
+<span class="sd">    [RileyStable32Manual]_ (pg. 174):</span>
 
 <span class="sd">    .. math:: x_{i+1} = x_i + y_i \\tau</span>
+
+<span class="sd">    Any gaps in the frequency data are filled to obtain phase continuity.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        frequency_data: data array of fractional frequency measurements</span>
@@ -229,7 +309,7 @@
 
     <span class="c1"># Protect against NaN values in input array (issue #60)</span>
     <span class="c1"># Reintroduces data trimming as in commit 503cb82</span>
-    <span class="n">frequency_data</span> <span class="o">=</span> <span class="n">trim_data</span><span class="p">(</span><span class="n">frequency_data</span><span class="p">)</span>
+    <span class="n">frequency_data</span> <span class="o">=</span> <span class="n">fill_gaps</span><span class="p">(</span><span class="n">frequency_data</span><span class="p">)</span>
 
     <span class="c1"># Erik Benkler (PTB): Subtract mean value before cumsum in order to</span>
     <span class="c1"># avoid precision issues when we have small frequency fluctuations on</span>
@@ -465,23 +545,6 @@
 
     <span class="k">return</span> <span class="n">o_taus</span><span class="p">,</span> <span class="n">o_devs</span><span class="p">,</span> <span class="n">o_deverrs</span><span class="p">,</span> <span class="n">o_ns</span></div>
 
-
-<div class="viewcode-block" id="trim_data"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.trim_data">[docs]</a><span class="k">def</span> <span class="nf">trim_data</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Trim leading and trailing NaNs from dataset</span>
-<span class="sd">    This is done by browsing the array from each end and store the index of the</span>
-<span class="sd">    first non-NaN in each case, the return the appropriate slice of the array</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Find indices for first and last valid data</span>
-    <span class="n">first</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">first</span><span class="p">]):</span>
-        <span class="n">first</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">last</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">last</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]):</span>
-        <span class="n">last</span> <span class="o">-=</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">first</span><span class="p">:</span><span class="n">last</span><span class="p">]</span></div>
-
-
 <div class="viewcode-block" id="three_cornered_hat_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.three_cornered_hat_phase">[docs]</a><span class="k">def</span> <span class="nf">three_cornered_hat_phase</span><span class="p">(</span><span class="n">phasedata_ab</span><span class="p">,</span> <span class="n">phasedata_bc</span><span class="p">,</span>
                              <span class="n">phasedata_ca</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -603,7 +666,7 @@
     <span class="k">return</span> <span class="n">y</span></div>
 
 
-<div class="viewcode-block" id="frequency2fractional"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2fractional">[docs]</a><span class="k">def</span> <span class="nf">frequency2fractional</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="n">mean_frequency</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="frequency2fractional"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2fractional">[docs]</a><span class="k">def</span> <span class="nf">frequency2fractional</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="n">mean_frequency</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Convert frequency in Hz to fractional frequency</span>
 
 <span class="sd">    Parameters</span>
@@ -624,7 +687,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mu</span> <span class="o">=</span> <span class="n">mean_frequency</span>
     <span class="n">y</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">mu</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">y</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
 </pre></div>
 
               </div>

@@ -29,7 +29,8 @@ def read_datafile(filename: Path):
             for line in f:
                 if not line.startswith("#"):  # skip comments
                     p.append(float(line))
-    return p
+
+    return numpy.array(p)
 
 
 # read a result-file, produced by copy/paste from Stable32

@@ -12,7 +12,6 @@ import numpy as np
 import pathlib
 import pytest
 import allantoolkit
-import allantoolkit.allantools as allan
 import allantoolkit.testutils as testutils
 
 

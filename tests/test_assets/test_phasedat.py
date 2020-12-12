@@ -6,60 +6,47 @@
 
 """
 
-import os
+import pathlib
 import pytest
-import allantoolkit.allantools as allan
+import allantoolkit
 import allantoolkit.testutils as testutils
 
-data_file = '../assets/phasedat/PHASE.DAT'
-tolerance = 1e-4
-verbose = 1
+# top level directory with asset files
+ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets'
+
+# input data files, and associated verbosity, tolerance, and acquisition rate
+assets = [
+    ('phasedat/PHASE.DAT', 1, 1e-4, 1.),
+]
 
 
-class TestPhaseDat:
-    def test_phasedat_adev(self):
-        self.generic_test( result= 'phase_dat_adev.txt' , fct= allan.adev, verbose=True )
-        
-    def test_phasedat_oadev(self):
-        self.generic_test( result='phase_dat_oadev.txt' , fct= allan.oadev )
-        
-    def test_phasedat_mdev(self):
-        self.generic_test( result='phase_dat_mdev.txt' , fct= allan.mdev )
-        
-    def test_phasedat_tdev(self):
-        self.generic_test( result='phase_dat_tdev.txt' , fct= allan.tdev )
-        
-    def test_phasedat_hdev(self):
-        self.generic_test( result='phase_dat_hdev.txt' , fct= allan.hdev )
-        
-    def test_phasedat_ohdev(self):
-        self.generic_test( result='phase_dat_ohdev.txt' , fct= allan.ohdev )
-        
-    def test_phasedat_totdev(self):
-        self.generic_test( result='phase_dat_totdev.txt' , fct= allan.totdev )
-        
-    @pytest.mark.slow
-    def test_phasedat_htotdev(self):
-        # bias-correction is not implemented, so compare against Stable32-run without bias correction
-        self.generic_test( result='phase_dat_htotdev_octave_nobias.txt' , fct= allan.htotdev )
-        
-    @pytest.mark.slow
-    def test_phasedat_mtotdev(self):
-        self.generic_test( result='phase_dat_mtotdev_octave.txt' , fct= allan.mtotdev )
-        
-    @pytest.mark.slow
-    def test_phasedat_ttotdev(self):
-        self.generic_test( result='phase_dat_ttotdev_octave.txt' , fct= allan.ttotdev )
+# input result files and function which should replicate them
+results = [
+    ('phase_dat_adev.txt', allantoolkit.allantools.adev),
+    ('phase_dat_oadev.txt', allantoolkit.allantools.oadev),
+    ('phase_dat_mdev.txt', allantoolkit.allantools.mdev),
+    ('phase_dat_tdev.txt', allantoolkit.allantools.tdev),
+    ('phase_dat_hdev.txt', allantoolkit.allantools.hdev),
+    ('phase_dat_ohdev.txt', allantoolkit.allantools.ohdev),
+    ('phase_dat_totdev.txt', allantoolkit.allantools.totdev),
+    pytest.param('phase_dat_htotdev_octave_nobias.txt',
+                 allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
+    pytest.param('phase_dat_mtotdev_octave.txt',
+                 allantoolkit.allantools.mtotdev, marks=pytest.mark.slow),
+    pytest.param('phase_dat_ttotdev_octave.txt',
+                 allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
+    ('phase_dat_theo1_alpha0_decade.txt', allantoolkit.allantools.theo1),
+    ('phase_dat_mtie.txt', allantoolkit.allantools.mtie),
+    ('phase_dat_tierms.txt', allantoolkit.allantools.tierms),
+]
 
-    def test_phasedat_theo1_alpha0(self):
-        self.generic_test( result='phase_dat_theo1_alpha0_decade.txt' , fct= allan.theo1 )
-        
-    def test_phasedat_mtie(self):
-        self.generic_test( result='phase_dat_mtie.txt' , fct= allan.mtie )
-        
-    def test_phasedat_tierms(self):
-        self.generic_test( result='phase_dat_tierms.txt' , fct= allan.tierms )
-    
-    def generic_test(self, datafile = data_file, result="", fct=None, verbose=False):
-        testutils.change_to_test_dir()
-        testutils.test_row_by_row( fct, datafile, 1.0, result , verbose=verbose, tolerance=tolerance)
+
+@pytest.mark.parametrize('datafile, verbose, tolerance, rate', assets)
+@pytest.mark.parametrize('result, fct', results)
+def test_generic(datafile, result, fct, verbose, tolerance, rate):
+
+    datafile = ASSETS_DIR / datafile
+    result = datafile.parent / result
+
+    testutils.test_row_by_row(fct, datafile, rate, result,
+                              verbose=verbose, tolerance=tolerance)

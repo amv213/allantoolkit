@@ -114,15 +114,16 @@ def frequency2phase(frequency_data: Array, rate: float) -> Array:
     # Reintroduces data trimming as in commit 503cb82
     frequency_data = fill_gaps(frequency_data)
 
-    # Erik Benkler (PTB): Subtract mean value before cumsum in order to
-    # avoid precision issues when we have small frequency fluctuations on
-    # a large average frequency
-    frequency_data = frequency_data - np.nanmean(frequency_data)
+    # filled data may be empty... so check
+    if frequency_data.size > 0:
 
-    phasedata = np.cumsum(frequency_data) * sampling_period
+        phasedata = np.cumsum(frequency_data) * sampling_period
 
-    # insert arbitrary 0 phase point for x_0
-    phasedata = np.insert(phasedata, 0, 0)
+        # insert arbitrary 0 phase point for x_0
+        phasedata = np.insert(phasedata, 0, 0)
+
+    else:
+        phasedata = np.array([])
 
     return phasedata
 

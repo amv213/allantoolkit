@@ -27,6 +27,12 @@ def data_with_gaps(data):
 
 
 @pytest.fixture
+def data_with_only_gaps(data):
+
+    return np.full_like(data, np.NaN)
+
+
+@pytest.fixture
 def dataset():
     return allantoolkit.dataset.Dataset(allantoolkit.noise.white(10))
 

@@ -53,14 +53,22 @@ def test_invariance(data):
     assert np.array_equal(output, data)
 
 
-def test_all_gaps():
+def test_all_gaps(data_with_only_gaps):
     """Test we get empty array if data is full of gaps"""
 
-    data = np.empty(100)
-    data[:] = np.NaN
-
-    output = allantoolkit.utils.fill_gaps(data)
+    output = allantoolkit.utils.fill_gaps(data_with_only_gaps)
 
     assert np.array_equal(output, np.array([]))
+
+
+def test_almost_all_gaps(data_with_only_gaps):
+    """Test we keep same input value if one and only value in dataset"""
+
+    # fill one value
+    data_with_only_gaps[5] = 1
+
+    output = allantoolkit.utils.fill_gaps(data_with_only_gaps)
+
+    assert np.array_equal(output, np.array([1]))
 
 

@@ -9,34 +9,41 @@ logger = logging.getLogger(__name__)
 Array = np.ndarray
 
 
-def frequency2phase(freqdata, rate):
-    """ integrate fractional frequency data and output phase data
+def frequency2phase(frequency_data: Array, rate: float) -> Array:
+    """Integrates fractional frequency data to output phase data.
 
-    Parameters
-    ----------
-    freqdata: np.array
-        Data array of fractional frequency measurements (nondimensional)
-    rate: float
-        The sampling rate for phase or frequency, in Hz
+    Frequency to phase conversion is done by piecewise  integration  using
+    the  averaging  time  as  the  integration  interval
+    [Riley_Stable32_Manual]_:
 
-    Returns
-    -------
-    phasedata: np.array
-        Time integral of fractional frequency data, i.e. phase (time) data
-        in units of seconds.
-        For phase in units of radians, see phase2radians()
+    .. math:: x_{i+1} = x_i + y_i \\tau
+
+    Args:
+        frequency_data: data array of fractional frequency measurements
+        rate:           sampling rate of the input data, in Hz
+
+    Returns:
+        time integral of fractional frequency data, i.e. phase (time) data
+        in units of seconds. For phase in units of radians, see
+        `phase2radians()`.
     """
-    dt = 1.0 / float(rate)
+
+    sampling_period = 1.0 / rate
+
     # Protect against NaN values in input array (issue #60)
     # Reintroduces data trimming as in commit 503cb82
-    freqdata = trim_data(freqdata)
+    frequency_data = trim_data(frequency_data)
+
     # Erik Benkler (PTB): Subtract mean value before cumsum in order to
     # avoid precision issues when we have small frequency fluctuations on
     # a large average frequency
-    freqdata = freqdata - np.nanmean(freqdata)
-    phasedata = np.cumsum(freqdata) * dt
-    phasedata = np.insert(phasedata, 0, 0) # FIXME: why do we do this?
-    # so that phase starts at zero and len(phase)=len(freq)+1 ??
+    frequency_data = frequency_data - np.nanmean(frequency_data)
+
+    phasedata = np.cumsum(frequency_data) * sampling_period
+
+    # insert arbitrary 0 phase point for x_0
+    phasedata = np.insert(phasedata, 0, 0)
+
     return phasedata
 
 
@@ -44,8 +51,8 @@ def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
     """Takes either phase or frequency data as input and returns phase.
 
     Args:
-        data:       array of input data.
-        rate:       sample rate in Hz of the input data
+        data:       data array of input measurements.
+        rate:       sampling rate of the input data, in Hz
         data_type:  input data type. Either `phase` or `freq`.
 
     Returns:

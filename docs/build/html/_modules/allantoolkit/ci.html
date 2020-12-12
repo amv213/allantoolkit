@@ -210,6 +210,8 @@
 <span class="kn">import</span> <span class="nn">scipy.signal</span>  <span class="c1"># decimation in lag-1 acf</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">allantools</span>
 
+<span class="c1"># Spawn module-level logger</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="c1"># Confidence Intervals</span>
 <span class="n">ONE_SIGMA_CI</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">erf</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>

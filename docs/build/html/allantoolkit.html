@@ -125,6 +125,11 @@
   <i class="fas fa-chevron-down">
   </i>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dev.html">
+   Development
+  </a>
+ </li>
 </ul>
 
 </nav>
@@ -217,25 +222,6 @@
   <a class="reference internal nav-link" href="#module-allantoolkit.allantools">
    allantoolkit.allantools module
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#allan-deviation-tools">
-     Allan deviation tools
-    </a>
-    <ul class="nav section-nav flex-column">
-     <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#version-history">
-       Version history
-      </a>
-     </li>
-     <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#license">
-       License
-      </a>
-     </li>
-    </ul>
-   </li>
-  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#module-allantoolkit.ci">
@@ -263,12 +249,12 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id26">
+    <a class="reference internal nav-link" href="#version-history">
      Version history
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id27">
+    <a class="reference internal nav-link" href="#license">
      License
     </a>
    </li>
@@ -309,82 +295,6 @@
 </div>
 <div class="section" id="module-allantoolkit.allantools">
 <span id="allantoolkit-allantools-module"></span><h2>allantoolkit.allantools module<a class="headerlink" href="#module-allantoolkit.allantools" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="allan-deviation-tools">
-<h3>Allan deviation tools<a class="headerlink" href="#allan-deviation-tools" title="Permalink to this headline">¶</a></h3>
-<p><strong>Author:</strong> Anders Wallin (anders.e.e.wallin “at” gmail.com)</p>
-<div class="section" id="version-history">
-<h4>Version history<a class="headerlink" href="#version-history" title="Permalink to this headline">¶</a></h4>
-<p><strong>2019.07</strong>
-- move edf-functions and noise-ID functions to ci.py
-- mtotdev() htotdev() speed improvements
-- save dataset results to file
-- real-time adev/mdev/hdev</p>
-<p><strong>2018.03</strong> 2018 March 27
-- change license to LGPL v3 or later
-- lag-1 autocorrelation noise identification function
-- B1 noise identification
-- R(n) noise identification
-- Noise() class using Kasdin &amp; Walter algorithm
-- work on Greenhall’s EDF and confidence intervals
-- tests for confidence intervals</p>
-<p><strong>2016.11</strong> 2016 November 18
-- Dataset class
-- plotting with a Plot class
-- confidence intervals based on Greenhall’s EDF algorithm
-- testing on multiple python versions with tox
-- continuous integration with <a class="reference external" href="https://travis-ci.org/aewallin/allantools">https://travis-ci.org/aewallin/allantools</a>
-- test coverage report on <a class="reference external" href="https://coveralls.io/github/aewallin/allantools?branch=master">https://coveralls.io/github/aewallin/allantools?branch=master</a></p>
-<p><strong>2016.4</strong> 2016 April 8
-- convert tests to use pytest
-- split tests into individual pytests, make them all pass
-- accept a numpy.array as taus parameter.
-- Switch to new signature (<a class="reference external" href="https://github.com/aewallin/allantools/issues/29">https://github.com/aewallin/allantools/issues/29</a>)
-- remove old and slow pure-python implementation</p>
-<p><strong>2016.3</strong> 2016 March
-- improve documentation and add __version__
-- added Theo1 deviation theo1()
-- added Hadamard Total Deviatio htotdev()
-- added Modified Total Deviation mtotdev(), and Time Total Deviation
-ttotdev() <a class="reference external" href="http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/">http://www.anderswallin.net/2016/03/modified-total-deviation-in-allantools/</a>
-- automatic tau-lists:  taus=[ “all” | “octave” | “decade” ]
-- merge adev() and adev_phase() into one, requiring phase= or frequency=
-argument
-- add GPS dataset as example and test</p>
-<p><strong>2016.2</strong> 2016 February
-- update release on PyPi <a class="reference external" href="https://pypi.python.org/pypi/AllanTools">https://pypi.python.org/pypi/AllanTools</a>
-- pytest and coverage
-- setuptools
-- change version number to year.month</p>
-<p><strong>v1.2.1</strong> 2015 July
-- Python 3 compatibility using 2to3 tool, by kuzavas
-- IPython notebook examples
-- sphinx documentation, auto-built on readthedocs</p>
-<p><strong>v1.2</strong> 2014 November, Cantwell G. Carson conrtibuted:
-- A gap-robust version of ADEV based on the paper by Sesia et al.
-gradev_phase() and gradev()
-- Improved uncertainty estimates: uncertainty_estimate() This introduces a
-new dependency: scipy.stats.chi2()</p>
-<p><strong>v1.1</strong> 2014 August
-- Danny Price converted the library to use numpy.
-- many functions in allantoolkit are now 100x faster than before.
-- see <a class="reference external" href="http://www.anderswallin.net/2014/08/faster-allantools-with-numpy/">http://www.anderswallin.net/2014/08/faster-allantools-with-numpy/</a></p>
-<p><strong>v1.01</strong> 2014 August
-- PEP8 compliance improvements by Danny Price.</p>
-<p><strong>v1.00</strong> 2014 January, first version of allantoolkit.
-- see <a class="reference external" href="http://www.anderswallin.net/2014/01/allantools/">http://www.anderswallin.net/2014/01/allantools/</a></p>
-</div>
-<div class="section" id="license">
-<h4>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h4>
-<p>This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.</p>
-<p>This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.</p>
-<p>You should have received a copy of the GNU Lesser General Public License
-along with this program.  If not, see &lt;<a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.</p>
 <dl class="py function">
 <dt id="allantoolkit.allantools.adev">
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">adev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#adev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.adev" title="Permalink to this definition">¶</a></dt>
@@ -543,49 +453,6 @@ Approach to the Modified Allan Variance,” Proc.
 </dd></dl>
 
 <dl class="py function">
-<dt id="allantoolkit.allantools.frequency2fractional">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">frequency2fractional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frequency</span></em>, <em class="sig-param"><span class="n">mean_frequency</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#frequency2fractional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.frequency2fractional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert frequency in Hz to fractional frequency</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>frequency</strong> (<em>np.array</em>) – Data array of frequency in Hz</p></li>
-<li><p><strong>mean_frequency</strong> (<em>float</em>) – (optional) The nominal mean frequency, in Hz
-if omitted, defaults to mean frequency=np.mean(frequency)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Data array of fractional frequency</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>y</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="allantoolkit.allantools.frequency2phase">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">frequency2phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">freqdata</span></em>, <em class="sig-param"><span class="n">rate</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#frequency2phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.frequency2phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>integrate fractional frequency data and output phase data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>freqdata</strong> (<em>np.array</em>) – Data array of fractional frequency measurements (nondimensional)</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for phase or frequency, in Hz</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>phasedata</strong> – Time integral of fractional frequency data, i.e. phase (time) data
-in units of seconds.
-For phase in units of radians, see phase2radians()</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>np.array</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt id="allantoolkit.allantools.gradev">
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">gradev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ci</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">noisetype</span><span class="o">=</span><span class="default_value">'wp'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#gradev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.gradev" title="Permalink to this definition">¶</a></dt>
 <dd><p>gap resistant overlapping Allan deviation</p>
@@ -686,12 +553,6 @@ tau-list generation.</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="allantoolkit.allantools.input_to_phase">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">input_to_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">data_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#input_to_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.input_to_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Take either phase or frequency as input and return phase</p>
 </dd></dl>
 
 <dl class="py function">
@@ -901,138 +762,6 @@ tau-list generation.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="allantoolkit.allantools.phase2frequency">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">phase2frequency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">rate</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#phase2frequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.phase2frequency" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert phase in seconds to fractional frequency</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>phase</strong> (<em>np.array</em>) – Data array of phase in seconds</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for phase, in Hz</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Data array of fractional frequency</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>y</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="allantoolkit.allantools.phase2radians">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">phase2radians</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phasedata</span></em>, <em class="sig-param"><span class="n">v0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#phase2radians"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.phase2radians" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert phase in seconds to phase in radians</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>phasedata</strong> (<em>np.array</em>) – Data array of phase in seconds</p></li>
-<li><p><strong>v0</strong> (<em>float</em>) – Nominal oscillator frequency in Hz</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>phase data in radians</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>fi</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="allantoolkit.allantools.remove_small_ns">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">remove_small_ns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">taus</span></em>, <em class="sig-param"><span class="n">devs</span></em>, <em class="sig-param"><span class="n">deverrs</span></em>, <em class="sig-param"><span class="n">ns</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#remove_small_ns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.remove_small_ns" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Remove results with small number of samples.</dt><dd><p>If n is small (==1), reject the result</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>taus</strong> (<em>array</em>) – List of tau values for which deviation were computed</p></li>
-<li><p><strong>devs</strong> (<em>array</em>) – List of deviations</p></li>
-<li><p><strong>deverrs</strong> (<em>array</em><em> or </em><em>list of arrays</em>) – List of estimated errors (possibly a list containing two arrays :
-upper and lower values)</p></li>
-<li><p><strong>ns</strong> (<em>array</em>) – Number of samples for each point</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>(taus, devs, deverrs, ns)</strong> – Identical to input, except that values with low ns have been removed.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="allantoolkit.allantools.tau_generator">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">tau_generator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">v</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">even</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">maximum_m</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#tau_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.tau_generator" title="Permalink to this definition">¶</a></dt>
-<dd><p>pre-processing of the tau-list given by the user (Helper function)</p>
-<p>Does sanity checks, sorts data, removes duplicates and invalid values.
-Generates a tau-list based on keywords ‘all’, ‘decade’, ‘octave’.
-Uses ‘octave’ by default if no taus= argument is given.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>np.array</em>) – data array</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – Sample rate of data in Hz. Time interval between measurements
-is 1/rate seconds.</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – Array of tau values for which to compute measurement.
-Alternatively one of the keywords: “all”, “octave”, “decade”.
-Defaults to “octave” if omitted.</p></li>
-<li><p><strong>v</strong> – verbose output if True</p></li>
-<li><p><strong>even</strong> – require even m, where tau=m*tau0, for Theo1 statistic</p></li>
-<li><p><strong>maximum_m</strong> – limit m, where tau=m*tau0, to this value.
-used by mtotdev() and htotdev() to limit maximum tau.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>(data, m, taus)</strong> (<em>tuple</em>) – List of computed values</p></li>
-<li><p><strong>data</strong> (<em>np.array</em>) – Data</p></li>
-<li><p><strong>m</strong> (<em>np.array</em>) – Tau in units of data points</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – Cleaned up list of tau values</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="allantoolkit.allantools.tau_reduction">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">tau_reduction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ms</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">n_per_decade</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#tau_reduction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.tau_reduction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reduce the number of taus to maximum of n per decade (Helper function)</p>
-<p>takes in a tau list and reduces the number of taus to a maximum amount per
-decade. This is only useful if more than the “decade” and “octave” but
-less than the “all” taus are wanted. E.g. to show certain features of
-the data one might want 100 points per decade.</p>
-<p>NOTE: The algorithm is slightly inaccurate for ms under n_per_decade, and
-will also remove some points in this range, which is usually fine.</p>
-<p>Typical use would be something like:
-(data,m,taus)=tau_generator(data,rate,taus=”all”)
-(m,taus)=tau_reduction(m,rate,n_per_decade)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ms</strong> (<em>array of integers</em>) – List of m values (assumed to be an “all” list) to remove points from.</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – Sample rate of data in Hz. Time interval between measurements
-is 1/rate seconds. Used to convert to taus.</p></li>
-<li><p><strong>n_per_decade</strong> (<em>int</em>) – Number of ms/taus to keep per decade.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>m</strong> (<em>np.array</em>) – Reduced list of m values</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – Reduced list of tau values</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt id="allantoolkit.allantools.tdev">
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">tdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#tdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.tdev" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
@@ -1104,45 +833,6 @@ tau-list generation.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="allantoolkit.allantools.three_cornered_hat_phase">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phasedata_ab</span></em>, <em class="sig-param"><span class="n">phasedata_bc</span></em>, <em class="sig-param"><span class="n">phasedata_ca</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">taus</span></em>, <em class="sig-param"><span class="n">function</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#three_cornered_hat_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Three Cornered Hat Method</p>
-<p>Given three clocks A, B, C, we seek to find their variances
-<span class="math notranslate nohighlight">\(\sigma^2_A\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_B\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_C\)</span>.
-We measure three phase differences, assuming no correlation between
-the clocks, the measurements have variances:</p>
-<div class="math notranslate nohighlight">
-\[ \begin{align}\begin{aligned}\sigma^2_{AB} = \sigma^2_{A} + \sigma^2_{B}\\\sigma^2_{BC} = \sigma^2_{B} + \sigma^2_{C}\\\sigma^2_{CA} = \sigma^2_{C} + \sigma^2_{A}\end{aligned}\end{align} \]</div>
-<p>Which allows solving for the variance of one clock as:</p>
-<div class="math notranslate nohighlight">
-\[\sigma^2_{A}  = {1 \over 2} ( \sigma^2_{AB} +
-\sigma^2_{CA} - \sigma^2_{BC} )\]</div>
-<p>and similarly cyclic permutations for <span class="math notranslate nohighlight">\(\sigma^2_B\)</span> and
-<span class="math notranslate nohighlight">\(\sigma^2_C\)</span></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>phasedata_ab</strong> (<em>np.array</em>) – phase measurements between clock A and B, in seconds</p></li>
-<li><p><strong>phasedata_bc</strong> (<em>np.array</em>) – phase measurements between clock B and C, in seconds</p></li>
-<li><p><strong>phasedata_ca</strong> (<em>np.array</em>) – phase measurements between clock C and A, in seconds</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for phase, in Hz</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – The tau values for deviations, in seconds</p></li>
-<li><p><strong>function</strong> (<em>allantoolkit deviation function</em>) – The type of statistic to compute, e.g. allantoolkit.oadev</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>tau_ab</strong> (<em>np.array</em>) – Tau values corresponding to output deviations</p></li>
-<li><p><strong>dev_a</strong> (<em>np.array</em>) – List of computed values for clock A</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-<p class="rubric">References</p>
-<p><a class="reference external" href="http://www.wriley.com/3-CornHat.htm">http://www.wriley.com/3-CornHat.htm</a></p>
-</dd></dl>
-
-<dl class="py function">
 <dt id="allantoolkit.allantools.tierms">
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">tierms</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#tierms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.tierms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Time Interval Error RMS.</p>
@@ -1197,14 +887,6 @@ frequency or phase.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="allantoolkit.allantools.trim_data">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">trim_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#trim_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.trim_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Trim leading and trailing NaNs from dataset
-This is done by browsing the array from each end and store the index of the
-first non-NaN in each case, the return the appropriate slice of the array</p>
-</dd></dl>
-
-<dl class="py function">
 <dt id="allantoolkit.allantools.ttotdev">
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">ttotdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#ttotdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.ttotdev" title="Permalink to this definition">¶</a></dt>
 <dd><p>Time Total Deviation</p>
@@ -1212,8 +894,6 @@ first non-NaN in each case, the return the appropriate slice of the array</p>
 <p>NIST <a class="reference internal" href="references.html#sp1065" id="id17"><span>[SP1065]</span></a> eqn (28) page 26.  Note that <a class="reference internal" href="references.html#sp1065" id="id18"><span>[SP1065]</span></a> erroneously has tau-cubed here (!).</p>
 </dd></dl>
 
-</div>
-</div>
 </div>
 <div class="section" id="module-allantoolkit.ci">
 <span id="allantoolkit-ci-module"></span><h2>allantoolkit.ci module<a class="headerlink" href="#module-allantoolkit.ci" title="Permalink to this headline">¶</a></h2>
@@ -2010,13 +1690,13 @@ number must be power of two</p></li>
 <dt><strong>Authors:</strong> Frederic Meynadier (frederic.meynadier “at” gmail.com),</dt><dd><p>Mike DePalatis (<a class="reference external" href="http://mike.depalatis.net">http://mike.depalatis.net</a>)</p>
 </dd>
 </dl>
-<div class="section" id="id26">
-<h3>Version history<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="version-history">
+<h3>Version history<a class="headerlink" href="#version-history" title="Permalink to this headline">¶</a></h3>
 <p><strong>unreleased</strong>
 - Initial commit</p>
 </div>
-<div class="section" id="id27">
-<h3>License<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="license">
+<h3>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h3>
 <p>This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -2159,7 +1839,7 @@ Initial version 2019 July, Anders E. E. Wallin.</p>
 <em class="property">class </em><code class="sig-prename descclassname">allantoolkit.realtime.</code><code class="sig-name descname">ohdev_realtime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">afs</span><span class="o">=</span><span class="default_value">[1]</span></em>, <em class="sig-param"><span class="n">tau0</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">auto_afs</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">pts_per_decade</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/realtime.html#ohdev_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.realtime.ohdev_realtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#allantoolkit.realtime.dev_realtime" title="allantoolkit.realtime.dev_realtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">allantoolkit.realtime.dev_realtime</span></code></a></p>
 <p>Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.</p>
-<p><a class="reference internal" href="references.html#dobrogowski2007" id="id28"><span>[Dobrogowski2007]</span></a>
+<p><a class="reference internal" href="references.html#dobrogowski2007" id="id26"><span>[Dobrogowski2007]</span></a>
 Dobrogowski &amp; Kasznia
 <a class="reference external" href="https://doi.org/10.1109/FREQ.2007.4319204">https://doi.org/10.1109/FREQ.2007.4319204</a></p>
 <dl class="py method">

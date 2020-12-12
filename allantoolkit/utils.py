@@ -1,16 +1,66 @@
+import logging
 import numpy as np
 from typing import List, Tuple, Union
 
+# Spawn module-level logger
+logger = logging.getLogger(__name__)
 
-def input_to_phase(data, rate, data_type):
-    """ Take either phase or frequency as input and return phase
+# shorten type hint to save some space
+Array = np.ndarray
+
+
+def frequency2phase(freqdata, rate):
+    """ integrate fractional frequency data and output phase data
+
+    Parameters
+    ----------
+    freqdata: np.array
+        Data array of fractional frequency measurements (nondimensional)
+    rate: float
+        The sampling rate for phase or frequency, in Hz
+
+    Returns
+    -------
+    phasedata: np.array
+        Time integral of fractional frequency data, i.e. phase (time) data
+        in units of seconds.
+        For phase in units of radians, see phase2radians()
     """
+    dt = 1.0 / float(rate)
+    # Protect against NaN values in input array (issue #60)
+    # Reintroduces data trimming as in commit 503cb82
+    freqdata = trim_data(freqdata)
+    # Erik Benkler (PTB): Subtract mean value before cumsum in order to
+    # avoid precision issues when we have small frequency fluctuations on
+    # a large average frequency
+    freqdata = freqdata - np.nanmean(freqdata)
+    phasedata = np.cumsum(freqdata) * dt
+    phasedata = np.insert(phasedata, 0, 0) # FIXME: why do we do this?
+    # so that phase starts at zero and len(phase)=len(freq)+1 ??
+    return phasedata
+
+
+def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
+    """Takes either phase or frequency data as input and returns phase.
+
+    Args:
+        data:       array of input data.
+        rate:       sample rate in Hz of the input data
+        data_type:  input data type. Either `phase` or `freq`.
+
+    Returns:
+        array of phase data.
+    """
+
     if data_type == "phase":
         return data
+
     elif data_type == "freq":
         return frequency2phase(data, rate)
+
     else:
-        raise Exception("unknown data_type: " + data_type)
+        raise ValueError(f"Invalid data_type value: {data_type}. Should be "
+                         f"`phase` or `freq`.")
 
 
 def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
@@ -309,37 +359,6 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
 #
 # simple conversions between frequency, phase(seconds), phase(radians)
 #
-
-
-def frequency2phase(freqdata, rate):
-    """ integrate fractional frequency data and output phase data
-
-    Parameters
-    ----------
-    freqdata: np.array
-        Data array of fractional frequency measurements (nondimensional)
-    rate: float
-        The sampling rate for phase or frequency, in Hz
-
-    Returns
-    -------
-    phasedata: np.array
-        Time integral of fractional frequency data, i.e. phase (time) data
-        in units of seconds.
-        For phase in units of radians, see phase2radians()
-    """
-    dt = 1.0 / float(rate)
-    # Protect against NaN values in input array (issue #60)
-    # Reintroduces data trimming as in commit 503cb82
-    freqdata = trim_data(freqdata)
-    # Erik Benkler (PTB): Subtract mean value before cumsum in order to
-    # avoid precision issues when we have small frequency fluctuations on
-    # a large average frequency
-    freqdata = freqdata - np.nanmean(freqdata)
-    phasedata = np.cumsum(freqdata) * dt
-    phasedata = np.insert(phasedata, 0, 0) # FIXME: why do we do this?
-    # so that phase starts at zero and len(phase)=len(freq)+1 ??
-    return phasedata
 
 
 def phase2radians(phasedata, v0):

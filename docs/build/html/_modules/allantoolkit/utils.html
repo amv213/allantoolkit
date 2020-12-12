@@ -206,21 +206,40 @@
 <span class="n">Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 
 
-<div class="viewcode-block" id="trim_data"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.trim_data">[docs]</a><span class="k">def</span> <span class="nf">trim_data</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Trim leading and trailing NaNs from dataset</span>
+<div class="viewcode-block" id="trim_data"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.trim_data">[docs]</a><span class="k">def</span> <span class="nf">trim_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Trim leading and trailing NaNs from dataset.</span>
+
 <span class="sd">    This is done by browsing the array from each end and store the index of the</span>
 <span class="sd">    first non-NaN in each case, the return the appropriate slice of the array</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   data array with possible NaNs</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        data array without leading and trailing NaNs</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Find indices for first and last valid data</span>
-    <span class="n">first</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">first</span><span class="p">]):</span>
-        <span class="n">first</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">last</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">last</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]):</span>
-        <span class="n">last</span> <span class="o">-=</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">first</span><span class="p">:</span><span class="n">last</span><span class="p">]</span></div>
+    <span class="c1"># input dataset may be empty or full of NaNs</span>
+    <span class="k">try</span><span class="p">:</span>
+
+        <span class="c1"># Find indices for first and last valid data</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">first</span><span class="p">]):</span>
+            <span class="n">first</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">last</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">last</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]):</span>
+            <span class="n">last</span> <span class="o">-=</span> <span class="mi">1</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">first</span><span class="p">:</span><span class="n">last</span><span class="p">]</span>
+
+    <span class="c1"># in that case trimming means giving back empty array</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Error raised when trimming trailing and leading &#39;</span>
+                         <span class="s1">&#39;gaps from data&#39;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
 
 
 <div class="viewcode-block" id="nan_helper"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.nan_helper">[docs]</a><span class="k">def</span> <span class="nf">nan_helper</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
@@ -269,16 +288,18 @@
 
     <span class="n">nans</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nan_helper</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
+    <span class="c1"># try filling inner gaps</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">data</span><span class="p">[</span><span class="n">nans</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">(</span><span class="n">nans</span><span class="p">),</span> <span class="n">xp</span><span class="o">=</span><span class="n">x</span><span class="p">(</span><span class="o">~</span><span class="n">nans</span><span class="p">),</span> <span class="n">fp</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">nans</span><span class="p">],</span>
-                               <span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                               <span class="n">left</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+
+    <span class="c1"># Not enough values to interpolate (all NaNs), return empty dataset</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Error raised when interpolating gaps in data&quot;</span><span class="p">)</span>
-        <span class="c1"># Not enough values to interpolate, return empty dataset</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
 
     <span class="c1"># Trim leading and trailing gaps</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trim_zeros</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">trim_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">data</span></div>
 
@@ -545,6 +566,7 @@
         <span class="k">raise</span> <span class="ne">UserWarning</span>
 
     <span class="k">return</span> <span class="n">o_taus</span><span class="p">,</span> <span class="n">o_devs</span><span class="p">,</span> <span class="n">o_deverrs</span><span class="p">,</span> <span class="n">o_ns</span></div>
+
 
 <div class="viewcode-block" id="three_cornered_hat_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.three_cornered_hat_phase">[docs]</a><span class="k">def</span> <span class="nf">three_cornered_hat_phase</span><span class="p">(</span><span class="n">phasedata_ab</span><span class="p">,</span> <span class="n">phasedata_bc</span><span class="p">,</span>
                              <span class="n">phasedata_ca</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>

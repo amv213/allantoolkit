@@ -9,21 +9,40 @@ logger = logging.getLogger(__name__)
 Array = np.ndarray
 
 
-def trim_data(x: Array) -> Array:
-    """
-    Trim leading and trailing NaNs from dataset
+def trim_data(data: Array) -> Array:
+    """Trim leading and trailing NaNs from dataset.
+
     This is done by browsing the array from each end and store the index of the
     first non-NaN in each case, the return the appropriate slice of the array
+
+    Args:
+        data:   data array with possible NaNs
+
+    Returns:
+        data array without leading and trailing NaNs
     """
 
-    # Find indices for first and last valid data
-    first = 0
-    while np.isnan(x[first]):
-        first += 1
-    last = len(x)
-    while np.isnan(x[last - 1]):
-        last -= 1
-    return x[first:last]
+    # input dataset may be empty or full of NaNs
+    try:
+
+        # Find indices for first and last valid data
+        first = 0
+        while np.isnan(data[first]):
+            first += 1
+
+        last = len(data)
+        while np.isnan(data[last - 1]):
+            last -= 1
+
+        data = data[first:last]
+
+    # in that case trimming means giving back empty array
+    except IndexError:
+        logger.exception('Error raised when trimming trailing and leading '
+                         'gaps from data')
+        data = np.array([])
+
+    return data
 
 
 def nan_helper(y: Array) -> Tuple[Array, Callable]:
@@ -72,16 +91,18 @@ def fill_gaps(data: Array) -> Array:
 
     nans, x = nan_helper(data)
 
+    # try filling inner gaps
     try:
         data[nans] = np.interp(x=x(nans), xp=x(~nans), fp=data[~nans],
-                               left=0, right=0)
+                               left=np.NaN, right=np.NaN)
+
+    # Not enough values to interpolate (all NaNs), return empty dataset
     except ValueError:
         logger.exception("Error raised when interpolating gaps in data")
-        # Not enough values to interpolate, return empty dataset
         data = np.array([])
 
     # Trim leading and trailing gaps
-    data = np.trim_zeros(data)
+    data = trim_data(data)
 
     return data
 
@@ -348,6 +369,7 @@ def remove_small_ns(taus: np.ndarray, devs: np.ndarray,
         raise UserWarning
 
     return o_taus, o_devs, o_deverrs, o_ns
+
 
 def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
                              phasedata_ca, rate, taus, function):

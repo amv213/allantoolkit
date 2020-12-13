@@ -521,17 +521,21 @@
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># make sure minimum averaging time is at least 1</span>
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&lt;=</span> <span class="n">maximum_m</span><span class="p">]</span>  <span class="c1"># make sure afs within maximum allowed</span>
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">even</span> <span class="k">else</span> <span class="n">afs</span>  <span class="c1"># only keep even afs if requested</span>
-    <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">afs</span><span class="p">)</span>    <span class="c1"># remove duplicates and sort</span>
 
-    <span class="c1"># FIXME: should we use a &quot;stop-ratio&quot; like Stable32</span>
+    <span class="c1"># Apply a Stable32 `stop-ratio`</span>
     <span class="k">if</span> <span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;octave&#39;</span> <span class="ow">or</span> <span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;decade&#39;</span><span class="p">:</span>
         <span class="n">stop_ratio</span> <span class="o">=</span> <span class="n">tables</span><span class="o">.</span><span class="n">STOP_RATIOS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dev_type</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">stop_ratio</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You provided a </span><span class="si">{</span><span class="n">dev_type</span><span class="si">}</span><span class="s2"> dev_type&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You provided an invalid </span><span class="si">{</span><span class="n">dev_type</span><span class="si">}</span><span class="s2"> &quot;</span>
+                                      <span class="sa">f</span><span class="s2">&quot;dev_type for Stable32 stop-ratio.&quot;</span><span class="p">)</span>
 
-        <span class="n">af_max</span> <span class="o">=</span> <span class="n">N</span> <span class="o">/</span> <span class="n">stop_ratio</span>
-        <span class="c1">#afs = afs[afs &lt;= af_max]</span>
+        <span class="c1"># Filter averaging factors further</span>
+        <span class="n">stop_m</span> <span class="o">=</span> <span class="n">N</span> <span class="o">//</span> <span class="n">stop_ratio</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stop_m</span><span class="p">)</span>
+        <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&lt;=</span> <span class="n">stop_m</span><span class="p">]</span>
+
+    <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">afs</span><span class="p">)</span>  <span class="c1"># remove duplicates and sort</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;tau_generator: averaging factors are </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">afs</span><span class="p">)</span>
 

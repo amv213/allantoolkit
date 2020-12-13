@@ -6,8 +6,9 @@ d = np.random.random(N)
 r = 1.0
 
 expected_all = np.arange(1, 43)
+# oadev stable32 stop-ratio is at 32:
 expected_octave = [1.,   2.,   4.,   8.,  16.,  32.]
-expected_decade = [1., 2., 4., 10., 20., 40.]
+expected_decade = [1., 2., 4., 10., 20.]
 
 ab = allantoolkit.noise.white(N)
 bc = allantoolkit.noise.white(N)

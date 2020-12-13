@@ -324,17 +324,21 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     afs = afs[afs > 0]  # make sure minimum averaging time is at least 1
     afs = afs[afs <= maximum_m]  # make sure afs within maximum allowed
     afs = afs[afs % 2 == 0] if even else afs  # only keep even afs if requested
-    afs = np.unique(afs)    # remove duplicates and sort
 
-    # FIXME: should we use a "stop-ratio" like Stable32
+    # Apply a Stable32 `stop-ratio`
     if taus == 'octave' or taus == 'decade':
         stop_ratio = tables.STOP_RATIOS.get(dev_type)
 
         if not stop_ratio:
-            raise NotImplementedError(f"You provided a {dev_type} dev_type")
+            raise NotImplementedError(f"You provided an invalid {dev_type} "
+                                      f"dev_type for Stable32 stop-ratio.")
 
-        af_max = N / stop_ratio
-        #afs = afs[afs <= af_max]
+        # Filter averaging factors further
+        stop_m = N // stop_ratio
+        print(stop_m)
+        afs = afs[afs <= stop_m]
+
+    afs = np.unique(afs)  # remove duplicates and sort
 
     logger.debug("tau_generator: averaging factors are %s", afs)
 

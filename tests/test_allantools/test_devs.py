@@ -9,8 +9,9 @@ d = np.random.random(N)
 r = 1.0
 
 expected_all = np.arange(1, 43)
-expected_octave = [1.,   2.,   4.,   8.,  16.,  32.]
-expected_decade = [1., 2., 4., 10., 20., 40.]
+# adev Stable32 stop-ratio is at 25
+expected_octave = [1.,   2.,   4.,   8.,  16.]
+expected_decade = [1., 2., 4., 10., 20.]
 expected_reduced_10 = [1., 2., 3., 4., 5., 7., 8., 11., 14., 17.,
                        22., 28., 35.]
 expected_reduced_2 = [1., 5., 17.]

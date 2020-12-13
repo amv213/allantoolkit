@@ -929,8 +929,7 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
 
     tau0 = 1.0/rate
     (taus_used, ms) = utils.tau_generator(data=phase, rate=rate,
-                                                 dev_type='theo1', taus=taus,
-                                                 even=True)
+                                                 dev_type='theo1', taus=taus)
 
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)

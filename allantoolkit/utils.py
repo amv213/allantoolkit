@@ -242,7 +242,6 @@ def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
 
 def tau_generator(data: Array, rate: float, dev_type: str,
                   taus: Union[Array, str] = None,
-                  even: bool = False,
                   maximum_m: int = None) -> Taus:
     """Pre-processing of the list of averaging times requested by the user, at
     which to compute statistics.
@@ -267,8 +266,6 @@ def tau_generator(data: Array, rate: float, dev_type: str,
                                 measurement. Can also be one of the keywords:
                                 `all`, `octave`, `decade`. Defaults to
                                 `octave`.
-        even (optional):        If True, allows only averaging times which are
-                                even multiples of the sampling interval.
         maximum_m (optional):   maximum averaging factor for which to compute
                                 measurement. Defaults to length of dataset,
                                 and might not take effect if bigger than
@@ -325,15 +322,15 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     afs = afs[afs < N]  # make sure averaging time smaller than size of dataset
     afs = afs[afs > 0]  # make sure minimum averaging time is at least 1
     afs = afs[afs <= maximum_m]  # make sure afs within maximum allowed
-    afs = afs[afs % 2 == 0] if even else afs  # only keep even afs if requested
+    afs = afs[afs % 2 == 0] if dev_type == 'theo1' else afs
 
     # Apply a Stable32 `stop-ratio`
     if taus == 'octave' or taus == 'decade':
         stop_ratio = tables.STOP_RATIOS.get(dev_type)
 
         if not stop_ratio:
-            raise NotImplementedError(f"You provided an invalid {dev_type} "
-                                      f"dev_type for Stable32 stop-ratio.")
+            raise KeyError(f"You provided an invalid {dev_type} "
+                           f"dev_type for Stable32 stop-ratio.")
 
         stop_m = N // stop_ratio
         afs = afs[afs <= stop_m]

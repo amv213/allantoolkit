@@ -434,7 +434,7 @@
                          <span class="sa">f</span><span class="s2">&quot;`phase` or `freq`.&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="tau_generator"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.tau_generator">[docs]</a><span class="k">def</span> <span class="nf">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<div class="viewcode-block" id="tau_generator"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.tau_generator">[docs]</a><span class="k">def</span> <span class="nf">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                   <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                   <span class="n">even</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                   <span class="n">maximum_m</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">]:</span>
@@ -456,6 +456,7 @@
 <span class="sd">        data:               data array of phase or fractional frequency</span>
 <span class="sd">                            measurements.</span>
 <span class="sd">        rate:               sampling rate of the input data, in Hz.</span>
+<span class="sd">        dev_type:           type of deviation is going to be computed.</span>
 <span class="sd">        taus (optional):    array of averaging times for which to compute</span>
 <span class="sd">                            measurement. Can also be one of the keywords:</span>
 <span class="sd">                            `all`, `octave`, `decade`. Defaults to `octave`.</span>
@@ -523,8 +524,14 @@
     <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">afs</span><span class="p">)</span>    <span class="c1"># remove duplicates and sort</span>
 
     <span class="c1"># FIXME: should we use a &quot;stop-ratio&quot; like Stable32</span>
-    <span class="n">af_max</span> <span class="o">=</span> <span class="n">N</span> <span class="o">/</span> <span class="n">tables</span><span class="o">.</span><span class="n">STOP_RATIOS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;adev&quot;</span><span class="p">)</span>
-    <span class="c1">#afs = afs[afs &lt;= af_max]</span>
+    <span class="k">if</span> <span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;octave&#39;</span> <span class="ow">or</span> <span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;decade&#39;</span><span class="p">:</span>
+        <span class="n">stop_ratio</span> <span class="o">=</span> <span class="n">tables</span><span class="o">.</span><span class="n">STOP_RATIOS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dev_type</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stop_ratio</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You provided a </span><span class="si">{</span><span class="n">dev_type</span><span class="si">}</span><span class="s2"> dev_type&quot;</span><span class="p">)</span>
+
+        <span class="n">af_max</span> <span class="o">=</span> <span class="n">N</span> <span class="o">/</span> <span class="n">stop_ratio</span>
+        <span class="c1">#afs = afs[afs &lt;= af_max]</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;tau_generator: averaging factors are </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">afs</span><span class="p">)</span>
 

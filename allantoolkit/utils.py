@@ -237,7 +237,7 @@ def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
                          f"`phase` or `freq`.")
 
 
-def tau_generator(data: Array, rate: float,
+def tau_generator(data: Array, rate: float, dev_type: str,
                   taus: Union[Array, str] = None,
                   even: bool = False,
                   maximum_m: int = None) -> Tuple[Array, Array, Array]:
@@ -259,6 +259,7 @@ def tau_generator(data: Array, rate: float,
         data:               data array of phase or fractional frequency
                             measurements.
         rate:               sampling rate of the input data, in Hz.
+        dev_type:           type of deviation is going to be computed.
         taus (optional):    array of averaging times for which to compute
                             measurement. Can also be one of the keywords:
                             `all`, `octave`, `decade`. Defaults to `octave`.
@@ -326,8 +327,14 @@ def tau_generator(data: Array, rate: float,
     afs = np.unique(afs)    # remove duplicates and sort
 
     # FIXME: should we use a "stop-ratio" like Stable32
-    af_max = N / tables.STOP_RATIOS.get("adev")
-    #afs = afs[afs <= af_max]
+    if taus == 'octave' or taus == 'decade':
+        stop_ratio = tables.STOP_RATIOS.get(dev_type)
+
+        if not stop_ratio:
+            raise NotImplementedError(f"You provided a {dev_type} dev_type")
+
+        af_max = N / stop_ratio
+        #afs = afs[afs <= af_max]
 
     logger.debug("tau_generator: averaging factors are %s", afs)
 

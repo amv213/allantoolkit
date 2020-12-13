@@ -104,7 +104,8 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
 
     """
     phase = utils.input_to_phase(data, rate, data_type)
-    (phase, ms, taus_used) = utils.tau_generator(phase, rate, taus=taus)
+    (phase, ms, taus_used) = utils.tau_generator(data=phase, rate=rate,
+                                                 dev_type='mdev', taus=taus)
     data, taus = np.array(phase), np.array(taus)
 
     md = np.zeros_like(ms)
@@ -204,7 +205,9 @@ def adev(data, rate=1.0, data_type="phase", taus=None):
 
     """
     phase = utils.input_to_phase(data, rate, data_type)
-    (phase, m, taus_used) = utils.tau_generator(phase, rate, taus)
+    (phase, m, taus_used) = utils.tau_generator(data=phase, rate=rate,
+                                                dev_type='adev',
+                                                taus=taus)
 
     ad = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
@@ -317,7 +320,8 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
 
     """
     phase = utils.input_to_phase(data, rate, data_type)
-    (phase, m, taus_used) = utils.tau_generator(phase, rate, taus)
+    (phase, m, taus_used) = utils.tau_generator(data=phase, rate=rate,
+                                                dev_type='oadev', taus=taus)
     ad = np.zeros_like(taus_used)
     ade = np.zeros_like(taus_used)
     adn = np.zeros_like(taus_used)
@@ -369,7 +373,8 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
 
     """
     phase = utils.input_to_phase(data, rate, data_type)
-    (phase, m, taus_used) = utils.tau_generator(phase, rate, taus)
+    (phase, m, taus_used) = utils.tau_generator(data=phase, rate=rate,
+                                                dev_type='ohdev', taus=taus)
     hdevs = np.zeros_like(taus_used)
     hdeverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
@@ -411,7 +416,8 @@ def hdev(data, rate=1.0, data_type="phase", taus=None):
         tau-list generation.
     """
     phase = utils.input_to_phase(data, rate, data_type)
-    (phase, m, taus_used) = utils.tau_generator(phase, rate, taus)
+    (phase, m, taus_used) = utils.tau_generator(data=phase, rate=rate,
+                                                dev_type='hdev', taus=taus)
     hdevs = np.zeros_like(taus_used)
     hdeverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
@@ -520,7 +526,8 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
 
     """
     phase = utils.input_to_phase(data, rate, data_type)
-    (phase, m, taus_used) = utils.tau_generator(phase, rate, taus)
+    (phase, m, taus_used) = utils.tau_generator(data=phase, rate=rate,
+                                                dev_type='totdev', taus=taus)
     N = len(phase)
 
     # totdev requires a new dataset
@@ -614,8 +621,9 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
 
     """
     phase = utils.input_to_phase(data, rate, data_type)
-    (phase, ms, taus_used) = utils.tau_generator(phase, rate, taus,
-                                           maximum_m=float(len(phase))/3.0)
+    (phase, ms, taus_used) = utils.tau_generator(data=phase, rate=rate,
+                                                 dev_type='mtotdev', taus=taus,
+                                                 maximum_m=float(len(phase))/3.0)
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
@@ -769,8 +777,10 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
         raise Exception("unknown data_type: " + data_type)
 
     rate = float(rate)
-    (freq, ms, taus_used) = utils.tau_generator(freq, rate, taus,
-                                          maximum_m=float(len(freq))/3.0)
+    (freq, ms, taus_used) = utils.tau_generator(data=freq, rate=rate,
+                                                dev_type='htotdev',
+                                                taus=taus,
+                                                maximum_m=float(len(freq))/3.0)
     phase = np.array(phase)
     freq = np.array(freq)
     devs = np.zeros_like(taus_used)
@@ -918,7 +928,9 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
     phase = utils.input_to_phase(data, rate, data_type)
 
     tau0 = 1.0/rate
-    (phase, ms, taus_used) = utils.tau_generator(phase, rate, taus, even=True)
+    (phase, ms, taus_used) = utils.tau_generator(data=phase, rate=rate,
+                                                 dev_type='theo1', taus=taus,
+                                                 even=True)
 
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
@@ -970,7 +982,8 @@ def tierms(data, rate=1.0, data_type="phase", taus=None):
 
     """
     phase = utils.input_to_phase(data, rate, data_type)
-    (data, m, taus_used) = utils.tau_generator(phase, rate, taus)
+    (data, m, taus_used) = utils.tau_generator(data=phase, rate=rate,
+                                               dev_type='tierms', taus=taus)
 
     count = len(phase)
 
@@ -1054,7 +1067,8 @@ def mtie(data, rate=1.0, data_type="phase", taus=None):
     dataset is extended somehow?
     """
     phase = utils.input_to_phase(data, rate, data_type)
-    (phase, m, taus_used) = utils.tau_generator(phase, rate, taus)
+    (phase, m, taus_used) = utils.tau_generator(data=phase, rate=rate,
+                                                dev_type='mtie', taus=taus)
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
@@ -1216,7 +1230,8 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
     if data_type == "freq":
         print("Warning : phase data is preferred as input to gradev()")
     phase = utils.input_to_phase(data, rate, data_type)
-    (data, m, taus_used) = utils.tau_generator(phase, rate, taus)
+    (data, m, taus_used) = utils.tau_generator(data=phase, rate=rate,
+                                               dev_type='gradev', taus=taus)
 
     ad = np.zeros_like(taus_used)
     ade_l = np.zeros_like(taus_used)

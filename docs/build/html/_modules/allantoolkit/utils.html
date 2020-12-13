@@ -437,11 +437,11 @@
 <div class="viewcode-block" id="tau_generator"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.tau_generator">[docs]</a><span class="k">def</span> <span class="nf">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                   <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                   <span class="n">even</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-                  <span class="n">maximum_m</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">]:</span>
+                  <span class="n">maximum_m</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Pre-processing of the list of averaging times requested by the user, at</span>
 <span class="sd">    which to compute statistics.</span>
 
-<span class="sd">    Does consistency checks, sorts data, removes duplicates and invalid values.</span>
+<span class="sd">    Does consistency checks, sorts, removes duplicates and invalid values.</span>
 <span class="sd">    Generates a tau-list based on keywords &#39;all&#39;, &#39;decade&#39;, &#39;octave&#39;.</span>
 <span class="sd">    Uses &#39;octave&#39; by default if no taus= argument is given.</span>
 
@@ -466,8 +466,7 @@
 <span class="sd">                            measurement. Defaults to length of dataset</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (data, afs, taus) Tuple of sanitised input data, averaging factors,</span>
-<span class="sd">        and sanitised averaging times.</span>
+<span class="sd">        (afs, taus) Tuple of sanitised averaging factors and averaging times.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">N</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
@@ -511,6 +510,8 @@
         <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">taus</span><span class="p">)</span> <span class="o">//</span> <span class="n">tau_0</span>
         <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
+    <span class="c1"># Consistency checks for averaging factors:</span>
+
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">]</span>  <span class="c1"># make sure averaging time smaller than size of dataset</span>
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># make sure minimum averaging time is at least 1</span>
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&lt;=</span> <span class="n">maximum_m</span><span class="p">]</span>  <span class="c1"># make sure afs within maximum allowed</span>
@@ -524,7 +525,6 @@
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You provided an invalid </span><span class="si">{</span><span class="n">dev_type</span><span class="si">}</span><span class="s2"> &quot;</span>
                                       <span class="sa">f</span><span class="s2">&quot;dev_type for Stable32 stop-ratio.&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Filter averaging factors further</span>
         <span class="n">stop_m</span> <span class="o">=</span> <span class="n">N</span> <span class="o">//</span> <span class="n">stop_ratio</span>
         <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&lt;=</span> <span class="n">stop_m</span><span class="p">]</span>
 
@@ -536,9 +536,10 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: sanity-check on tau failed!&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   len(data)=&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="s2">&quot; rate=&quot;</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="s2">&quot;taus= &quot;</span><span class="p">,</span> <span class="n">taus</span><span class="p">)</span>
 
+    <span class="c1"># Recalculate averaging times, now sanitised.</span>
     <span class="n">taus</span> <span class="o">=</span> <span class="n">tau_0</span><span class="o">*</span><span class="n">afs</span>
 
-    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">afs</span><span class="p">,</span> <span class="n">taus</span></div>
+    <span class="k">return</span> <span class="n">afs</span><span class="p">,</span> <span class="n">taus</span></div>
 
 
 <div class="viewcode-block" id="tau_reduction"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.tau_reduction">[docs]</a><span class="k">def</span> <span class="nf">tau_reduction</span><span class="p">(</span><span class="n">ms</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_per_decade</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>

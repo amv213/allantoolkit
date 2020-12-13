@@ -240,11 +240,11 @@ def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
 def tau_generator(data: Array, rate: float, dev_type: str,
                   taus: Union[Array, str] = None,
                   even: bool = False,
-                  maximum_m: int = None) -> Tuple[Array, Array, Array]:
+                  maximum_m: int = None) -> Tuple[Array, Array]:
     """Pre-processing of the list of averaging times requested by the user, at
     which to compute statistics.
 
-    Does consistency checks, sorts data, removes duplicates and invalid values.
+    Does consistency checks, sorts, removes duplicates and invalid values.
     Generates a tau-list based on keywords 'all', 'decade', 'octave'.
     Uses 'octave' by default if no taus= argument is given.
 
@@ -269,8 +269,7 @@ def tau_generator(data: Array, rate: float, dev_type: str,
                             measurement. Defaults to length of dataset
 
     Returns:
-        (data, afs, taus) Tuple of sanitised input data, averaging factors,
-        and sanitised averaging times.
+        (afs, taus) Tuple of sanitised averaging factors and averaging times.
     """
 
     N = data.size
@@ -314,6 +313,8 @@ def tau_generator(data: Array, rate: float, dev_type: str,
         afs = np.array(taus) // tau_0
         afs = afs.astype(int)
 
+    # Consistency checks for averaging factors:
+
     afs = afs[afs < N]  # make sure averaging time smaller than size of dataset
     afs = afs[afs > 0]  # make sure minimum averaging time is at least 1
     afs = afs[afs <= maximum_m]  # make sure afs within maximum allowed
@@ -327,7 +328,6 @@ def tau_generator(data: Array, rate: float, dev_type: str,
             raise NotImplementedError(f"You provided an invalid {dev_type} "
                                       f"dev_type for Stable32 stop-ratio.")
 
-        # Filter averaging factors further
         stop_m = N // stop_ratio
         afs = afs[afs <= stop_m]
 
@@ -339,9 +339,10 @@ def tau_generator(data: Array, rate: float, dev_type: str,
         print("Warning: sanity-check on tau failed!")
         print("   len(data)=", len(data), " rate=", rate, "taus= ", taus)
 
+    # Recalculate averaging times, now sanitised.
     taus = tau_0*afs
 
-    return data, afs, taus
+    return afs, taus
 
 
 def tau_reduction(ms: np.ndarray, rate: float, n_per_decade: int) -> Tuple[

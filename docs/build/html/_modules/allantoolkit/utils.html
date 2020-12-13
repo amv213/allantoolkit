@@ -304,7 +304,7 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="frequency2phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2phase">[docs]</a><span class="k">def</span> <span class="nf">frequency2phase</span><span class="p">(</span><span class="n">frequency_data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+<div class="viewcode-block" id="frequency2phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2phase">[docs]</a><span class="k">def</span> <span class="nf">frequency2phase</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Integrates fractional frequency data to output phase data (with</span>
 <span class="sd">    arbitrary initial value), in units of second.</span>
 
@@ -317,8 +317,8 @@
 <span class="sd">    Any gaps in the frequency data are filled to obtain phase continuity.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        frequency_data: data array of fractional frequency measurements</span>
-<span class="sd">        rate:           sampling rate of the input data, in Hz</span>
+<span class="sd">        y:      data array of fractional frequency measurements</span>
+<span class="sd">        rate:   sampling rate of the input data, in Hz</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        time integral of fractional frequency data, i.e. phase (time) data</span>
@@ -330,40 +330,41 @@
 
     <span class="c1"># Protect against NaN values in input array (issue #60)</span>
     <span class="c1"># Reintroduces data trimming as in commit 503cb82</span>
-    <span class="n">frequency_data</span> <span class="o">=</span> <span class="n">fill_gaps</span><span class="p">(</span><span class="n">frequency_data</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">fill_gaps</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
     <span class="c1"># filled data may be empty... so check</span>
-    <span class="k">if</span> <span class="n">frequency_data</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 
-        <span class="n">phasedata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">frequency_data</span><span class="p">)</span> <span class="o">*</span> <span class="n">sampling_period</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">sampling_period</span>
 
         <span class="c1"># insert arbitrary 0 phase point for x_0</span>
-        <span class="n">phasedata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">phasedata</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">phasedata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
 
-    <span class="k">return</span> <span class="n">phasedata</span></div>
+    <span class="k">return</span> <span class="n">x</span></div>
 
 
-<div class="viewcode-block" id="phase2radians"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.phase2radians">[docs]</a><span class="k">def</span> <span class="nf">phase2radians</span><span class="p">(</span><span class="n">phase_data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">v0</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+<div class="viewcode-block" id="phase2radians"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.phase2radians">[docs]</a><span class="k">def</span> <span class="nf">phase2radians</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">v0</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Convert array of phases in seconds to equivalent phases in radians.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        phase_data: data array of phases, in seconds.</span>
-<span class="sd">        v0:         nominal oscillator frequency, in Hz.</span>
+<span class="sd">        x:  data array of phases, in seconds.</span>
+<span class="sd">        v0: nominal oscillator frequency, in Hz.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        array of phase data, in radians.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">rads</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">v0</span> <span class="o">*</span> <span class="n">phase_data</span>
+    <span class="n">phase_data</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">v0</span> <span class="o">*</span> <span class="n">x</span>
 
-    <span class="k">return</span> <span class="n">rads</span></div>
+    <span class="k">return</span> <span class="n">phase_data</span></div>
 
 
 <div class="viewcode-block" id="input_to_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.input_to_phase">[docs]</a><span class="k">def</span> <span class="nf">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Takes either phase or frequency data as input and returns phase.</span>
+    <span class="sd">&quot;&quot;&quot;Takes either phase or fractional frequency data as input and returns</span>
+<span class="sd">    phase.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data:       data array of input measurements.</span>
@@ -383,6 +384,32 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid data_type value: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">. Should be &quot;</span>
                          <span class="sa">f</span><span class="s2">&quot;`phase` or `freq`.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="phase2frequency"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.phase2frequency">[docs]</a><span class="k">def</span> <span class="nf">phase2frequency</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Convert phase data in units of seconds to fractional frequency data.</span>
+
+<span class="sd">    Phase to frequency conversion is done by dividing the first differences</span>
+<span class="sd">    of the phase points by the averaging time [RileyStable32Manual]_ (pg. 174):</span>
+
+<span class="sd">    .. math:: y_i = ( x_{i+1} - x_i ) \\over \\tau</span>
+
+<span class="sd">    Phase to frequency conversion is straightforward for data having</span>
+<span class="sd">    gaps. Because two phase points  are  needed  to  determine  each</span>
+<span class="sd">    frequency  point a single phase gap will cause two frequency gaps, and a</span>
+<span class="sd">    gap of N phase points causes N+1 frequency gaps [RileyStable32]_ (pg. 108).</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">        x:      data array of phase measurements, in seconds</span>
+<span class="sd">        rate:   sampling rate of the input data, in Hz</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        data array converted to fractional frequency.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">rate</span>
+
+    <span class="k">return</span> <span class="n">y</span></div>
 
 
 <div class="viewcode-block" id="tau_generator"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.tau_generator">[docs]</a><span class="k">def</span> <span class="nf">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">even</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">maximum_m</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
@@ -665,25 +692,6 @@
 <span class="c1">#</span>
 <span class="c1"># simple conversions between frequency, phase(seconds), phase(radians)</span>
 <span class="c1">#</span>
-
-
-<div class="viewcode-block" id="phase2frequency"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.phase2frequency">[docs]</a><span class="k">def</span> <span class="nf">phase2frequency</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Convert phase in seconds to fractional frequency</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    phase: np.array</span>
-<span class="sd">        Data array of phase in seconds</span>
-<span class="sd">    rate: float</span>
-<span class="sd">        The sampling rate for phase, in Hz</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    y:</span>
-<span class="sd">        Data array of fractional frequency</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">rate</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">y</span></div>
 
 
 <div class="viewcode-block" id="frequency2fractional"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2fractional">[docs]</a><span class="k">def</span> <span class="nf">frequency2fractional</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="n">mean_frequency</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>

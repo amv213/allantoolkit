@@ -1962,7 +1962,7 @@ if omitted, defaults to mean frequency=np.mean(frequency)</p></li>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.frequency2phase">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frequency_data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2phase" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2phase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Integrates fractional frequency data to output phase data (with
 arbitrary initial value), in units of second.</p>
 <p>Frequency to phase conversion is done by piecewise  integration  using
@@ -1974,7 +1974,7 @@ the  averaging  time  as  the  integration  interval
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>frequency_data</strong> – data array of fractional frequency measurements</p></li>
+<li><p><strong>y</strong> – data array of fractional frequency measurements</p></li>
 <li><p><strong>rate</strong> – sampling rate of the input data, in Hz</p></li>
 </ul>
 </dd>
@@ -1989,7 +1989,8 @@ in units of seconds. For phase in units of radians, see
 <dl class="py function">
 <dt id="allantoolkit.utils.input_to_phase">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">input_to_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#input_to_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.input_to_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes either phase or frequency data as input and returns phase.</p>
+<dd><p>Takes either phase or fractional frequency data as input and returns
+phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2031,32 +2032,36 @@ indices</p>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.phase2frequency">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2frequency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">rate</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#phase2frequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2frequency" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert phase in seconds to fractional frequency</p>
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2frequency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#phase2frequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert phase data in units of seconds to fractional frequency data.</p>
+<p>Phase to frequency conversion is done by dividing the first differences
+of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id29"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
+<div class="math notranslate nohighlight">
+\[y_i = ( x_{i+1} - x_i ) \over \tau\]</div>
+<p>Phase to frequency conversion is straightforward for data having
+gaps. Because two phase points  are  needed  to  determine  each
+frequency  point a single phase gap will cause two frequency gaps, and a
+gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id30"><span>[RileyStable32]</span></a> (pg. 108).</p>
+<dl class="simple">
+<dt>Params:</dt><dd><p>x:      data array of phase measurements, in seconds
+rate:   sampling rate of the input data, in Hz</p>
+</dd>
+</dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>phase</strong> (<em>np.array</em>) – Data array of phase in seconds</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for phase, in Hz</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Data array of fractional frequency</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>y</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>data array converted to fractional frequency.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.phase2radians">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2radians</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase_data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">v0</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#phase2radians"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2radians" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2radians</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">v0</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#phase2radians"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2radians" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert array of phases in seconds to equivalent phases in radians.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>phase_data</strong> – data array of phases, in seconds.</p></li>
+<li><p><strong>x</strong> – data array of phases, in seconds.</p></li>
 <li><p><strong>v0</strong> – nominal oscillator frequency, in Hz.</p></li>
 </ul>
 </dd>

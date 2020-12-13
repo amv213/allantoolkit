@@ -107,7 +107,7 @@ def fill_gaps(data: Array) -> Array:
     return data
 
 
-def frequency2phase(frequency_data: Array, rate: float) -> Array:
+def frequency2phase(y: Array, rate: float) -> Array:
     """Integrates fractional frequency data to output phase data (with
     arbitrary initial value), in units of second.
 
@@ -120,8 +120,8 @@ def frequency2phase(frequency_data: Array, rate: float) -> Array:
     Any gaps in the frequency data are filled to obtain phase continuity.
 
     Args:
-        frequency_data: data array of fractional frequency measurements
-        rate:           sampling rate of the input data, in Hz
+        y:      data array of fractional frequency measurements
+        rate:   sampling rate of the input data, in Hz
 
     Returns:
         time integral of fractional frequency data, i.e. phase (time) data
@@ -133,40 +133,41 @@ def frequency2phase(frequency_data: Array, rate: float) -> Array:
 
     # Protect against NaN values in input array (issue #60)
     # Reintroduces data trimming as in commit 503cb82
-    frequency_data = fill_gaps(frequency_data)
+    y = fill_gaps(y)
 
     # filled data may be empty... so check
-    if frequency_data.size > 0:
+    if y.size > 0:
 
-        phasedata = np.cumsum(frequency_data) * sampling_period
+        x = np.cumsum(y) * sampling_period
 
         # insert arbitrary 0 phase point for x_0
-        phasedata = np.insert(phasedata, 0, 0)
+        x = np.insert(x, 0, 0)
 
     else:
-        phasedata = np.array([])
+        x = np.array([])
 
-    return phasedata
+    return x
 
 
-def phase2radians(phase_data: Array, v0: float) -> Array:
+def phase2radians(x: Array, v0: float) -> Array:
     """ Convert array of phases in seconds to equivalent phases in radians.
 
     Args:
-        phase_data: data array of phases, in seconds.
-        v0:         nominal oscillator frequency, in Hz.
+        x:  data array of phases, in seconds.
+        v0: nominal oscillator frequency, in Hz.
 
     Returns:
         array of phase data, in radians.
     """
 
-    rads = 2*np.pi*v0 * phase_data
+    phase_data = 2*np.pi*v0 * x
 
-    return rads
+    return phase_data
 
 
 def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
-    """Takes either phase or frequency data as input and returns phase.
+    """Takes either phase or fractional frequency data as input and returns
+    phase.
 
     Args:
         data:       data array of input measurements.
@@ -186,6 +187,32 @@ def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
     else:
         raise ValueError(f"Invalid data_type value: {data_type}. Should be "
                          f"`phase` or `freq`.")
+
+
+def phase2frequency(x: Array, rate: float) -> Array:
+    """Convert phase data in units of seconds to fractional frequency data.
+
+    Phase to frequency conversion is done by dividing the first differences
+    of the phase points by the averaging time [RileyStable32Manual]_ (pg. 174):
+
+    .. math:: y_i = ( x_{i+1} - x_i ) \\over \\tau
+
+    Phase to frequency conversion is straightforward for data having
+    gaps. Because two phase points  are  needed  to  determine  each
+    frequency  point a single phase gap will cause two frequency gaps, and a
+    gap of N phase points causes N+1 frequency gaps [RileyStable32]_ (pg. 108).
+
+    Params:
+        x:      data array of phase measurements, in seconds
+        rate:   sampling rate of the input data, in Hz
+
+    Returns:
+        data array converted to fractional frequency.
+    """
+
+    y = np.diff(x) * rate
+
+    return y
 
 
 def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
@@ -468,25 +495,6 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
 #
 # simple conversions between frequency, phase(seconds), phase(radians)
 #
-
-
-def phase2frequency(phase, rate):
-    """ Convert phase in seconds to fractional frequency
-
-    Parameters
-    ----------
-    phase: np.array
-        Data array of phase in seconds
-    rate: float
-        The sampling rate for phase, in Hz
-
-    Returns
-    -------
-    y:
-        Data array of fractional frequency
-    """
-    y = rate*np.diff(phase)
-    return y
 
 
 def frequency2fractional(frequency, mean_frequency=-1) -> Array:

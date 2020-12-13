@@ -1921,7 +1921,7 @@ Dobrogowski &amp; Kasznia
 <dl class="py function">
 <dt id="allantoolkit.utils.fill_gaps">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">fill_gaps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#fill_gaps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.fill_gaps" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fill gaps in phase or frequency data by interpolation.</p>
+<dd><p>Fill internal gaps in phase or frequency data by interpolation.</p>
 <p>Gaps may be filled in phase or frequency data by replacing them with
 interpolated values, by first removing any leading and trailing gaps,
 and then using the two values immediately before and after any interior
@@ -1933,8 +1933,7 @@ gaps to determine linearly interpolated values within the gap
 represented as NaNs</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>data array with leading and trailing gaps removed, and interior gaps
-filled via linear interpolation.</p>
+<dd class="field-even"><p>data array with interior gaps filled via linear interpolation.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1981,7 +1980,7 @@ the  averaging  time  as  the  integration  interval
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>time integral of fractional frequency data, i.e. phase (time) data
 in units of seconds. For phase in units of radians, see
-<cite>phase2radians()</cite>.</p>
+<cite>phase2radians()</cite>. Size: y.size + 1 - leading_and_trailing_gaps.size</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2049,7 +2048,10 @@ rate:   sampling rate of the input data, in Hz</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>data array converted to fractional frequency.</p>
+<dd class="field-odd"><p>x.size - 1</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>data array converted to fractional frequency. Size</p>
 </dd>
 </dl>
 </dd></dl>

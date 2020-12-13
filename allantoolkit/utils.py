@@ -72,7 +72,7 @@ def nan_helper(y: Array) -> Tuple[Array, Callable]:
 
 
 def fill_gaps(data: Array) -> Array:
-    """Fill gaps in phase or frequency data by interpolation.
+    """Fill internal gaps in phase or frequency data by interpolation.
 
     Gaps may be filled in phase or frequency data by replacing them with
     interpolated values, by first removing any leading and trailing gaps,
@@ -85,10 +85,13 @@ def fill_gaps(data: Array) -> Array:
                 represented as NaNs
 
     Returns:
-        data array with leading and trailing gaps removed, and interior gaps
-        filled via linear interpolation.
+        data array with interior gaps filled via linear interpolation.
     """
 
+    # remove leading and trailing gaps
+    data = trim_data(data)
+
+    # locate 'inner' gaps
     nans, x = nan_helper(data)
 
     # try filling inner gaps
@@ -96,15 +99,37 @@ def fill_gaps(data: Array) -> Array:
         data[nans] = np.interp(x=x(nans), xp=x(~nans), fp=data[~nans],
                                left=np.NaN, right=np.NaN)
 
-    # Not enough values to interpolate (all NaNs), return empty dataset
+    # No concept of 'gaps' (empty input dataset), return same dataset
     except ValueError:
         logger.exception("Error raised when interpolating gaps in data")
-        data = np.array([])
-
-    # Trim leading and trailing gaps
-    data = trim_data(data)
 
     return data
+
+
+def phase2frequency(x: Array, rate: float) -> Array:
+    """Convert phase data in units of seconds to fractional frequency data.
+
+    Phase to frequency conversion is done by dividing the first differences
+    of the phase points by the averaging time [RileyStable32Manual]_ (pg. 174):
+
+    .. math:: y_i = ( x_{i+1} - x_i ) \\over \\tau
+
+    Phase to frequency conversion is straightforward for data having
+    gaps. Because two phase points  are  needed  to  determine  each
+    frequency  point a single phase gap will cause two frequency gaps, and a
+    gap of N phase points causes N+1 frequency gaps [RileyStable32]_ (pg. 108).
+
+    Params:
+        x:      data array of phase measurements, in seconds
+        rate:   sampling rate of the input data, in Hz
+
+    Returns:
+        data array converted to fractional frequency. Size: x.size - 1
+    """
+
+    y = np.diff(x) * rate
+
+    return y
 
 
 def frequency2phase(y: Array, rate: float) -> Array:
@@ -126,25 +151,21 @@ def frequency2phase(y: Array, rate: float) -> Array:
     Returns:
         time integral of fractional frequency data, i.e. phase (time) data
         in units of seconds. For phase in units of radians, see
-        `phase2radians()`.
+        `phase2radians()`. Size: y.size + 1 - leading_and_trailing_gaps.size
     """
 
-    sampling_period = 1.0 / rate
-
-    # Protect against NaN values in input array (issue #60)
-    # Reintroduces data trimming as in commit 503cb82
     y = fill_gaps(y)
 
-    # filled data may be empty... so check
+    # if meaningful data to convert (not empty)...
     if y.size > 0:
 
-        x = np.cumsum(y) * sampling_period
+        x = np.cumsum(y) / rate
 
         # insert arbitrary 0 phase point for x_0
         x = np.insert(x, 0, 0)
 
     else:
-        x = np.array([])
+        x = y
 
     return x
 
@@ -187,32 +208,6 @@ def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
     else:
         raise ValueError(f"Invalid data_type value: {data_type}. Should be "
                          f"`phase` or `freq`.")
-
-
-def phase2frequency(x: Array, rate: float) -> Array:
-    """Convert phase data in units of seconds to fractional frequency data.
-
-    Phase to frequency conversion is done by dividing the first differences
-    of the phase points by the averaging time [RileyStable32Manual]_ (pg. 174):
-
-    .. math:: y_i = ( x_{i+1} - x_i ) \\over \\tau
-
-    Phase to frequency conversion is straightforward for data having
-    gaps. Because two phase points  are  needed  to  determine  each
-    frequency  point a single phase gap will cause two frequency gaps, and a
-    gap of N phase points causes N+1 frequency gaps [RileyStable32]_ (pg. 108).
-
-    Params:
-        x:      data array of phase measurements, in seconds
-        rate:   sampling rate of the input data, in Hz
-
-    Returns:
-        data array converted to fractional frequency.
-    """
-
-    y = np.diff(x) * rate
-
-    return y
 
 
 def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):

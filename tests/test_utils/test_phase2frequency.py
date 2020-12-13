@@ -56,3 +56,14 @@ def test_two_values():
     output_theory = np.array([np.NaN, np.NaN, np.NaN, 1.*RATE, np.NaN])
 
     np.testing.assert_array_equal(output, output_theory)
+
+
+def test_empty_conversion():
+    """Test that conversion of empty data is invariant."""
+
+    data = np.array([])
+
+    # using data without gaps to make check easier
+    output = allantoolkit.utils.phase2frequency(data, rate=RATE)
+
+    assert np.array_equal(output, data)

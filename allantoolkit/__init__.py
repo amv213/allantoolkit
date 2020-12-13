@@ -1,5 +1,6 @@
 import logging
 
+import allantoolkit.tables
 import allantoolkit.allantools
 import allantoolkit.ci
 import allantoolkit.dataset

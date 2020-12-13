@@ -75,6 +75,9 @@ Papers
        for Fundamental Frequency and Time Metrology - Random Instabilities
        http://dx.doi.org/10.1109/IEEESTD.2008.4797525
 
+.. [RileyEvolution] "Evolution of frequency stability analysis software"
+    http://www.wriley.com/The%20Evolution%20of%20Frequency%20Stability%20Analysis%20Software.pdf
+
 .. [RileyStable32] http://www.stable32.com/Handbook.pdf
 
 

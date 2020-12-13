@@ -1,6 +1,15 @@
 allantoolkit package
 ====================
 
+Module contents
+---------------
+
+.. automodule:: allantoolkit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 Submodules
 ----------
 
@@ -61,10 +70,10 @@ allantoolkit.realtime module
    :show-inheritance:
 
 
-allantoolkit.utils module
-----------------------------
+allantoolkit.tables module
+-----------------------------
 
-.. automodule:: allantoolkit.utils
+.. automodule:: allantoolkit.tables
    :members:
    :undoc-members:
    :show-inheritance:
@@ -78,10 +87,10 @@ allantoolkit.testutils module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+allantoolkit.utils module
+----------------------------
 
-.. automodule:: allantoolkit
+.. automodule:: allantoolkit.utils
    :members:
    :undoc-members:
    :show-inheritance:

@@ -2,6 +2,8 @@ import logging
 import warnings
 import numpy as np
 from typing import List, Tuple, Union, Callable
+from . import tables
+
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -272,7 +274,6 @@ def tau_generator(data: Array, rate: float,
 
     N = data.size
 
-    # if no limit given
     maximum_m = N if maximum_m is None else maximum_m
     taus = 'octave' if taus is None else taus
 
@@ -325,27 +326,7 @@ def tau_generator(data: Array, rate: float,
     afs = np.unique(afs)    # remove duplicates and sort
 
     # FIXME: should we use a "stop-ratio" like Stable32
-    # Implement stop ratio (see Refs)
-    # found in Table III, page 9 of "Evolution of frequency stability analysis software"
-    # max(AF) = len(phase)/stop_ratio, where
-    # function  stop_ratio
-    # adev      5
-    # oadev     4
-    # mdev      4
-    # tdev      4
-    # hdev      5
-    # ohdev     4
-    # totdev    2
-    # tierms    4
-    # htotdev   3
-    # mtie      2
-    # theo1     1
-    # theoH     1
-    # mtotdev   2
-    # ttotdev   2
-
-    #stop_ratio = {"adev": 5, "oadev": 4, "mdev": 4}
-    #af_max = N / stop_ratio[dev_type]
+    af_max = N / tables.STOP_RATIOS.get("adev")
     #afs = afs[afs <= af_max]
 
     logger.debug("tau_generator: averaging factors are %s", afs)

@@ -1,0 +1,29 @@
+stop_ratios:
+  # Table of Stable32 Stop Ratios
+  #
+  # Stable32 `octave` and `decade` stability runs use a maximum averaging
+  # factor determined by the number of data points and the variance type.
+  # Each variance type is assigned a stop ratio as shown in Table III, and the
+  # maximum averaging factor for a given stability run is determined by the
+  # number of data points divided by  this  stop  ratio [RileyEvolution]_
+  # (pg.9 Table III)
+  #
+  # max(AF) = len(data) // stop_ratio
+
+
+  # Variance Type:  Stop Ratio
+  adev:     5
+  oadev:    4
+  mdev:     4
+  tdev:     4
+  omdev:    4
+  hdev:     5
+  ohdev:    4
+  totdev:   2
+  tierms:   4
+  htotdev:  3
+  mtie:     2
+  theo1:    1
+  theoH:    1
+  mtotdev:  2
+  ttotdev:  2

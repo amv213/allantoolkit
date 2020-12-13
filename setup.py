@@ -29,6 +29,7 @@ setuptools.setup(
     install_requires=[
         'matplotlib',
         'numpy',
+        'pyyaml',
         'scipy',
         'setuptools',
     ],
@@ -42,6 +43,7 @@ setuptools.setup(
             'sphinx-book-theme',
         ],
     },
+    include_package_data=True,
 )
 
 # to build the package run the following:

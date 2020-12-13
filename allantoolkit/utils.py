@@ -1,4 +1,5 @@
 import logging
+import warnings
 import numpy as np
 from typing import List, Tuple, Union, Callable
 
@@ -45,13 +46,13 @@ def trim_data(data: Array) -> Array:
     return data
 
 
-def nan_helper(y: Array) -> Tuple[Array, Callable]:
+def nan_helper(data: Array) -> Tuple[Array, Callable]:
     """Helper to handle indices and logical indices of NaNs.
 
     https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array#6520696
 
     Args:
-        y: 1d numpy array with possible NaNs
+        data:   1d numpy array with possible NaNs
 
     Returns:
         logical indices of NaNs and a function, with signature indices = index(
@@ -68,7 +69,7 @@ def nan_helper(y: Array) -> Tuple[Array, Callable]:
 
     """
 
-    return np.isnan(y), lambda z: z.nonzero()[0]
+    return np.isnan(data), lambda z: z.nonzero()[0]
 
 
 def fill_gaps(data: Array) -> Array:
@@ -170,6 +171,30 @@ def frequency2phase(y: Array, rate: float) -> Array:
     return x
 
 
+def frequency2fractional(f: Array, v0: float = None) -> Array:
+    """ Convert frequency in Hz to fractional frequency [Wikipedia]_.
+
+    .. math:: y(t) =  ( \\nu(t) - \\nu_0 )  \\over \\nu_0
+
+    Args:
+        f:              data array of frequency in Hz.
+        v0 (optional):  nominal oscillator frequency, in Hz. Defaults to mean
+                        frequency of dataset.
+
+    Returns:
+        array of fractional frequency data, y.
+    """
+
+    # If data has only NaNs it might rise a warning if calculating the mean
+    with warnings.catch_warnings():
+        warnings.simplefilter(action="ignore", category=RuntimeWarning)
+        mu = np.nanmean(f) if v0 is None else v0
+
+    y = (f - mu) / mu
+
+    return y
+
+
 def phase2radians(x: Array, v0: float) -> Array:
     """ Convert array of phases in seconds to equivalent phases in radians.
 
@@ -208,6 +233,10 @@ def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
     else:
         raise ValueError(f"Invalid data_type value: {data_type}. Should be "
                          f"`phase` or `freq`.")
+
+
+
+
 
 
 def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
@@ -491,26 +520,3 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
 # simple conversions between frequency, phase(seconds), phase(radians)
 #
 
-
-def frequency2fractional(frequency, mean_frequency=-1) -> Array:
-    """ Convert frequency in Hz to fractional frequency
-
-    Parameters
-    ----------
-    frequency: np.array
-        Data array of frequency in Hz
-    mean_frequency: float
-        (optional) The nominal mean frequency, in Hz
-        if omitted, defaults to mean frequency=np.mean(frequency)
-
-    Returns
-    -------
-    y:
-        Data array of fractional frequency
-    """
-    if mean_frequency == -1:
-        mu = np.mean(frequency)
-    else:
-        mu = mean_frequency
-    y = [(x-mu)/mu for x in frequency]
-    return np.array(y)

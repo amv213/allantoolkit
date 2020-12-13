@@ -66,7 +66,7 @@ Papers
     46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992
     http://dx.doi.org/10.1109/FREQ.1992.270003
 
-.. [wikipedia_adev] http://en.wikipedia.org/wiki/Allan_variance
+.. [Wikipedia] http://en.wikipedia.org/wiki/Allan_variance
 
 .. [SP1065] NIST Special Publication 1065
     http://tf.nist.gov/timefreq/general/pdf/2220.pdf

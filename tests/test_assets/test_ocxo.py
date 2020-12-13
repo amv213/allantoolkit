@@ -55,8 +55,7 @@ def test_generic_ci(datafile, result, fct, verbose, tolerance, rate,
 
     for row in s32rows:
         data = testutils.read_datafile(datafile)
-        data = allantoolkit.utils.frequency2fractional(
-            data, mean_frequency=1.0e7)
+        data = allantoolkit.utils.frequency2fractional(data, v0=1.0e7)
         (taus, devs, errs, ns) = fct(data, rate=rate, data_type="freq",
                                      taus=[row['tau']])
 
@@ -90,8 +89,7 @@ def test_totdev_ci(datafile, verbose, tolerance, rate):
 
     for row in s32rows:
         data = testutils.read_datafile(datafile)
-        data = allantoolkit.utils.frequency2fractional(
-            data, mean_frequency=1.0e7)
+        data = allantoolkit.utils.frequency2fractional(data, v0=1.0e7)
         (taus, devs, errs, ns) = allantoolkit.allantools.totdev(
             data, rate=rate, data_type="freq", taus=[row['tau']])
         edf = allantoolkit.ci.edf_totdev(

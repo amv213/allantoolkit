@@ -245,7 +245,7 @@ def calc_adev_phase(phase, rate, mj, stride):
 
     References
     ----------
-    [wikipedia_adev]_
+    [Wikipedia]_
     * http://en.wikipedia.org/wiki/Allan_variance
     * http://www.leapsecond.com/tools/adev_lib.c
 
@@ -1245,7 +1245,7 @@ def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):
         stride = mj for nonoverlapping allan deviation
         stride = 1 for overlapping allan deviation
 
-        [wikipedia_adev]_
+        [Wikipedia]_
         see http://en.wikipedia.org/wiki/Allan_variance
 
     .. math::

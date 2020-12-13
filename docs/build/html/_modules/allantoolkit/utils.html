@@ -196,6 +196,7 @@
                 
   <h1>Source code for allantoolkit.utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
 
@@ -242,13 +243,13 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="nan_helper"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.nan_helper">[docs]</a><span class="k">def</span> <span class="nf">nan_helper</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
+<div class="viewcode-block" id="nan_helper"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.nan_helper">[docs]</a><span class="k">def</span> <span class="nf">nan_helper</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Helper to handle indices and logical indices of NaNs.</span>
 
 <span class="sd">    https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array#6520696</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        y: 1d numpy array with possible NaNs</span>
+<span class="sd">        data:   1d numpy array with possible NaNs</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        logical indices of NaNs and a function, with signature indices = index(</span>
@@ -265,7 +266,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">z</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">z</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="fill_gaps"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.fill_gaps">[docs]</a><span class="k">def</span> <span class="nf">fill_gaps</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
@@ -367,6 +368,30 @@
     <span class="k">return</span> <span class="n">x</span></div>
 
 
+<div class="viewcode-block" id="frequency2fractional"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2fractional">[docs]</a><span class="k">def</span> <span class="nf">frequency2fractional</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">v0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Convert frequency in Hz to fractional frequency [Wikipedia]_.</span>
+
+<span class="sd">    .. math:: y(t) =  ( \\nu(t) - \\nu_0 )  \\over \\nu_0</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f:              data array of frequency in Hz.</span>
+<span class="sd">        v0 (optional):  nominal oscillator frequency, in Hz. Defaults to mean</span>
+<span class="sd">                        frequency of dataset.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        array of fractional frequency data, y.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># If data has only NaNs it might rise a warning if calculating the mean</span>
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">if</span> <span class="n">v0</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">v0</span>
+
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">/</span> <span class="n">mu</span>
+
+    <span class="k">return</span> <span class="n">y</span></div>
+
+
 <div class="viewcode-block" id="phase2radians"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.phase2radians">[docs]</a><span class="k">def</span> <span class="nf">phase2radians</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">v0</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Convert array of phases in seconds to equivalent phases in radians.</span>
 
@@ -405,6 +430,10 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid data_type value: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">. Should be &quot;</span>
                          <span class="sa">f</span><span class="s2">&quot;`phase` or `freq`.&quot;</span><span class="p">)</span></div>
+
+
+
+
 
 
 <div class="viewcode-block" id="tau_generator"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.tau_generator">[docs]</a><span class="k">def</span> <span class="nf">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">even</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">maximum_m</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
@@ -688,29 +717,6 @@
 <span class="c1"># simple conversions between frequency, phase(seconds), phase(radians)</span>
 <span class="c1">#</span>
 
-
-<div class="viewcode-block" id="frequency2fractional"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2fractional">[docs]</a><span class="k">def</span> <span class="nf">frequency2fractional</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="n">mean_frequency</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Convert frequency in Hz to fractional frequency</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    frequency: np.array</span>
-<span class="sd">        Data array of frequency in Hz</span>
-<span class="sd">    mean_frequency: float</span>
-<span class="sd">        (optional) The nominal mean frequency, in Hz</span>
-<span class="sd">        if omitted, defaults to mean frequency=np.mean(frequency)</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    y:</span>
-<span class="sd">        Data array of fractional frequency</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">mean_frequency</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-        <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">frequency</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">mu</span> <span class="o">=</span> <span class="n">mean_frequency</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">mu</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">frequency</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
 </pre></div>
 
               </div>

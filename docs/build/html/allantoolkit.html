@@ -379,7 +379,7 @@ stride = mj for nonoverlapping allan deviation</p>
 <p>stride = mj for nonoverlapping Allan deviation
 stride = 1 for overlapping Allan deviation</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#wikipedia-adev" id="id2"><span>[wikipedia_adev]</span></a>
+<p><a class="reference internal" href="references.html#wikipedia" id="id2"><span>[Wikipedia]</span></a>
 * <a class="reference external" href="http://en.wikipedia.org/wiki/Allan_variance">http://en.wikipedia.org/wiki/Allan_variance</a>
 * <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p>
 <p>NIST <a class="reference internal" href="references.html#sp1065" id="id3"><span>[SP1065]</span></a> eqn (7) and (11) page 16</p>
@@ -391,7 +391,7 @@ stride = 1 for overlapping Allan deviation</p>
 <dd><dl>
 <dt>see <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></dt><dd><p>stride = mj for nonoverlapping allan deviation
 stride = 1 for overlapping allan deviation</p>
-<p><a class="reference internal" href="references.html#wikipedia-adev" id="id4"><span>[wikipedia_adev]</span></a>
+<p><a class="reference internal" href="references.html#wikipedia" id="id4"><span>[Wikipedia]</span></a>
 see <a class="reference external" href="http://en.wikipedia.org/wiki/Allan_variance">http://en.wikipedia.org/wiki/Allan_variance</a></p>
 </dd>
 </dl>
@@ -1940,21 +1940,20 @@ represented as NaNs</p>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.frequency2fractional">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2fractional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frequency</span></em>, <em class="sig-param"><span class="n">mean_frequency</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2fractional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2fractional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert frequency in Hz to fractional frequency</p>
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2fractional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">v0</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2fractional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2fractional" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert frequency in Hz to fractional frequency <a class="reference internal" href="references.html#wikipedia" id="id28"><span>[Wikipedia]</span></a>.</p>
+<div class="math notranslate nohighlight">
+\[y(t) =  ( \nu(t) - \nu_0 )  \over \nu_0\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>frequency</strong> (<em>np.array</em>) – Data array of frequency in Hz</p></li>
-<li><p><strong>mean_frequency</strong> (<em>float</em>) – (optional) The nominal mean frequency, in Hz
-if omitted, defaults to mean frequency=np.mean(frequency)</p></li>
+<li><p><strong>f</strong> – data array of frequency in Hz.</p></li>
+<li><p><strong>v0</strong> (<em>optional</em>) – nominal oscillator frequency, in Hz. Defaults to mean
+frequency of dataset.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Data array of fractional frequency</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>y</p>
+<dd class="field-even"><p>array of fractional frequency data, y.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1966,7 +1965,7 @@ if omitted, defaults to mean frequency=np.mean(frequency)</p></li>
 arbitrary initial value), in units of second.</p>
 <p>Frequency to phase conversion is done by piecewise  integration  using
 the  averaging  time  as  the  integration  interval
-<a class="reference internal" href="references.html#rileystable32manual" id="id28"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
+<a class="reference internal" href="references.html#rileystable32manual" id="id29"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
 <div class="math notranslate nohighlight">
 \[x_{i+1} = x_i + y_i \tau\]</div>
 <p>Any gaps in the frequency data are filled to obtain phase continuity.</p>
@@ -2006,12 +2005,12 @@ phase.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.nan_helper">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">nan_helper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>Callable<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#nan_helper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.nan_helper" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">nan_helper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>Callable<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#nan_helper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.nan_helper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper to handle indices and logical indices of NaNs.</p>
 <p><a class="reference external" href="https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array#6520696">https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array#6520696</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>y</strong> – 1d numpy array with possible NaNs</p>
+<dd class="field-odd"><p><strong>data</strong> – 1d numpy array with possible NaNs</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>logical indices of NaNs and a function, with signature indices = index(
@@ -2034,13 +2033,13 @@ indices</p>
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2frequency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#phase2frequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert phase data in units of seconds to fractional frequency data.</p>
 <p>Phase to frequency conversion is done by dividing the first differences
-of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id29"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
+of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id30"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
 <div class="math notranslate nohighlight">
 \[y_i = ( x_{i+1} - x_i ) \over \tau\]</div>
 <p>Phase to frequency conversion is straightforward for data having
 gaps. Because two phase points  are  needed  to  determine  each
 frequency  point a single phase gap will cause two frequency gaps, and a
-gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id30"><span>[RileyStable32]</span></a> (pg. 108).</p>
+gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id31"><span>[RileyStable32]</span></a> (pg. 108).</p>
 <dl class="simple">
 <dt>Params:</dt><dd><p>x:      data array of phase measurements, in seconds
 rate:   sampling rate of the input data, in Hz</p>

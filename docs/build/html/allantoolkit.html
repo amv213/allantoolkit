@@ -2100,34 +2100,35 @@ upper and lower values)</p></li>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.tau_generator">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">tau_generator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">v</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">even</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">maximum_m</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#tau_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.tau_generator" title="Permalink to this definition">¶</a></dt>
-<dd><p>pre-processing of the tau-list given by the user (Helper function)</p>
-<p>Does sanity checks, sorts data, removes duplicates and invalid values.
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">tau_generator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">even</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">maximum_m</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#tau_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.tau_generator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pre-processing of the list of averaging times requested by the user, at
+which to compute statistics.</p>
+<p>Does consistency checks, sorts data, removes duplicates and invalid values.
 Generates a tau-list based on keywords ‘all’, ‘decade’, ‘octave’.
 Uses ‘octave’ by default if no taus= argument is given.</p>
+<p>Averaging times may be integer multiples of the data sampling interval
+<a class="reference internal" href="references.html#rileystable32" id="id32"><span>[RileyStable32]</span></a> (Pg.3):</p>
+<div class="math notranslate nohighlight">
+\[\tau =  m \tau_0\]</div>
+<p>where <cite>m</cite> is the averaging factor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>np.array</em>) – data array</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – Sample rate of data in Hz. Time interval between measurements
-is 1/rate seconds.</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – Array of tau values for which to compute measurement.
-Alternatively one of the keywords: “all”, “octave”, “decade”.
-Defaults to “octave” if omitted.</p></li>
-<li><p><strong>v</strong> – verbose output if True</p></li>
-<li><p><strong>even</strong> – require even m, where tau=m*tau0, for Theo1 statistic</p></li>
-<li><p><strong>maximum_m</strong> – limit m, where tau=m*tau0, to this value.
-used by mtotdev() and htotdev() to limit maximum tau.</p></li>
+<li><p><strong>data</strong> – data array of phase or fractional frequency
+measurements.</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
+<li><p><strong>taus</strong> (<em>optional</em>) – array of averaging times for which to compute
+measurement. Can also be one of the keywords:
+<cite>all</cite>, <cite>octave</cite>, <cite>decade</cite>. Defaults to <cite>octave</cite>.</p></li>
+<li><p><strong>even</strong> (<em>optional</em>) – If True, allows only averaging times which are
+even multiples of the sampling interval.</p></li>
+<li><p><strong>maximum_m</strong> (<em>optional</em>) – maximum averaging factor for which to compute
+measurement. Defaults to length of dataset</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>(data, m, taus)</strong> (<em>tuple</em>) – List of computed values</p></li>
-<li><p><strong>data</strong> (<em>np.array</em>) – Data</p></li>
-<li><p><strong>m</strong> (<em>np.array</em>) – Tau in units of data points</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – Cleaned up list of tau values</p></li>
-</ul>
-</p>
+<dd class="field-even"><p>(data, afs, taus) Tuple of sanitised input data, averaging factors,
+and sanitised averaging times.</p>
 </dd>
 </dl>
 </dd></dl>

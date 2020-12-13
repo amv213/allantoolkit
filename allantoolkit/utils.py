@@ -235,78 +235,97 @@ def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
                          f"`phase` or `freq`.")
 
 
+def tau_generator(data: Array, rate: float,
+                  taus: Union[Array, str] = None,
+                  even: bool = False,
+                  maximum_m: int = None) -> Tuple[Array, Array, Array]:
+    """Pre-processing of the list of averaging times requested by the user, at
+    which to compute statistics.
 
-
-
-
-def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
-    """ pre-processing of the tau-list given by the user (Helper function)
-
-    Does sanity checks, sorts data, removes duplicates and invalid values.
+    Does consistency checks, sorts data, removes duplicates and invalid values.
     Generates a tau-list based on keywords 'all', 'decade', 'octave'.
     Uses 'octave' by default if no taus= argument is given.
 
-    Parameters
-    ----------
-    data: np.array
-        data array
-    rate: float
-        Sample rate of data in Hz. Time interval between measurements
-        is 1/rate seconds.
-    taus: np.array
-        Array of tau values for which to compute measurement.
-        Alternatively one of the keywords: "all", "octave", "decade".
-        Defaults to "octave" if omitted.
-    v:
-        verbose output if True
-    even:
-        require even m, where tau=m*tau0, for Theo1 statistic
-    maximum_m:
-        limit m, where tau=m*tau0, to this value.
-        used by mtotdev() and htotdev() to limit maximum tau.
+    Averaging times may be integer multiples of the data sampling interval
+    [RileyStable32]_ (Pg.3):
 
-    Returns
-    -------
-    (data, m, taus): tuple
-        List of computed values
-    data: np.array
-        Data
-    m: np.array
-        Tau in units of data points
-    taus: np.array
-        Cleaned up list of tau values
+    .. math:: \\tau =  m \\tau_0
+
+    where `m` is the averaging factor.
+
+    Args:
+        data:               data array of phase or fractional frequency
+                            measurements.
+        rate:               sampling rate of the input data, in Hz.
+        taus (optional):    array of averaging times for which to compute
+                            measurement. Can also be one of the keywords:
+                            `all`, `octave`, `decade`. Defaults to `octave`.
+        even (optional):    If True, allows only averaging times which are
+                            even multiples of the sampling interval.
+        maximum_m (optional):  maximum averaging factor for which to compute
+                            measurement. Defaults to length of dataset
+
+    Returns:
+        (data, afs, taus) Tuple of sanitised input data, averaging factors,
+        and sanitised averaging times.
     """
 
-    if rate == 0:
-        raise RuntimeError("Warning! rate==0")
+    N = data.size
 
-    if taus is None:  # empty or no tau-list supplied
-        taus = "octave"  # default to octave
-    elif isinstance(taus, list) and taus == []:
-        taus = "octave"
+    # if no limit given
+    maximum_m = N if maximum_m is None else maximum_m
+    taus = 'octave' if taus is None else taus
 
+    # Consistency check sampling interval
+    try:
+        tau_0 = 1. / rate
+    except ZeroDivisionError:
+        logger.exception("Invalid data sampling rate %s Hz", rate)
+        raise
+
+    # Calculate requested averaging factors
     if isinstance(taus, str):
 
         if taus == "all":
-            taus = (1.0/rate)*np.linspace(1.0, len(data), len(data))
+            # 1, 2, 3, 4, 5, 6, 7, ...
+            afs = np.linspace(start=1, stop=N, num=N + 1, dtype=int)
+
         elif taus == "octave":
-            maxn = np.floor(np.log2(len(data)))
-            taus = (1.0/rate)*np.logspace(0, int(maxn), int(maxn+1), base=2.0)
-        elif taus == "decade": # 1, 2, 4, 10, 20, 40, spacing similar to Stable32
-            maxn = np.floor(np.log10(len(data)))
-            taus = []
-            for k in range(int(maxn+1)):
-                taus.append(1.0*(1.0/rate)*pow(10.0, k))
-                taus.append(2.0*(1.0/rate)*pow(10.0, k))
-                taus.append(4.0*(1.0/rate)*pow(10.0, k))
+            # 1, 2, 4, 8, 16, 32, 64, ...
+            maxn = int(np.floor(np.log2(N)))
+            afs = np.logspace(start=0, stop=maxn, num=maxn + 1, base=2.0,
+                              dtype=int)
 
-    data, taus = np.array(data), np.array(taus)
-    rate = float(rate)
-    m = [] # integer averaging factor. tau = m*tau0
+        elif taus == "decade":
+            # 1, 2, 4, 10, 20, 40, 100, ...
+            maxn = int(np.floor(np.log10(N)))
+            pwrs = 10 ** np.arange(maxn + 1)
+            afs = np.outer(np.array([1, 2, 4]), pwrs).flatten(
+                order='F').astype(int)
 
-    if maximum_m == -1: # if no limit given
-        maximum_m = len(data)
+        else:
+            raise ValueError(f"Invalid averaging mode selected: {taus}. "
+                             f"Should be either `all`, `octave` or `decade`.")
+
+    # Get closest integer averaging factors for requested averaging times
+    else:
+        print(taus)
+        afs = np.array(taus) // tau_0
+        afs = afs.astype(int)
+
+    # FIXME: technically these should be ints, but then toolkit's devs
+    #  fail to calculate with the correct precision. Find where the type
+    #  casting fails and then come back here and keep them as ints
+    afs = afs.astype(float)
+
+    afs = afs[afs < N]  # make sure averaging time smaller than size of dataset
+    afs = afs[afs > 0]  # make sure minimum averaging time is at least 1
+    afs = afs[afs <= maximum_m]  # make sure afs within maximum allowed
+    afs = afs[afs % 2 == 0] if even else afs  # only keep even afs if requested
+    afs = np.unique(afs)    # remove duplicates and sort
+
     # FIXME: should we use a "stop-ratio" like Stable32
+    # Implement stop ratio (see Refs)
     # found in Table III, page 9 of "Evolution of frequency stability analysis software"
     # max(AF) = len(phase)/stop_ratio, where
     # function  stop_ratio
@@ -325,29 +344,19 @@ def tau_generator(data, rate, taus=None, v=False, even=False, maximum_m=-1):
     # mtotdev   2
     # ttotdev   2
 
-    taus_valid1 = taus < (1 / float(rate)) * float(len(data))
-    taus_valid2 = taus > 0
-    taus_valid3 = taus <= (1 / float(rate)) * float(maximum_m)
-    taus_valid = taus_valid1 & taus_valid2 & taus_valid3
-    m = np.floor(taus[taus_valid] * rate)
-    m = m[m != 0]       # m is tau in units of datapoints
-    m = np.unique(m)    # remove duplicates and sort
+    #stop_ratio = {"adev": 5, "oadev": 4, "mdev": 4}
+    #af_max = N / stop_ratio[dev_type]
+    #afs = afs[afs <= af_max]
 
-    if v:
-        print("tau_generator: ", m)
+    logger.debug("tau_generator: averaging factors are %s", afs)
 
-    if len(m) == 0:
+    if afs.size == 0:
         print("Warning: sanity-check on tau failed!")
         print("   len(data)=", len(data), " rate=", rate, "taus= ", taus)
 
-    taus2 = m / float(rate)
+    taus = tau_0*afs
 
-    if even:  # used by Theo1
-        m_even_mask = ((m % 2) == 0)
-        m = m[m_even_mask]
-        taus2 = taus2[m_even_mask]
-
-    return data, m, taus2
+    return data, afs, taus
 
 
 def tau_reduction(ms: np.ndarray, rate: float, n_per_decade: int) -> Tuple[
@@ -514,9 +523,3 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
     err_a = [d/np.sqrt(nn) for (d, nn) in zip(dev_a, ns_ab)]
 
     return tau_ab, dev_a, err_a, ns_ab
-
-########################################################################
-#
-# simple conversions between frequency, phase(seconds), phase(radians)
-#
-

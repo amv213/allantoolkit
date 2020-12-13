@@ -110,6 +110,7 @@ def test_row_by_row(function, datafile, datarate, resultfile, verbose=False, tol
     n_errors=0
     # run allantoolkit algorithm, row by row
     for s32data in s32rows:
+
         if frequency:
             (taus2, devs2, errs2, ns2) = function(data, rate=datarate,
                                                   data_type="freq",
@@ -119,8 +120,11 @@ def test_row_by_row(function, datafile, datarate, resultfile, verbose=False, tol
                                                   taus=[s32data['tau']])
         
         n_errors += check_equal( s32data['n'], ns2[0] )
+
         n_errors += check_equal( s32data['tau'], taus2[0] )
+
         n_errors += check_approx_equal( s32data['dev'], devs2[0], tolerance=tolerance, verbose=verbose )
+
         if verbose:
             rel_error = (devs2[0] - s32data['dev']) / s32data['dev']
             bias = pow(s32data['dev']/devs2[0],2)

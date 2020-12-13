@@ -307,6 +307,7 @@
     <span class="n">n_errors</span><span class="o">=</span><span class="mi">0</span>
     <span class="c1"># run allantoolkit algorithm, row by row</span>
     <span class="k">for</span> <span class="n">s32data</span> <span class="ow">in</span> <span class="n">s32rows</span><span class="p">:</span>
+
         <span class="k">if</span> <span class="n">frequency</span><span class="p">:</span>
             <span class="p">(</span><span class="n">taus2</span><span class="p">,</span> <span class="n">devs2</span><span class="p">,</span> <span class="n">errs2</span><span class="p">,</span> <span class="n">ns2</span><span class="p">)</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">datarate</span><span class="p">,</span>
                                                   <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;freq&quot;</span><span class="p">,</span>
@@ -316,8 +317,11 @@
                                                   <span class="n">taus</span><span class="o">=</span><span class="p">[</span><span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]])</span>
         
         <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_equal</span><span class="p">(</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">],</span> <span class="n">ns2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
+
         <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_equal</span><span class="p">(</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">],</span> <span class="n">taus2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
+
         <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_approx_equal</span><span class="p">(</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">],</span> <span class="n">devs2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span> <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">rel_error</span> <span class="o">=</span> <span class="p">(</span><span class="n">devs2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">]</span>
             <span class="n">bias</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">devs2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span>

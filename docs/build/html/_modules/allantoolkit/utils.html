@@ -198,7 +198,7 @@
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tables</span>
 
 
@@ -207,6 +207,9 @@
 
 <span class="c1"># shorten type hint to save some space</span>
 <span class="n">Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+<span class="c1"># define named tuple to hold averaging times and factors</span>
+<span class="n">Taus</span> <span class="o">=</span> <span class="n">NamedTuple</span><span class="p">(</span><span class="s1">&#39;Taus&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;taus&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;afs&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">)])</span>
 
 
 <div class="viewcode-block" id="trim_data"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.trim_data">[docs]</a><span class="k">def</span> <span class="nf">trim_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
@@ -437,7 +440,7 @@
 <div class="viewcode-block" id="tau_generator"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.tau_generator">[docs]</a><span class="k">def</span> <span class="nf">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                   <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                   <span class="n">even</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-                  <span class="n">maximum_m</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">]:</span>
+                  <span class="n">maximum_m</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Taus</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Pre-processing of the list of averaging times requested by the user, at</span>
 <span class="sd">    which to compute statistics.</span>
 
@@ -453,20 +456,24 @@
 <span class="sd">    where `m` is the averaging factor.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        data:               data array of phase or fractional frequency</span>
-<span class="sd">                            measurements.</span>
-<span class="sd">        rate:               sampling rate of the input data, in Hz.</span>
-<span class="sd">        dev_type:           type of deviation is going to be computed.</span>
-<span class="sd">        taus (optional):    array of averaging times for which to compute</span>
-<span class="sd">                            measurement. Can also be one of the keywords:</span>
-<span class="sd">                            `all`, `octave`, `decade`. Defaults to `octave`.</span>
-<span class="sd">        even (optional):    If True, allows only averaging times which are</span>
-<span class="sd">                            even multiples of the sampling interval.</span>
-<span class="sd">        maximum_m (optional):  maximum averaging factor for which to compute</span>
-<span class="sd">                            measurement. Defaults to length of dataset</span>
+<span class="sd">        data:                   data array of phase or fractional frequency</span>
+<span class="sd">                                measurements.</span>
+<span class="sd">        rate:                   sampling rate of the input data, in Hz.</span>
+<span class="sd">        dev_type:               type of deviation is going to be computed.</span>
+<span class="sd">        taus (optional):        array of averaging times for which to compute</span>
+<span class="sd">                                measurement. Can also be one of the keywords:</span>
+<span class="sd">                                `all`, `octave`, `decade`. Defaults to</span>
+<span class="sd">                                `octave`.</span>
+<span class="sd">        even (optional):        If True, allows only averaging times which are</span>
+<span class="sd">                                even multiples of the sampling interval.</span>
+<span class="sd">        maximum_m (optional):   maximum averaging factor for which to compute</span>
+<span class="sd">                                measurement. Defaults to length of dataset,</span>
+<span class="sd">                                and might not take effect if bigger than</span>
+<span class="sd">                                automatic Stable32 stop-ratio.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (afs, taus) Tuple of sanitised averaging factors and averaging times.</span>
+<span class="sd">        (taus, afs) NamedTuple of sanitised averaging times and averaging</span>
+<span class="sd">        factors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">N</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
@@ -539,7 +546,7 @@
     <span class="c1"># Recalculate averaging times, now sanitised.</span>
     <span class="n">taus</span> <span class="o">=</span> <span class="n">tau_0</span><span class="o">*</span><span class="n">afs</span>
 
-    <span class="k">return</span> <span class="n">afs</span><span class="p">,</span> <span class="n">taus</span></div>
+    <span class="k">return</span> <span class="n">Taus</span><span class="p">(</span><span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="tau_reduction"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.tau_reduction">[docs]</a><span class="k">def</span> <span class="nf">tau_reduction</span><span class="p">(</span><span class="n">ms</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_per_decade</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>

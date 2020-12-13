@@ -1,7 +1,7 @@
 import logging
 import warnings
 import numpy as np
-from typing import List, Tuple, Union, Callable
+from typing import List, Tuple, NamedTuple, Union, Callable
 from . import tables
 
 
@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 
 # shorten type hint to save some space
 Array = np.ndarray
+
+# define named tuple to hold averaging times and factors
+Taus = NamedTuple('Taus', [('taus', Array), ('afs', Array)])
 
 
 def trim_data(data: Array) -> Array:
@@ -240,7 +243,7 @@ def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
 def tau_generator(data: Array, rate: float, dev_type: str,
                   taus: Union[Array, str] = None,
                   even: bool = False,
-                  maximum_m: int = None) -> Tuple[Array, Array]:
+                  maximum_m: int = None) -> Taus:
     """Pre-processing of the list of averaging times requested by the user, at
     which to compute statistics.
 
@@ -256,20 +259,24 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     where `m` is the averaging factor.
 
     Args:
-        data:               data array of phase or fractional frequency
-                            measurements.
-        rate:               sampling rate of the input data, in Hz.
-        dev_type:           type of deviation is going to be computed.
-        taus (optional):    array of averaging times for which to compute
-                            measurement. Can also be one of the keywords:
-                            `all`, `octave`, `decade`. Defaults to `octave`.
-        even (optional):    If True, allows only averaging times which are
-                            even multiples of the sampling interval.
-        maximum_m (optional):  maximum averaging factor for which to compute
-                            measurement. Defaults to length of dataset
+        data:                   data array of phase or fractional frequency
+                                measurements.
+        rate:                   sampling rate of the input data, in Hz.
+        dev_type:               type of deviation is going to be computed.
+        taus (optional):        array of averaging times for which to compute
+                                measurement. Can also be one of the keywords:
+                                `all`, `octave`, `decade`. Defaults to
+                                `octave`.
+        even (optional):        If True, allows only averaging times which are
+                                even multiples of the sampling interval.
+        maximum_m (optional):   maximum averaging factor for which to compute
+                                measurement. Defaults to length of dataset,
+                                and might not take effect if bigger than
+                                automatic Stable32 stop-ratio.
 
     Returns:
-        (afs, taus) Tuple of sanitised averaging factors and averaging times.
+        (taus, afs) NamedTuple of sanitised averaging times and averaging
+        factors.
     """
 
     N = data.size
@@ -342,7 +349,7 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     # Recalculate averaging times, now sanitised.
     taus = tau_0*afs
 
-    return afs, taus
+    return Taus(taus=taus, afs=afs)
 
 
 def tau_reduction(ms: np.ndarray, rate: float, n_per_decade: int) -> Tuple[

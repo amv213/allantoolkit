@@ -1991,6 +1991,24 @@ previous on exit.</p>
 </div>
 <div class="section" id="module-allantoolkit.utils">
 <span id="allantoolkit-utils-module"></span><h2>allantoolkit.utils module<a class="headerlink" href="#module-allantoolkit.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="allantoolkit.utils.Taus">
+<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">Taus</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">taus</span></em>, <em class="sig-param"><span class="n">afs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#allantoolkit.utils.Taus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt id="allantoolkit.utils.Taus.afs">
+<code class="sig-name descname">afs</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.utils.Taus.afs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="allantoolkit.utils.Taus.taus">
+<code class="sig-name descname">taus</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.utils.Taus.taus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt id="allantoolkit.utils.fill_gaps">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">fill_gaps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#fill_gaps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.fill_gaps" title="Permalink to this definition">¶</a></dt>
@@ -2173,7 +2191,7 @@ upper and lower values)</p></li>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.tau_generator">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">tau_generator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">even</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">maximum_m</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#tau_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.tau_generator" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">tau_generator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">even</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">maximum_m</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.utils.Taus" title="allantoolkit.utils.Taus">allantoolkit.utils.Taus</a><a class="reference internal" href="_modules/allantoolkit/utils.html#tau_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.tau_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pre-processing of the list of averaging times requested by the user, at
 which to compute statistics.</p>
 <p>Does consistency checks, sorts, removes duplicates and invalid values.
@@ -2193,15 +2211,19 @@ measurements.</p></li>
 <li><p><strong>dev_type</strong> – type of deviation is going to be computed.</p></li>
 <li><p><strong>taus</strong> (<em>optional</em>) – array of averaging times for which to compute
 measurement. Can also be one of the keywords:
-<cite>all</cite>, <cite>octave</cite>, <cite>decade</cite>. Defaults to <cite>octave</cite>.</p></li>
+<cite>all</cite>, <cite>octave</cite>, <cite>decade</cite>. Defaults to
+<cite>octave</cite>.</p></li>
 <li><p><strong>even</strong> (<em>optional</em>) – If True, allows only averaging times which are
 even multiples of the sampling interval.</p></li>
 <li><p><strong>maximum_m</strong> (<em>optional</em>) – maximum averaging factor for which to compute
-measurement. Defaults to length of dataset</p></li>
+measurement. Defaults to length of dataset,
+and might not take effect if bigger than
+automatic Stable32 stop-ratio.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(afs, taus) Tuple of sanitised averaging factors and averaging times.</p>
+<dd class="field-even"><p>(taus, afs) NamedTuple of sanitised averaging times and averaging
+factors.</p>
 </dd>
 </dl>
 </dd></dl>

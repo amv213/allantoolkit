@@ -311,14 +311,8 @@ def tau_generator(data: Array, rate: float, dev_type: str,
 
     # Get closest integer averaging factors for requested averaging times
     else:
-        print(taus)
         afs = np.array(taus) // tau_0
         afs = afs.astype(int)
-
-    # FIXME: technically these should be ints, but then toolkit's devs
-    #  fail to calculate with the correct precision. Find where the type
-    #  casting fails and then come back here and keep them as ints
-    afs = afs.astype(float)
 
     afs = afs[afs < N]  # make sure averaging time smaller than size of dataset
     afs = afs[afs > 0]  # make sure minimum averaging time is at least 1
@@ -335,7 +329,6 @@ def tau_generator(data: Array, rate: float, dev_type: str,
 
         # Filter averaging factors further
         stop_m = N // stop_ratio
-        print(stop_m)
         afs = afs[afs <= stop_m]
 
     afs = np.unique(afs)  # remove duplicates and sort

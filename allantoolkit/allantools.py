@@ -108,9 +108,9 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
                                                  dev_type='mdev', taus=taus)
     data, taus = np.array(phase), np.array(taus)
 
-    md = np.zeros_like(ms)
-    mderr = np.zeros_like(ms)
-    ns = np.zeros_like(ms)
+    md = np.zeros_like(taus_used)
+    mderr = np.zeros_like(taus_used)
+    ns = np.zeros_like(taus_used)
 
     # this is a 'loop-unrolled' algorithm following
     # http://www.leapsecond.com/tools/adev_lib.c

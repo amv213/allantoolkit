@@ -306,7 +306,7 @@
 
 <div class="viewcode-block" id="frequency2phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2phase">[docs]</a><span class="k">def</span> <span class="nf">frequency2phase</span><span class="p">(</span><span class="n">frequency_data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Integrates fractional frequency data to output phase data (with</span>
-<span class="sd">    arbitrary initial value).</span>
+<span class="sd">    arbitrary initial value), in units of second.</span>
 
 <span class="sd">    Frequency to phase conversion is done by piecewise  integration  using</span>
 <span class="sd">    the  averaging  time  as  the  integration  interval</span>
@@ -344,6 +344,22 @@
         <span class="n">phasedata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
 
     <span class="k">return</span> <span class="n">phasedata</span></div>
+
+
+<div class="viewcode-block" id="phase2radians"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.phase2radians">[docs]</a><span class="k">def</span> <span class="nf">phase2radians</span><span class="p">(</span><span class="n">phase_data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">v0</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Convert array of phases in seconds to equivalent phases in radians.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        phase_data: data array of phases, in seconds.</span>
+<span class="sd">        v0:         nominal oscillator frequency, in Hz.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        array of phase data, in radians.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">rads</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">v0</span> <span class="o">*</span> <span class="n">phase_data</span>
+
+    <span class="k">return</span> <span class="n">rads</span></div>
 
 
 <div class="viewcode-block" id="input_to_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.input_to_phase">[docs]</a><span class="k">def</span> <span class="nf">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
@@ -649,25 +665,6 @@
 <span class="c1">#</span>
 <span class="c1"># simple conversions between frequency, phase(seconds), phase(radians)</span>
 <span class="c1">#</span>
-
-
-<div class="viewcode-block" id="phase2radians"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.phase2radians">[docs]</a><span class="k">def</span> <span class="nf">phase2radians</span><span class="p">(</span><span class="n">phasedata</span><span class="p">,</span> <span class="n">v0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Convert phase in seconds to phase in radians</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    phasedata: np.array</span>
-<span class="sd">        Data array of phase in seconds</span>
-<span class="sd">    v0: float</span>
-<span class="sd">        Nominal oscillator frequency in Hz</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    fi:</span>
-<span class="sd">        phase data in radians</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">fi</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">v0</span><span class="o">*</span><span class="n">xx</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">phasedata</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">fi</span></div>
 
 
 <div class="viewcode-block" id="phase2frequency"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.phase2frequency">[docs]</a><span class="k">def</span> <span class="nf">phase2frequency</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>

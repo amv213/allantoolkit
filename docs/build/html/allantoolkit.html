@@ -1964,7 +1964,7 @@ if omitted, defaults to mean frequency=np.mean(frequency)</p></li>
 <dt id="allantoolkit.utils.frequency2phase">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frequency_data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2phase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Integrates fractional frequency data to output phase data (with
-arbitrary initial value).</p>
+arbitrary initial value), in units of second.</p>
 <p>Frequency to phase conversion is done by piecewise  integration  using
 the  averaging  time  as  the  integration  interval
 <a class="reference internal" href="references.html#rileystable32manual" id="id28"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
@@ -2051,20 +2051,17 @@ indices</p>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.phase2radians">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2radians</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phasedata</span></em>, <em class="sig-param"><span class="n">v0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#phase2radians"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2radians" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert phase in seconds to phase in radians</p>
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2radians</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase_data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">v0</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#phase2radians"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2radians" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert array of phases in seconds to equivalent phases in radians.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>phasedata</strong> (<em>np.array</em>) – Data array of phase in seconds</p></li>
-<li><p><strong>v0</strong> (<em>float</em>) – Nominal oscillator frequency in Hz</p></li>
+<li><p><strong>phase_data</strong> – data array of phases, in seconds.</p></li>
+<li><p><strong>v0</strong> – nominal oscillator frequency, in Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>phase data in radians</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>fi</p>
+<dd class="field-even"><p>array of phase data, in radians.</p>
 </dd>
 </dl>
 </dd></dl>

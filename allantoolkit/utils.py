@@ -109,7 +109,7 @@ def fill_gaps(data: Array) -> Array:
 
 def frequency2phase(frequency_data: Array, rate: float) -> Array:
     """Integrates fractional frequency data to output phase data (with
-    arbitrary initial value).
+    arbitrary initial value), in units of second.
 
     Frequency to phase conversion is done by piecewise  integration  using
     the  averaging  time  as  the  integration  interval
@@ -147,6 +147,22 @@ def frequency2phase(frequency_data: Array, rate: float) -> Array:
         phasedata = np.array([])
 
     return phasedata
+
+
+def phase2radians(phase_data: Array, v0: float) -> Array:
+    """ Convert array of phases in seconds to equivalent phases in radians.
+
+    Args:
+        phase_data: data array of phases, in seconds.
+        v0:         nominal oscillator frequency, in Hz.
+
+    Returns:
+        array of phase data, in radians.
+    """
+
+    rads = 2*np.pi*v0 * phase_data
+
+    return rads
 
 
 def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
@@ -452,25 +468,6 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
 #
 # simple conversions between frequency, phase(seconds), phase(radians)
 #
-
-
-def phase2radians(phasedata, v0):
-    """ Convert phase in seconds to phase in radians
-
-    Parameters
-    ----------
-    phasedata: np.array
-        Data array of phase in seconds
-    v0: float
-        Nominal oscillator frequency in Hz
-
-    Returns
-    -------
-    fi:
-        phase data in radians
-    """
-    fi = [2*np.pi*v0*xx for xx in phasedata]
-    return fi
 
 
 def phase2frequency(phase, rate):

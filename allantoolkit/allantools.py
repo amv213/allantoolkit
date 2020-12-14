@@ -65,8 +65,6 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         # Calculate variance, and number of samples it is based on
         var, n = func(x=x, m=m, tau=tau)
 
-        # FIXME there is some leakage of too small n or var
-        
         # Calculate deviation
         dev = np.sqrt(var)
 

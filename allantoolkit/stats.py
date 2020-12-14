@@ -56,7 +56,7 @@ def calc_adev(x, m, tau):
 
     if N < min_N:
         RuntimeWarning("Data array length is too small: %i" % len(x))
-        N += 1
+        N = min_N
 
     # Calculate variance
     var = 1. / (2 * (N-2) * tau**2) * np.sum((x[2:] - 2*x[1:-1] + x[:-2])**2)
@@ -76,11 +76,11 @@ def calc_oadev(x, m, tau):
 
     if N < min_N:
         RuntimeWarning("Data array length is too small: %i" % len(x))
-        N += 1
+        N = min_N
 
     # Calculate variance
     var = 1. / (2 * (N-2*m) * tau**2) * np.sum(
-        (x[2*m:] - 2*x[m:-1*m] + x[:-2*m])**2)
+        (x[2*m:] - 2*x[m:-m] + x[:-2*m])**2)
 
     # num values looped through to gen variance
     n = N - 2*m  # capped by i+2m

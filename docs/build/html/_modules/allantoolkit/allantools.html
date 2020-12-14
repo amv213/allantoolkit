@@ -215,7 +215,7 @@
 
 
 <div class="viewcode-block" id="dev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.dev">[docs]</a><span class="k">def</span> <span class="nf">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+        <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">],</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Dispatches the input data and parameters to the appropriate statistical</span>
 <span class="sd">    algorithm computing the requested deviation.</span>
 
@@ -227,6 +227,8 @@
 <span class="sd">        data_type:  input data type. Either `phase` or `freq`.</span>
 <span class="sd">        taus:       array of averaging times for which to compute deviation.</span>
 <span class="sd">                    Can also be one of the keywords: `all`, `octave`, `decade`.</span>
+<span class="sd">        max_af:     maximum averaging factor for which to compute deviation.</span>
+<span class="sd">                    Defaults to length of dataset.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (taus, devs, errs, ns) NamedTuple of results:</span>
@@ -242,10 +244,17 @@
 
     <span class="c1"># Build/Select averaging factors at which to calculate deviations</span>
     <span class="n">taus</span><span class="p">,</span> <span class="n">afs</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">dev_type</span><span class="o">=</span><span class="n">dev_type</span><span class="p">,</span>
-                                    <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
+                                    <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">maximum_m</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span>
 
     <span class="c1"># Calc statistic at each averaging factor</span>
     <span class="c1"># devs, errs, ns = func(x, afs)</span>
+    <span class="c1"># i.e.</span>
+    <span class="c1">#   []</span>
+    <span class="c1">#   for af in afs:</span>
+    <span class="c1">#       sample = decimate(x)</span>
+    <span class="c1">#       n = sample.size</span>
+    <span class="c1">#       dev = func(sample)</span>
+    <span class="c1">#       err =</span>
 
     <span class="c1"># Cleanup datapoints calculated on too few samples</span>
     <span class="c1"># taus, ads, errs, ns = utils.remove_small_ns(taus, devs, errs, ns)</span>
@@ -303,7 +312,7 @@
 <span class="sd">                                `octave`.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (taus, devs, errs, ns) NamedTuple of results:</span>
+<span class="sd">        (taus, devs, errs, ns) NamedTuple of results</span>
 
 <span class="sd">        .taus:  array of averaging times for which deviation was computed.</span>
 <span class="sd">        .devs:  array with deviation computed at each averaging time.</span>

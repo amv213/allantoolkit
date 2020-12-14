@@ -18,7 +18,7 @@ DevResult = NamedTuple('DevResult', [('taus', Array),
 
 
 def dev(dev_type: str, data: Array, rate: float, data_type: str,
-        taus: Union[str, Array]) -> DevResult:
+        taus: Union[str, Array], max_af: int = None) -> DevResult:
     """Dispatches the input data and parameters to the appropriate statistical
     algorithm computing the requested deviation.
 
@@ -30,6 +30,8 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         data_type:  input data type. Either `phase` or `freq`.
         taus:       array of averaging times for which to compute deviation.
                     Can also be one of the keywords: `all`, `octave`, `decade`.
+        max_af:     maximum averaging factor for which to compute deviation.
+                    Defaults to length of dataset.
 
     Returns:
         (taus, devs, errs, ns) NamedTuple of results:
@@ -45,10 +47,17 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
     # Build/Select averaging factors at which to calculate deviations
     taus, afs = utils.tau_generator(data=x, rate=rate, dev_type=dev_type,
-                                    taus=taus)
+                                    taus=taus, maximum_m=max_af)
 
     # Calc statistic at each averaging factor
     # devs, errs, ns = func(x, afs)
+    # i.e.
+    #   []
+    #   for af in afs:
+    #       sample = decimate(x)
+    #       n = sample.size
+    #       dev = func(sample)
+    #       err =
 
     # Cleanup datapoints calculated on too few samples
     # taus, ads, errs, ns = utils.remove_small_ns(taus, devs, errs, ns)
@@ -106,7 +115,7 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
                                 `octave`.
 
     Returns:
-        (taus, devs, errs, ns) NamedTuple of results:
+        (taus, devs, errs, ns) NamedTuple of results
 
         .taus:  array of averaging times for which deviation was computed.
         .devs:  array with deviation computed at each averaging time.

@@ -257,6 +257,10 @@ def tau_generator(data: Array, rate: float, dev_type: str,
 
     where `m` is the averaging factor.
 
+    This function implements a Stable32 stop-ratio for `octave` and `decade`
+    stability runs, which automatically calculates the maximum averaging
+    factor to use for the given deviation [RileyEvolution]_ (pg.9 Table III).
+
     Args:
         data:                   data array of phase or fractional frequency
                                 measurements.
@@ -317,6 +321,10 @@ def tau_generator(data: Array, rate: float, dev_type: str,
 
     # Get closest integer averaging factors for requested averaging times
     else:
+
+        # FIXME: fix pipeline up to here so that other functions are not
+        #  passing lists
+        taus = np.array(taus)
 
         taus = taus[~np.isnan(taus)]  # remove NaNs in input taus
         afs = np.array(taus) // tau_0

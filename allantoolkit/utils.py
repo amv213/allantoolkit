@@ -409,47 +409,46 @@ def tau_reduction(afs: Array, rate: float, n_per_decade: int) -> Taus:
     return Taus(taus=taus, afs=afs)
 
 
-def remove_small_ns(taus: np.ndarray, devs: np.ndarray,
-                    deverrs: Union[List[np.ndarray], np.ndarray],
-                    ns: np.ndarray) -> Tuple[np.ndarray, np.ndarray,
-                                             Union[List[np.ndarray], np.ndarray],
-                                             np.ndarray]:
-    """ Remove results with small number of samples.
-        If n is small (==1), reject the result
+def remove_small_ns(taus: Array, devs: Array,
+                    deverrs: Union[List[Array], Array], ns: Array) \
+        -> Tuple[Array, Array, Union[List[Array], Array], Array]:
+    """ Remove results calculated on one or less samples.
 
-    Parameters
-    ----------
-    taus: array
-        List of tau values for which deviation were computed
-    devs: array
-        List of deviations
-    deverrs: array or list of arrays
-        List of estimated errors (possibly a list containing two arrays :
-        upper and lower values)
-    ns: array
-        Number of samples for each point
+    Args:
+        taus:       array of averaging times for which deviation were computed
+        devs:       array of computed deviations
+        deverrs:    array of estimated errors (possibly an array containing two
+                    arrays, one with upper values, and one with lower values)
+        ns:         array with number of samples for each point
 
-    Returns
-    -------
+    Returns:
     (taus, devs, deverrs, ns): tuple
         Identical to input, except that values with low ns have been removed.
 
     """
-    ns_big_enough = ns > 1
 
-    o_taus = taus[ns_big_enough]
-    o_devs = devs[ns_big_enough]
-    o_ns = ns[ns_big_enough]
-    if isinstance(deverrs, list):
-        assert len(deverrs) < 3
-        o_deverrs = [deverrs[0][ns_big_enough], deverrs[1][ns_big_enough]]
-    else:
-        o_deverrs = deverrs[ns_big_enough]
-    if len(o_devs) == 0:
-        print("remove_small_ns() nothing remains!?")
+    mask = ns > 1
+
+    # Filter out results
+    devs = devs[mask]
+
+    if not devs.size:
+        logger.warning("Deviation calculated on too little samples. All "
+                       "results have been filtered out!")
         raise UserWarning
 
-    return o_taus, o_devs, o_deverrs, o_ns
+    # Filter supporting arrays as well
+    taus = taus[mask]
+    ns = ns[mask]
+
+    if deverrs.ndim == 1:
+        deverrs = deverrs[mask]
+    elif deverrs.ndim == 2:
+        deverrs = np.array([deverrs[0][mask], deverrs[1][mask]])
+    else:
+        raise TypeError("Array of estimated errors should be 1D or 2D.")
+
+    return taus, devs, deverrs, ns
 
 
 def three_cornered_hat_phase(phasedata_ab, phasedata_bc,

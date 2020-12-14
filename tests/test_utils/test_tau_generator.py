@@ -132,7 +132,8 @@ def test_max_m(data_with_gaps, dev_type, taus):
                                               dev_type=dev_type, taus=taus,
                                               maximum_m=2)
 
-    assert max(output.afs) <= 2
+    if output.afs.size:
+        assert max(output.afs) <= 2
 
 
 @pytest.mark.parametrize('dev_type', dev_types)

@@ -1251,7 +1251,7 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
         adn[idx] = n
 
     # Note that errors are split in 2 arrays
-    return utils.remove_small_ns(taus_used, ad, [ade_l, ade_h], adn)
+    return utils.remove_small_ns(taus_used, ad, np.array([ade_l, ade_h]), adn)
 
 
 def calc_gradev_phase(data, rate, mj, stride, confidence, noisetype):

@@ -606,47 +606,46 @@
     <span class="k">return</span> <span class="n">Taus</span><span class="p">(</span><span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="remove_small_ns"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.remove_small_ns">[docs]</a><span class="k">def</span> <span class="nf">remove_small_ns</span><span class="p">(</span><span class="n">taus</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">devs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-                    <span class="n">deverrs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-                    <span class="n">ns</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-                                             <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-                                             <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; Remove results with small number of samples.</span>
-<span class="sd">        If n is small (==1), reject the result</span>
+<div class="viewcode-block" id="remove_small_ns"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.remove_small_ns">[docs]</a><span class="k">def</span> <span class="nf">remove_small_ns</span><span class="p">(</span><span class="n">taus</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">devs</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span>
+                    <span class="n">deverrs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Array</span><span class="p">],</span> <span class="n">Array</span><span class="p">],</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> \
+        <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Array</span><span class="p">],</span> <span class="n">Array</span><span class="p">],</span> <span class="n">Array</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot; Remove results calculated on one or less samples.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    taus: array</span>
-<span class="sd">        List of tau values for which deviation were computed</span>
-<span class="sd">    devs: array</span>
-<span class="sd">        List of deviations</span>
-<span class="sd">    deverrs: array or list of arrays</span>
-<span class="sd">        List of estimated errors (possibly a list containing two arrays :</span>
-<span class="sd">        upper and lower values)</span>
-<span class="sd">    ns: array</span>
-<span class="sd">        Number of samples for each point</span>
+<span class="sd">    Args:</span>
+<span class="sd">        taus:       array of averaging times for which deviation were computed</span>
+<span class="sd">        devs:       array of computed deviations</span>
+<span class="sd">        deverrs:    array of estimated errors (possibly an array containing two</span>
+<span class="sd">                    arrays, one with upper values, and one with lower values)</span>
+<span class="sd">        ns:         array with number of samples for each point</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
+<span class="sd">    Returns:</span>
 <span class="sd">    (taus, devs, deverrs, ns): tuple</span>
 <span class="sd">        Identical to input, except that values with low ns have been removed.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ns_big_enough</span> <span class="o">=</span> <span class="n">ns</span> <span class="o">&gt;</span> <span class="mi">1</span>
 
-    <span class="n">o_taus</span> <span class="o">=</span> <span class="n">taus</span><span class="p">[</span><span class="n">ns_big_enough</span><span class="p">]</span>
-    <span class="n">o_devs</span> <span class="o">=</span> <span class="n">devs</span><span class="p">[</span><span class="n">ns_big_enough</span><span class="p">]</span>
-    <span class="n">o_ns</span> <span class="o">=</span> <span class="n">ns</span><span class="p">[</span><span class="n">ns_big_enough</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deverrs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">deverrs</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span>
-        <span class="n">o_deverrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">deverrs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">ns_big_enough</span><span class="p">],</span> <span class="n">deverrs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">ns_big_enough</span><span class="p">]]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">o_deverrs</span> <span class="o">=</span> <span class="n">deverrs</span><span class="p">[</span><span class="n">ns_big_enough</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">o_devs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;remove_small_ns() nothing remains!?&quot;</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">ns</span> <span class="o">&gt;</span> <span class="mi">1</span>
+
+    <span class="c1"># Filter out results</span>
+    <span class="n">devs</span> <span class="o">=</span> <span class="n">devs</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">devs</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Deviation calculated on too little samples. All &quot;</span>
+                       <span class="s2">&quot;results have been filtered out!&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">UserWarning</span>
 
-    <span class="k">return</span> <span class="n">o_taus</span><span class="p">,</span> <span class="n">o_devs</span><span class="p">,</span> <span class="n">o_deverrs</span><span class="p">,</span> <span class="n">o_ns</span></div>
+    <span class="c1"># Filter supporting arrays as well</span>
+    <span class="n">taus</span> <span class="o">=</span> <span class="n">taus</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+    <span class="n">ns</span> <span class="o">=</span> <span class="n">ns</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">deverrs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">deverrs</span> <span class="o">=</span> <span class="n">deverrs</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">deverrs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">deverrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">deverrs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">mask</span><span class="p">],</span> <span class="n">deverrs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">mask</span><span class="p">]])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Array of estimated errors should be 1D or 2D.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span></div>
 
 
 <div class="viewcode-block" id="three_cornered_hat_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.three_cornered_hat_phase">[docs]</a><span class="k">def</span> <span class="nf">three_cornered_hat_phase</span><span class="p">(</span><span class="n">phasedata_ab</span><span class="p">,</span> <span class="n">phasedata_bc</span><span class="p">,</span>

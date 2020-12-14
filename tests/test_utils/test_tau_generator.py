@@ -159,19 +159,64 @@ def test_even(data_with_gaps, taus):
 @pytest.mark.parametrize('dev_type', dev_types)
 @pytest.mark.parametrize('taus', tau_types)
 def test_min_m(data_with_gaps, dev_type, taus):
-    """Test that minimum averaging factor is greater than 0"""
+    """Test that minimum averaging factor is greater than 0 [if any
+    averaging factors calculated]"""
 
     output = allantoolkit.utils.tau_generator(data_with_gaps, rate=RATE,
                                               dev_type=dev_type, taus=taus)
 
-    assert min(output.afs) > 0
+    if output.afs.size:
+        assert min(output.afs) > 0
+
+
+@pytest.mark.parametrize('dev_type', dev_types)
+@pytest.mark.parametrize('taus', tau_types)
+def test_empty_data(dev_type, taus):
+    """Test that ValueError raised if calculating taus for empty
+    data"""
+
+    with pytest.raises(ValueError):
+        allantoolkit.utils.tau_generator(data=np.array([]), rate=RATE,
+                                         dev_type=dev_type, taus=taus)
+
+
+@pytest.mark.parametrize('dev_type', dev_types)
+@pytest.mark.parametrize('taus', tau_types)
+def test_negative_max_m_data(data_with_gaps, dev_type, taus):
+    """Test that get empty results if cap the maximum averaging factor to
+    negative numbers"""
+
+    output = allantoolkit.utils.tau_generator(data=data_with_gaps, rate=RATE,
+                                              dev_type=dev_type, taus=taus,
+                                              maximum_m=-1)
+
+    assert output.taus.size == 0 and output.afs.size == 0
+
+
+@pytest.mark.parametrize('dev_type', dev_types)
+def test_empty_taus(data_with_gaps, dev_type):
+    """Test that get empty results if provide empty averaging times"""
+
+    output = allantoolkit.utils.tau_generator(data=data_with_gaps, rate=RATE,
+                                              dev_type=dev_type,
+                                              taus=np.array([]))
+
+    assert output.taus.size == 0 and output.afs.size == 0
+
+
+@pytest.mark.parametrize('dev_type', dev_types)
+def test_NaN_taus(data_with_gaps, dev_type):
+    """Test that get empty results if provide NaN averaging times"""
+
+    taus = np.array([np.NaN, np.NaN, np.NaN, np.NaN])
+
+    output = allantoolkit.utils.tau_generator(data=data_with_gaps, rate=RATE,
+                                              dev_type=dev_type,
+                                              taus=taus)
+
+    assert output.taus.size == 0 and output.afs.size == 0
 
 
 # TODO:
 #  test decades, octaves and all building correctly
 #  test outputs unique
-#  test behaviour when passing empty taus
-#  test behaviour when passing NaN taus
-#  test behaviour when passing negative max_n
-#  test behaviour when passing empty data
-#  test behaviour when passing all NaN data

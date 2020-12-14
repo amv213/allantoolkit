@@ -278,6 +278,9 @@ def tau_generator(data: Array, rate: float, dev_type: str,
 
     N = data.size
 
+    if not N:
+        raise ValueError("Cannot calculate averaging times on empty data.")
+
     maximum_m = N if maximum_m is None else maximum_m
     taus = 'octave' if taus is None else taus
 
@@ -314,6 +317,8 @@ def tau_generator(data: Array, rate: float, dev_type: str,
 
     # Get closest integer averaging factors for requested averaging times
     else:
+
+        taus = taus[~np.isnan(taus)]  # remove NaNs in input taus
         afs = np.array(taus) // tau_0
         afs = afs.astype(int)
 
@@ -325,7 +330,8 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     afs = afs[afs % 2 == 0] if dev_type == 'theo1' else afs
 
     # Apply a Stable32 `stop-ratio`
-    if taus == 'octave' or taus == 'decade':
+    if isinstance(taus, str) and (taus == 'octave' or taus == 'decade'):
+
         stop_ratio = tables.STOP_RATIOS.get(dev_type)
 
         if not stop_ratio:
@@ -336,15 +342,14 @@ def tau_generator(data: Array, rate: float, dev_type: str,
         afs = afs[afs <= stop_m]
 
     afs = np.unique(afs)  # remove duplicates and sort
+    taus = tau_0*afs  # Recalculate averaging times, now sanitised.
 
-    logger.debug("tau_generator: averaging factors are %s", afs)
+    if not afs.size:
+        logger.warning("Could not generate valid averaging factors at which "
+                       "to calculate deviation!")
 
-    if afs.size == 0:
-        print("Warning: sanity-check on tau failed!")
-        print("   len(data)=", len(data), " rate=", rate, "taus= ", taus)
-
-    # Recalculate averaging times, now sanitised.
-    taus = tau_0*afs
+    logger.debug("Averaging times: %s", taus)
+    logger.debug("Averaging factors: %s", afs)
 
     return Taus(taus=taus, afs=afs)
 

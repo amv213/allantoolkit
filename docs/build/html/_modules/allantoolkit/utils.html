@@ -475,6 +475,9 @@
 
     <span class="n">N</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
 
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">N</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot calculate averaging times on empty data.&quot;</span><span class="p">)</span>
+
     <span class="n">maximum_m</span> <span class="o">=</span> <span class="n">N</span> <span class="k">if</span> <span class="n">maximum_m</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">maximum_m</span>
     <span class="n">taus</span> <span class="o">=</span> <span class="s1">&#39;octave&#39;</span> <span class="k">if</span> <span class="n">taus</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">taus</span>
 
@@ -511,6 +514,8 @@
 
     <span class="c1"># Get closest integer averaging factors for requested averaging times</span>
     <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">taus</span> <span class="o">=</span> <span class="n">taus</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">taus</span><span class="p">)]</span>  <span class="c1"># remove NaNs in input taus</span>
         <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">taus</span><span class="p">)</span> <span class="o">//</span> <span class="n">tau_0</span>
         <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
@@ -522,7 +527,8 @@
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s1">&#39;theo1&#39;</span> <span class="k">else</span> <span class="n">afs</span>
 
     <span class="c1"># Apply a Stable32 `stop-ratio`</span>
-    <span class="k">if</span> <span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;octave&#39;</span> <span class="ow">or</span> <span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;decade&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;octave&#39;</span> <span class="ow">or</span> <span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;decade&#39;</span><span class="p">):</span>
+
         <span class="n">stop_ratio</span> <span class="o">=</span> <span class="n">tables</span><span class="o">.</span><span class="n">STOP_RATIOS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dev_type</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">stop_ratio</span><span class="p">:</span>
@@ -533,15 +539,14 @@
         <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&lt;=</span> <span class="n">stop_m</span><span class="p">]</span>
 
     <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">afs</span><span class="p">)</span>  <span class="c1"># remove duplicates and sort</span>
+    <span class="n">taus</span> <span class="o">=</span> <span class="n">tau_0</span><span class="o">*</span><span class="n">afs</span>  <span class="c1"># Recalculate averaging times, now sanitised.</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;tau_generator: averaging factors are </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">afs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not generate valid averaging factors at which &quot;</span>
+                       <span class="s2">&quot;to calculate deviation!&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">afs</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: sanity-check on tau failed!&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   len(data)=&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="s2">&quot; rate=&quot;</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="s2">&quot;taus= &quot;</span><span class="p">,</span> <span class="n">taus</span><span class="p">)</span>
-
-    <span class="c1"># Recalculate averaging times, now sanitised.</span>
-    <span class="n">taus</span> <span class="o">=</span> <span class="n">tau_0</span><span class="o">*</span><span class="n">afs</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Averaging times: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Averaging factors: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">afs</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">Taus</span><span class="p">(</span><span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">)</span></div>
 

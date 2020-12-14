@@ -50,25 +50,30 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     taus, afs = utils.tau_generator(data=x, rate=rate, dev_type=dev_type,
                                     taus=taus, maximum_m=max_af)
 
-    # Calc statistic at each averaging factor
-    # devs, errs, ns = func(x, afs)
-    # i.e.
-    #   []
-    #   for af in afs:
-    #       sample = decimate(x)
-    #       n = sample.size
-    #       var = getattr(stats, 'calc_' + dev_type)(sample)
-    #       dev = sqrt(var)
-    #       err =
+    # CALC DEV
 
-    # func(x, m) -> var
+    # Should be function of this signature: func(x, m, tau) -> var, n
     func = getattr(stats, 'calc_' + dev_type)  # e.g. stats.calc_adev
 
-    devs = np.zeros_like(taus)
-    errs = np.zeros_like(devs)
-    ns = np.zeros_like(afs)
-    for i, af in enumerate(afs):  # loop through each averaging factor
-        (devs[i], errs[i], ns[i]) = func(x=x, af=af, rate=rate)
+    # Initialise arrays
+    devs, errs = np.zeros(len(afs)), np.zeros(len(afs))
+    ns = np.zeros(len(afs), dtype=int)
+
+    # Calculate metrics at each averaging time / factor
+    for i, (tau, m) in enumerate(zip(taus, afs)):
+
+        # Calculate variance, and number of samples it is based on
+        var, n = func(x=x, m=m, tau=tau)
+
+        # FIXME there is some leakage of too small n or var
+        
+        # Calculate deviation
+        dev = np.sqrt(var)
+
+        # Calculate error
+        err = dev / np.sqrt(n)
+
+        devs[i], errs[i], ns[i] = dev, err, n
 
     # Cleanup datapoints calculated on too few samples
     taus, devs, errs, ns = utils.remove_small_ns(taus, devs, errs, ns)

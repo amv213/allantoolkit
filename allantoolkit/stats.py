@@ -43,12 +43,49 @@ def oadev_core(x: Array, af: int, rate: float, stride: int):
     return dev, deverr, n
 
 
-def calc_adev(x, af, rate):
-    return oadev_core(x=x, af=af, rate=rate, stride=af)
+def calc_adev(x, m, tau):
+
+    # minimum number of values needed by algorithm:
+    min_N = 3  # i --> i+2
+
+    # Decimate input data, to get sample at this averaging factor
+    x = x[::m]
+
+    # Size of sample
+    N = x.size
+
+    if N < min_N:
+        RuntimeWarning("Data array length is too small: %i" % len(x))
+        N += 1
+
+    # Calculate variance
+    var = 1. / (2 * (N-2) * tau**2) * np.sum((x[2:] - 2*x[1:-1] + x[:-2])**2)
+
+    # num values looped through to gen variance
+    n = N - 2  # capped by i+2
+
+    return var, n
 
 
-def calc_oadev(x, af, rate):
-    return oadev_core(x=x, af=af, rate=rate, stride=1)
+def calc_oadev(x, m, tau):
+
+    # minimum number of values needed by algorithm:
+    min_N = 2*m + 1  # i --> i+2m
+
+    N = x.size
+
+    if N < min_N:
+        RuntimeWarning("Data array length is too small: %i" % len(x))
+        N += 1
+
+    # Calculate variance
+    var = 1. / (2 * (N-2*m) * tau**2) * np.sum(
+        (x[2*m:] - 2*x[m:-1*m] + x[:-2*m])**2)
+
+    # num values looped through to gen variance
+    n = N - 2*m  # capped by i+2m
+
+    return var, n
 
 
 def calc_hdev(phase, rate, mj, stride):

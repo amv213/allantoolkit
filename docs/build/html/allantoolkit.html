@@ -313,50 +313,83 @@
 </div>
 <div class="section" id="module-allantoolkit.allantools">
 <span id="allantoolkit-allantools-module"></span><h2>allantoolkit.allantools module<a class="headerlink" href="#module-allantoolkit.allantools" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="allantoolkit.allantools.DevResult">
+<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">DevResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">taus</span></em>, <em class="sig-param"><span class="n">devs</span></em>, <em class="sig-param"><span class="n">errs</span></em>, <em class="sig-param"><span class="n">ns</span></em><span class="sig-paren">)</span><a class="headerlink" href="#allantoolkit.allantools.DevResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt id="allantoolkit.allantools.DevResult.devs">
+<code class="sig-name descname">devs</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.devs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="allantoolkit.allantools.DevResult.errs">
+<code class="sig-name descname">errs</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.errs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="allantoolkit.allantools.DevResult.ns">
+<code class="sig-name descname">ns</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.ns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="allantoolkit.allantools.DevResult.taus">
+<code class="sig-name descname">taus</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.taus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt id="allantoolkit.allantools.adev">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">adev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#adev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.adev" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Allan deviation.</dt><dd><p>Classic - use only if required - relatively poor confidence.</p>
-</dd>
-</dl>
+<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">adev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.allantools.DevResult" title="allantoolkit.allantools.DevResult">allantoolkit.allantools.DevResult</a><a class="reference internal" href="_modules/allantoolkit/allantools.html#adev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.adev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allan deviation (ADEV): classic - use only if required - relatively
+poor confidence [<a class="reference internal" href="references.html#sp1065" id="id1"><span>[SP1065]</span></a> (pg.14-15)].</p>
+<p>The Allan deviation - <span class="math notranslate nohighlight">\(\sigma_y(\tau)\)</span> - is the square root of
+the Allan variance. The Allan variance is the same as  the  ordinary
+variance  for  white  FM  noise, but  has  the  advantage,  for  more
+divergent  noise  types  such  as flicker  noise,  of  converging  to  a
+value  that  is  independent  on  the  number  of  samples.</p>
+<p>In terms of <cite>phase</cite> data, the Allan variance may be calculated as:</p>
 <div class="math notranslate nohighlight">
-\[\sigma^2_{ADEV}(\tau) = { 1 \over 2 \tau^2 }
-\langle ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2 \rangle
-= { 1 \over 2 (N-2) \tau^2 }
-\sum_{n=1}^{N-2} ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2\]</div>
-<p>where <span class="math notranslate nohighlight">\(x_n\)</span> is the time-series of phase observations, spaced
-by the measurement interval <span class="math notranslate nohighlight">\(\tau\)</span>, and with length <span class="math notranslate nohighlight">\(N\)</span>.</p>
-<p>Or alternatively calculated from a time-series of fractional frequency:</p>
+\[\sigma^2_y(\tau) = { 1 \over 2 (N-2) \tau^2 }
+\sum_{i=1}^{N-2} \left[ x_{i+2} - 2x_{i+1} + x_{i} \right]^2\]</div>
+<p>where <span class="math notranslate nohighlight">\(x_i\)</span> is the <span class="math notranslate nohighlight">\(i\)</span> phase values spaced by
+an averaging time <span class="math notranslate nohighlight">\(\tau\)</span>.</p>
+<p>For a time-series of fractional frequency values, the Allan variance is
+defined as:</p>
 <div class="math notranslate nohighlight">
-\[\sigma^{2}_{ADEV}(\tau) =  { 1 \over 2 }
-\langle ( \bar{y}_{n+1} - \bar{y}_n )^2 \rangle\]</div>
-<p>where <span class="math notranslate nohighlight">\(\bar{y}_n\)</span> is the time-series of fractional frequency
-at averaging time <span class="math notranslate nohighlight">\(\tau\)</span></p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id1"><span>[SP1065]</span></a> eqn (6) and (7), pages 14 and 15.</p>
+\[\sigma^{2}_y(\tau) =  { 1 \over 2 (M - 1) } \sum_{i=1}^{M-1}
+\langle \left[ \bar{y}_{i+1} - \bar{y}_i \right]^2\]</div>
+<p>where <span class="math notranslate nohighlight">\(\bar{y}_i\)</span> is the <span class="math notranslate nohighlight">\(i\)</span> fractional
+frequency values averaged over the averaging time <span class="math notranslate nohighlight">\(\tau\)</span>.</p>
+<p>The  confidence  interval  of  an  Allan  deviation estimate is dependent
+on the noise type, but is often estimated as
+<span class="math notranslate nohighlight">\(\pm\sigma^{2}_y(\tau) / \sqrt{N}\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>np.array</em>) – Input data. Provide either phase or frequency (fractional,
-adimensional).</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for data, in Hz. Defaults to 1.0</p></li>
-<li><p><strong>data_type</strong> (<em>{'phase'</em><em>, </em><em>'freq'}</em>) – Data type, i.e. phase or frequency. Defaults to “phase”.</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – Array of tau values, in seconds, for which to compute statistic.
-Optionally set taus=[“all”|”octave”|”decade”] for automatic
-tau-list generation.</p></li>
+<li><p><strong>data</strong> – array of phase (in units of seconds) or
+fractional frequency data for which to
+calculate deviation.</p></li>
+<li><p><strong>rate</strong> (<em>optional</em>) – sampling rate of the input data, in Hz.</p></li>
+<li><p><strong>data_type</strong> (<em>optional</em>) – input data type. Either <cite>phase</cite> or <cite>freq</cite>.</p></li>
+<li><p><strong>taus</strong> (<em>optional</em>) – array of averaging times for which to compute
+deviation. Can also be one of the keywords:
+<cite>all</cite>, <cite>octave</cite>, <cite>decade</cite>. Defaults to
+<cite>octave</cite>.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>(taus2, ad, ade, ns)</strong> (<em>tuple</em>) – Tuple of values</p></li>
-<li><p><strong>taus2</strong> (<em>np.array</em>) – Tau values for which td computed</p></li>
-<li><p><strong>ad</strong> (<em>np.array</em>) – Computed adev for each tau value</p></li>
-<li><p><strong>ade</strong> (<em>np.array</em>) – adev errors</p></li>
-<li><p><strong>ns</strong> (<em>np.array</em>) – Values of N used in each adev calculation</p></li>
-</ul>
-</p>
 </dd>
 </dl>
+<p>Returns:
+(taus, devs, errs, ns) NamedTuple of results:</p>
+<p>.taus:  array of averaging times for which deviation was computed.
+.devs:  array with deviation computed at each averaging time.
+.errs:  array with estimated error in each computed deviation.
+.ns:    array with number of values used to compute each deviation.</p>
 </dd></dl>
 
 <dl class="py function">

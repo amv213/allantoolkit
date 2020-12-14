@@ -1,13 +1,148 @@
 import logging
-
 import numpy as np
-
-from . import ci  # edf, confidence intervals
+from . import ci
 from . import utils
-from typing import List, Tuple, Union
+from typing import List, Tuple, NamedTuple, Union
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
+
+# shorten type hint to save some space
+Array = np.ndarray
+
+# define named tuple to hold dev results
+DevResult = NamedTuple('DevResult', [('taus', Array),
+                                     ('devs', Array),
+                                     ('errs', Array),
+                                     ('ns', Array)])
+
+
+def adev(data: Array, rate: float = 1., data_type: str = "phase",
+         taus:Union[str, Array] = None) -> DevResult:
+    """Allan deviation (ADEV): classic - use only if required - relatively
+    poor confidence [[SP1065]_ (pg.14-15)].
+
+    The Allan deviation - :math:`\\sigma_y(\\tau)` - is the square root of
+    the Allan variance. The Allan variance is the same as  the  ordinary
+    variance  for  white  FM  noise, but  has  the  advantage,  for  more
+    divergent  noise  types  such  as flicker  noise,  of  converging  to  a
+    value  that  is  independent  on  the  number  of  samples.
+
+    In terms of `phase` data, the Allan variance may be calculated as:
+
+    .. math::
+
+        \\sigma^2_y(\\tau) = { 1 \\over 2 (N-2) \\tau^2 }
+        \\sum_{i=1}^{N-2} \\left[ x_{i+2} - 2x_{i+1} + x_{i} \\right]^2
+
+    where :math:`x_i` is the :math:`i`th of :math:`N` phase values spaced by
+    an averaging time :math:`\\tau`.
+
+    For a time-series of fractional frequency values, the Allan variance is
+    defined as:
+
+    .. math::
+
+        \\sigma^{2}_y(\\tau) =  { 1 \\over 2 (M - 1) } \\sum_{i=1}^{M-1}
+        \\langle \\left[ \\bar{y}_{i+1} - \\bar{y}_i \\right]^2
+
+    where :math:`\\bar{y}_i` is the :math:`i`th of :math:`M` fractional
+    frequency values averaged over the averaging time :math:`\\tau`.
+
+    The  confidence  interval  of  an  Allan  deviation estimate is dependent
+    on the noise type, but is often estimated as
+    :math:`\\pm\\sigma^{2}_y(\\tau) / \\sqrt{N}`.
+
+    Args:
+
+        data:                   array of phase (in units of seconds) or
+                                fractional frequency data for which to
+                                calculate deviation.
+        rate (optional):        sampling rate of the input data, in Hz.
+        data_type (optional):   input data type. Either `phase` or `freq`.
+        taus (optional):        array of averaging times for which to compute
+                                deviation. Can also be one of the keywords:
+                                `all`, `octave`, `decade`. Defaults to
+                                `octave`.
+
+    Returns:
+    (taus, devs, errs, ns) NamedTuple of results:
+
+    .taus:  array of averaging times for which deviation was computed.
+    .devs:  array with deviation computed at each averaging time.
+    .errs:  array with estimated error in each computed deviation.
+    .ns:    array with number of values used to compute each deviation.
+    """
+
+    phase = utils.input_to_phase(data, rate, data_type)
+    (taus_used, m) = utils.tau_generator(data=phase, rate=rate,
+                                                dev_type='adev',
+                                                taus=taus)
+
+    ad = np.zeros_like(taus_used)
+    ade = np.zeros_like(taus_used)
+    adn = np.zeros_like(taus_used)
+
+    for idx, mj in enumerate(m):  # loop through each tau value m(j)
+        (ad[idx], ade[idx], adn[idx]) = calc_adev_phase(phase, rate, mj, mj)
+
+    return utils.remove_small_ns(taus_used, ad, ade, adn)
+
+
+def calc_adev_phase(phase, rate, mj, stride):
+    """  Main algorithm for adev() (stride=mj) and oadev() (stride=1)
+
+        see http://www.leapsecond.com/tools/adev_lib.c
+        stride = mj for nonoverlapping allan deviation
+
+    Parameters
+    ----------
+    phase: np.array
+        Phase data in seconds.
+    rate: float
+        The sampling rate for phase or frequency, in Hz
+    mj: int
+        M index value for stride
+    stride: int
+        Size of stride
+
+    Returns
+    -------
+    (dev, deverr, n): tuple
+        Array of computed values.
+
+    Notes
+    -----
+    stride = mj for nonoverlapping Allan deviation
+    stride = 1 for overlapping Allan deviation
+
+    References
+    ----------
+    [Wikipedia]_
+    * http://en.wikipedia.org/wiki/Allan_variance
+    * http://www.leapsecond.com/tools/adev_lib.c
+
+    NIST [SP1065]_ eqn (7) and (11) page 16
+    """
+    mj = int(mj)
+    stride = int(stride)
+    d2 = phase[2 * mj::stride]
+    d1 = phase[1 * mj::stride]
+    d0 = phase[::stride]
+
+    n = min(len(d0), len(d1), len(d2))
+
+    if n == 0:
+        RuntimeWarning("Data array length is too small: %i" % len(phase))
+        n = 1
+
+    v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
+    s = np.sum(v_arr * v_arr)
+
+    dev = np.sqrt(s / (2.0 * n)) / mj  * rate
+    deverr = dev / np.sqrt(n)
+
+    return dev, deverr, n
 
 
 def tdev(data, rate=1.0, data_type="phase", taus=None):
@@ -148,131 +283,6 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
         ns[idx] = n
 
     return utils.remove_small_ns(taus_used, md, mderr, ns)
-
-
-def adev(data, rate=1.0, data_type="phase", taus=None):
-    """ Allan deviation.
-        Classic - use only if required - relatively poor confidence.
-
-    .. math::
-
-        \\sigma^2_{ADEV}(\\tau) = { 1 \\over 2 \\tau^2 }
-        \\langle ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2 \\rangle
-        = { 1 \\over 2 (N-2) \\tau^2 }
-        \\sum_{n=1}^{N-2} ( {x}_{n+2} - 2x_{n+1} + x_{n} )^2
-
-    where :math:`x_n` is the time-series of phase observations, spaced
-    by the measurement interval :math:`\\tau`, and with length :math:`N`.
-
-    Or alternatively calculated from a time-series of fractional frequency:
-
-    .. math::
-
-        \\sigma^{2}_{ADEV}(\\tau) =  { 1 \\over 2 }
-        \\langle ( \\bar{y}_{n+1} - \\bar{y}_n )^2 \\rangle
-
-    where :math:`\\bar{y}_n` is the time-series of fractional frequency
-    at averaging time :math:`\\tau`
-
-    NIST [SP1065]_ eqn (6) and (7), pages 14 and 15.
-
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
-
-    Returns
-    -------
-    (taus2, ad, ade, ns): tuple
-          Tuple of values
-    taus2: np.array
-        Tau values for which td computed
-    ad: np.array
-        Computed adev for each tau value
-    ade: np.array
-        adev errors
-    ns: np.array
-        Values of N used in each adev calculation
-
-    """
-    phase = utils.input_to_phase(data, rate, data_type)
-    (taus_used, m) = utils.tau_generator(data=phase, rate=rate,
-                                                dev_type='adev',
-                                                taus=taus)
-
-    ad = np.zeros_like(taus_used)
-    ade = np.zeros_like(taus_used)
-    adn = np.zeros_like(taus_used)
-
-    for idx, mj in enumerate(m):  # loop through each tau value m(j)
-        (ad[idx], ade[idx], adn[idx]) = calc_adev_phase(phase, rate, mj, mj)
-
-    return utils.remove_small_ns(taus_used, ad, ade, adn)
-
-
-def calc_adev_phase(phase, rate, mj, stride):
-    """  Main algorithm for adev() (stride=mj) and oadev() (stride=1)
-
-        see http://www.leapsecond.com/tools/adev_lib.c
-        stride = mj for nonoverlapping allan deviation
-
-    Parameters
-    ----------
-    phase: np.array
-        Phase data in seconds.
-    rate: float
-        The sampling rate for phase or frequency, in Hz
-    mj: int
-        M index value for stride
-    stride: int
-        Size of stride
-
-    Returns
-    -------
-    (dev, deverr, n): tuple
-        Array of computed values.
-
-    Notes
-    -----
-    stride = mj for nonoverlapping Allan deviation
-    stride = 1 for overlapping Allan deviation
-
-    References
-    ----------
-    [Wikipedia]_
-    * http://en.wikipedia.org/wiki/Allan_variance
-    * http://www.leapsecond.com/tools/adev_lib.c
-
-    NIST [SP1065]_ eqn (7) and (11) page 16
-    """
-    mj = int(mj)
-    stride = int(stride)
-    d2 = phase[2 * mj::stride]
-    d1 = phase[1 * mj::stride]
-    d0 = phase[::stride]
-
-    n = min(len(d0), len(d1), len(d2))
-
-    if n == 0:
-        RuntimeWarning("Data array length is too small: %i" % len(phase))
-        n = 1
-
-    v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
-    s = np.sum(v_arr * v_arr)
-
-    dev = np.sqrt(s / (2.0 * n)) / mj  * rate
-    deverr = dev / np.sqrt(n)
-
-    return dev, deverr, n
 
 
 def oadev(data, rate=1.0, data_type="phase", taus=None):

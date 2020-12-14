@@ -20,3 +20,6 @@ public
 
 # sphinx docs generated here:
 docs/_build/**
+
+# Coverage
+.coverage

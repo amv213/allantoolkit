@@ -422,9 +422,8 @@ def remove_small_ns(taus: Array, devs: Array,
         ns:         array with number of samples for each point
 
     Returns:
-    (taus, devs, deverrs, ns): tuple
-        Identical to input, except that values with low ns have been removed.
-
+        (taus, devs, deverrs, ns) iddentical to input, except that values
+        with low ns have been removed.
     """
 
     mask = ns > 1

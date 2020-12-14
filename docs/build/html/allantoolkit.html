@@ -395,46 +395,12 @@ deviation. Can also be one of the keywords:
 </dd></dl>
 
 <dl class="py function">
-<dt id="allantoolkit.allantools.calc_adev_phase">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">calc_adev_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">mj</span></em>, <em class="sig-param"><span class="n">stride</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#calc_adev_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.calc_adev_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main algorithm for adev() (stride=mj) and oadev() (stride=1)</p>
-<blockquote>
-<div><p>see <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a>
-stride = mj for nonoverlapping allan deviation</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>phase</strong> (<em>np.array</em>) – Phase data in seconds.</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for phase or frequency, in Hz</p></li>
-<li><p><strong>mj</strong> (<em>int</em>) – M index value for stride</p></li>
-<li><p><strong>stride</strong> (<em>int</em>) – Size of stride</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>(dev, deverr, n)</strong> – Array of computed values.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>stride = mj for nonoverlapping Allan deviation
-stride = 1 for overlapping Allan deviation</p>
-<p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#wikipedia" id="id2"><span>[Wikipedia]</span></a>
-* <a class="reference external" href="http://en.wikipedia.org/wiki/Allan_variance">http://en.wikipedia.org/wiki/Allan_variance</a>
-* <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id3"><span>[SP1065]</span></a> eqn (7) and (11) page 16</p>
-</dd></dl>
-
-<dl class="py function">
 <dt id="allantoolkit.allantools.calc_gradev_phase">
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">calc_gradev_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">mj</span></em>, <em class="sig-param"><span class="n">stride</span></em>, <em class="sig-param"><span class="n">confidence</span></em>, <em class="sig-param"><span class="n">noisetype</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#calc_gradev_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.calc_gradev_phase" title="Permalink to this definition">¶</a></dt>
 <dd><dl>
 <dt>see <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></dt><dd><p>stride = mj for nonoverlapping allan deviation
 stride = 1 for overlapping allan deviation</p>
-<p><a class="reference internal" href="references.html#wikipedia" id="id4"><span>[Wikipedia]</span></a>
+<p><a class="reference internal" href="references.html#wikipedia" id="id2"><span>[Wikipedia]</span></a>
 see <a class="reference external" href="http://en.wikipedia.org/wiki/Allan_variance">http://en.wikipedia.org/wiki/Allan_variance</a></p>
 </dd>
 </dl>
@@ -468,7 +434,7 @@ see <a class="reference external" href="http://en.wikipedia.org/wiki/Allan_varia
 \[ \begin{align}\begin{aligned}\sigma^2_{y}(t) = { 1 \over 6\tau^2 (N-3m) }
     \sum_{i=1}^{N-3} [ x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2\\N=M+1 phase measurements
 m is averaging factor\end{aligned}\end{align} \]</div>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id5"><span>[SP1065]</span></a> eqn (18) and (20) pages 20 and 21</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id3"><span>[SP1065]</span></a> eqn (18) and (20) pages 20 and 21</p>
 </dd></dl>
 
 <dl class="py function">
@@ -492,14 +458,14 @@ tau = m*tau0</p>
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">calc_mtotdev_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#calc_mtotdev_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.calc_mtotdev_phase" title="Permalink to this definition">¶</a></dt>
 <dd><p>PRELIMINARY - REQUIRES FURTHER TESTING.
 calculation of mtotdev for one averaging factor m; tau = m*tau0</p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id6"><span>[SP1065]</span></a> Eqn (27), page 25.</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id4"><span>[SP1065]</span></a> Eqn (27), page 25.</p>
 <p>Computed from a set of N - 3m + 1 subsequences of 3m points.</p>
 <p>1. A linear trend (frequency offset) is removed from the subsequence by
 averaging the first and last halves of the subsequence and dividing by
 half the interval.
 2. The offset-removed subsequence is extended at both ends by
 uninverted, even reflection.</p>
-<p><a class="reference internal" href="references.html#howe1999" id="id7"><span>[Howe1999]</span></a>
+<p><a class="reference internal" href="references.html#howe1999" id="id5"><span>[Howe1999]</span></a>
 D.A. Howe and F. Vernotte, “Generalization of the Total Variance
 Approach to the Modified Allan Variance,” Proc.
 31 st PTTI Meeting, pp. 267-276, Dec. 1999.</p>
@@ -589,7 +555,7 @@ distances from the the estimated two sample variance.</p></li>
 \sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} - x_{i} )^2\]</div>
 <p>where <span class="math notranslate nohighlight">\(x_i\)</span> is the time-series of phase observations, spaced
 by the measurement interval <span class="math notranslate nohighlight">\(\tau\)</span>, and with length <span class="math notranslate nohighlight">\(N\)</span>.</p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id8"><span>[SP1065]</span></a> eqn (17) and (18), page 20</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id6"><span>[SP1065]</span></a> eqn (17) and (18), page 20</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -651,7 +617,7 @@ tau-list generation.</p></li>
 \sum_{j=1}^{N-3m+1} \lbrace
 \sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \rbrace^2\]</div>
 <p>see <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id9"><span>[SP1065]</span></a> eqn (14), page 17.</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id7"><span>[SP1065]</span></a> eqn (14), page 17.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -704,7 +670,7 @@ dataset is extended somehow?</p>
 <dt id="allantoolkit.allantools.mtie_phase_fast">
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">mtie_phase_fast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#mtie_phase_fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.mtie_phase_fast" title="Permalink to this definition">¶</a></dt>
 <dd><p>fast binary decomposition algorithm for MTIE</p>
-<p>See: <a class="reference internal" href="references.html#bregni2001" id="id10"><span>[Bregni2001]</span></a> STEFANO BREGNI “Fast Algorithms for TVAR and MTIE Computation in
+<p>See: <a class="reference internal" href="references.html#bregni2001" id="id8"><span>[Bregni2001]</span></a> STEFANO BREGNI “Fast Algorithms for TVAR and MTIE Computation in
 Characterization of Network Synchronization Performance”</p>
 </dd></dl>
 
@@ -782,7 +748,7 @@ tau-list generation.</p></li>
 deviation at an averaging time of <span class="math notranslate nohighlight">\(\tau=m\tau_0\)</span>, and
 <span class="math notranslate nohighlight">\(x_n\)</span> is the time-series of phase observations, spaced by the
 measurement interval <span class="math notranslate nohighlight">\(\tau_0\)</span>, with length <span class="math notranslate nohighlight">\(N\)</span>.</p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id12"><span>[SP1065]</span></a> eqn (11), page 16.</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id10"><span>[SP1065]</span></a> eqn (11), page 16.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -856,7 +822,7 @@ tau-list generation.</p></li>
 \[\sigma^2_{TDEV}( \tau ) = { \tau^2 \over 3 }
 \sigma^2_{MDEV}( \tau )\]</div>
 <p>Note that TDEV has a unit of seconds.</p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id13"><span>[SP1065]</span></a> eqn (15), page 18.</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id11"><span>[SP1065]</span></a> eqn (15), page 18.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -889,7 +855,7 @@ tau-list generation.</p></li>
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">theo1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#theo1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.theo1" title="Permalink to this definition">¶</a></dt>
 <dd><dl>
 <dt>PRELIMINARY - REQUIRES FURTHER TESTING.</dt><dd><p>Theo1 is a two-sample variance with improved confidence and
-extended averaging factor range. <a class="reference internal" href="references.html#howe-theo1" id="id14"><span>[Howe_theo1]</span></a></p>
+extended averaging factor range. <a class="reference internal" href="references.html#howe-theo1" id="id12"><span>[Howe_theo1]</span></a></p>
 <div class="math notranslate nohighlight">
 \[\sigma^2_{THEO1}(m\tau_0) = { 1 \over  (m \tau_0 )^2 (N-m) }
     \sum_{i=1}^{N-m}   \sum_{\delta=0}^{m/2-1}
@@ -898,7 +864,7 @@ extended averaging factor range. <a class="reference internal" href="references.
         (x_{i+m}- x_{i+\delta +m/2}) \rbrace^2\]</div>
 <p>Where <span class="math notranslate nohighlight">\(10&lt;=m&lt;=N-1\)</span> is even.</p>
 <p>FIXME: bias correction</p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id15"><span>[SP1065]</span></a> eq (30) page 29</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id13"><span>[SP1065]</span></a> eq (30) page 29</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -955,7 +921,7 @@ x*(i)   = x(i)            for i=1..N
 x*(N+j) = 2x(N) - x(N-j)  for j=1..N-2
 x* has length 3N-4
 tau = m*tau0</p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id16"><span>[SP1065]</span></a> eqn (25) page 23</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id14"><span>[SP1065]</span></a> eqn (25) page 23</p>
 <p>FIXME: bias correction <a class="reference external" href="http://www.wriley.com/CI2.pdf">http://www.wriley.com/CI2.pdf</a> page 5</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -975,7 +941,7 @@ frequency or phase.</p></li>
 <code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">ttotdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#ttotdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.ttotdev" title="Permalink to this definition">¶</a></dt>
 <dd><p>Time Total Deviation</p>
 <p>Modified total variance scaled by tau^2 / 3</p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id17"><span>[SP1065]</span></a> eqn (28) page 26.  Note that <a class="reference internal" href="references.html#sp1065" id="id18"><span>[SP1065]</span></a> erroneously has tau-cubed here (!).</p>
+<p>NIST <a class="reference internal" href="references.html#sp1065" id="id15"><span>[SP1065]</span></a> eqn (28) page 26.  Note that <a class="reference internal" href="references.html#sp1065" id="id16"><span>[SP1065]</span></a> erroneously has tau-cubed here (!).</p>
 </dd></dl>
 
 </div>
@@ -1033,7 +999,7 @@ Riley,W.J. et al.
 A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
 32nd PTTI, 2000
 <a class="reference external" href="https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf">https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf</a></p>
-<p><a class="reference internal" href="references.html#barnes1974" id="id19"><span>[Barnes1974]</span></a>
+<p><a class="reference internal" href="references.html#barnes1974" id="id17"><span>[Barnes1974]</span></a>
 <a class="reference external" href="https://tf.nist.gov/general/pdf/11.pdf">https://tf.nist.gov/general/pdf/11.pdf</a></p>
 </dd></dl>
 
@@ -1195,7 +1161,7 @@ ohdev()</p>
 <dl class="py function">
 <dt id="allantoolkit.ci.edf_greenhall_simple">
 <code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">edf_greenhall_simple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">m</span></em>, <em class="sig-param"><span class="n">S</span></em>, <em class="sig-param"><span class="n">F</span></em>, <em class="sig-param"><span class="n">N</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#edf_greenhall_simple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.edf_greenhall_simple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Eqn (13) from <a class="reference internal" href="references.html#greenhall2004" id="id20"><span>[Greenhall2004]</span></a></p>
+<dd><p>Eqn (13) from <a class="reference internal" href="references.html#greenhall2004" id="id18"><span>[Greenhall2004]</span></a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -1251,25 +1217,25 @@ FIXME: what is the right behavior for alpha outside 0,-1,-2?</p>
 <dl class="py function">
 <dt id="allantoolkit.ci.greenhall_BasicSum">
 <code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">greenhall_BasicSum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">J</span></em>, <em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">S</span></em>, <em class="sig-param"><span class="n">F</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#greenhall_BasicSum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.greenhall_BasicSum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Eqn (10) from <a class="reference internal" href="references.html#greenhall2004" id="id21"><span>[Greenhall2004]</span></a></p>
+<dd><p>Eqn (10) from <a class="reference internal" href="references.html#greenhall2004" id="id19"><span>[Greenhall2004]</span></a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="allantoolkit.ci.greenhall_sw">
 <code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">greenhall_sw</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#greenhall_sw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.greenhall_sw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Eqn (7) from <a class="reference internal" href="references.html#greenhall2004" id="id22"><span>[Greenhall2004]</span></a></p>
+<dd><p>Eqn (7) from <a class="reference internal" href="references.html#greenhall2004" id="id20"><span>[Greenhall2004]</span></a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="allantoolkit.ci.greenhall_sx">
 <code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">greenhall_sx</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em>, <em class="sig-param"><span class="n">F</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#greenhall_sx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.greenhall_sx" title="Permalink to this definition">¶</a></dt>
-<dd><p>Eqn (8) from <a class="reference internal" href="references.html#greenhall2004" id="id23"><span>[Greenhall2004]</span></a></p>
+<dd><p>Eqn (8) from <a class="reference internal" href="references.html#greenhall2004" id="id21"><span>[Greenhall2004]</span></a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="allantoolkit.ci.greenhall_sz">
 <code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">greenhall_sz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em>, <em class="sig-param"><span class="n">F</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#greenhall_sz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.greenhall_sz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Eqn (9) from <a class="reference internal" href="references.html#greenhall2004" id="id24"><span>[Greenhall2004]</span></a></p>
+<dd><p>Eqn (9) from <a class="reference internal" href="references.html#greenhall2004" id="id22"><span>[Greenhall2004]</span></a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -1537,7 +1503,7 @@ The PSD is at ‘height’ b0 and extends from 0 Hz up to the nyquist frequency 
 <em class="property">class </em><code class="sig-prename descclassname">allantoolkit.noise_kasdin.</code><code class="sig-name descname">Noise</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nr</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">qd</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">b</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Generate discrete colored noise</p>
-<p>Python / Numpy implementation of <a class="reference internal" href="references.html#kasdin1992" id="id25"><span>[Kasdin1992]</span></a>:
+<p>Python / Numpy implementation of <a class="reference internal" href="references.html#kasdin1992" id="id23"><span>[Kasdin1992]</span></a>:
 Kasdin, N.J., Walter, T., “Discrete simulation of power law noise [for
 oscillator stability evaluation],” Frequency Control Symposium, 1992.
 46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992
@@ -1923,7 +1889,7 @@ Initial version 2019 July, Anders E. E. Wallin.</p>
 <em class="property">class </em><code class="sig-prename descclassname">allantoolkit.realtime.</code><code class="sig-name descname">ohdev_realtime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">afs</span><span class="o">=</span><span class="default_value">[1]</span></em>, <em class="sig-param"><span class="n">tau0</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">auto_afs</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">pts_per_decade</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/realtime.html#ohdev_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.realtime.ohdev_realtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#allantoolkit.realtime.dev_realtime" title="allantoolkit.realtime.dev_realtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">allantoolkit.realtime.dev_realtime</span></code></a></p>
 <p>Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.</p>
-<p><a class="reference internal" href="references.html#dobrogowski2007" id="id26"><span>[Dobrogowski2007]</span></a>
+<p><a class="reference internal" href="references.html#dobrogowski2007" id="id24"><span>[Dobrogowski2007]</span></a>
 Dobrogowski &amp; Kasznia
 <a class="reference external" href="https://doi.org/10.1109/FREQ.2007.4319204">https://doi.org/10.1109/FREQ.2007.4319204</a></p>
 <dl class="py method">
@@ -2083,7 +2049,7 @@ previous on exit.</p>
 interpolated values, by first removing any leading and trailing gaps,
 and then using the two values immediately before and after any interior
 gaps to determine linearly interpolated values within the gap
-<a class="reference internal" href="references.html#rileystable32" id="id27"><span>[RileyStable32]</span></a> (pg. 107).</p>
+<a class="reference internal" href="references.html#rileystable32" id="id25"><span>[RileyStable32]</span></a> (pg. 107).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> – data array of frequency or phase measurements, with gaps
@@ -2098,7 +2064,7 @@ represented as NaNs</p>
 <dl class="py function">
 <dt id="allantoolkit.utils.frequency2fractional">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2fractional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">v0</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2fractional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2fractional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert frequency in Hz to fractional frequency <a class="reference internal" href="references.html#wikipedia" id="id28"><span>[Wikipedia]</span></a>.</p>
+<dd><p>Convert frequency in Hz to fractional frequency <a class="reference internal" href="references.html#wikipedia" id="id26"><span>[Wikipedia]</span></a>.</p>
 <div class="math notranslate nohighlight">
 \[y(t) =  ( \nu(t) - \nu_0 )  \over \nu_0\]</div>
 <dl class="field-list simple">
@@ -2122,7 +2088,7 @@ frequency of dataset.</p></li>
 arbitrary initial value), in units of second.</p>
 <p>Frequency to phase conversion is done by piecewise  integration  using
 the  averaging  time  as  the  integration  interval
-<a class="reference internal" href="references.html#rileystable32manual" id="id29"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
+<a class="reference internal" href="references.html#rileystable32manual" id="id27"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
 <div class="math notranslate nohighlight">
 \[x_{i+1} = x_i + y_i \tau\]</div>
 <p>Any gaps in the frequency data are filled to obtain phase continuity.</p>
@@ -2190,13 +2156,13 @@ indices</p>
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2frequency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#phase2frequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert phase data in units of seconds to fractional frequency data.</p>
 <p>Phase to frequency conversion is done by dividing the first differences
-of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id30"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
+of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id28"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
 <div class="math notranslate nohighlight">
 \[y_i = ( x_{i+1} - x_i ) \over \tau\]</div>
 <p>Phase to frequency conversion is straightforward for data having
 gaps. Because two phase points  are  needed  to  determine  each
 frequency  point a single phase gap will cause two frequency gaps, and a
-gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id31"><span>[RileyStable32]</span></a> (pg. 108).</p>
+gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id29"><span>[RileyStable32]</span></a> (pg. 108).</p>
 <dl class="simple">
 <dt>Params:</dt><dd><p>x:      data array of phase measurements, in seconds
 rate:   sampling rate of the input data, in Hz</p>
@@ -2259,13 +2225,13 @@ which to compute statistics.</p>
 Generates a tau-list based on keywords ‘all’, ‘decade’, ‘octave’.
 Uses ‘octave’ by default if no taus= argument is given.</p>
 <p>Averaging times may be integer multiples of the data sampling interval
-<a class="reference internal" href="references.html#rileystable32" id="id32"><span>[RileyStable32]</span></a> (Pg.3):</p>
+<a class="reference internal" href="references.html#rileystable32" id="id30"><span>[RileyStable32]</span></a> (Pg.3):</p>
 <div class="math notranslate nohighlight">
 \[\tau =  m \tau_0\]</div>
 <p>where <cite>m</cite> is the averaging factor.</p>
 <p>This function implements a Stable32 stop-ratio for <cite>octave</cite> and <cite>decade</cite>
 stability runs, which automatically calculates the maximum averaging
-factor to use for the given deviation <a class="reference internal" href="references.html#rileyevolution" id="id33"><span>[RileyEvolution]</span></a> (pg.9 Table III).</p>
+factor to use for the given deviation <a class="reference internal" href="references.html#rileyevolution" id="id31"><span>[RileyEvolution]</span></a> (pg.9 Table III).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2321,7 +2287,7 @@ factors.</p>
 <dl class="py function">
 <dt id="allantoolkit.utils.three_cornered_hat_phase">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_ab</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_bc</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_ca</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#three_cornered_hat_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Three Cornered Hat Method <a class="reference internal" href="references.html#riley3chat" id="id34"><span>[Riley3CHat]</span></a></p>
+<dd><p>Three Cornered Hat Method <a class="reference internal" href="references.html#riley3chat" id="id32"><span>[Riley3CHat]</span></a></p>
 <p>Given three clocks A, B, C, we seek to find their variances</p>
 <p><span class="math notranslate nohighlight">\(\sigma^2_A\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_B\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_C\)</span></p>
 <p>We measure three phase differences, assuming no correlation between

@@ -77,7 +77,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
 
 def adev(data: Array, rate: float = 1., data_type: str = "phase",
-        taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
     """Allan deviation (ADEV):
     classic - use only if required - relatively poor confidence
     [[SP1065]_ (pg.14-15)].
@@ -118,6 +118,31 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
     """
 
     return dev(dev_type='adev', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
+
+
+def oadev(data: Array, rate: float = 1., data_type: str = "phase",
+          taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+    """ overlapping Allan deviation.
+        General purpose - most widely used - first choice
+
+    .. math::
+
+        \\sigma^2_{OADEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-2m) }
+        \\sum_{n=1}^{N-2m} ( {x}_{n+2m} - 2x_{n+1m} + x_{n} )^2
+
+    where :math:`\\sigma^2_x(m\\tau_0)` is the overlapping Allan
+    deviation at an averaging time of :math:`\\tau=m\\tau_0`, and
+    :math:`x_n` is the time-series of phase observations, spaced by the
+    measurement interval :math:`\\tau_0`, with length :math:`N`.
+
+    NIST [SP1065]_ eqn (11), page 16.
+
+    Args:
+        See documentation for allantoolkit.allantools.dev
+    """
+
+    return dev(dev_type='oadev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 
 
@@ -259,64 +284,6 @@ def mdev(data, rate=1.0, data_type="phase", taus=None):
         ns[idx] = n
 
     return utils.remove_small_ns(taus_used, md, mderr, ns)
-
-
-def oadev(data, rate=1.0, data_type="phase", taus=None):
-    """ overlapping Allan deviation.
-        General purpose - most widely used - first choice
-
-    .. math::
-
-        \\sigma^2_{OADEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-2m) }
-        \\sum_{n=1}^{N-2m} ( {x}_{n+2m} - 2x_{n+1m} + x_{n} )^2
-
-    where :math:`\\sigma^2_x(m\\tau_0)` is the overlapping Allan
-    deviation at an averaging time of :math:`\\tau=m\\tau_0`, and
-    :math:`x_n` is the time-series of phase observations, spaced by the
-    measurement interval :math:`\\tau_0`, with length :math:`N`.
-
-    NIST [SP1065]_ eqn (11), page 16.
-
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
-
-    Returns
-    -------
-    (taus2, ad, ade, ns): tuple
-          Tuple of values
-    taus2: np.array
-        Tau values for which td computed
-    ad: np.array
-        Computed oadev for each tau value
-    ade: np.array
-        oadev errors
-    ns: np.array
-        Values of N used in each oadev calculation
-
-    """
-    phase = utils.input_to_phase(data, rate, data_type)
-    (taus_used, m) = utils.tau_generator(data=phase, rate=rate,
-                                                dev_type='oadev', taus=taus)
-    ad = np.zeros_like(taus_used)
-    ade = np.zeros_like(taus_used)
-    adn = np.zeros_like(taus_used)
-
-    for idx, mj in enumerate(m): # stride=1 for overlapping ADEV
-        (ad[idx], ade[idx], adn[idx]) = stats.calc_oadev(
-            x=phase, af=mj, rate=rate)
-
-    return utils.remove_small_ns(taus_used, ad, ade, adn)
 
 
 def ohdev(data, rate=1.0, data_type="phase", taus=None):

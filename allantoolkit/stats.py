@@ -1,41 +1,26 @@
 from . import ci
 import numpy as np
 
+Array = np.ndarray
 
-def oadev_core(x, af, rate, stride):
-    """  Main algorithm for adev() (stride=mj) and oadev() (stride=1)
 
-        see http://www.leapsecond.com/tools/adev_lib.c
-        stride = mj for nonoverlapping allan deviation
+def oadev_core(x: Array, af: int, rate: float, stride: int):
+    """Main algorithm for adev() and oadev() calculations.
 
-    Parameters
-    ----------
-    phase: np.array
-        Phase data in seconds.
-    rate: float
-        The sampling rate for phase or frequency, in Hz
-    mj: int
-        M index value for stride
-    stride: int
-        Size of stride
+    References:
+        [SP1065]_ eqn (7) and (11) page 16
+        [Wikipedia]_
+        http://www.leapsecond.com/tools/adev_lib.c
 
-    Returns
-    -------
-    (dev, deverr, n): tuple
-        Array of computed values.
+    Args:
+        x:      input phase data, in units of seconds.
+        rate:   sampling rate of the input data, in Hz.
+        af:     averaging factor at which to calculate deviation
+        stride: size of stride. 1 for overlapping, `af` for non-overlapping
 
-    Notes
-    -----
-    stride = mj for nonoverlapping Allan deviation
-    stride = 1 for overlapping Allan deviation
-
-    References
-    ----------
-    [Wikipedia]_
-    * http://en.wikipedia.org/wiki/Allan_variance
-    * http://www.leapsecond.com/tools/adev_lib.c
-
-    NIST [SP1065]_ eqn (7) and (11) page 16
+    Returns:
+        (dev, deverr, n) tuple of computed deviation, estimated error,
+        and number of samples used to estimate it
     """
     mj = int(af)
     stride = int(stride)

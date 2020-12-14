@@ -198,41 +198,26 @@
 <span></span><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ci</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
+<span class="n">Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 
-<div class="viewcode-block" id="oadev_core"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.oadev_core">[docs]</a><span class="k">def</span> <span class="nf">oadev_core</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">af</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">stride</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;  Main algorithm for adev() (stride=mj) and oadev() (stride=1)</span>
 
-<span class="sd">        see http://www.leapsecond.com/tools/adev_lib.c</span>
-<span class="sd">        stride = mj for nonoverlapping allan deviation</span>
+<div class="viewcode-block" id="oadev_core"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.oadev_core">[docs]</a><span class="k">def</span> <span class="nf">oadev_core</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">af</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">stride</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Main algorithm for adev() and oadev() calculations.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    phase: np.array</span>
-<span class="sd">        Phase data in seconds.</span>
-<span class="sd">    rate: float</span>
-<span class="sd">        The sampling rate for phase or frequency, in Hz</span>
-<span class="sd">    mj: int</span>
-<span class="sd">        M index value for stride</span>
-<span class="sd">    stride: int</span>
-<span class="sd">        Size of stride</span>
+<span class="sd">    References:</span>
+<span class="sd">        [SP1065]_ eqn (7) and (11) page 16</span>
+<span class="sd">        [Wikipedia]_</span>
+<span class="sd">        http://www.leapsecond.com/tools/adev_lib.c</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    (dev, deverr, n): tuple</span>
-<span class="sd">        Array of computed values.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        x:      input phase data, in units of seconds.</span>
+<span class="sd">        rate:   sampling rate of the input data, in Hz.</span>
+<span class="sd">        af:     averaging factor at which to calculate deviation</span>
+<span class="sd">        stride: size of stride. 1 for overlapping, `af` for non-overlapping</span>
 
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    stride = mj for nonoverlapping Allan deviation</span>
-<span class="sd">    stride = 1 for overlapping Allan deviation</span>
-
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    [Wikipedia]_</span>
-<span class="sd">    * http://en.wikipedia.org/wiki/Allan_variance</span>
-<span class="sd">    * http://www.leapsecond.com/tools/adev_lib.c</span>
-
-<span class="sd">    NIST [SP1065]_ eqn (7) and (11) page 16</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (dev, deverr, n) tuple of computed deviation, estimated error,</span>
+<span class="sd">        and number of samples used to estimate it</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mj</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">af</span><span class="p">)</span>
     <span class="n">stride</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stride</span><span class="p">)</span>

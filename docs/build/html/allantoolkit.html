@@ -647,7 +647,7 @@ tau-list generation.</p></li>
 
 <dl class="py function">
 <dt id="allantoolkit.allantools.oadev">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">oadev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#oadev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.oadev" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">oadev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_af</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.allantools.DevResult" title="allantoolkit.allantools.DevResult">allantoolkit.allantools.DevResult</a><a class="reference internal" href="_modules/allantoolkit/allantools.html#oadev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.oadev" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>overlapping Allan deviation.</dt><dd><p>General purpose - most widely used - first choice</p>
 </dd>
@@ -662,25 +662,7 @@ measurement interval <span class="math notranslate nohighlight">\(\tau_0\)</span
 <p>NIST <a class="reference internal" href="references.html#sp1065" id="id6"><span>[SP1065]</span></a> eqn (11), page 16.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>np.array</em>) – Input data. Provide either phase or frequency (fractional,
-adimensional).</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for data, in Hz. Defaults to 1.0</p></li>
-<li><p><strong>data_type</strong> (<em>{'phase'</em><em>, </em><em>'freq'}</em>) – Data type, i.e. phase or frequency. Defaults to “phase”.</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – Array of tau values, in seconds, for which to compute statistic.
-Optionally set taus=[“all”|”octave”|”decade”] for automatic
-tau-list generation.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>(taus2, ad, ade, ns)</strong> (<em>tuple</em>) – Tuple of values</p></li>
-<li><p><strong>taus2</strong> (<em>np.array</em>) – Tau values for which td computed</p></li>
-<li><p><strong>ad</strong> (<em>np.array</em>) – Computed oadev for each tau value</p></li>
-<li><p><strong>ade</strong> (<em>np.array</em>) – oadev errors</p></li>
-<li><p><strong>ns</strong> (<em>np.array</em>) – Values of N used in each oadev calculation</p></li>
-</ul>
-</p>
+<dd class="field-odd"><p><strong>documentation for allantoolkit.allantools.dev</strong> (<em>See</em>) – </p>
 </dd>
 </dl>
 </dd></dl>
@@ -1958,36 +1940,26 @@ Approach to the Modified Allan Variance,” Proc.
 
 <dl class="py function">
 <dt id="allantoolkit.stats.oadev_core">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">oadev_core</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">af</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">stride</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/stats.html#oadev_core"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.oadev_core" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main algorithm for adev() (stride=mj) and oadev() (stride=1)</p>
-<blockquote>
-<div><p>see <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a>
-stride = mj for nonoverlapping allan deviation</p>
-</div></blockquote>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">oadev_core</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">af</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">stride</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/stats.html#oadev_core"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.oadev_core" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main algorithm for adev() and oadev() calculations.</p>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#sp1065" id="id25"><span>[SP1065]</span></a> eqn (7) and (11) page 16
+<a class="reference internal" href="references.html#wikipedia" id="id26"><span>[Wikipedia]</span></a>
+<a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>phase</strong> (<em>np.array</em>) – Phase data in seconds.</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for phase or frequency, in Hz</p></li>
-<li><p><strong>mj</strong> (<em>int</em>) – M index value for stride</p></li>
-<li><p><strong>stride</strong> (<em>int</em>) – Size of stride</p></li>
+<li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
+<li><p><strong>af</strong> – averaging factor at which to calculate deviation</p></li>
+<li><p><strong>stride</strong> – size of stride. 1 for overlapping, <cite>af</cite> for non-overlapping</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>(dev, deverr, n)</strong> – Array of computed values.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
+<dd class="field-even"><p>(dev, deverr, n) tuple of computed deviation, estimated error,
+and number of samples used to estimate it</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>stride = mj for nonoverlapping Allan deviation
-stride = 1 for overlapping Allan deviation</p>
-<p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#wikipedia" id="id25"><span>[Wikipedia]</span></a>
-* <a class="reference external" href="http://en.wikipedia.org/wiki/Allan_variance">http://en.wikipedia.org/wiki/Allan_variance</a>
-* <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id26"><span>[SP1065]</span></a> eqn (7) and (11) page 16</p>
 </dd></dl>
 
 </div>

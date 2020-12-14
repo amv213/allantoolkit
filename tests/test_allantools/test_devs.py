@@ -55,20 +55,6 @@ def test_tau_generator_numpy1234():
     np.testing.assert_allclose(taus_used, wanted_taus)
 
 
-def test_tau_reduction_10():
-    (ms, taus) = allantoolkit.utils.tau_reduction(ms=expected_all, rate=r,
-                                                  n_per_decade=10)
-    print(ms, taus)
-    np.testing.assert_allclose(expected_reduced_10, ms)
-
-
-def test_tau_reduction_2():
-    (ms, taus) = allantoolkit.utils.tau_reduction(ms=expected_all, rate=r,
-                                                  n_per_decade=2)
-    print(ms, taus)
-    np.testing.assert_allclose(expected_reduced_2, ms)
-
-
 def test_zero_rate():
     with pytest.raises(ZeroDivisionError):
         at.adev(d, rate=0.0)

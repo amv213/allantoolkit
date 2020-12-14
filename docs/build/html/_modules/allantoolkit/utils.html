@@ -519,6 +519,10 @@
     <span class="c1"># Get closest integer averaging factors for requested averaging times</span>
     <span class="k">else</span><span class="p">:</span>
 
+        <span class="c1"># FIXME: fix pipeline up to here so that other functions are not</span>
+        <span class="c1">#  passing lists</span>
+        <span class="n">taus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">taus</span><span class="p">)</span>
+
         <span class="n">taus</span> <span class="o">=</span> <span class="n">taus</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">taus</span><span class="p">)]</span>  <span class="c1"># remove NaNs in input taus</span>
         <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">taus</span><span class="p">)</span> <span class="o">//</span> <span class="n">tau_0</span>
         <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -555,12 +559,10 @@
     <span class="k">return</span> <span class="n">Taus</span><span class="p">(</span><span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="tau_reduction"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.tau_reduction">[docs]</a><span class="k">def</span> <span class="nf">tau_reduction</span><span class="p">(</span><span class="n">ms</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_per_decade</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Reduce the number of taus to maximum of n per decade (Helper function)</span>
+<div class="viewcode-block" id="tau_reduction"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.tau_reduction">[docs]</a><span class="k">def</span> <span class="nf">tau_reduction</span><span class="p">(</span><span class="n">afs</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n_per_decade</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Taus</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Reduce the number of averaging factors to maximum of n per decade.</span>
 
-<span class="sd">    takes in a tau list and reduces the number of taus to a maximum amount per</span>
-<span class="sd">    decade. This is only useful if more than the &quot;decade&quot; and &quot;octave&quot; but</span>
+<span class="sd">    This is only useful if more than the &quot;decade&quot; and &quot;octave&quot; but</span>
 <span class="sd">    less than the &quot;all&quot; taus are wanted. E.g. to show certain features of</span>
 <span class="sd">    the data one might want 100 points per decade.</span>
 
@@ -571,33 +573,37 @@
 <span class="sd">    (data,m,taus)=tau_generator(data,rate,taus=&quot;all&quot;)</span>
 <span class="sd">    (m,taus)=tau_reduction(m,rate,n_per_decade)</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    ms: array of integers</span>
-<span class="sd">        List of m values (assumed to be an &quot;all&quot; list) to remove points from.</span>
-<span class="sd">    rate: float</span>
-<span class="sd">        Sample rate of data in Hz. Time interval between measurements</span>
-<span class="sd">        is 1/rate seconds. Used to convert to taus.</span>
-<span class="sd">    n_per_decade: int</span>
-<span class="sd">        Number of ms/taus to keep per decade.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        afs:            integer array of averaging factors (assumed to be an</span>
+<span class="sd">                        &quot;all&quot; list) from which to remove points.</span>
+<span class="sd">        rate:           sampling rate of the input data, in Hz.</span>
+<span class="sd">        n_per_decade:   number of averaging factors to keep per decade.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    m: np.array</span>
-<span class="sd">        Reduced list of m values</span>
-<span class="sd">    taus: np.array</span>
-<span class="sd">        Reduced list of tau values</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (taus, afs) NamedTuple of reduced averaging times and averaging</span>
+<span class="sd">        factors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bool8</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">n_per_decade</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ms</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span> <span class="o">-</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">n_per_decade</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ms</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
-    <span class="c1"># Adjust ms size to fit above-defined mask</span>
-    <span class="n">ms</span> <span class="o">=</span> <span class="n">ms</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">keep</span><span class="p">)</span>
-    <span class="n">ms</span> <span class="o">=</span> <span class="n">ms</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
-    <span class="n">taus</span> <span class="o">=</span> <span class="n">ms</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">ms</span><span class="p">,</span> <span class="n">taus</span></div>
+    <span class="c1"># Consistency check sampling interval</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tau_0</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">rate</span>
+    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Invalid data sampling rate </span><span class="si">%s</span><span class="s2"> Hz&quot;</span><span class="p">,</span> <span class="n">rate</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bool8</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">n_per_decade</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">afs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span> <span class="o">-</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">n_per_decade</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">afs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
+
+    <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>     <span class="c1"># Adjust ms size to fit above-defined mask</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">afs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">keep</span><span class="p">)</span>
+    <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+
+    <span class="n">taus</span> <span class="o">=</span> <span class="n">tau_0</span><span class="o">*</span><span class="n">afs</span>
+
+    <span class="k">return</span> <span class="n">Taus</span><span class="p">(</span><span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="remove_small_ns"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.remove_small_ns">[docs]</a><span class="k">def</span> <span class="nf">remove_small_ns</span><span class="p">(</span><span class="n">taus</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">devs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>

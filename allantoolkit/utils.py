@@ -362,12 +362,10 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     return Taus(taus=taus, afs=afs)
 
 
-def tau_reduction(ms: np.ndarray, rate: float, n_per_decade: int) -> Tuple[
-    np.ndarray, np.ndarray]:
-    """Reduce the number of taus to maximum of n per decade (Helper function)
+def tau_reduction(afs: Array, rate: float, n_per_decade: int) -> Taus:
+    """Reduce the number of averaging factors to maximum of n per decade.
 
-    takes in a tau list and reduces the number of taus to a maximum amount per
-    decade. This is only useful if more than the "decade" and "octave" but
+    This is only useful if more than the "decade" and "octave" but
     less than the "all" taus are wanted. E.g. to show certain features of
     the data one might want 100 points per decade.
 
@@ -378,33 +376,37 @@ def tau_reduction(ms: np.ndarray, rate: float, n_per_decade: int) -> Tuple[
     (data,m,taus)=tau_generator(data,rate,taus="all")
     (m,taus)=tau_reduction(m,rate,n_per_decade)
 
-    Parameters
-    ----------
-    ms: array of integers
-        List of m values (assumed to be an "all" list) to remove points from.
-    rate: float
-        Sample rate of data in Hz. Time interval between measurements
-        is 1/rate seconds. Used to convert to taus.
-    n_per_decade: int
-        Number of ms/taus to keep per decade.
+    Args:
+        afs:            integer array of averaging factors (assumed to be an
+                        "all" list) from which to remove points.
+        rate:           sampling rate of the input data, in Hz.
+        n_per_decade:   number of averaging factors to keep per decade.
 
-    Returns
-    -------
-    m: np.array
-        Reduced list of m values
-    taus: np.array
-        Reduced list of tau values
+    Returns:
+        (taus, afs) NamedTuple of reduced averaging times and averaging
+        factors.
     """
-    ms = np.int64(ms)
-    keep = np.bool8(np.rint(n_per_decade*np.log10(ms[1:])) -
-                    np.rint(n_per_decade*np.log10(ms[:-1])))
-    # Adjust ms size to fit above-defined mask
-    ms = ms[:-1]
-    assert len(ms) == len(keep)
-    ms = ms[keep]
-    taus = ms/float(rate)
 
-    return ms, taus
+    # Consistency check sampling interval
+    try:
+        tau_0 = 1. / rate
+    except ZeroDivisionError:
+        logger.exception("Invalid data sampling rate %s Hz", rate)
+        raise
+
+    afs = afs.astype(int)
+
+    keep = np.bool8(np.rint(n_per_decade*np.log10(afs[1:])) -
+                    np.rint(n_per_decade*np.log10(afs[:-1])))
+
+    afs = afs[:-1]     # Adjust ms size to fit above-defined mask
+
+    assert len(afs) == len(keep)
+    afs = afs[keep]
+
+    taus = tau_0*afs
+
+    return Taus(taus=taus, afs=afs)
 
 
 def remove_small_ns(taus: np.ndarray, devs: np.ndarray,

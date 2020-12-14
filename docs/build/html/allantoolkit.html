@@ -2231,10 +2231,9 @@ factors.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.tau_reduction">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">tau_reduction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ms</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">n_per_decade</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#tau_reduction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.tau_reduction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reduce the number of taus to maximum of n per decade (Helper function)</p>
-<p>takes in a tau list and reduces the number of taus to a maximum amount per
-decade. This is only useful if more than the “decade” and “octave” but
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">tau_reduction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">afs</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">n_per_decade</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.utils.Taus" title="allantoolkit.utils.Taus">allantoolkit.utils.Taus</a><a class="reference internal" href="_modules/allantoolkit/utils.html#tau_reduction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.tau_reduction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reduce the number of averaging factors to maximum of n per decade.</p>
+<p>This is only useful if more than the “decade” and “octave” but
 less than the “all” taus are wanted. E.g. to show certain features of
 the data one might want 100 points per decade.</p>
 <p>NOTE: The algorithm is slightly inaccurate for ms under n_per_decade, and
@@ -2245,18 +2244,15 @@ will also remove some points in this range, which is usually fine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ms</strong> (<em>array of integers</em>) – List of m values (assumed to be an “all” list) to remove points from.</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – Sample rate of data in Hz. Time interval between measurements
-is 1/rate seconds. Used to convert to taus.</p></li>
-<li><p><strong>n_per_decade</strong> (<em>int</em>) – Number of ms/taus to keep per decade.</p></li>
+<li><p><strong>afs</strong> – integer array of averaging factors (assumed to be an
+“all” list) from which to remove points.</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
+<li><p><strong>n_per_decade</strong> – number of averaging factors to keep per decade.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>m</strong> (<em>np.array</em>) – Reduced list of m values</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – Reduced list of tau values</p></li>
-</ul>
-</p>
+<dd class="field-even"><p>(taus, afs) NamedTuple of reduced averaging times and averaging
+factors.</p>
 </dd>
 </dl>
 </dd></dl>

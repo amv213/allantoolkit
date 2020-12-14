@@ -3,6 +3,7 @@ import warnings
 import numpy as np
 from typing import List, Tuple, NamedTuple, Union, Callable
 from . import tables
+from . import allantools
 
 
 # Spawn module-level logger
@@ -450,13 +451,17 @@ def remove_small_ns(taus: Array, devs: Array,
     return taus, devs, deverrs, ns
 
 
-def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
-                             phasedata_ca, rate, taus, function):
+def three_cornered_hat_phase(x_ab: Array, x_bc: Array, x_ca: Array,
+                             rate: float, taus: Union[Array, str],
+                             dev_type: str) -> \
+        Tuple[Array, Array, Array, Array]:
     """
-    Three Cornered Hat Method
+    Three Cornered Hat Method [Riley3CHat]_
 
     Given three clocks A, B, C, we seek to find their variances
-    :math:`\\sigma^2_A`, :math:`\\sigma^2_B`, :math:`\\sigma^2_C`.
+
+    :math:`\\sigma^2_A`, :math:`\\sigma^2_B`, :math:`\\sigma^2_C`
+
     We measure three phase differences, assuming no correlation between
     the clocks, the measurements have variances:
 
@@ -478,51 +483,40 @@ def three_cornered_hat_phase(phasedata_ab, phasedata_bc,
     and similarly cyclic permutations for :math:`\\sigma^2_B` and
     :math:`\\sigma^2_C`
 
-    Parameters
-    ----------
-    phasedata_ab: np.array
-        phase measurements between clock A and B, in seconds
-    phasedata_bc: np.array
-        phase measurements between clock B and C, in seconds
-    phasedata_ca: np.array
-        phase measurements between clock C and A, in seconds
-    rate: float
-        The sampling rate for phase, in Hz
-    taus: np.array
-        The tau values for deviations, in seconds
-    function: allantoolkit deviation function
-        The type of statistic to compute, e.g. allantoolkit.oadev
+    Args:
+        x_ab:       phase measurements between clock A and B, in seconds
+        x_bc:       phase measurements between clock B and C, in seconds
+        x_ca:       phase measurements between clock C and A, in seconds
+        rate:       sampling rate of the input data, in Hz.
+        taus:       array of averaging times for which to compute measurement.
+                    Can also be one of the keywords: `all`, `octave`, `decade`.
+                    Defaults to `octave`.
+        dev_type:   type of deviation to compute e.g. `oadev`
 
-    Returns
-    -------
-    tau_ab: np.array
-        Tau values corresponding to output deviations
-    dev_a: np.array
-        List of computed values for clock A
-
-    References
-    ----------
-    http://www.wriley.com/3-CornHat.htm
+    Returns:
+        (taus_ab, devs_a, err_a, ns_ab) Tuple of averaging times
+        corresponding to output deviations, clock A deviations, clock A
+        estimated errors, number of samples used to calculate each deviaiton.
     """
 
-    (tau_ab, dev_ab, err_ab, ns_ab) = function(phasedata_ab,
-                                               data_type='phase',
-                                               rate=rate, taus=taus)
-    (tau_bc, dev_bc, err_bc, ns_bc) = function(phasedata_bc,
-                                               data_type='phase',
-                                               rate=rate, taus=taus)
-    (tau_ca, dev_ca, err_ca, ns_ca) = function(phasedata_ca,
-                                               data_type='phase',
-                                               rate=rate, taus=taus)
+    tau_ab, dev_ab, _, ns_ab = getattr(allantools, dev_type)(
+        data=x_ab, data_type='phase', rate=rate, taus=taus)
+
+    _, dev_bc, _, _ = getattr(allantools, dev_type)(
+        data=x_bc, data_type='phase', rate=rate, taus=taus)
+
+    _, dev_ca, _, _ = getattr(allantools, dev_type)(
+        data=x_ca, data_type='phase', rate=rate, taus=taus)
 
     var_ab = dev_ab * dev_ab
     var_bc = dev_bc * dev_bc
     var_ca = dev_ca * dev_ca
     assert len(var_ab) == len(var_bc) == len(var_ca)
-    var_a = 0.5 * (var_ab + var_ca - var_bc)
 
-    var_a[var_a < 0] = 0 # don't return imaginary deviations (?)
+    var_a = 0.5 * (var_ab + var_ca - var_bc)
+    var_a[var_a < 0] = 0  # don't return imaginary deviations (?)
+
     dev_a = np.sqrt(var_a)
-    err_a = [d/np.sqrt(nn) for (d, nn) in zip(dev_a, ns_ab)]
+    err_a = np.array([d/np.sqrt(nn) for (d, nn) in zip(dev_a, ns_ab)])
 
     return tau_ab, dev_a, err_a, ns_ab

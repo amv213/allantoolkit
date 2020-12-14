@@ -83,6 +83,8 @@ Papers
 
 .. [RileyStable32Manual] http://stable32.com/Manual154.pdf
 
+.. [Riley3CHat] http://www.wriley.com/3-CornHat.htm
+
 ..  .. [Riley_CI] Confidence Intervals and Bias Corrections  for the Stable32
         Variance Functions
         W.J. Riley, Hamilton Technical Services

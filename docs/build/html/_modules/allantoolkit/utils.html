@@ -200,6 +200,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tables</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">allantools</span>
 
 
 <span class="c1"># Spawn module-level logger</span>
@@ -647,13 +648,17 @@
     <span class="k">return</span> <span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span></div>
 
 
-<div class="viewcode-block" id="three_cornered_hat_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.three_cornered_hat_phase">[docs]</a><span class="k">def</span> <span class="nf">three_cornered_hat_phase</span><span class="p">(</span><span class="n">phasedata_ab</span><span class="p">,</span> <span class="n">phasedata_bc</span><span class="p">,</span>
-                             <span class="n">phasedata_ca</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+<div class="viewcode-block" id="three_cornered_hat_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.three_cornered_hat_phase">[docs]</a><span class="k">def</span> <span class="nf">three_cornered_hat_phase</span><span class="p">(</span><span class="n">x_ab</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">x_bc</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">x_ca</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span>
+                             <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+                             <span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> \
+        <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Three Cornered Hat Method</span>
+<span class="sd">    Three Cornered Hat Method [Riley3CHat]_</span>
 
 <span class="sd">    Given three clocks A, B, C, we seek to find their variances</span>
-<span class="sd">    :math:`\\sigma^2_A`, :math:`\\sigma^2_B`, :math:`\\sigma^2_C`.</span>
+
+<span class="sd">    :math:`\\sigma^2_A`, :math:`\\sigma^2_B`, :math:`\\sigma^2_C`</span>
+
 <span class="sd">    We measure three phase differences, assuming no correlation between</span>
 <span class="sd">    the clocks, the measurements have variances:</span>
 
@@ -675,52 +680,41 @@
 <span class="sd">    and similarly cyclic permutations for :math:`\\sigma^2_B` and</span>
 <span class="sd">    :math:`\\sigma^2_C`</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    phasedata_ab: np.array</span>
-<span class="sd">        phase measurements between clock A and B, in seconds</span>
-<span class="sd">    phasedata_bc: np.array</span>
-<span class="sd">        phase measurements between clock B and C, in seconds</span>
-<span class="sd">    phasedata_ca: np.array</span>
-<span class="sd">        phase measurements between clock C and A, in seconds</span>
-<span class="sd">    rate: float</span>
-<span class="sd">        The sampling rate for phase, in Hz</span>
-<span class="sd">    taus: np.array</span>
-<span class="sd">        The tau values for deviations, in seconds</span>
-<span class="sd">    function: allantoolkit deviation function</span>
-<span class="sd">        The type of statistic to compute, e.g. allantoolkit.oadev</span>
+<span class="sd">    Args:</span>
+<span class="sd">        x_ab:       phase measurements between clock A and B, in seconds</span>
+<span class="sd">        x_bc:       phase measurements between clock B and C, in seconds</span>
+<span class="sd">        x_ca:       phase measurements between clock C and A, in seconds</span>
+<span class="sd">        rate:       sampling rate of the input data, in Hz.</span>
+<span class="sd">        taus:       array of averaging times for which to compute measurement.</span>
+<span class="sd">                    Can also be one of the keywords: `all`, `octave`, `decade`.</span>
+<span class="sd">                    Defaults to `octave`.</span>
+<span class="sd">        dev_type:   type of deviation to compute e.g. `oadev`</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    tau_ab: np.array</span>
-<span class="sd">        Tau values corresponding to output deviations</span>
-<span class="sd">    dev_a: np.array</span>
-<span class="sd">        List of computed values for clock A</span>
-
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    http://www.wriley.com/3-CornHat.htm</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (taus_ab, devs_a, err_a, ns_ab) Tuple of averaging times</span>
+<span class="sd">        corresponding to output deviations, clock A deviations, clock A</span>
+<span class="sd">        estimated errors, number of samples used to calculate each deviaiton.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="p">(</span><span class="n">tau_ab</span><span class="p">,</span> <span class="n">dev_ab</span><span class="p">,</span> <span class="n">err_ab</span><span class="p">,</span> <span class="n">ns_ab</span><span class="p">)</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">phasedata_ab</span><span class="p">,</span>
-                                               <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span>
-                                               <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
-    <span class="p">(</span><span class="n">tau_bc</span><span class="p">,</span> <span class="n">dev_bc</span><span class="p">,</span> <span class="n">err_bc</span><span class="p">,</span> <span class="n">ns_bc</span><span class="p">)</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">phasedata_bc</span><span class="p">,</span>
-                                               <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span>
-                                               <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
-    <span class="p">(</span><span class="n">tau_ca</span><span class="p">,</span> <span class="n">dev_ca</span><span class="p">,</span> <span class="n">err_ca</span><span class="p">,</span> <span class="n">ns_ca</span><span class="p">)</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">phasedata_ca</span><span class="p">,</span>
-                                               <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span>
-                                               <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
+    <span class="n">tau_ab</span><span class="p">,</span> <span class="n">dev_ab</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">ns_ab</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">x_ab</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">dev_bc</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">x_bc</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">dev_ca</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">x_ca</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
 
     <span class="n">var_ab</span> <span class="o">=</span> <span class="n">dev_ab</span> <span class="o">*</span> <span class="n">dev_ab</span>
     <span class="n">var_bc</span> <span class="o">=</span> <span class="n">dev_bc</span> <span class="o">*</span> <span class="n">dev_bc</span>
     <span class="n">var_ca</span> <span class="o">=</span> <span class="n">dev_ca</span> <span class="o">*</span> <span class="n">dev_ca</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_ab</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_bc</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_ca</span><span class="p">)</span>
-    <span class="n">var_a</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">var_ab</span> <span class="o">+</span> <span class="n">var_ca</span> <span class="o">-</span> <span class="n">var_bc</span><span class="p">)</span>
 
-    <span class="n">var_a</span><span class="p">[</span><span class="n">var_a</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># don&#39;t return imaginary deviations (?)</span>
+    <span class="n">var_a</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">var_ab</span> <span class="o">+</span> <span class="n">var_ca</span> <span class="o">-</span> <span class="n">var_bc</span><span class="p">)</span>
+    <span class="n">var_a</span><span class="p">[</span><span class="n">var_a</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># don&#39;t return imaginary deviations (?)</span>
+
     <span class="n">dev_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_a</span><span class="p">)</span>
-    <span class="n">err_a</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">nn</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dev_a</span><span class="p">,</span> <span class="n">ns_ab</span><span class="p">)]</span>
+    <span class="n">err_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">nn</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dev_a</span><span class="p">,</span> <span class="n">ns_ab</span><span class="p">)])</span>
 
     <span class="k">return</span> <span class="n">tau_ab</span><span class="p">,</span> <span class="n">dev_a</span><span class="p">,</span> <span class="n">err_a</span><span class="p">,</span> <span class="n">ns_ab</span></div>
 </pre></div>

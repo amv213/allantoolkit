@@ -2254,11 +2254,11 @@ factors.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.three_cornered_hat_phase">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phasedata_ab</span></em>, <em class="sig-param"><span class="n">phasedata_bc</span></em>, <em class="sig-param"><span class="n">phasedata_ca</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">taus</span></em>, <em class="sig-param"><span class="n">function</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#three_cornered_hat_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Three Cornered Hat Method</p>
-<p>Given three clocks A, B, C, we seek to find their variances
-<span class="math notranslate nohighlight">\(\sigma^2_A\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_B\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_C\)</span>.
-We measure three phase differences, assuming no correlation between
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_ab</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_bc</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_ca</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#three_cornered_hat_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Three Cornered Hat Method <a class="reference internal" href="references.html#riley3chat" id="id34"><span>[Riley3CHat]</span></a></p>
+<p>Given three clocks A, B, C, we seek to find their variances</p>
+<p><span class="math notranslate nohighlight">\(\sigma^2_A\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_B\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_C\)</span></p>
+<p>We measure three phase differences, assuming no correlation between
 the clocks, the measurements have variances:</p>
 <div class="math notranslate nohighlight">
 \[ \begin{align}\begin{aligned}\sigma^2_{AB} = \sigma^2_{A} + \sigma^2_{B}\\\sigma^2_{BC} = \sigma^2_{B} + \sigma^2_{C}\\\sigma^2_{CA} = \sigma^2_{C} + \sigma^2_{A}\end{aligned}\end{align} \]</div>
@@ -2271,24 +2271,22 @@ the clocks, the measurements have variances:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>phasedata_ab</strong> (<em>np.array</em>) – phase measurements between clock A and B, in seconds</p></li>
-<li><p><strong>phasedata_bc</strong> (<em>np.array</em>) – phase measurements between clock B and C, in seconds</p></li>
-<li><p><strong>phasedata_ca</strong> (<em>np.array</em>) – phase measurements between clock C and A, in seconds</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for phase, in Hz</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – The tau values for deviations, in seconds</p></li>
-<li><p><strong>function</strong> (<em>allantoolkit deviation function</em>) – The type of statistic to compute, e.g. allantoolkit.oadev</p></li>
+<li><p><strong>x_ab</strong> – phase measurements between clock A and B, in seconds</p></li>
+<li><p><strong>x_bc</strong> – phase measurements between clock B and C, in seconds</p></li>
+<li><p><strong>x_ca</strong> – phase measurements between clock C and A, in seconds</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
+<li><p><strong>taus</strong> – array of averaging times for which to compute measurement.
+Can also be one of the keywords: <cite>all</cite>, <cite>octave</cite>, <cite>decade</cite>.
+Defaults to <cite>octave</cite>.</p></li>
+<li><p><strong>dev_type</strong> – type of deviation to compute e.g. <cite>oadev</cite></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>tau_ab</strong> (<em>np.array</em>) – Tau values corresponding to output deviations</p></li>
-<li><p><strong>dev_a</strong> (<em>np.array</em>) – List of computed values for clock A</p></li>
-</ul>
-</p>
+<dd class="field-even"><p>(taus_ab, devs_a, err_a, ns_ab) Tuple of averaging times
+corresponding to output deviations, clock A deviations, clock A
+estimated errors, number of samples used to calculate each deviaiton.</p>
 </dd>
 </dl>
-<p class="rubric">References</p>
-<p><a class="reference external" href="http://www.wriley.com/3-CornHat.htm">http://www.wriley.com/3-CornHat.htm</a></p>
 </dd></dl>
 
 <dl class="py function">

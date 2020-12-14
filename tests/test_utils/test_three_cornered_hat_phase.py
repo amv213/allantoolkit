@@ -18,7 +18,6 @@ ca = allantoolkit.noise.white(N)
 def test_3ch_1():
 
     (t, d, e, n) = allantoolkit.utils.three_cornered_hat_phase(
-        ab, bc, ca, rate=r, taus='decade',
-        function=allantoolkit.allantools.oadev)
+        ab, bc, ca, rate=r, taus='decade', dev_type='oadev')
 
     np.testing.assert_array_equal(t, expected_decade)

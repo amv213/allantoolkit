@@ -22,10 +22,9 @@ def oadev_core(x: Array, af: int, rate: float, stride: int):
         (dev, deverr, n) tuple of computed deviation, estimated error,
         and number of samples used to estimate it
     """
-    mj = int(af)
-    stride = int(stride)
-    d2 = x[2 * mj::stride]
-    d1 = x[1 * mj::stride]
+
+    d2 = x[2 * af::stride]
+    d1 = x[1 * af::stride]
     d0 = x[::stride]
 
     n = min(len(d0), len(d1), len(d2))
@@ -37,7 +36,8 @@ def oadev_core(x: Array, af: int, rate: float, stride: int):
     v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
     s = np.sum(v_arr * v_arr)
 
-    dev = np.sqrt(s / (2.0 * n)) / mj  * rate
+
+    dev = np.sqrt(s / (2.0 * n)) / af * rate
     deverr = dev / np.sqrt(n)
 
     return dev, deverr, n

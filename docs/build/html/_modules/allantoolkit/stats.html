@@ -219,10 +219,9 @@
 <span class="sd">        (dev, deverr, n) tuple of computed deviation, estimated error,</span>
 <span class="sd">        and number of samples used to estimate it</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">mj</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">af</span><span class="p">)</span>
-    <span class="n">stride</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stride</span><span class="p">)</span>
-    <span class="n">d2</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mj</span><span class="p">::</span><span class="n">stride</span><span class="p">]</span>
-    <span class="n">d1</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span> <span class="o">*</span> <span class="n">mj</span><span class="p">::</span><span class="n">stride</span><span class="p">]</span>
+
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">af</span><span class="p">::</span><span class="n">stride</span><span class="p">]</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span> <span class="o">*</span> <span class="n">af</span><span class="p">::</span><span class="n">stride</span><span class="p">]</span>
     <span class="n">d0</span> <span class="o">=</span> <span class="n">x</span><span class="p">[::</span><span class="n">stride</span><span class="p">]</span>
 
     <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d0</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d2</span><span class="p">))</span>
@@ -234,7 +233,8 @@
     <span class="n">v_arr</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">d1</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">d0</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">v_arr</span> <span class="o">*</span> <span class="n">v_arr</span><span class="p">)</span>
 
-    <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">n</span><span class="p">))</span> <span class="o">/</span> <span class="n">mj</span>  <span class="o">*</span> <span class="n">rate</span>
+
+    <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">n</span><span class="p">))</span> <span class="o">/</span> <span class="n">af</span> <span class="o">*</span> <span class="n">rate</span>
     <span class="n">deverr</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">dev</span><span class="p">,</span> <span class="n">deverr</span><span class="p">,</span> <span class="n">n</span></div>

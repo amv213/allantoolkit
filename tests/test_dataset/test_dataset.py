@@ -8,9 +8,12 @@ def test_no_function_in_allantools(dataset):
         dataset.compute("nosuchfunction")
 
 
+# Now functions that are in .allantools are already all in whitelist. So
+# there is no need to check anymore for a blacklist
+@pytest.mark.skip
 def test_blacklisted_function(dataset):
     with pytest.raises(RuntimeError):
-        dataset.compute("calc_mtotdev_phase")
+        dataset.compute("calc_mtotdev")
 
 
 def test_compute_functions(dataset):

@@ -1,0 +1,585 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>allantoolkit.stats &#8212; AllanToolkit Documentation</title>
+    
+  <link rel="stylesheet" href="../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../../index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">AllanToolkit Documentation</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../index.html">
+   📑 Welcome to AllanToolkit!
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  MAIN DOCS
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../readme_copy.html">
+   Readme
+  </a>
+ </li>
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="../../documentation.html">
+   Documentation
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2 collapsible-parent">
+    <a class="reference internal" href="../../modules.html">
+     Modules
+    </a>
+    <ul class="collapse-ul">
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../allantoolkit.html">
+       allantoolkit package
+      </a>
+     </li>
+    </ul>
+    <i class="fas fa-chevron-down">
+    </i>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../functions.html">
+     Functions
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../api.html">
+     API
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../references.html">
+     References
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../dev.html">
+   Development
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://gitlab.com/amv213/allantoolkit"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2F_modules/allantoolkit/stats.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <h1>Source code for allantoolkit.stats</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ci</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="calc_adev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_adev">[docs]</a><span class="k">def</span> <span class="nf">calc_adev</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">stride</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;  Main algorithm for adev() (stride=mj) and oadev() (stride=1)</span>
+
+<span class="sd">        see http://www.leapsecond.com/tools/adev_lib.c</span>
+<span class="sd">        stride = mj for nonoverlapping allan deviation</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    phase: np.array</span>
+<span class="sd">        Phase data in seconds.</span>
+<span class="sd">    rate: float</span>
+<span class="sd">        The sampling rate for phase or frequency, in Hz</span>
+<span class="sd">    mj: int</span>
+<span class="sd">        M index value for stride</span>
+<span class="sd">    stride: int</span>
+<span class="sd">        Size of stride</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (dev, deverr, n): tuple</span>
+<span class="sd">        Array of computed values.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    stride = mj for nonoverlapping Allan deviation</span>
+<span class="sd">    stride = 1 for overlapping Allan deviation</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    [Wikipedia]_</span>
+<span class="sd">    * http://en.wikipedia.org/wiki/Allan_variance</span>
+<span class="sd">    * http://www.leapsecond.com/tools/adev_lib.c</span>
+
+<span class="sd">    NIST [SP1065]_ eqn (7) and (11) page 16</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mj</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj</span><span class="p">)</span>
+    <span class="n">stride</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stride</span><span class="p">)</span>
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mj</span><span class="p">::</span><span class="n">stride</span><span class="p">]</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="mi">1</span> <span class="o">*</span> <span class="n">mj</span><span class="p">::</span><span class="n">stride</span><span class="p">]</span>
+    <span class="n">d0</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[::</span><span class="n">stride</span><span class="p">]</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d0</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d2</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="ne">RuntimeWarning</span><span class="p">(</span><span class="s2">&quot;Data array length is too small: </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">))</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">v_arr</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">d1</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">d0</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">v_arr</span> <span class="o">*</span> <span class="n">v_arr</span><span class="p">)</span>
+
+    <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">n</span><span class="p">))</span> <span class="o">/</span> <span class="n">mj</span>  <span class="o">*</span> <span class="n">rate</span>
+    <span class="n">deverr</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dev</span><span class="p">,</span> <span class="n">deverr</span><span class="p">,</span> <span class="n">n</span></div>
+
+
+<div class="viewcode-block" id="calc_hdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_hdev">[docs]</a><span class="k">def</span> <span class="nf">calc_hdev</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">stride</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; main calculation fungtion for HDEV and OHDEV</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    phase: np.array</span>
+<span class="sd">        Phase data in seconds.</span>
+<span class="sd">    rate: float</span>
+<span class="sd">        The sampling rate for phase or frequency, in Hz</span>
+<span class="sd">    mj: int</span>
+<span class="sd">        M index value for stride</span>
+<span class="sd">    stride: int</span>
+<span class="sd">        Size of stride</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (dev, deverr, n): tuple</span>
+<span class="sd">        Array of computed values.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    http://www.leapsecond.com/tools/adev_lib.c</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^2_{y}(t) = { 1 \\over 6\\tau^2 (N-3m) }</span>
+<span class="sd">            \\sum_{i=1}^{N-3} [ x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2</span>
+
+<span class="sd">        N=M+1 phase measurements</span>
+<span class="sd">        m is averaging factor</span>
+
+<span class="sd">    NIST [SP1065]_ eqn (18) and (20) pages 20 and 21</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tau0</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+    <span class="n">mj</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj</span><span class="p">)</span>
+    <span class="n">stride</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stride</span><span class="p">)</span>
+    <span class="n">d3</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="mi">3</span> <span class="o">*</span> <span class="n">mj</span><span class="p">::</span><span class="n">stride</span><span class="p">]</span>
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mj</span><span class="p">::</span><span class="n">stride</span><span class="p">]</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="mi">1</span> <span class="o">*</span> <span class="n">mj</span><span class="p">::</span><span class="n">stride</span><span class="p">]</span>
+    <span class="n">d0</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[::</span><span class="n">stride</span><span class="p">]</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d0</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d2</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d3</span><span class="p">))</span>
+
+    <span class="n">v_arr</span> <span class="o">=</span> <span class="n">d3</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">d2</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">d1</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="n">d0</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">v_arr</span> <span class="o">*</span> <span class="n">v_arr</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s</span> <span class="o">/</span> <span class="mf">6.0</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">tau0</span> <span class="o">*</span> <span class="n">mj</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">h</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">h</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">n</span></div>
+
+
+<div class="viewcode-block" id="calc_mtotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_mtotdev">[docs]</a><span class="k">def</span> <span class="nf">calc_mtotdev</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
+<span class="sd">    calculation of mtotdev for one averaging factor m; tau = m*tau0</span>
+
+<span class="sd">    NIST [SP1065]_ Eqn (27), page 25.</span>
+
+<span class="sd">    Computed from a set of N - 3m + 1 subsequences of 3m points.</span>
+
+<span class="sd">    1. A linear trend (frequency offset) is removed from the subsequence by</span>
+<span class="sd">    averaging the first and last halves of the subsequence and dividing by</span>
+<span class="sd">    half the interval.</span>
+<span class="sd">    2. The offset-removed subsequence is extended at both ends by</span>
+<span class="sd">    uninverted, even reflection.</span>
+
+<span class="sd">    [Howe1999]_</span>
+<span class="sd">    D.A. Howe and F. Vernotte, &quot;Generalization of the Total Variance</span>
+<span class="sd">    Approach to the Modified Allan Variance,&quot; Proc.</span>
+<span class="sd">    31 st PTTI Meeting, pp. 267-276, Dec. 1999.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tau0</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">rate</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>  <span class="c1"># phase data, N points</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># number of terms in the sum, for error estimation</span>
+    <span class="n">dev</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># the deviation we are computing</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># the error in the deviation</span>
+    <span class="c1"># print(&#39;calc_mtotdev N=%d m=%d&#39; % (N,m) )</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># subsequence of length 3m, from the original phase data</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span>
+        <span class="c1"># Step 1.</span>
+        <span class="c1"># remove linear trend. by averaging first/last half,</span>
+        <span class="c1"># computing slope, and subtracting</span>
+        <span class="n">half1_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">))</span>
+        <span class="n">half2_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">))</span>
+        <span class="c1"># m</span>
+        <span class="c1"># 1    0:1   2:2</span>
+        <span class="n">mean1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">xs</span><span class="p">[:</span><span class="n">half1_idx</span><span class="p">])</span>
+        <span class="n">mean2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="n">half2_idx</span><span class="p">:])</span>
+
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># m is odd</span>
+            <span class="c1"># 3m = 2k+1 is odd, with the averages at both ends over k points</span>
+            <span class="c1"># the distance between the averages is then k+1 = (3m-1)/2 +1</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean2</span> <span class="o">-</span> <span class="n">mean1</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">tau0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># m is even</span>
+            <span class="c1"># 3m = 2k is even, so distance between averages is k=m/2</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean2</span> <span class="o">-</span> <span class="n">mean1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">*</span> <span class="n">tau0</span><span class="p">)</span>
+
+        <span class="c1"># remove the linear trend</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">-</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">*</span> <span class="n">tau0</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xs</span><span class="p">)]</span>
+        <span class="n">x0_flip</span> <span class="o">=</span> <span class="n">x0</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># left-right flipped version of array</span>
+
+        <span class="c1"># Step 2.</span>
+        <span class="c1"># extend sequence, by uninverted even reflection</span>
+        <span class="c1"># extended sequence xstar, of length 9m,</span>
+        <span class="n">xstar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">x0_flip</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x0_flip</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">xstar</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span> <span class="o">*</span> <span class="n">m</span>
+
+        <span class="c1"># now compute mdev on these 9m points</span>
+        <span class="c1"># 6m unique groups of m-point averages,</span>
+        <span class="c1"># use all possible overlapping second differences</span>
+        <span class="c1"># one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2</span>
+        <span class="n">squaresum</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="c1"># print(&#39;m=%d 9m=%d maxj+3*m=%d&#39; %( m, len(xstar), 6*int(m)+3*int(m)) )</span>
+
+        <span class="c1"># below we want the following sums (averages, see squaresum where we divide by m)</span>
+        <span class="c1"># xmean1=np.sum(xstar[j     :   j+m])</span>
+        <span class="c1"># xmean2=np.sum(xstar[j+m   : j+2*m])</span>
+        <span class="c1"># xmean3=np.sum(xstar[j+2*m : j+3*m])</span>
+        <span class="c1"># for speed these are not computed with np.sum or np.mean in each loop</span>
+        <span class="c1"># instead they are initialized at m=0, and then just updated</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">m</span><span class="p">):</span>  <span class="c1"># summation of the 6m terms.</span>
+            <span class="c1"># faster inner sum, based on Stable32 MTC.c code</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># intialize the sum</span>
+                <span class="n">xmean1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">m</span><span class="p">])</span>
+                <span class="n">xmean2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="n">m</span><span class="p">:</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">])</span>
+                <span class="n">xmean3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">:</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># j&gt;=1, subtract old point, add new point</span>
+                <span class="n">xmean1</span> <span class="o">=</span> <span class="n">xmean1</span> <span class="o">-</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1">#</span>
+                <span class="n">xmean2</span> <span class="o">=</span> <span class="n">xmean2</span> <span class="o">-</span> <span class="n">xstar</span><span class="p">[</span><span class="n">m</span> <span class="o">+</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1">#</span>
+                <span class="n">xmean3</span> <span class="o">=</span> <span class="n">xmean3</span> <span class="o">-</span> <span class="n">xstar</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xstar</span><span class="p">[</span>
+                    <span class="n">j</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1">#</span>
+
+            <span class="n">squaresum</span> <span class="o">+=</span> <span class="nb">pow</span><span class="p">((</span><span class="n">xmean1</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">xmean2</span> <span class="o">+</span> <span class="n">xmean3</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">squaresum</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">6.0</span> <span class="o">*</span> <span class="n">m</span><span class="p">))</span> <span class="o">*</span> <span class="n">squaresum</span>
+        <span class="n">dev</span> <span class="o">+=</span> <span class="n">squaresum</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># scaling in front of double-sum</span>
+    <span class="k">assert</span> <span class="n">n</span> <span class="o">==</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># sanity check on the number of terms n</span>
+    <span class="n">dev</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="n">tau0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="calc_htotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_htotdev">[docs]</a><span class="k">def</span> <span class="nf">calc_htotdev</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
+<span class="sd">        calculation of htotdev for one averaging factor m</span>
+<span class="sd">        tau = m*tau0</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        frequency: np.array</span>
+<span class="sd">            Fractional frequency data (nondimensional).</span>
+<span class="sd">        m: int</span>
+<span class="sd">            Averaging factor. tau = m*tau0, where tau0=1/rate.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span>  <span class="c1"># frequency data, N points</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># number of terms in the sum, for error estimation</span>
+    <span class="n">dev</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># the deviation we are computing</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># subsequence of length 3m, from the original phase data</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span>
+        <span class="c1"># remove linear trend. by averaging first/last half,</span>
+        <span class="c1"># computing slope, and subtracting</span>
+        <span class="n">half1_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">))</span>
+        <span class="n">half2_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">))</span>
+        <span class="c1"># m</span>
+        <span class="c1"># 1    0:1   2:2</span>
+        <span class="n">mean1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">xs</span><span class="p">[:</span><span class="n">half1_idx</span><span class="p">])</span>
+        <span class="n">mean2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="n">half2_idx</span><span class="p">:])</span>
+
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># m is odd</span>
+            <span class="c1"># 3m = 2k+1 is odd, with the averages at both ends over k points</span>
+            <span class="c1"># the distance between the averages is then k+1 = (3m-1)/2 +1</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean2</span> <span class="o">-</span> <span class="n">mean1</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># m is even</span>
+            <span class="c1"># 3m = 2k is even, so distance between averages is k=3m/2</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean2</span> <span class="o">-</span> <span class="n">mean1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">)</span>
+
+        <span class="c1"># remove the linear trend</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">-</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">idx</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span>
+              <span class="nb">enumerate</span><span class="p">(</span><span class="n">xs</span><span class="p">)]</span>
+        <span class="n">x0_flip</span> <span class="o">=</span> <span class="n">x0</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># left-right flipped version of array</span>
+        <span class="c1"># extended sequence, to length 9m, by uninverted even reflection</span>
+        <span class="n">xstar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">x0_flip</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x0_flip</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">xstar</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span> <span class="o">*</span> <span class="n">m</span>
+
+        <span class="c1"># now compute totdev on these 9m points</span>
+        <span class="c1"># 6m unique groups of m-point averages,</span>
+        <span class="c1"># all possible overlapping second differences</span>
+        <span class="c1"># one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2</span>
+        <span class="n">squaresum</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="p">)):</span>  <span class="c1"># summation of the 6m terms.</span>
+            <span class="c1"># old naive code</span>
+            <span class="c1"># xmean1 = np.mean(xstar[j+0*m : j+1*m])</span>
+            <span class="c1"># xmean2 = np.mean(xstar[j+1*m : j+2*m])</span>
+            <span class="c1"># xmean3 = np.mean(xstar[j+2*m : j+3*m])</span>
+            <span class="c1"># squaresum += pow(xmean1 - 2.0*xmean2 + xmean3, 2)</span>
+            <span class="c1"># new faster way of doing the sums</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># intialize the sum</span>
+                <span class="n">xmean1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">m</span><span class="p">])</span>
+                <span class="n">xmean2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="n">m</span><span class="p">:</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">])</span>
+                <span class="n">xmean3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">:</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># j&gt;=1, subtract old point, add new point</span>
+                <span class="n">xmean1</span> <span class="o">=</span> <span class="n">xmean1</span> <span class="o">-</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1">#</span>
+                <span class="n">xmean2</span> <span class="o">=</span> <span class="n">xmean2</span> <span class="o">-</span> <span class="n">xstar</span><span class="p">[</span><span class="n">m</span> <span class="o">+</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xstar</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1">#</span>
+                <span class="n">xmean3</span> <span class="o">=</span> <span class="n">xmean3</span> <span class="o">-</span> <span class="n">xstar</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xstar</span><span class="p">[</span>
+                    <span class="n">j</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1">#</span>
+
+            <span class="n">squaresum</span> <span class="o">+=</span> <span class="nb">pow</span><span class="p">((</span><span class="n">xmean1</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">xmean2</span> <span class="o">+</span> <span class="n">xmean3</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">k</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">m</span>  <span class="c1"># check number of terms in the sum</span>
+        <span class="n">squaresum</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">6.0</span> <span class="o">*</span> <span class="n">k</span><span class="p">))</span> <span class="o">*</span> <span class="n">squaresum</span>
+        <span class="n">dev</span> <span class="o">+=</span> <span class="n">squaresum</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># scaling in front of double-sum</span>
+    <span class="k">assert</span> <span class="n">n</span> <span class="o">==</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># sanity check on the number of terms n</span>
+    <span class="n">dev</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="calc_gradev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_gradev">[docs]</a><span class="k">def</span> <span class="nf">calc_gradev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">confidence</span><span class="p">,</span> <span class="n">noisetype</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; see http://www.leapsecond.com/tools/adev_lib.c</span>
+<span class="sd">        stride = mj for nonoverlapping allan deviation</span>
+<span class="sd">        stride = 1 for overlapping allan deviation</span>
+
+<span class="sd">        [Wikipedia]_</span>
+<span class="sd">        see http://en.wikipedia.org/wiki/Allan_variance</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^2_{y}(t) = { 1 \\over ( 2 \\tau^2 } sum [x(i+2) - 2x(i+1) + x(i) ]^2</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj</span><span class="p">)::</span><span class="nb">int</span><span class="p">(</span><span class="n">stride</span><span class="p">)]</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj</span><span class="p">)::</span><span class="nb">int</span><span class="p">(</span><span class="n">stride</span><span class="p">)]</span>
+    <span class="n">d0</span> <span class="o">=</span> <span class="n">data</span><span class="p">[::</span><span class="nb">int</span><span class="p">(</span><span class="n">stride</span><span class="p">)]</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d0</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d2</span><span class="p">))</span>
+
+    <span class="n">v_arr</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">d1</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">d0</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">v_arr</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># only average for non-nans</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="ne">RuntimeWarning</span><span class="p">(</span><span class="s2">&quot;Data array length is too small: </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">v_arr</span> <span class="o">*</span> <span class="n">v_arr</span><span class="p">)</span>   <span class="c1">#  a summation robust to nans</span>
+
+    <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">n</span><span class="p">))</span> <span class="o">/</span> <span class="n">mj</span>  <span class="o">*</span> <span class="n">rate</span>
+    <span class="c1">#deverr = dev / np.sqrt(n) # old simple errorbars</span>
+    <span class="k">if</span> <span class="n">noisetype</span> <span class="o">==</span> <span class="s1">&#39;wp&#39;</span><span class="p">:</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">noisetype</span> <span class="o">==</span> <span class="s1">&#39;wf&#39;</span><span class="p">:</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">noisetype</span> <span class="o">==</span> <span class="s1">&#39;fp&#39;</span><span class="p">:</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">edf</span> <span class="o">=</span> <span class="n">ci</span><span class="o">.</span><span class="n">edf_simple</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+        <span class="n">deverr</span> <span class="o">=</span> <span class="n">ci</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">confidence</span><span class="p">,</span> <span class="n">edf</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">deverr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">dev</span><span class="p">,</span> <span class="n">deverr</span><span class="p">,</span> <span class="n">n</span></div>
+</pre></div>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Alvise Vianello<br/>
+        
+            &copy; Copyright 2020, Alvise Vianello.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>

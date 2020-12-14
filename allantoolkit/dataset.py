@@ -113,7 +113,7 @@ class Dataset:
         try:
             func = getattr(allantools, function)
         except AttributeError:
-            raise AttributeError("function must be defined in allantoolkit")
+            raise AttributeError("function must be defined in allantools")
 
         whitelisted = ["theo1", "mtie", "tierms"]
 

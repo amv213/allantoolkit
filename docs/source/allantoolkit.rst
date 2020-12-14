@@ -13,7 +13,7 @@ Module contents
 Submodules
 ----------
 
-allantoolkit.allantools module
+allantoolkit.allantools
 ------------------------------
 
 .. automodule:: allantoolkit.allantools
@@ -21,7 +21,7 @@ allantoolkit.allantools module
    :undoc-members:
    :show-inheritance:
 
-allantoolkit.ci module
+allantoolkit.ci
 ----------------------
 
 .. automodule:: allantoolkit.ci
@@ -29,7 +29,7 @@ allantoolkit.ci module
    :undoc-members:
    :show-inheritance:
 
-allantoolkit.dataset module
+allantoolkit.dataset
 ---------------------------
 
 .. automodule:: allantoolkit.dataset
@@ -37,7 +37,7 @@ allantoolkit.dataset module
    :undoc-members:
    :show-inheritance:
 
-allantoolkit.noise module
+allantoolkit.noise
 -------------------------
 
 .. automodule:: allantoolkit.noise
@@ -45,7 +45,7 @@ allantoolkit.noise module
    :undoc-members:
    :show-inheritance:
 
-allantoolkit.noise\_kasdin module
+allantoolkit.noise\_kasdin
 ---------------------------------
 
 .. automodule:: allantoolkit.noise_kasdin
@@ -53,7 +53,7 @@ allantoolkit.noise\_kasdin module
    :undoc-members:
    :show-inheritance:
 
-allantoolkit.plot module
+allantoolkit.plot
 ------------------------
 
 .. automodule:: allantoolkit.plot
@@ -61,7 +61,7 @@ allantoolkit.plot module
    :undoc-members:
    :show-inheritance:
 
-allantoolkit.realtime module
+allantoolkit.realtime
 ----------------------------
 
 .. automodule:: allantoolkit.realtime
@@ -69,8 +69,15 @@ allantoolkit.realtime module
    :undoc-members:
    :show-inheritance:
 
+allantoolkit.stats
+----------------------------
 
-allantoolkit.tables module
+.. automodule:: allantoolkit.stats
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+allantoolkit.tables
 -----------------------------
 
 .. automodule:: allantoolkit.tables
@@ -79,7 +86,7 @@ allantoolkit.tables module
    :show-inheritance:
 
 
-allantoolkit.testutils module
+allantoolkit.testutils
 -----------------------------
 
 .. automodule:: allantoolkit.testutils
@@ -87,7 +94,7 @@ allantoolkit.testutils module
    :undoc-members:
    :show-inheritance:
 
-allantoolkit.utils module
+allantoolkit.utils
 ----------------------------
 
 .. automodule:: allantoolkit.utils

@@ -17,8 +17,48 @@ DevResult = NamedTuple('DevResult', [('taus', Array),
                                      ('ns', Array)])
 
 
+def dev(dev_type: str, data: Array, rate: float, data_type: str,
+        taus: Union[str, Array]) -> DevResult:
+    """Dispatches the input data and parameters to the appropriate statistical
+    algorithm computing the requested deviation.
+
+    Args:
+        dev_type:   type of deviation to be computed, e.g. `adev`.
+        data:       array of phase (in units of seconds) or fractional
+                    frequency data for which to calculate deviation.
+        rate:       sampling rate of the input data, in Hz.
+        data_type:  input data type. Either `phase` or `freq`.
+        taus:       array of averaging times for which to compute deviation.
+                    Can also be one of the keywords: `all`, `octave`, `decade`.
+
+    Returns:
+        (taus, devs, errs, ns) NamedTuple of results:
+
+        .taus:  array of averaging times for which deviation was computed.
+        .devs:  array with deviation computed at each averaging time.
+        .errs:  array with estimated error in each computed deviation.
+        .ns:    array with number of values used to compute each deviation.
+    """
+
+    # Work with phase data, in units of seconds
+    x = utils.input_to_phase(data=data, rate=rate, data_type=data_type)
+
+    # Build/Select averaging factors at which to calculate deviations
+    taus, afs = utils.tau_generator(data=x, rate=rate, dev_type=dev_type,
+                                    taus=taus)
+
+    # Calc statistic at each averaging factor
+    # devs, errs, ns = func(x, afs)
+
+    # Cleanup datapoints calculated on too few samples
+    # taus, ads, errs, ns = utils.remove_small_ns(taus, devs, errs, ns)
+
+    # return DevResult(taus=taus, devs=devs, errs=errs, ns=ns)
+    return 1
+
+
 def adev(data: Array, rate: float = 1., data_type: str = "phase",
-         taus:Union[str, Array] = None) -> DevResult:
+         taus: Union[str, Array] = None) -> DevResult:
     """Allan deviation (ADEV): classic - use only if required - relatively
     poor confidence [[SP1065]_ (pg.14-15)].
 
@@ -44,7 +84,7 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
     .. math::
 
         \\sigma^{2}_y(\\tau) =  { 1 \\over 2 (M - 1) } \\sum_{i=1}^{M-1}
-        \\langle \\left[ \\bar{y}_{i+1} - \\bar{y}_i \\right]^2
+        \\left[ \\bar{y}_{i+1} - \\bar{y}_i \\right]^2
 
     where :math:`\\bar{y}_i` is the :math:`i`th of :math:`M` fractional
     frequency values averaged over the averaging time :math:`\\tau`.
@@ -66,12 +106,12 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
                                 `octave`.
 
     Returns:
-    (taus, devs, errs, ns) NamedTuple of results:
+        (taus, devs, errs, ns) NamedTuple of results:
 
-    .taus:  array of averaging times for which deviation was computed.
-    .devs:  array with deviation computed at each averaging time.
-    .errs:  array with estimated error in each computed deviation.
-    .ns:    array with number of values used to compute each deviation.
+        .taus:  array of averaging times for which deviation was computed.
+        .devs:  array with deviation computed at each averaging time.
+        .errs:  array with estimated error in each computed deviation.
+        .ns:    array with number of values used to compute each deviation.
     """
 
     phase = utils.input_to_phase(data, rate, data_type)

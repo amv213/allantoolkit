@@ -19,7 +19,7 @@ DevResult = NamedTuple('DevResult', [('taus', Array),
 
 
 def dev(dev_type: str, data: Array, rate: float, data_type: str,
-        taus: Union[str, Array], max_af: int = None) -> DevResult:
+        taus: Union[str, Array], max_af: int) -> DevResult:
     """Dispatches the input data and parameters to the appropriate statistical
     algorithm computing the requested deviation.
 
@@ -60,17 +60,27 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     #       var = getattr(stats, 'calc_' + dev_type)(sample)
     #       dev = sqrt(var)
     #       err =
-    # Cleanup datapoints calculated on too few samples
-    # taus, ads, errs, ns = utils.remove_small_ns(taus, devs, errs, ns)
 
-    # return DevResult(taus=taus, devs=devs, errs=errs, ns=ns)
-    return 1
+    # func(x, m) -> var
+    func = getattr(stats, 'calc_' + dev_type)  # e.g. stats.calc_adev
+
+    devs = np.zeros_like(taus)
+    errs = np.zeros_like(devs)
+    ns = np.zeros_like(afs)
+    for i, af in enumerate(afs):  # loop through each averaging factor
+        (devs[i], errs[i], ns[i]) = func(x=x, af=af, rate=rate)
+
+    # Cleanup datapoints calculated on too few samples
+    taus, devs, errs, ns = utils.remove_small_ns(taus, devs, errs, ns)
+
+    return DevResult(taus=taus, devs=devs, errs=errs, ns=ns)
 
 
 def adev(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Union[str, Array] = None) -> DevResult:
-    """Allan deviation (ADEV): classic - use only if required - relatively
-    poor confidence [[SP1065]_ (pg.14-15)].
+        taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+    """Allan deviation (ADEV):
+    classic - use only if required - relatively poor confidence
+    [[SP1065]_ (pg.14-15)].
 
     The Allan deviation - :math:`\\sigma_y(\\tau)` - is the square root of
     the Allan variance. The Allan variance is the same as  the  ordinary
@@ -104,40 +114,11 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
     :math:`\\pm\\sigma^{2}_y(\\tau) / \\sqrt{N}`.
 
     Args:
-
-        data:                   array of phase (in units of seconds) or
-                                fractional frequency data for which to
-                                calculate deviation.
-        rate (optional):        sampling rate of the input data, in Hz.
-        data_type (optional):   input data type. Either `phase` or `freq`.
-        taus (optional):        array of averaging times for which to compute
-                                deviation. Can also be one of the keywords:
-                                `all`, `octave`, `decade`. Defaults to
-                                `octave`.
-
-    Returns:
-        (taus, devs, errs, ns) NamedTuple of results
-
-        .taus:  array of averaging times for which deviation was computed.
-        .devs:  array with deviation computed at each averaging time.
-        .errs:  array with estimated error in each computed deviation.
-        .ns:    array with number of values used to compute each deviation.
+        See documentation for allantoolkit.allantools.dev
     """
 
-    phase = utils.input_to_phase(data, rate, data_type)
-    (taus_used, m) = utils.tau_generator(data=phase, rate=rate,
-                                                dev_type='adev',
-                                                taus=taus)
-
-    ad = np.zeros_like(taus_used)
-    ade = np.zeros_like(taus_used)
-    adn = np.zeros_like(taus_used)
-
-    for idx, mj in enumerate(m):  # loop through each tau value m(j)
-        (ad[idx], ade[idx], adn[idx]) = stats.calc_adev(
-            phase, rate, mj, mj)
-
-    return utils.remove_small_ns(taus_used, ad, ade, adn)
+    return dev(dev_type='adev', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
 
 
 def tdev(data, rate=1.0, data_type="phase", taus=None):
@@ -332,8 +313,8 @@ def oadev(data, rate=1.0, data_type="phase", taus=None):
     adn = np.zeros_like(taus_used)
 
     for idx, mj in enumerate(m): # stride=1 for overlapping ADEV
-        (ad[idx], ade[idx], adn[idx]) = stats.calc_adev(
-            phase, rate, mj, 1)
+        (ad[idx], ade[idx], adn[idx]) = stats.calc_oadev(
+            x=phase, af=mj, rate=rate)
 
     return utils.remove_small_ns(taus_used, ad, ade, adn)
 

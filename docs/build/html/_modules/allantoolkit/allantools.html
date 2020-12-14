@@ -216,7 +216,7 @@
 
 
 <div class="viewcode-block" id="dev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.dev">[docs]</a><span class="k">def</span> <span class="nf">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">],</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+        <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">],</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Dispatches the input data and parameters to the appropriate statistical</span>
 <span class="sd">    algorithm computing the requested deviation.</span>
 
@@ -257,17 +257,27 @@
     <span class="c1">#       var = getattr(stats, &#39;calc_&#39; + dev_type)(sample)</span>
     <span class="c1">#       dev = sqrt(var)</span>
     <span class="c1">#       err =</span>
-    <span class="c1"># Cleanup datapoints calculated on too few samples</span>
-    <span class="c1"># taus, ads, errs, ns = utils.remove_small_ns(taus, devs, errs, ns)</span>
 
-    <span class="c1"># return DevResult(taus=taus, devs=devs, errs=errs, ns=ns)</span>
-    <span class="k">return</span> <span class="mi">1</span></div>
+    <span class="c1"># func(x, m) -&gt; var</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="s1">&#39;calc_&#39;</span> <span class="o">+</span> <span class="n">dev_type</span><span class="p">)</span>  <span class="c1"># e.g. stats.calc_adev</span>
+
+    <span class="n">devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus</span><span class="p">)</span>
+    <span class="n">errs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">devs</span><span class="p">)</span>
+    <span class="n">ns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">afs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">af</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">afs</span><span class="p">):</span>  <span class="c1"># loop through each averaging factor</span>
+        <span class="p">(</span><span class="n">devs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">errs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ns</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">af</span><span class="o">=</span><span class="n">af</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
+
+    <span class="c1"># Cleanup datapoints calculated on too few samples</span>
+    <span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">errs</span><span class="p">,</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">errs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">DevResult</span><span class="p">(</span><span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="o">=</span><span class="n">devs</span><span class="p">,</span> <span class="n">errs</span><span class="o">=</span><span class="n">errs</span><span class="p">,</span> <span class="n">ns</span><span class="o">=</span><span class="n">ns</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="adev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.adev">[docs]</a><span class="k">def</span> <span class="nf">adev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-         <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Allan deviation (ADEV): classic - use only if required - relatively</span>
-<span class="sd">    poor confidence [[SP1065]_ (pg.14-15)].</span>
+        <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Allan deviation (ADEV):</span>
+<span class="sd">    classic - use only if required - relatively poor confidence</span>
+<span class="sd">    [[SP1065]_ (pg.14-15)].</span>
 
 <span class="sd">    The Allan deviation - :math:`\\sigma_y(\\tau)` - is the square root of</span>
 <span class="sd">    the Allan variance. The Allan variance is the same as  the  ordinary</span>
@@ -301,40 +311,11 @@
 <span class="sd">    :math:`\\pm\\sigma^{2}_y(\\tau) / \\sqrt{N}`.</span>
 
 <span class="sd">    Args:</span>
-
-<span class="sd">        data:                   array of phase (in units of seconds) or</span>
-<span class="sd">                                fractional frequency data for which to</span>
-<span class="sd">                                calculate deviation.</span>
-<span class="sd">        rate (optional):        sampling rate of the input data, in Hz.</span>
-<span class="sd">        data_type (optional):   input data type. Either `phase` or `freq`.</span>
-<span class="sd">        taus (optional):        array of averaging times for which to compute</span>
-<span class="sd">                                deviation. Can also be one of the keywords:</span>
-<span class="sd">                                `all`, `octave`, `decade`. Defaults to</span>
-<span class="sd">                                `octave`.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        (taus, devs, errs, ns) NamedTuple of results</span>
-
-<span class="sd">        .taus:  array of averaging times for which deviation was computed.</span>
-<span class="sd">        .devs:  array with deviation computed at each averaging time.</span>
-<span class="sd">        .errs:  array with estimated error in each computed deviation.</span>
-<span class="sd">        .ns:    array with number of values used to compute each deviation.</span>
+<span class="sd">        See documentation for allantoolkit.allantools.dev</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">phase</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="p">)</span>
-    <span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
-                                                <span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;adev&#39;</span><span class="p">,</span>
-                                                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
-
-    <span class="n">ad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-    <span class="n">ade</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-    <span class="n">adn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>  <span class="c1"># loop through each tau value m(j)</span>
-        <span class="p">(</span><span class="n">ad</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">ade</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">adn</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_adev</span><span class="p">(</span>
-            <span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">mj</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">ade</span><span class="p">,</span> <span class="n">adn</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;adev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+               <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="tdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.tdev">[docs]</a><span class="k">def</span> <span class="nf">tdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -529,8 +510,8 @@
     <span class="n">adn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m</span><span class="p">):</span> <span class="c1"># stride=1 for overlapping ADEV</span>
-        <span class="p">(</span><span class="n">ad</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">ade</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">adn</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_adev</span><span class="p">(</span>
-            <span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">ad</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">ade</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">adn</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_oadev</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">af</span><span class="o">=</span><span class="n">mj</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">ade</span><span class="p">,</span> <span class="n">adn</span><span class="p">)</span></div>
 

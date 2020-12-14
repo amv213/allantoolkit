@@ -2,7 +2,7 @@ from . import ci
 import numpy as np
 
 
-def calc_adev(phase, rate, mj, stride):
+def oadev_core(x, af, rate, stride):
     """  Main algorithm for adev() (stride=mj) and oadev() (stride=1)
 
         see http://www.leapsecond.com/tools/adev_lib.c
@@ -37,16 +37,16 @@ def calc_adev(phase, rate, mj, stride):
 
     NIST [SP1065]_ eqn (7) and (11) page 16
     """
-    mj = int(mj)
+    mj = int(af)
     stride = int(stride)
-    d2 = phase[2 * mj::stride]
-    d1 = phase[1 * mj::stride]
-    d0 = phase[::stride]
+    d2 = x[2 * mj::stride]
+    d1 = x[1 * mj::stride]
+    d0 = x[::stride]
 
     n = min(len(d0), len(d1), len(d2))
 
     if n == 0:
-        RuntimeWarning("Data array length is too small: %i" % len(phase))
+        RuntimeWarning("Data array length is too small: %i" % len(x))
         n = 1
 
     v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
@@ -56,6 +56,14 @@ def calc_adev(phase, rate, mj, stride):
     deverr = dev / np.sqrt(n)
 
     return dev, deverr, n
+
+
+def calc_adev(x, af, rate):
+    return oadev_core(x=x, af=af, rate=rate, stride=af)
+
+
+def calc_oadev(x, af, rate):
+    return oadev_core(x=x, af=af, rate=rate, stride=1)
 
 
 def calc_hdev(phase, rate, mj, stride):

@@ -216,6 +216,35 @@ def calc_hdev(phase, rate, mj, stride):
     return h, e, n
 
 
+def calc_totvar(x, m, tau):
+
+    N = len(x)
+
+    # totdev requires extended dataset
+    x = np.pad(x, N-1, 'symmetric', reflect_type='odd')
+    x = np.delete(x, [N-2, -N+1])  # pop duplicate edge values
+    assert len(x) == 3 * N - 4
+
+    # index of start of original dataset
+    mid = N - 2
+
+    d0 = x[mid + 1:]
+    d1 = x[mid + m + 1:]
+    d1n = x[mid - m + 1:]
+    e = min(len(d0), len(d1), len(d1n))
+
+    v_arr = d1n[:e] - 2.0 * d0[:e] + d1[:e]
+    var = np.sum(v_arr[:mid] * v_arr[:mid])
+
+    var /= float(2 * tau**2 * (N - 2))
+
+    n = N - 2
+
+    return var, n
+
+
+
+
 def calc_mtotdev(phase, rate, m):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
     calculation of mtotdev for one averaging factor m; tau = m*tau0

@@ -325,7 +325,8 @@ def ohdev(data: Array, rate: float = 1., data_type: str = "phase",
                taus=taus, max_af=max_af)
 
 
-def totdev(data, rate=1.0, data_type="phase", taus=None):
+def totdev(data: Array, rate: float = 1., data_type: str = "phase",
+         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
     """ Total deviation.
         Better confidence at long averages for Allan deviation.
 
@@ -364,39 +365,8 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
         Array of tau values for which to compute measurement
 
     """
-    phase = utils.input_to_phase(data, rate, data_type)
-    (taus_used, m) = utils.tau_generator(data=phase, rate=rate,
-                                                dev_type='totdev', taus=taus)
-    N = len(phase)
-
-    # totdev requires extended dataset
-    x = np.pad(phase, N-1, 'symmetric',  reflect_type='odd')
-    x = np.delete(x, [N-2, -N])  # pop duplicate edge values
-    assert len(x) == 3*N - 4
-
-    mid = N - 2
-
-    devs = np.zeros_like(taus_used)
-    deverrs = np.zeros_like(taus_used)
-    ns = np.zeros_like(taus_used)
-
-    for idx, mj in enumerate(m):
-        mj = int(mj)
-        d0 = x[mid + 1:]
-        d1 = x[mid  + mj + 1:]
-        d1n = x[mid - mj + 1:]
-        e = min(len(d0), len(d1), len(d1n))
-
-        v_arr = d1n[:e] - 2.0 * d0[:e] + d1[:e]
-        dev = np.sum(v_arr[:mid] * v_arr[:mid])
-
-        dev /= float(2 * pow(mj / rate, 2) * (N - 2))
-        dev = np.sqrt(dev)
-        devs[idx] = dev
-        deverrs[idx] = dev / np.sqrt(mid)
-        ns[idx] = mid
-
-    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
+    return dev(dev_type='totdev', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
 
 
 def ttotdev(data, rate=1.0, data_type="phase", taus=None):

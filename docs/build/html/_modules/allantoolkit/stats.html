@@ -534,6 +534,15 @@
     <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="n">n</span></div>
 
 
+<div class="viewcode-block" id="calc_ttotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_ttotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_ttotvar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+
+    <span class="n">mtotvar</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">calc_mtotvar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+
+    <span class="n">ttotvar</span> <span class="o">=</span> <span class="p">(</span><span class="n">tau</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">mtotvar</span>
+
+    <span class="k">return</span> <span class="n">ttotvar</span><span class="p">,</span> <span class="n">n</span></div>
+
+
 <div class="viewcode-block" id="calc_htotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_htotdev">[docs]</a><span class="k">def</span> <span class="nf">calc_htotdev</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
 <span class="sd">        calculation of htotdev for one averaging factor m</span>

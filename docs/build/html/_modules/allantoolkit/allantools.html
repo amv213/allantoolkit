@@ -246,7 +246,7 @@
     <span class="c1"># FIXME: remove this once modified mtotdev tests, mtotdev can be autocapped</span>
     <span class="c1">#  by Stable32 to len(x) // 2</span>
     <span class="c1"># Cap max_af for mtotdev to value calibrated for tests</span>
-    <span class="k">if</span> <span class="n">max_af</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s1">&#39;mtotdev&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">max_af</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dev_type</span> <span class="o">==</span> <span class="s1">&#39;mtotdev&#39;</span> <span class="ow">or</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s1">&#39;ttotdev&#39;</span><span class="p">):</span>
         <span class="n">max_af</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">//</span> <span class="mi">3</span>
 
     <span class="c1"># Build/Select averaging factors at which to calculate deviations</span>
@@ -609,7 +609,8 @@
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ttotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.ttotdev">[docs]</a><span class="k">def</span> <span class="nf">ttotdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ttotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.ttotdev">[docs]</a><span class="k">def</span> <span class="nf">ttotdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
+            <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Time Total Deviation</span>
 
 <span class="sd">        Modified total variance scaled by tau^2 / 3</span>
@@ -617,11 +618,8 @@
 <span class="sd">        NIST [SP1065]_ eqn (28) page 26.  Note that [SP1065]_ erroneously has tau-cubed here (!).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="n">mtotdevs</span><span class="p">,</span> <span class="n">mde</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span> <span class="o">=</span> <span class="n">mtotdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
-                                        <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
-    <span class="n">td</span> <span class="o">=</span> <span class="n">taus</span><span class="o">*</span><span class="n">mtotdevs</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
-    <span class="n">tde</span> <span class="o">=</span> <span class="n">td</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">taus</span><span class="p">,</span> <span class="n">td</span><span class="p">,</span> <span class="n">tde</span><span class="p">,</span> <span class="n">ns</span></div>
+    <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;ttotdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+               <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
 
 

@@ -49,7 +49,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     # FIXME: remove this once modified mtotdev tests, mtotdev can be autocapped
     #  by Stable32 to len(x) // 2
     # Cap max_af for mtotdev to value calibrated for tests
-    if max_af is None and dev_type == 'mtotdev':
+    if max_af is None and (dev_type == 'mtotdev' or dev_type == 'ttotdev'):
         max_af = len(x) // 3
 
     # Build/Select averaging factors at which to calculate deviations
@@ -412,7 +412,8 @@ def mtotdev(data: Array, rate: float = 1., data_type: str = "phase",
                taus=taus, max_af=max_af)
 
 
-def ttotdev(data, rate=1.0, data_type="phase", taus=None):
+def ttotdev(data: Array, rate: float = 1., data_type: str = "phase",
+            taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
     """ Time Total Deviation
 
         Modified total variance scaled by tau^2 / 3
@@ -420,11 +421,8 @@ def ttotdev(data, rate=1.0, data_type="phase", taus=None):
         NIST [SP1065]_ eqn (28) page 26.  Note that [SP1065]_ erroneously has tau-cubed here (!).
     """
 
-    (taus, mtotdevs, mde, ns) = mtotdev(data, data_type=data_type,
-                                        rate=rate, taus=taus)
-    td = taus*mtotdevs / np.sqrt(3.0)
-    tde = td / np.sqrt(ns)
-    return taus, td, tde, ns
+    return dev(dev_type='ttotdev', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
 
 
 

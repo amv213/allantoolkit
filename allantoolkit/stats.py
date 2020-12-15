@@ -337,6 +337,15 @@ def calc_mtotvar(x, m, tau):
     return var, n
 
 
+def calc_ttotvar(x, m, tau):
+
+    mtotvar, n = calc_mtotvar(x=x, m=m, tau=tau)
+
+    ttotvar = (tau**2 / 3) * mtotvar
+
+    return ttotvar, n
+
+
 def calc_htotdev(freq, m):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         calculation of htotdev for one averaging factor m

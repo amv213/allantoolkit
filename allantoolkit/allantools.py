@@ -52,8 +52,9 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
     # CALC DEV
 
-    # Should be function of this signature: func(x, m, tau) -> var, n
-    func = getattr(stats, 'calc_' + dev_type)  # e.g. stats.calc_adev
+    # Dispatch to appropriate variance calculator for this dev_type:
+    # should be function of this signature: func(x, m, tau) -> var, n
+    func = getattr(stats, 'calc_' + dev_type.replace('dev', 'var'))
 
     # Initialise arrays
     devs, errs = np.zeros(len(afs)), np.zeros(len(afs))

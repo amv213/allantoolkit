@@ -249,8 +249,9 @@
 
     <span class="c1"># CALC DEV</span>
 
-    <span class="c1"># Should be function of this signature: func(x, m, tau) -&gt; var, n</span>
-    <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="s1">&#39;calc_&#39;</span> <span class="o">+</span> <span class="n">dev_type</span><span class="p">)</span>  <span class="c1"># e.g. stats.calc_adev</span>
+    <span class="c1"># Dispatch to appropriate variance calculator for this dev_type:</span>
+    <span class="c1"># should be function of this signature: func(x, m, tau) -&gt; var, n</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="s1">&#39;calc_&#39;</span> <span class="o">+</span> <span class="n">dev_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;dev&#39;</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">))</span>
 
     <span class="c1"># Initialise arrays</span>
     <span class="n">devs</span><span class="p">,</span> <span class="n">errs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">afs</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">afs</span><span class="p">))</span>

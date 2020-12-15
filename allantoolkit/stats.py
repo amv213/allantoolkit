@@ -44,7 +44,7 @@ def oadev_core(x: Array, af: int, rate: float, stride: int):
     return dev, deverr, n
 
 
-def calc_adev(x, m, tau):
+def calc_avar(x, m, tau):
 
     # minimum number of values needed by algorithm:
     min_N = 3  # i --> i+2
@@ -68,7 +68,7 @@ def calc_adev(x, m, tau):
     return var, n
 
 
-def calc_oadev(x, m, tau):
+def calc_oavar(x, m, tau):
 
     # minimum number of values needed by algorithm:
     min_N = 2*m + 1  # i --> i+2m
@@ -89,7 +89,7 @@ def calc_oadev(x, m, tau):
     return var, n
 
 
-def calc_mdev(x, m , tau):
+def calc_mvar(x, m , tau):
 
     # this is a 'loop-unrolled' algorithm following
     # http://www.leapsecond.com/tools/adev_lib.c

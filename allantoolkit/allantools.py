@@ -369,29 +369,16 @@ def totdev(data, rate=1.0, data_type="phase", taus=None):
                                                 dev_type='totdev', taus=taus)
     N = len(phase)
 
-    # totdev requires a new dataset
-    # Begin by adding reflected data before dataset
-    x1 = 2.0 * phase[0] * np.ones((N - 2,))
-    x1 = x1 - phase[1:-1]
-    x1 = x1[::-1]
+    # totdev requires extended dataset
+    x = np.pad(phase, N-1, 'symmetric',  reflect_type='odd')
+    x = np.delete(x, [N-2, -N])  # pop duplicate edge values
+    assert len(x) == 3*N - 4
 
-    # Reflected data at end of dataset
-    x2 = 2.0 * phase[-1] * np.ones((N - 2,))
-    x2 = x2 - phase[1:-1][::-1]
-
-    # check length of new dataset
-    assert len(x1)+len(phase)+len(x2) == 3*N - 4
-    # Combine into a single array
-    x = np.zeros((3*N - 4))
-    x[0:N-2] = x1
-    x[N-2:2*(N-2)+2] = phase # original data in the middle
-    x[2*(N-2)+2:] = x2
+    mid = N - 2
 
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
-
-    mid = len(x1)
 
     for idx, mj in enumerate(m):
         mj = int(mj)

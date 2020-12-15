@@ -89,7 +89,7 @@ def calc_oavar(x, m, tau):
     return var, n
 
 
-def calc_mvar(x, m , tau):
+def calc_mvar(x, m, tau):
 
     # this is a 'loop-unrolled' algorithm following
     # http://www.leapsecond.com/tools/adev_lib.c
@@ -99,6 +99,7 @@ def calc_mvar(x, m , tau):
     d1 = x[m:2 * m]
     d2 = x[2 * m:3 * m]
     e = min(len(d0), len(d1), len(d2))
+
     v = np.sum(d2[:e] - 2 * d1[:e] + d0[:e])
     s = v * v
 
@@ -114,12 +115,18 @@ def calc_mvar(x, m , tau):
     v_arr = v + np.cumsum(d3[:e] - 3 * d2[:e] + 3 * d1[:e] - d0[:e])
 
     s = s + np.sum(v_arr * v_arr)
-    s /= 2.0 * m * m * tau * tau * n
+    s /= 2 * m**2 * tau**2 * n
 
     return s, n
 
 
+def calc_tvar(x, m, tau):
 
+    mvar, n = calc_mvar(x=x, m=m, tau=tau)
+
+    tvar = (tau**2 / 3) * mvar
+
+    return tvar, n
 
 
 def calc_hdev(phase, rate, mj, stride):

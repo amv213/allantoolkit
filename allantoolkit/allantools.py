@@ -198,7 +198,8 @@ def mdev(data: Array, rate: float = 1., data_type: str = "phase",
                taus=taus, max_af=max_af)
 
 
-def tdev(data, rate=1.0, data_type="phase", taus=None):
+def tdev(data: Array, rate: float = 1., data_type: str = "phase",
+         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
     """ Time deviation.
         Based on modified Allan variance.
 
@@ -242,11 +243,8 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
     -----
     http://en.wikipedia.org/wiki/Time_deviation
     """
-    phase = utils.input_to_phase(data, rate, data_type)
-    (taus, md, mde, ns) = mdev(phase, rate=rate, taus=taus)
-    td = taus * md / np.sqrt(3.0)
-    tde = td / np.sqrt(ns)
-    return taus, td, tde, ns
+    return dev(dev_type='tdev', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
 
 def ohdev(data, rate=1.0, data_type="phase", taus=None):
     """ Overlapping Hadamard deviation.

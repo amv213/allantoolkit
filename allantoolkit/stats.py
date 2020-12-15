@@ -218,31 +218,31 @@ def calc_hdev(phase, rate, mj, stride):
 
 def calc_totvar(x, m, tau):
 
-    N = len(x)
+    N = x.size
 
-    # totdev requires extended dataset
-    x = np.pad(x, N-1, 'symmetric', reflect_type='odd')
-    x = np.delete(x, [N-2, -N+1])  # pop duplicate edge values
-    assert len(x) == 3 * N - 4
+    # extend dataset by reflection, as required by totdev
+    xxx = np.pad(x, N-1, 'symmetric', reflect_type='odd')
+    xxx = np.delete(xxx, [N-2, -N+1])  # pop duplicate edge values
+    M = len(xxx)
+    assert M == 3 * N - 4
 
     # index of start of original dataset
-    mid = N - 2
+    i0 = N - 2  # `i` = 1
 
-    d0 = x[mid + 1:]
-    d1 = x[mid + m + 1:]
-    d1n = x[mid - m + 1:]
+    d0 = xxx[i0 + 1:]
+    d1 = xxx[i0 + 1 + m:]
+    d1n = xxx[i0 + 1 -m:]
     e = min(len(d0), len(d1), len(d1n))
 
-    v_arr = d1n[:e] - 2.0 * d0[:e] + d1[:e]
-    var = np.sum(v_arr[:mid] * v_arr[:mid])
+    # Calculate variance
+    var = 1. / (2 * tau**2 * (N - 2)) * np.sum(
+        (d1n[:e] - 2.0 * d0[:e] + d1[:e])[:i0]**2
+    )
 
-    var /= float(2 * tau**2 * (N - 2))
-
-    n = N - 2
+    # num values looped through to gen variance
+    n = N - 2  # sum i=2 --> N-1
 
     return var, n
-
-
 
 
 def calc_mtotdev(phase, rate, m):

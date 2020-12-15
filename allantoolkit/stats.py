@@ -264,37 +264,34 @@ def calc_mtotvar(x, m, tau):
     Approach to the Modified Allan Variance," Proc.
     31 st PTTI Meeting, pp. 267-276, Dec. 1999.
     """
-    tau0 = tau / m
-    N = len(x)  # phase data, N points
-    m = int(m)
+
+    tau0 = tau / m  # data sampling interval
+
+    N = x.size
+
+    # MTOT is computed from a set of N-3m+1 subsequences of 3*m points
+    subseqs = [x[i:i+3*m] for i in range(N-3*m+1)]
 
     n = 0  # number of terms in the sum, for error estimation
     var = 0.0  # the variance we are computing
-    # print('calc_mtotdev N=%d m=%d' % (N,m) )
-    for i in range(0, N - 3 * m + 1):
-        # subsequence of length 3m, from the original phase data
-        xs = x[i:i + 3 * m]
-        assert len(xs) == 3 * m
+    for xi in subseqs:
+
         # Step 1.
         # remove linear trend. by averaging first/last half,
         # computing slope, and subtracting
-        half1_idx = int(np.floor(3 * m / 2.0))
-        half2_idx = int(np.ceil(3 * m / 2.0))
-        # m
-        # 1    0:1   2:2
-        mean1 = np.mean(xs[:half1_idx])
-        mean2 = np.mean(xs[half2_idx:])
+        w = xi.size // 2
+        mu1, mu2 = np.nanmean(xi[:w]),  np.nanmean(xi[-w:])
 
         if int(3 * m) % 2 == 1:  # m is odd
             # 3m = 2k+1 is odd, with the averages at both ends over k points
             # the distance between the averages is then k+1 = (3m-1)/2 +1
-            slope = (mean2 - mean1) / ((0.5 * (3 * m - 1) + 1) * tau0)
+            slope = (mu2 - mu1) / ((0.5 * (3 * m - 1) + 1) * tau0)
         else:  # m is even
             # 3m = 2k is even, so distance between averages is k=m/2
-            slope = (mean2 - mean1) / (0.5 * 3 * m * tau0)
+            slope = (mu2 - mu1) / (0.5 * 3 * m * tau0)
 
         # remove the linear trend
-        x0 = [x - slope * idx * tau0 for (idx, x) in enumerate(xs)]
+        x0 = [x - slope * idx * tau0 for (idx, x) in enumerate(xi)]
         x0_flip = x0[::-1]  # left-right flipped version of array
 
         # Step 2.

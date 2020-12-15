@@ -4,47 +4,24 @@ import numpy as np
 Array = np.ndarray
 
 
-# TODO: remove
-def oadev_core(x: Array, af: int, rate: float, stride: int):
+def calc_avar(x, m, tau):
     """Main algorithm for adev() and oadev() calculations.
 
-    References:
-        [SP1065]_ eqn (7) and (11) page 16
-        [Wikipedia]_
-        http://www.leapsecond.com/tools/adev_lib.c
+       References:
+           [SP1065]_ eqn (7) and (11) page 16
+           [Wikipedia]_
+           http://www.leapsecond.com/tools/adev_lib.c
 
-    Args:
-        x:      input phase data, in units of seconds.
-        rate:   sampling rate of the input data, in Hz.
-        af:     averaging factor at which to calculate deviation
-        stride: size of stride. 1 for overlapping, `af` for non-overlapping
+       Args:
+           x:      input phase data, in units of seconds.
+           rate:   sampling rate of the input data, in Hz.
+           af:     averaging factor at which to calculate deviation
+           stride: size of stride. 1 for overlapping, `af` for non-overlapping
 
-    Returns:
-        (dev, deverr, n) tuple of computed deviation, estimated error,
-        and number of samples used to estimate it
-    """
-
-    d2 = x[2 * af::stride]
-    d1 = x[1 * af::stride]
-    d0 = x[::stride]
-
-    n = min(len(d0), len(d1), len(d2))
-
-    if n == 0:
-        RuntimeWarning("Data array length is too small: %i" % len(x))
-        n = 1
-
-    v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
-    s = np.sum(v_arr * v_arr)
-
-
-    dev = np.sqrt(s / (2.0 * n)) / af * rate
-    deverr = dev / np.sqrt(n)
-
-    return dev, deverr, n
-
-
-def calc_avar(x, m, tau):
+       Returns:
+           (dev, deverr, n) tuple of computed deviation, estimated error,
+           and number of samples used to estimate it
+       """
 
     # minimum number of values needed by algorithm:
     min_N = 3  # i --> i+2
@@ -129,7 +106,7 @@ def calc_tvar(x, m, tau):
     return tvar, n
 
 
-def calc_hdev(phase, rate, mj, stride):
+def calc_hvar(x, m, tau):
     """ main calculation fungtion for HDEV and OHDEV
 
     Parameters
@@ -162,6 +139,60 @@ def calc_hdev(phase, rate, mj, stride):
 
     NIST [SP1065]_ eqn (18) and (20) pages 20 and 21
     """
+
+    # Decimate values (non-overlapping)
+    x = x[::m]
+
+    d = 3  # 3rd difference algorithm
+
+    # minimum number of values needed by algorithm:
+    min_N = d + 1
+
+    N = x.size
+
+    # del with invalid number of samples
+    if N < min_N:
+        RuntimeWarning("Data array length is too small: %i" % len(x))
+        N = min_N
+
+    # Calculate variance
+    var = 1. / (6. * tau**2 * (N-3)) * np.sum(
+        (x[3:] - 3 * x[2:-1] + 3 * x[1:-2] - x[:-3])**2
+    )
+
+    # num values looped through to gen variance
+    n = N-3  # sum i=1 --> N-3
+
+    return var, n
+
+
+def calc_ohvar(x, m, tau):
+
+    d = 3  # 3rd difference algorithm
+
+    # minimum number of values needed by algorithm:
+    min_N = d*m + 1  # (overlapping)
+
+    N = x.size
+
+    # del with invalid number of samples
+    if N < min_N:
+        RuntimeWarning("Data array length is too small: %i" % len(x))
+        N = min_N
+
+    # Calculate variance
+    var = 1. / (6. * tau ** 2 * (N - 3*m)) * np.sum(
+        (x[3*m:] - 3 * x[2*m:-1*m] + 3 * x[1*m:-2*m] - x[:-3*m]) ** 2
+    )
+
+    # num values looped through to gen variance
+    n = N - 3*m  # sum i=1 --> N-3
+
+    return var, n
+
+
+# TODO: Remove
+def calc_hdev(phase, rate, mj, stride):
 
     tau0 = 1.0 / float(rate)
     mj = int(mj)

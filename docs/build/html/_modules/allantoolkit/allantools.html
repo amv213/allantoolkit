@@ -443,7 +443,42 @@
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;tdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ohdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.ohdev">[docs]</a><span class="k">def</span> <span class="nf">ohdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="hdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.hdev">[docs]</a><span class="k">def</span> <span class="nf">hdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
+         <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Hadamard deviation.</span>
+<span class="sd">        Rejects frequency drift, and handles divergent noise.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^2_{HDEV}( \\tau ) = { 1 \\over 6 \\tau^2 (N-3) }</span>
+<span class="sd">        \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} - x_{i} )^2</span>
+
+<span class="sd">    where :math:`x_i` is the time-series of phase observations, spaced</span>
+<span class="sd">    by the measurement interval :math:`\\tau`, and with length :math:`N`.</span>
+
+<span class="sd">    NIST [SP1065]_ eqn (17) and (18), page 20</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: np.array</span>
+<span class="sd">        Input data. Provide either phase or frequency (fractional,</span>
+<span class="sd">        adimensional).</span>
+<span class="sd">    rate: float</span>
+<span class="sd">        The sampling rate for data, in Hz. Defaults to 1.0</span>
+<span class="sd">    data_type: {&#39;phase&#39;, &#39;freq&#39;}</span>
+<span class="sd">        Data type, i.e. phase or frequency. Defaults to &quot;phase&quot;.</span>
+<span class="sd">    taus: np.array</span>
+<span class="sd">        Array of tau values, in seconds, for which to compute statistic.</span>
+<span class="sd">        Optionally set taus=[&quot;all&quot;|&quot;octave&quot;|&quot;decade&quot;] for automatic</span>
+<span class="sd">        tau-list generation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;hdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+               <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ohdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.ohdev">[docs]</a><span class="k">def</span> <span class="nf">ohdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
+         <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Overlapping Hadamard deviation.</span>
 <span class="sd">        Better confidence than normal Hadamard.</span>
 
@@ -483,62 +518,8 @@
 <span class="sd">        Values of N used in each hdev calculation</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">phase</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="p">)</span>
-    <span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
-                                                <span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;ohdev&#39;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
-    <span class="n">hdevs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-    <span class="n">hdeverrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-    <span class="n">ns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
-        <span class="p">(</span><span class="n">hdevs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-         <span class="n">hdeverrs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-         <span class="n">ns</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_hdev</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">hdevs</span><span class="p">,</span> <span class="n">hdeverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="hdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.hdev">[docs]</a><span class="k">def</span> <span class="nf">hdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Hadamard deviation.</span>
-<span class="sd">        Rejects frequency drift, and handles divergent noise.</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \\sigma^2_{HDEV}( \\tau ) = { 1 \\over 6 \\tau^2 (N-3) }</span>
-<span class="sd">        \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} - x_{i} )^2</span>
-
-<span class="sd">    where :math:`x_i` is the time-series of phase observations, spaced</span>
-<span class="sd">    by the measurement interval :math:`\\tau`, and with length :math:`N`.</span>
-
-<span class="sd">    NIST [SP1065]_ eqn (17) and (18), page 20</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data: np.array</span>
-<span class="sd">        Input data. Provide either phase or frequency (fractional,</span>
-<span class="sd">        adimensional).</span>
-<span class="sd">    rate: float</span>
-<span class="sd">        The sampling rate for data, in Hz. Defaults to 1.0</span>
-<span class="sd">    data_type: {&#39;phase&#39;, &#39;freq&#39;}</span>
-<span class="sd">        Data type, i.e. phase or frequency. Defaults to &quot;phase&quot;.</span>
-<span class="sd">    taus: np.array</span>
-<span class="sd">        Array of tau values, in seconds, for which to compute statistic.</span>
-<span class="sd">        Optionally set taus=[&quot;all&quot;|&quot;octave&quot;|&quot;decade&quot;] for automatic</span>
-<span class="sd">        tau-list generation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">phase</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="p">)</span>
-    <span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
-                                                <span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;hdev&#39;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
-    <span class="n">hdevs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-    <span class="n">hdeverrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-    <span class="n">ns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
-        <span class="p">(</span><span class="n">hdevs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-         <span class="n">hdeverrs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-         <span class="n">ns</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_hdev</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">mj</span><span class="p">)</span>  <span class="c1"># stride = mj</span>
-
-    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">hdevs</span><span class="p">,</span> <span class="n">hdeverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;ohdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+               <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="totdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.totdev">[docs]</a><span class="k">def</span> <span class="nf">totdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

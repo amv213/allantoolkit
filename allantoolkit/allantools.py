@@ -246,7 +246,42 @@ def tdev(data: Array, rate: float = 1., data_type: str = "phase",
     return dev(dev_type='tdev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 
-def ohdev(data, rate=1.0, data_type="phase", taus=None):
+
+def hdev(data: Array, rate: float = 1., data_type: str = "phase",
+         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+    """ Hadamard deviation.
+        Rejects frequency drift, and handles divergent noise.
+
+    .. math::
+
+        \\sigma^2_{HDEV}( \\tau ) = { 1 \\over 6 \\tau^2 (N-3) }
+        \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} - x_{i} )^2
+
+    where :math:`x_i` is the time-series of phase observations, spaced
+    by the measurement interval :math:`\\tau`, and with length :math:`N`.
+
+    NIST [SP1065]_ eqn (17) and (18), page 20
+
+    Parameters
+    ----------
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
+    rate: float
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
+    taus: np.array
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
+        tau-list generation.
+    """
+    return dev(dev_type='hdev', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
+
+
+def ohdev(data: Array, rate: float = 1., data_type: str = "phase",
+         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
     """ Overlapping Hadamard deviation.
         Better confidence than normal Hadamard.
 
@@ -286,62 +321,8 @@ def ohdev(data, rate=1.0, data_type="phase", taus=None):
         Values of N used in each hdev calculation
 
     """
-    phase = utils.input_to_phase(data, rate, data_type)
-    (taus_used, m) = utils.tau_generator(data=phase, rate=rate,
-                                                dev_type='ohdev', taus=taus)
-    hdevs = np.zeros_like(taus_used)
-    hdeverrs = np.zeros_like(taus_used)
-    ns = np.zeros_like(taus_used)
-
-    for idx, mj in enumerate(m):
-        (hdevs[idx],
-         hdeverrs[idx],
-         ns[idx]) = stats.calc_hdev(phase, rate, mj, 1)
-
-    return utils.remove_small_ns(taus_used, hdevs, hdeverrs, ns)
-
-
-def hdev(data, rate=1.0, data_type="phase", taus=None):
-    """ Hadamard deviation.
-        Rejects frequency drift, and handles divergent noise.
-
-    .. math::
-
-        \\sigma^2_{HDEV}( \\tau ) = { 1 \\over 6 \\tau^2 (N-3) }
-        \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} - x_{i} )^2
-
-    where :math:`x_i` is the time-series of phase observations, spaced
-    by the measurement interval :math:`\\tau`, and with length :math:`N`.
-
-    NIST [SP1065]_ eqn (17) and (18), page 20
-
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
-    """
-    phase = utils.input_to_phase(data, rate, data_type)
-    (taus_used, m) = utils.tau_generator(data=phase, rate=rate,
-                                                dev_type='hdev', taus=taus)
-    hdevs = np.zeros_like(taus_used)
-    hdeverrs = np.zeros_like(taus_used)
-    ns = np.zeros_like(taus_used)
-
-    for idx, mj in enumerate(m):
-        (hdevs[idx],
-         hdeverrs[idx],
-         ns[idx]) = stats.calc_hdev(phase, rate, mj, mj)  # stride = mj
-
-    return utils.remove_small_ns(taus_used, hdevs, hdeverrs, ns)
+    return dev(dev_type='ohdev', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
 
 
 def totdev(data, rate=1.0, data_type="phase", taus=None):

@@ -1,4 +1,5 @@
 from . import ci
+from . import utils
 import numpy as np
 
 Array = np.ndarray
@@ -346,7 +347,7 @@ def calc_ttotvar(x, m, tau):
     return ttotvar, n
 
 
-def calc_htotdev(freq, m):
+def calc_htotdev(freq, m, tau):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         calculation of htotdev for one averaging factor m
         tau = m*tau0
@@ -359,78 +360,92 @@ def calc_htotdev(freq, m):
             Averaging factor. tau = m*tau0, where tau0=1/rate.
     """
 
-    N = int(len(freq))  # frequency data, N points
-    m = int(m)
-    n = 0  # number of terms in the sum, for error estimation
-    dev = 0.0  # the deviation we are computing
-    for i in range(0, N - 3 * m + 1):
-        # subsequence of length 3m, from the original phase data
-        xs = freq[i:i + 3 * m]
-        assert len(xs) == 3 * m
-        # remove linear trend. by averaging first/last half,
-        # computing slope, and subtracting
-        half1_idx = int(np.floor(3 * m / 2.0))
-        half2_idx = int(np.ceil(3 * m / 2.0))
-        # m
-        # 1    0:1   2:2
-        mean1 = np.mean(xs[:half1_idx])
-        mean2 = np.mean(xs[half2_idx:])
+    # NOTE at mj==1 we use ohdev(), based on comment from here:
+    # http://www.wriley.com/paper4ht.htm
+    # "For best consistency, the overlapping Hadamard variance is used
+    # instead of the Hadamard total variance at m=1"
+    # FIXME: this uses both freq and phase datasets, which uses double the
+    #  memory really needed...
+    if m == 1:
+        x = utils.frequency2phase(y=freq, rate=m/tau)
+        var, n = calc_hvar(x=x, m=m, tau=tau)
+        dev = np.sqrt(var)
+        err = dev / np.sqrt(n)
+        return dev, err, n
 
-        if int(3 * m) % 2 == 1:  # m is odd
-            # 3m = 2k+1 is odd, with the averages at both ends over k points
-            # the distance between the averages is then k+1 = (3m-1)/2 +1
-            slope = (mean2 - mean1) / ((0.5 * (3 * m - 1) + 1))
-        else:  # m is even
-            # 3m = 2k is even, so distance between averages is k=3m/2
-            slope = (mean2 - mean1) / (0.5 * 3 * m)
+    else:
+        N = int(len(freq))  # frequency data, N points
 
-        # remove the linear trend
-        x0 = [x - slope * (idx - np.floor(3 * m / 2)) for (idx, x) in
-              enumerate(xs)]
-        x0_flip = x0[::-1]  # left-right flipped version of array
-        # extended sequence, to length 9m, by uninverted even reflection
-        xstar = np.concatenate((x0_flip, x0, x0_flip))
-        assert len(xstar) == 9 * m
+        n = 0  # number of terms in the sum, for error estimation
+        dev = 0.0  # the deviation we are computing
+        for i in range(0, N - 3 * m + 1):
+            # subsequence of length 3m, from the original phase data
+            xs = freq[i:i + 3 * m]
+            assert len(xs) == 3 * m
+            # remove linear trend. by averaging first/last half,
+            # computing slope, and subtracting
+            half1_idx = int(np.floor(3 * m / 2.0))
+            half2_idx = int(np.ceil(3 * m / 2.0))
+            # m
+            # 1    0:1   2:2
+            mean1 = np.mean(xs[:half1_idx])
+            mean2 = np.mean(xs[half2_idx:])
 
-        # now compute totdev on these 9m points
-        # 6m unique groups of m-point averages,
-        # all possible overlapping second differences
-        # one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2
-        squaresum = 0.0
-        k = 0
-        for j in range(0, 6 * int(m)):  # summation of the 6m terms.
-            # old naive code
-            # xmean1 = np.mean(xstar[j+0*m : j+1*m])
-            # xmean2 = np.mean(xstar[j+1*m : j+2*m])
-            # xmean3 = np.mean(xstar[j+2*m : j+3*m])
-            # squaresum += pow(xmean1 - 2.0*xmean2 + xmean3, 2)
-            # new faster way of doing the sums
-            if j == 0:
-                # intialize the sum
-                xmean1 = np.sum(xstar[0:m])
-                xmean2 = np.sum(xstar[m:2 * m])
-                xmean3 = np.sum(xstar[2 * m:3 * m])
-            else:
-                # j>=1, subtract old point, add new point
-                xmean1 = xmean1 - xstar[j - 1] + xstar[j + m - 1]  #
-                xmean2 = xmean2 - xstar[m + j - 1] + xstar[j + 2 * m - 1]  #
-                xmean3 = xmean3 - xstar[2 * m + j - 1] + xstar[
-                    j + 3 * m - 1]  #
+            if int(3 * m) % 2 == 1:  # m is odd
+                # 3m = 2k+1 is odd, with the averages at both ends over k points
+                # the distance between the averages is then k+1 = (3m-1)/2 +1
+                slope = (mean2 - mean1) / ((0.5 * (3 * m - 1) + 1))
+            else:  # m is even
+                # 3m = 2k is even, so distance between averages is k=3m/2
+                slope = (mean2 - mean1) / (0.5 * 3 * m)
 
-            squaresum += pow((xmean1 - 2.0 * xmean2 + xmean3) / float(m), 2)
+            # remove the linear trend
+            x0 = [x - slope * (idx - np.floor(3 * m / 2)) for (idx, x) in
+                  enumerate(xs)]
+            x0_flip = x0[::-1]  # left-right flipped version of array
+            # extended sequence, to length 9m, by uninverted even reflection
+            xstar = np.concatenate((x0_flip, x0, x0_flip))
+            assert len(xstar) == 9 * m
 
-            k = k + 1
-        assert k == 6 * m  # check number of terms in the sum
-        squaresum = (1.0 / (6.0 * k)) * squaresum
-        dev += squaresum
-        n = n + 1
+            # now compute totdev on these 9m points
+            # 6m unique groups of m-point averages,
+            # all possible overlapping second differences
+            # one term in the 6m sum:  [ x_i - 2 x_i+m + x_i+2m ]^2
+            squaresum = 0.0
+            k = 0
+            for j in range(0, 6 * int(m)):  # summation of the 6m terms.
+                # old naive code
+                # xmean1 = np.mean(xstar[j+0*m : j+1*m])
+                # xmean2 = np.mean(xstar[j+1*m : j+2*m])
+                # xmean3 = np.mean(xstar[j+2*m : j+3*m])
+                # squaresum += pow(xmean1 - 2.0*xmean2 + xmean3, 2)
+                # new faster way of doing the sums
+                if j == 0:
+                    # intialize the sum
+                    xmean1 = np.sum(xstar[0:m])
+                    xmean2 = np.sum(xstar[m:2 * m])
+                    xmean3 = np.sum(xstar[2 * m:3 * m])
+                else:
+                    # j>=1, subtract old point, add new point
+                    xmean1 = xmean1 - xstar[j - 1] + xstar[j + m - 1]  #
+                    xmean2 = xmean2 - xstar[m + j - 1] + xstar[j + 2 * m - 1]  #
+                    xmean3 = xmean3 - xstar[2 * m + j - 1] + xstar[
+                        j + 3 * m - 1]  #
 
-    # scaling in front of double-sum
-    assert n == N - 3 * m + 1  # sanity check on the number of terms n
-    dev = dev * 1.0 / (N - 3 * m + 1)
-    dev = np.sqrt(dev)
-    error = dev / np.sqrt(n)
-    return (dev, error, n)
+                squaresum += pow((xmean1 - 2.0 * xmean2 + xmean3) / float(m), 2)
+
+                k = k + 1
+            assert k == 6 * m  # check number of terms in the sum
+            squaresum = (1.0 / (6.0 * k)) * squaresum
+            dev += squaresum
+            n = n + 1
+
+        # scaling in front of double-sum
+        assert n == N - 3 * m + 1  # sanity check on the number of terms n
+        dev = dev * 1.0 / (N - 3 * m + 1)
+        dev = np.sqrt(dev)
+        error = dev / np.sqrt(n)
+        return (dev, error, n)
 
 
 def calc_gradev(data, rate, mj, stride, confidence, noisetype):

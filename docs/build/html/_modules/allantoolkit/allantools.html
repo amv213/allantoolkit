@@ -670,26 +670,14 @@
                                                 <span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;htotdev&#39;</span><span class="p">,</span>
                                                 <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span>
                                                 <span class="n">maximum_m</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span>
-    <span class="n">phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
+
     <span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
     <span class="n">devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
     <span class="n">deverrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
     <span class="n">ns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
 
-    <span class="c1"># NOTE at mj==1 we use ohdev(), based on comment from here:</span>
-    <span class="c1"># http://www.wriley.com/paper4ht.htm</span>
-    <span class="c1"># &quot;For best consistency, the overlapping Hadamard variance is used</span>
-    <span class="c1"># instead of the Hadamard total variance at m=1&quot;</span>
-    <span class="c1"># FIXME: this uses both freq and phase datasets, which uses double the memory really needed...</span>
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ms</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="p">(</span><span class="n">devs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-             <span class="n">deverrs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-             <span class="n">ns</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_hdev</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="p">(</span><span class="n">devs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-             <span class="n">deverrs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-             <span class="n">ns</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_htotdev</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">mj</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">mj</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">ms</span><span class="p">)):</span>
+        <span class="n">devs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">deverrs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">ns</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_htotdev</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">tau</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
 

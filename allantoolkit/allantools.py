@@ -473,26 +473,14 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
                                                 dev_type='htotdev',
                                                 taus=taus,
                                                 maximum_m=float(len(freq))/3.0)
-    phase = np.array(phase)
+
     freq = np.array(freq)
     devs = np.zeros_like(taus_used)
     deverrs = np.zeros_like(taus_used)
     ns = np.zeros_like(taus_used)
 
-    # NOTE at mj==1 we use ohdev(), based on comment from here:
-    # http://www.wriley.com/paper4ht.htm
-    # "For best consistency, the overlapping Hadamard variance is used
-    # instead of the Hadamard total variance at m=1"
-    # FIXME: this uses both freq and phase datasets, which uses double the memory really needed...
-    for idx, mj in enumerate(ms):
-        if int(mj) == 1:
-            (devs[idx],
-             deverrs[idx],
-             ns[idx]) = stats.calc_hdev(phase, rate, mj, 1)
-        else:
-            (devs[idx],
-             deverrs[idx],
-             ns[idx]) = stats.calc_htotdev(freq, mj)
+    for idx, (tau, mj) in enumerate(zip(taus_used, ms)):
+        devs[idx], deverrs[idx], ns[idx] = stats.calc_htotdev(freq, mj, tau)
 
     return utils.remove_small_ns(taus_used, devs, deverrs, ns)
 

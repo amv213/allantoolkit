@@ -280,6 +280,7 @@
         <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
 
         <span class="c1"># Calculate error</span>
+        <span class="c1"># FIXME: check if this also applies to tierms</span>
         <span class="n">err</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
         <span class="n">devs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">errs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dev</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">n</span>
@@ -738,7 +739,8 @@
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="tierms"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.tierms">[docs]</a><span class="k">def</span> <span class="nf">tierms</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="tierms"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.tierms">[docs]</a><span class="k">def</span> <span class="nf">tierms</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
+           <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Time Interval Error RMS.</span>
 
 <span class="sd">    Parameters</span>
@@ -756,103 +758,11 @@
 <span class="sd">        tau-list generation.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">phase</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="p">)</span>
-    <span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
-                                               <span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;tierms&#39;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
-
-    <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
-
-    <span class="n">devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-    <span class="n">deverrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-    <span class="n">ns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
-        <span class="n">mj</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj</span><span class="p">)</span>
-
-        <span class="c1"># This seems like an unusual way to</span>
-        <span class="n">phases</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">phase</span><span class="p">[:</span><span class="o">-</span><span class="n">mj</span><span class="p">],</span> <span class="n">phase</span><span class="p">[</span><span class="n">mj</span><span class="p">:]))</span>
-        <span class="n">p_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">phases</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">p_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">phases</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">phases</span> <span class="o">=</span> <span class="n">p_max</span> <span class="o">-</span> <span class="n">p_min</span>
-        <span class="n">tie</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">phases</span> <span class="o">*</span> <span class="n">phases</span><span class="p">))</span>
-
-        <span class="n">ncount</span> <span class="o">=</span> <span class="n">count</span> <span class="o">-</span> <span class="n">mj</span>
-
-        <span class="n">devs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tie</span>
-        <span class="n">deverrs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ncount</span><span class="p">)</span> <span class="c1"># TODO! I THINK THIS IS WRONG!</span>
-        <span class="n">ns</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">ncount</span>
-
-    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;tierms&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+               <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
 
-<span class="c1">#</span>
-<span class="c1"># !!!!!!!</span>
-<span class="c1"># FIXME: mtie_phase_fast() is incomplete.</span>
-<span class="c1"># !!!!!!!</span>
-<span class="c1">#</span>
-<div class="viewcode-block" id="mtie_phase_fast"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.mtie_phase_fast">[docs]</a><span class="k">def</span> <span class="nf">mtie_phase_fast</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; fast binary decomposition algorithm for MTIE</span>
-
-<span class="sd">        See: [Bregni2001]_ STEFANO BREGNI &quot;Fast Algorithms for TVAR and MTIE Computation in</span>
-<span class="sd">        Characterization of Network Synchronization Performance&quot;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">rate</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
-    <span class="n">phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
-    <span class="n">k_max</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">))))</span>
-    <span class="n">phase</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">k_max</span><span class="p">)]</span> <span class="c1"># truncate data to 2**k_max datapoints</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="o">==</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">k_max</span><span class="p">)</span>
-    <span class="c1">#k = 1</span>
-    <span class="n">taus</span> <span class="o">=</span> <span class="p">[</span><span class="nb">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k_max</span><span class="p">)]</span>
-    <span class="c1">#while k &lt;= k_max:</span>
-    <span class="c1">#    tau = pow(2, k)</span>
-    <span class="c1">#    taus.append(tau)</span>
-        <span class="c1">#print tau</span>
-    <span class="c1">#    k += 1</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;taus N=&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">taus</span><span class="p">),</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">taus</span><span class="p">)</span>
-    <span class="n">devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">taus</span><span class="p">))</span>
-    <span class="n">deverrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">taus</span><span class="p">))</span>
-    <span class="n">ns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">taus</span><span class="p">))</span>
-    <span class="n">taus_used</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">taus</span><span class="p">)</span> <span class="c1"># [(1.0/rate)*t for t in taus]</span>
-    <span class="c1"># matrices to store results</span>
-    <span class="n">mtie_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k_max</span><span class="p">))</span>
-    <span class="n">mtie_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k_max</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">kidx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k_max</span><span class="p">):</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="n">kidx</span><span class="o">+</span><span class="mi">1</span>
-        <span class="n">imax</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span><span class="o">-</span><span class="nb">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
-        <span class="c1">#print k, imax</span>
-        <span class="n">tie</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">imax</span><span class="p">)</span>
-        <span class="n">ns</span><span class="p">[</span><span class="n">kidx</span><span class="p">]</span> <span class="o">=</span> <span class="n">imax</span>
-        <span class="c1">#print np.max( tie )</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">imax</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">mtie_max</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">kidx</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">phase</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">phase</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
-                <span class="n">mtie_min</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">kidx</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">phase</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">phase</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-                <span class="n">mtie_max</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">kidx</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">mtie_max</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">kidx</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                                        <span class="n">mtie_max</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">p</span><span class="p">,</span> <span class="n">kidx</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-                <span class="n">mtie_min</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">kidx</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">mtie_min</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">kidx</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                                        <span class="n">mtie_min</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">p</span><span class="p">,</span> <span class="n">kidx</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-
-        <span class="c1">#for i in range(imax):</span>
-            <span class="n">tie</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mtie_max</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">kidx</span><span class="p">]</span> <span class="o">-</span> <span class="n">mtie_min</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">kidx</span><span class="p">]</span>
-            <span class="c1">#print tie[i]</span>
-        <span class="n">devs</span><span class="p">[</span><span class="n">kidx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">tie</span><span class="p">)</span> <span class="c1"># maximum along axis</span>
-        <span class="c1">#print &quot;maximum %2.4f&quot; % devs[kidx]</span>
-        <span class="c1">#print np.amax( tie )</span>
-    <span class="c1">#for tau in taus:</span>
-    <span class="c1">#for</span>
-    <span class="n">devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">devs</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;devs N=&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">devs</span><span class="p">),</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">devs</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;taus N=&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">taus_used</span><span class="p">),</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">taus_used</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
-
-
-<span class="c1">########################################################################</span>
-<span class="c1">#</span>
-<span class="c1">#  gap resistant Allan deviation</span>
-<span class="c1">#</span>
-
+<span class="c1"># TODO: eliminate by making all deviations gap resistant</span>
 <div class="viewcode-block" id="gradev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.gradev">[docs]</a><span class="k">def</span> <span class="nf">gradev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
            <span class="n">ci</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">noisetype</span><span class="o">=</span><span class="s1">&#39;wp&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; gap resistant overlapping Allan deviation</span>

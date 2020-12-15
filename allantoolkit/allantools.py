@@ -83,6 +83,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         dev = np.sqrt(var)
 
         # Calculate error
+        # FIXME: check if this also applies to tierms
         err = dev / np.sqrt(n)
 
         devs[i], errs[i], ns[i] = dev, err, n
@@ -541,7 +542,8 @@ def mtie(data: Array, rate: float = 1., data_type: str = "phase",
                taus=taus, max_af=max_af)
 
 
-def tierms(data, rate=1.0, data_type="phase", taus=None):
+def tierms(data: Array, rate: float = 1., data_type: str = "phase",
+           taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
     """ Time Interval Error RMS.
 
     Parameters
@@ -559,103 +561,11 @@ def tierms(data, rate=1.0, data_type="phase", taus=None):
         tau-list generation.
 
     """
-    phase = utils.input_to_phase(data, rate, data_type)
-    (taus_used, m) = utils.tau_generator(data=phase, rate=rate,
-                                               dev_type='tierms', taus=taus)
-
-    count = len(phase)
-
-    devs = np.zeros_like(taus_used)
-    deverrs = np.zeros_like(taus_used)
-    ns = np.zeros_like(taus_used)
-
-    for idx, mj in enumerate(m):
-        mj = int(mj)
-
-        # This seems like an unusual way to
-        phases = np.column_stack((phase[:-mj], phase[mj:]))
-        p_max = np.max(phases, axis=1)
-        p_min = np.min(phases, axis=1)
-        phases = p_max - p_min
-        tie = np.sqrt(np.mean(phases * phases))
-
-        ncount = count - mj
-
-        devs[idx] = tie
-        deverrs[idx] = 0 / np.sqrt(ncount) # TODO! I THINK THIS IS WRONG!
-        ns[idx] = ncount
-
-    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
+    return dev(dev_type='tierms', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
 
 
-#
-# !!!!!!!
-# FIXME: mtie_phase_fast() is incomplete.
-# !!!!!!!
-#
-def mtie_phase_fast(phase, rate=1.0, data_type="phase", taus=None):
-    """ fast binary decomposition algorithm for MTIE
-
-        See: [Bregni2001]_ STEFANO BREGNI "Fast Algorithms for TVAR and MTIE Computation in
-        Characterization of Network Synchronization Performance"
-    """
-    rate = float(rate)
-    phase = np.asarray(phase)
-    k_max = int(np.floor(np.log2(len(phase))))
-    phase = phase[0:pow(2, k_max)] # truncate data to 2**k_max datapoints
-    assert len(phase) == pow(2, k_max)
-    #k = 1
-    taus = [pow(2, k) for k in range(k_max)]
-    #while k <= k_max:
-    #    tau = pow(2, k)
-    #    taus.append(tau)
-        #print tau
-    #    k += 1
-    print("taus N=", len(taus), " ", taus)
-    devs = np.zeros(len(taus))
-    deverrs = np.zeros(len(taus))
-    ns = np.zeros(len(taus))
-    taus_used = np.array(taus) # [(1.0/rate)*t for t in taus]
-    # matrices to store results
-    mtie_max = np.zeros((len(phase)-1, k_max))
-    mtie_min = np.zeros((len(phase)-1, k_max))
-    for kidx in range(k_max):
-        k = kidx+1
-        imax = len(phase)-pow(2, k)+1
-        #print k, imax
-        tie = np.zeros(imax)
-        ns[kidx] = imax
-        #print np.max( tie )
-        for i in range(imax):
-            if k == 1:
-                mtie_max[i, kidx] = max(phase[i], phase[i+1])
-                mtie_min[i, kidx] = min(phase[i], phase[i+1])
-            else:
-                p = int(pow(2, k-1))
-                mtie_max[i, kidx] = max(mtie_max[i, kidx-1],
-                                        mtie_max[i+p, kidx-1])
-                mtie_min[i, kidx] = min(mtie_min[i, kidx-1],
-                                        mtie_min[i+p, kidx-1])
-
-        #for i in range(imax):
-            tie[i] = mtie_max[i, kidx] - mtie_min[i, kidx]
-            #print tie[i]
-        devs[kidx] = np.amax(tie) # maximum along axis
-        #print "maximum %2.4f" % devs[kidx]
-        #print np.amax( tie )
-    #for tau in taus:
-    #for
-    devs = np.array(devs)
-    print("devs N=", len(devs), " ", devs)
-    print("taus N=", len(taus_used), " ", taus_used)
-    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
-
-
-########################################################################
-#
-#  gap resistant Allan deviation
-#
-
+# TODO: eliminate by making all deviations gap resistant
 def gradev(data, rate=1.0, data_type="phase", taus=None,
            ci=0.9, noisetype='wp'):
     """ gap resistant overlapping Allan deviation

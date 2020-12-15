@@ -192,31 +192,6 @@ def calc_ohvar(x, m, tau):
     return var, n
 
 
-# TODO: Remove
-def calc_hdev(phase, rate, mj, stride):
-
-    tau0 = 1.0 / float(rate)
-    mj = int(mj)
-    stride = int(stride)
-    d3 = phase[3 * mj::stride]
-    d2 = phase[2 * mj::stride]
-    d1 = phase[1 * mj::stride]
-    d0 = phase[::stride]
-
-    n = min(len(d0), len(d1), len(d2), len(d3))
-
-    v_arr = d3[:n] - 3 * d2[:n] + 3 * d1[:n] - d0[:n]
-
-    s = np.sum(v_arr * v_arr)
-
-    if n == 0:
-        n = 1
-
-    h = np.sqrt(s / 6.0 / float(n)) / float(tau0 * mj)
-    e = h / np.sqrt(n)
-    return h, e, n
-
-
 def calc_totvar(x, m, tau):
 
     N = x.size
@@ -518,6 +493,83 @@ def calc_mtie(x, m, tau=None):
     return var, ncount
 
 
+# FIXME: mtie_phase_fast() is incomplete.
+# TODO: Complete and swap in
+def calc_mtie_fast(phase, rate=1.0, data_type="phase", taus=None):
+    """ fast binary decomposition algorithm for MTIE
+
+        See: [Bregni2001]_ STEFANO BREGNI "Fast Algorithms for TVAR and MTIE Computation in
+        Characterization of Network Synchronization Performance"
+    """
+    rate = float(rate)
+    phase = np.asarray(phase)
+    k_max = int(np.floor(np.log2(len(phase))))
+    phase = phase[0:pow(2, k_max)] # truncate data to 2**k_max datapoints
+    assert len(phase) == pow(2, k_max)
+    #k = 1
+    taus = [pow(2, k) for k in range(k_max)]
+    #while k <= k_max:
+    #    tau = pow(2, k)
+    #    taus.append(tau)
+        #print tau
+    #    k += 1
+    print("taus N=", len(taus), " ", taus)
+    devs = np.zeros(len(taus))
+    deverrs = np.zeros(len(taus))
+    ns = np.zeros(len(taus))
+    taus_used = np.array(taus) # [(1.0/rate)*t for t in taus]
+    # matrices to store results
+    mtie_max = np.zeros((len(phase)-1, k_max))
+    mtie_min = np.zeros((len(phase)-1, k_max))
+    for kidx in range(k_max):
+        k = kidx+1
+        imax = len(phase)-pow(2, k)+1
+        #print k, imax
+        tie = np.zeros(imax)
+        ns[kidx] = imax
+        #print np.max( tie )
+        for i in range(imax):
+            if k == 1:
+                mtie_max[i, kidx] = max(phase[i], phase[i+1])
+                mtie_min[i, kidx] = min(phase[i], phase[i+1])
+            else:
+                p = int(pow(2, k-1))
+                mtie_max[i, kidx] = max(mtie_max[i, kidx-1],
+                                        mtie_max[i+p, kidx-1])
+                mtie_min[i, kidx] = min(mtie_min[i, kidx-1],
+                                        mtie_min[i+p, kidx-1])
+
+        #for i in range(imax):
+            tie[i] = mtie_max[i, kidx] - mtie_min[i, kidx]
+            #print tie[i]
+        devs[kidx] = np.amax(tie) # maximum along axis
+        #print "maximum %2.4f" % devs[kidx]
+        #print np.amax( tie )
+    #for tau in taus:
+    #for
+    devs = np.array(devs)
+    print("devs N=", len(devs), " ", devs)
+    print("taus N=", len(taus_used), " ", taus_used)
+    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
+
+
+def calc_tierms(x, m, tau=None):
+
+    count = x.size
+
+    # This seems like an unusual way to
+    phases = np.column_stack((x[:-m], x[m:]))
+    p_max = np.max(phases, axis=1)
+    p_min = np.min(phases, axis=1)
+    phases = p_max - p_min
+    tie = np.sqrt(np.mean(phases * phases))
+
+    var = tie**2
+    ncount = count - m
+
+    return var, ncount
+
+# FIXME: integrate this in normal adev i.e. make all stats gap resistant
 def calc_gradev(data, rate, mj, stride, confidence, noisetype):
     """ see http://www.leapsecond.com/tools/adev_lib.c
         stride = mj for nonoverlapping allan deviation

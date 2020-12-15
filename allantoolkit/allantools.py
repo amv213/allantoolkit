@@ -470,7 +470,8 @@ def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
                taus=taus, max_af=max_af)
 
 
-def theo1(data, rate=1.0, data_type="phase", taus=None):
+def theo1(data: Array, rate: float = 1., data_type: str = "phase",
+          taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Theo1 is a two-sample variance with improved confidence and
         extended averaging factor range. [Howe_theo1]_
@@ -505,41 +506,8 @@ def theo1(data, rate=1.0, data_type="phase", taus=None):
         tau-list generation.
 
     """
-    phase = utils.input_to_phase(data, rate, data_type)
-
-    tau0 = 1.0/rate
-    (taus_used, ms) = utils.tau_generator(data=phase, rate=rate,
-                                                 dev_type='theo1', taus=taus)
-
-    devs = np.zeros_like(taus_used)
-    deverrs = np.zeros_like(taus_used)
-    ns = np.zeros_like(taus_used)
-
-    N = len(phase)
-    for idx, m in enumerate(ms):
-        m = int(m) # to avoid: VisibleDeprecationWarning: using a
-                   # non-integer number instead of an integer will
-                   # result in an error in the future
-        assert m % 2 == 0 # m must be even
-        dev = 0
-        n = 0
-        for i in range(int(N-m)):
-            s = 0
-            for d in range(int(m/2)): # inner sum
-                pre = 1.0 / (float(m)/2 - float(d))
-                s += pre*pow(phase[i]-phase[i-d+int(m/2)] +
-                             phase[i+m]-phase[i+d+int(m/2)], 2)
-                n = n+1
-            dev += s
-        assert n == (N-m)*m/2 # N-m outer sums, m/2 inner sums
-        dev = dev/(0.75*(N-m)*pow(m*tau0, 2))
-        # factor 0.75 used here? http://tf.nist.gov/general/pdf/1990.pdf
-        # but not here? http://tf.nist.gov/timefreq/general/pdf/2220.pdf page 29
-        devs[idx] = np.sqrt(dev)
-        deverrs[idx] = devs[idx] / np.sqrt(N-m)
-        ns[idx] = n
-
-    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
+    return dev(dev_type='theo1', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
 
 
 def tierms(data, rate=1.0, data_type="phase", taus=None):

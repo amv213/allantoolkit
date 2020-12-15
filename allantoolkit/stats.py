@@ -450,6 +450,33 @@ def calc_htotvar(x, m, tau):
         return var, n
 
 
+def calc_theo1(x, m, tau):
+
+    assert m % 2 == 0  # m must be even
+
+    N = x.size
+
+    var = 0
+    n = 0
+    for i in range(int(N - m)):
+        s = 0
+        for d in range(int(m / 2)):  # inner sum
+            pre = 1.0 / (float(m) / 2 - float(d))
+            s += pre * pow(x[i] - x[i - d + int(m / 2)] +
+                           x[i + m] - x[i + d + int(m / 2)], 2)
+            n = n + 1
+        var += s
+    assert n == (N - m) * m / 2  # N-m outer sums, m/2 inner sums
+
+    var = var / (0.75 * (N - m) * tau**2)
+    # factor 0.75 used here? http://tf.nist.gov/general/pdf/1990.pdf
+    # but not here? http://tf.nist.gov/timefreq/general/pdf/2220.pdf page 29
+
+    # TODO: is the effective n to return this one or just N-m?
+    # allantools had it at N-m...
+    return var, n
+
+
 def calc_gradev(data, rate, mj, stride, confidence, noisetype):
     """ see http://www.leapsecond.com/tools/adev_lib.c
         stride = mj for nonoverlapping allan deviation

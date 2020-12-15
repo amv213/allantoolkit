@@ -265,8 +265,7 @@ def calc_mtotvar(x, m, tau):
     31 st PTTI Meeting, pp. 267-276, Dec. 1999.
     """
 
-    tau0 = tau / m  # data sampling interval
-
+    # Start with N phase data points to be analysed at averaging time tau
     N = x.size
 
     # MTOT is computed from a set of N-3m+1 subsequences of 3*m points
@@ -276,30 +275,28 @@ def calc_mtotvar(x, m, tau):
     var = 0.0  # the variance we are computing
     for xi in subseqs:
 
-        # Step 1.
-        # remove linear trend. by averaging first/last half,
-        # computing slope, and subtracting
-        w = xi.size // 2
-        mu1, mu2 = np.nanmean(xi[:w]),  np.nanmean(xi[-w:])
+        # First, a linear trend (frequency offset) is removed from the
+        # subsequence by averaging the first and last halves of the subsequence
+        # and dividing by half the interval
 
-        if int(3 * m) % 2 == 1:  # m is odd
-            # 3m = 2k+1 is odd, with the averages at both ends over k points
-            # the distance between the averages is then k+1 = (3m-1)/2 +1
-            slope = (mu2 - mu1) / ((0.5 * (3 * m - 1) + 1) * tau0)
-        else:  # m is even
-            # 3m = 2k is even, so distance between averages is k=m/2
-            slope = (mu2 - mu1) / (0.5 * 3 * m * tau0)
+        # calc mean of halves
+        w = xi.size // 2  # width of a `half`
+        mu1, mu2 = np.nanmean(xi[:w]),  np.nanmean(xi[-w:])  # mean of `halves`
+
+        # calc slope
+        slope = (mu2 - mu1) / (w + (xi.size % 2))  # extra sep if odd n samples
 
         # remove the linear trend
-        x0 = [x - slope * idx * tau0 for (idx, x) in enumerate(xi)]
-        x0_flip = x0[::-1]  # left-right flipped version of array
+        xi0 = xi - slope * np.arange(xi.size)
 
-        # Step 2.
-        # extend sequence, by uninverted even reflection
-        # extended sequence xstar, of length 9m,
-        xstar = np.concatenate((x0_flip, x0, x0_flip))
-        assert len(xstar) == 9 * m
+        # Then the offset-removed subsequence is extended at both ends by
+        # uninverted, even reflection: 3m -> 9m points.
+        xstar = np.pad(xi0, xi0.size, 'symmetric', reflect_type='even')
+        assert xstar.size == 9*m
 
+        # ---
+
+        # Next the modified Allan variance is computed for these 9m points
         # now compute mdev on these 9m points
         # 6m unique groups of m-point averages,
         # use all possible overlapping second differences
@@ -333,9 +330,9 @@ def calc_mtotvar(x, m, tau):
         var += squaresum
         n = n + 1
 
-    # scaling in front of double-sum
+    # scaling in front of double sum
     assert n == N - 3 * m + 1  # sanity check on the number of terms n
-    var = var * 1.0 / (2.0 * pow(m * tau0, 2) * (N - 3 * m + 1))
+    var = var * 1.0 / (2.0 * pow(tau, 2) * (N - 3 * m + 1))
 
     return var, n
 

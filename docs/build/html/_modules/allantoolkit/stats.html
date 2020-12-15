@@ -462,8 +462,7 @@
 <span class="sd">    31 st PTTI Meeting, pp. 267-276, Dec. 1999.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">tau0</span> <span class="o">=</span> <span class="n">tau</span> <span class="o">/</span> <span class="n">m</span>  <span class="c1"># data sampling interval</span>
-
+    <span class="c1"># Start with N phase data points to be analysed at averaging time tau</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
 
     <span class="c1"># MTOT is computed from a set of N-3m+1 subsequences of 3*m points</span>
@@ -473,30 +472,28 @@
     <span class="n">var</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># the variance we are computing</span>
     <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">subseqs</span><span class="p">:</span>
 
-        <span class="c1"># Step 1.</span>
-        <span class="c1"># remove linear trend. by averaging first/last half,</span>
-        <span class="c1"># computing slope, and subtracting</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
-        <span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">xi</span><span class="p">[:</span><span class="n">w</span><span class="p">]),</span>  <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">xi</span><span class="p">[</span><span class="o">-</span><span class="n">w</span><span class="p">:])</span>
+        <span class="c1"># First, a linear trend (frequency offset) is removed from the</span>
+        <span class="c1"># subsequence by averaging the first and last halves of the subsequence</span>
+        <span class="c1"># and dividing by half the interval</span>
 
-        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># m is odd</span>
-            <span class="c1"># 3m = 2k+1 is odd, with the averages at both ends over k points</span>
-            <span class="c1"># the distance between the averages is then k+1 = (3m-1)/2 +1</span>
-            <span class="n">slope</span> <span class="o">=</span> <span class="p">(</span><span class="n">mu2</span> <span class="o">-</span> <span class="n">mu1</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">tau0</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># m is even</span>
-            <span class="c1"># 3m = 2k is even, so distance between averages is k=m/2</span>
-            <span class="n">slope</span> <span class="o">=</span> <span class="p">(</span><span class="n">mu2</span> <span class="o">-</span> <span class="n">mu1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">*</span> <span class="n">tau0</span><span class="p">)</span>
+        <span class="c1"># calc mean of halves</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># width of a `half`</span>
+        <span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">xi</span><span class="p">[:</span><span class="n">w</span><span class="p">]),</span>  <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">xi</span><span class="p">[</span><span class="o">-</span><span class="n">w</span><span class="p">:])</span>  <span class="c1"># mean of `halves`</span>
+
+        <span class="c1"># calc slope</span>
+        <span class="n">slope</span> <span class="o">=</span> <span class="p">(</span><span class="n">mu2</span> <span class="o">-</span> <span class="n">mu1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">w</span> <span class="o">+</span> <span class="p">(</span><span class="n">xi</span><span class="o">.</span><span class="n">size</span> <span class="o">%</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># extra sep if odd n samples</span>
 
         <span class="c1"># remove the linear trend</span>
-        <span class="n">x0</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">-</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">*</span> <span class="n">tau0</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xi</span><span class="p">)]</span>
-        <span class="n">x0_flip</span> <span class="o">=</span> <span class="n">x0</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># left-right flipped version of array</span>
+        <span class="n">xi0</span> <span class="o">=</span> <span class="n">xi</span> <span class="o">-</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">xi</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 
-        <span class="c1"># Step 2.</span>
-        <span class="c1"># extend sequence, by uninverted even reflection</span>
-        <span class="c1"># extended sequence xstar, of length 9m,</span>
-        <span class="n">xstar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">x0_flip</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x0_flip</span><span class="p">))</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">xstar</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span> <span class="o">*</span> <span class="n">m</span>
+        <span class="c1"># Then the offset-removed subsequence is extended at both ends by</span>
+        <span class="c1"># uninverted, even reflection: 3m -&gt; 9m points.</span>
+        <span class="n">xstar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">xi0</span><span class="p">,</span> <span class="n">xi0</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="s1">&#39;symmetric&#39;</span><span class="p">,</span> <span class="n">reflect_type</span><span class="o">=</span><span class="s1">&#39;even&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">xstar</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">9</span><span class="o">*</span><span class="n">m</span>
 
+        <span class="c1"># ---</span>
+
+        <span class="c1"># Next the modified Allan variance is computed for these 9m points</span>
         <span class="c1"># now compute mdev on these 9m points</span>
         <span class="c1"># 6m unique groups of m-point averages,</span>
         <span class="c1"># use all possible overlapping second differences</span>
@@ -530,9 +527,9 @@
         <span class="n">var</span> <span class="o">+=</span> <span class="n">squaresum</span>
         <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
 
-    <span class="c1"># scaling in front of double-sum</span>
+    <span class="c1"># scaling in front of double sum</span>
     <span class="k">assert</span> <span class="n">n</span> <span class="o">==</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># sanity check on the number of terms n</span>
-    <span class="n">var</span> <span class="o">=</span> <span class="n">var</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="n">tau0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">var</span> <span class="o">=</span> <span class="n">var</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="n">n</span></div>
 

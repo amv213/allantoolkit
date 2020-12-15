@@ -43,8 +43,15 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         .ns:    array with number of values used to compute each deviation.
     """
 
-    # Work with phase data, in units of seconds
-    x = utils.input_to_phase(data=data, rate=rate, data_type=data_type)
+    if dev_type == 'htotdev':
+        # Work with frequency data
+        x = data if data_type == 'freq' else utils.phase2frequency(x=data,
+                                                                   rate=rate)
+    else:
+        # Work with phase data, in units of seconds
+        x = utils.input_to_phase(data=data, rate=rate, data_type=data_type)
+
+
 
     # FIXME: remove this once modified mtotdev tests, mtotdev can be autocapped
     #  by Stable32 to len(x) // 2
@@ -425,8 +432,8 @@ def ttotdev(data: Array, rate: float = 1., data_type: str = "phase",
                taus=taus, max_af=max_af)
 
 
-
-def htotdev(data, rate=1.0, data_type="phase", taus=None):
+def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
+            taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Hadamard Total deviation.
         Better confidence at long averages for Hadamard deviation
@@ -459,30 +466,8 @@ def htotdev(data, rate=1.0, data_type="phase", taus=None):
         tau-list generation.
 
     """
-    if data_type == "phase":
-        phase = data
-        freq = utils.phase2frequency(phase, rate)
-    elif data_type == "freq":
-        phase = utils.frequency2phase(data, rate)
-        freq = data
-    else:
-        raise Exception("unknown data_type: " + data_type)
-
-    rate = float(rate)
-    (taus_used, ms) = utils.tau_generator(data=freq, rate=rate,
-                                                dev_type='htotdev',
-                                                taus=taus,
-                                                maximum_m=float(len(freq))/3.0)
-
-    freq = np.array(freq)
-    devs = np.zeros_like(taus_used)
-    deverrs = np.zeros_like(taus_used)
-    ns = np.zeros_like(taus_used)
-
-    for idx, (tau, mj) in enumerate(zip(taus_used, ms)):
-        devs[idx], deverrs[idx], ns[idx] = stats.calc_htotdev(freq, mj, tau)
-
-    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
+    return dev(dev_type='htotdev', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
 
 
 def theo1(data, rate=1.0, data_type="phase", taus=None):

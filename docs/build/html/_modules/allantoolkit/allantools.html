@@ -240,8 +240,15 @@
 <span class="sd">        .ns:    array with number of values used to compute each deviation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Work with phase data, in units of seconds</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s1">&#39;htotdev&#39;</span><span class="p">:</span>
+        <span class="c1"># Work with frequency data</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span> <span class="k">else</span> <span class="n">utils</span><span class="o">.</span><span class="n">phase2frequency</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                                                                   <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Work with phase data, in units of seconds</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span>
+
+
 
     <span class="c1"># FIXME: remove this once modified mtotdev tests, mtotdev can be autocapped</span>
     <span class="c1">#  by Stable32 to len(x) // 2</span>
@@ -622,8 +629,8 @@
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="htotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.htotdev">[docs]</a><span class="k">def</span> <span class="nf">htotdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="htotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.htotdev">[docs]</a><span class="k">def</span> <span class="nf">htotdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
+            <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
 <span class="sd">        Hadamard Total deviation.</span>
 <span class="sd">        Better confidence at long averages for Hadamard deviation</span>
@@ -656,30 +663,8 @@
 <span class="sd">        tau-list generation.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;phase&quot;</span><span class="p">:</span>
-        <span class="n">phase</span> <span class="o">=</span> <span class="n">data</span>
-        <span class="n">freq</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">phase2frequency</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">rate</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;freq&quot;</span><span class="p">:</span>
-        <span class="n">phase</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">frequency2phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">)</span>
-        <span class="n">freq</span> <span class="o">=</span> <span class="n">data</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;unknown data_type: &quot;</span> <span class="o">+</span> <span class="n">data_type</span><span class="p">)</span>
-
-    <span class="n">rate</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
-    <span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">ms</span><span class="p">)</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span>
-                                                <span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;htotdev&#39;</span><span class="p">,</span>
-                                                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span>
-                                                <span class="n">maximum_m</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span>
-
-    <span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
-    <span class="n">devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-    <span class="n">deverrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-    <span class="n">ns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">taus_used</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">mj</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">ms</span><span class="p">)):</span>
-        <span class="n">devs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">deverrs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">ns</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_htotdev</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">tau</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus_used</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">deverrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;htotdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+               <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="theo1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.theo1">[docs]</a><span class="k">def</span> <span class="nf">theo1</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

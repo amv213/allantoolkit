@@ -544,7 +544,7 @@
     <span class="k">return</span> <span class="n">ttotvar</span><span class="p">,</span> <span class="n">n</span></div>
 
 
-<div class="viewcode-block" id="calc_htotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_htotdev">[docs]</a><span class="k">def</span> <span class="nf">calc_htotdev</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+<div class="viewcode-block" id="calc_htotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_htotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_htotvar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
 <span class="sd">        calculation of htotdev for one averaging factor m</span>
 <span class="sd">        tau = m*tau0</span>
@@ -557,6 +557,11 @@
 <span class="sd">            Averaging factor. tau = m*tau0, where tau0=1/rate.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># NOTE: had to call parameter `x` to match the signature of all other</span>
+    <span class="c1"># callables, but this functions operates on fractional frequency datasets!!</span>
+    <span class="c1"># so this `x` should be an array of frequencies</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">x</span>
+
     <span class="c1"># NOTE at mj==1 we use ohdev(), based on comment from here:</span>
     <span class="c1"># http://www.wriley.com/paper4ht.htm</span>
     <span class="c1"># &quot;For best consistency, the overlapping Hadamard variance is used</span>
@@ -566,15 +571,13 @@
     <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">frequency2phase</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">m</span><span class="o">/</span><span class="n">tau</span><span class="p">)</span>
         <span class="n">var</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">calc_hvar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
-        <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
-        <span class="n">err</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">dev</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">n</span>
+        <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="n">n</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">N</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span>  <span class="c1"># frequency data, N points</span>
 
         <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># number of terms in the sum, for error estimation</span>
-        <span class="n">dev</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># the deviation we are computing</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># the deviation we are computing</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
             <span class="c1"># subsequence of length 3m, from the original phase data</span>
             <span class="n">xs</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">]</span>
@@ -634,15 +637,14 @@
                 <span class="n">k</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="k">assert</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">m</span>  <span class="c1"># check number of terms in the sum</span>
             <span class="n">squaresum</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">6.0</span> <span class="o">*</span> <span class="n">k</span><span class="p">))</span> <span class="o">*</span> <span class="n">squaresum</span>
-            <span class="n">dev</span> <span class="o">+=</span> <span class="n">squaresum</span>
+            <span class="n">var</span> <span class="o">+=</span> <span class="n">squaresum</span>
             <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
 
         <span class="c1"># scaling in front of double-sum</span>
         <span class="k">assert</span> <span class="n">n</span> <span class="o">==</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># sanity check on the number of terms n</span>
-        <span class="n">dev</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
-        <span class="n">error</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span></div>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">var</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="n">n</span></div>
 
 
 <div class="viewcode-block" id="calc_gradev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_gradev">[docs]</a><span class="k">def</span> <span class="nf">calc_gradev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">confidence</span><span class="p">,</span> <span class="n">noisetype</span><span class="p">):</span>

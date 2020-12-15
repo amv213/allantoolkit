@@ -347,7 +347,7 @@ def calc_ttotvar(x, m, tau):
     return ttotvar, n
 
 
-def calc_htotdev(freq, m, tau):
+def calc_htotvar(x, m, tau):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         calculation of htotdev for one averaging factor m
         tau = m*tau0
@@ -360,6 +360,11 @@ def calc_htotdev(freq, m, tau):
             Averaging factor. tau = m*tau0, where tau0=1/rate.
     """
 
+    # NOTE: had to call parameter `x` to match the signature of all other
+    # callables, but this functions operates on fractional frequency datasets!!
+    # so this `x` should be an array of frequencies
+    freq = x
+
     # NOTE at mj==1 we use ohdev(), based on comment from here:
     # http://www.wriley.com/paper4ht.htm
     # "For best consistency, the overlapping Hadamard variance is used
@@ -369,15 +374,13 @@ def calc_htotdev(freq, m, tau):
     if m == 1:
         x = utils.frequency2phase(y=freq, rate=m/tau)
         var, n = calc_hvar(x=x, m=m, tau=tau)
-        dev = np.sqrt(var)
-        err = dev / np.sqrt(n)
-        return dev, err, n
+        return var, n
 
     else:
         N = int(len(freq))  # frequency data, N points
 
         n = 0  # number of terms in the sum, for error estimation
-        dev = 0.0  # the deviation we are computing
+        var = 0.0  # the deviation we are computing
         for i in range(0, N - 3 * m + 1):
             # subsequence of length 3m, from the original phase data
             xs = freq[i:i + 3 * m]
@@ -437,15 +440,14 @@ def calc_htotdev(freq, m, tau):
                 k = k + 1
             assert k == 6 * m  # check number of terms in the sum
             squaresum = (1.0 / (6.0 * k)) * squaresum
-            dev += squaresum
+            var += squaresum
             n = n + 1
 
         # scaling in front of double-sum
         assert n == N - 3 * m + 1  # sanity check on the number of terms n
-        dev = dev * 1.0 / (N - 3 * m + 1)
-        dev = np.sqrt(dev)
-        error = dev / np.sqrt(n)
-        return (dev, error, n)
+        var = var * 1.0 / (N - 3 * m + 1)
+
+        return var, n
 
 
 def calc_gradev(data, rate, mj, stride, confidence, noisetype):

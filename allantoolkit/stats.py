@@ -4,6 +4,7 @@ import numpy as np
 Array = np.ndarray
 
 
+# TODO: remove
 def oadev_core(x: Array, af: int, rate: float, stride: int):
     """Main algorithm for adev() and oadev() calculations.
 
@@ -86,6 +87,39 @@ def calc_oadev(x, m, tau):
     n = N - 2*m  # capped by i+2m
 
     return var, n
+
+
+def calc_mdev(x, m , tau):
+
+    # this is a 'loop-unrolled' algorithm following
+    # http://www.leapsecond.com/tools/adev_lib.c
+
+    # First loop sum
+    d0 = x[0:m]
+    d1 = x[m:2 * m]
+    d2 = x[2 * m:3 * m]
+    e = min(len(d0), len(d1), len(d2))
+    v = np.sum(d2[:e] - 2 * d1[:e] + d0[:e])
+    s = v * v
+
+    # Second part of sum
+    d3 = x[3 * m:]
+    d2 = x[2 * m:]
+    d1 = x[1 * m:]
+    d0 = x[0:]
+
+    e = min(len(d0), len(d1), len(d2), len(d3))
+    n = e + 1
+
+    v_arr = v + np.cumsum(d3[:e] - 3 * d2[:e] + 3 * d1[:e] - d0[:e])
+
+    s = s + np.sum(v_arr * v_arr)
+    s /= 2.0 * m * m * tau * tau * n
+
+    return s, n
+
+
+
 
 
 def calc_hdev(phase, rate, mj, stride):

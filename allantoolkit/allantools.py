@@ -149,6 +149,54 @@ def oadev(data: Array, rate: float = 1., data_type: str = "phase",
                taus=taus, max_af=max_af)
 
 
+def mdev(data: Array, rate: float = 1., data_type: str = "phase",
+         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+    """  Modified Allan deviation.
+         Used to distinguish between White and Flicker Phase Modulation.
+
+    .. math::
+
+        \\sigma^2_{MDEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-3m+1) }
+        \\sum_{j=1}^{N-3m+1} \\lbrace
+        \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
+
+    see http://www.leapsecond.com/tools/adev_lib.c
+
+    NIST [SP1065]_ eqn (14), page 17.
+
+    Parameters
+    ----------
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
+    rate: float
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
+    taus: np.array
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
+        tau-list generation.
+
+    Returns
+    -------
+    (taus2, md, mde, ns): tuple
+          Tuple of values
+    taus2: np.array
+        Tau values for which td computed
+    md: np.array
+        Computed mdev for each tau value
+    mde: np.array
+        mdev errors
+    ns: np.array
+        Values of N used in each mdev calculation
+
+    """
+
+    return dev(dev_type='mdev', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
+
+
 def tdev(data, rate=1.0, data_type="phase", taus=None):
     """ Time deviation.
         Based on modified Allan variance.
@@ -198,96 +246,6 @@ def tdev(data, rate=1.0, data_type="phase", taus=None):
     td = taus * md / np.sqrt(3.0)
     tde = td / np.sqrt(ns)
     return taus, td, tde, ns
-
-
-def mdev(data, rate=1.0, data_type="phase", taus=None):
-    """  Modified Allan deviation.
-         Used to distinguish between White and Flicker Phase Modulation.
-
-    .. math::
-
-        \\sigma^2_{MDEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-3m+1) }
-        \\sum_{j=1}^{N-3m+1} \\lbrace
-        \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
-
-    see http://www.leapsecond.com/tools/adev_lib.c
-
-    NIST [SP1065]_ eqn (14), page 17.
-
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
-
-    Returns
-    -------
-    (taus2, md, mde, ns): tuple
-          Tuple of values
-    taus2: np.array
-        Tau values for which td computed
-    md: np.array
-        Computed mdev for each tau value
-    mde: np.array
-        mdev errors
-    ns: np.array
-        Values of N used in each mdev calculation
-
-    """
-    phase = utils.input_to_phase(data, rate, data_type)
-    (taus_used, ms) = utils.tau_generator(data=phase, rate=rate,
-                                                 dev_type='mdev', taus=taus)
-    data, taus = np.array(phase), np.array(taus)
-
-    md = np.zeros_like(taus_used)
-    mderr = np.zeros_like(taus_used)
-    ns = np.zeros_like(taus_used)
-
-    # this is a 'loop-unrolled' algorithm following
-    # http://www.leapsecond.com/tools/adev_lib.c
-    for idx, m in enumerate(ms):
-        m = int(m) # without this we get: VisibleDeprecationWarning:
-                   # using a non-integer number instead of an integer
-                   # will result in an error in the future
-        tau = taus_used[idx]
-
-        # First loop sum
-        d0 = phase[0:m]
-        d1 = phase[m:2*m]
-        d2 = phase[2*m:3*m]
-        e = min(len(d0), len(d1), len(d2))
-        v = np.sum(d2[:e] - 2* d1[:e] + d0[:e])
-        s = v * v
-
-        # Second part of sum
-        d3 = phase[3*m:]
-        d2 = phase[2*m:]
-        d1 = phase[1*m:]
-        d0 = phase[0:]
-
-        e = min(len(d0), len(d1), len(d2), len(d3))
-        n = e + 1
-
-        v_arr = v + np.cumsum(d3[:e] - 3 * d2[:e] + 3 * d1[:e] - d0[:e])
-
-        s = s + np.sum(v_arr * v_arr)
-        s /= 2.0 * m * m * tau * tau * n
-        s = np.sqrt(s)
-
-        md[idx] = s
-        mderr[idx] = (s / np.sqrt(n))
-        ns[idx] = n
-
-    return utils.remove_small_ns(taus_used, md, mderr, ns)
-
 
 def ohdev(data, rate=1.0, data_type="phase", taus=None):
     """ Overlapping Hadamard deviation.

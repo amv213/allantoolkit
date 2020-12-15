@@ -556,7 +556,7 @@ tau-list generation.</p></li>
 
 <dl class="py function">
 <dt id="allantoolkit.allantools.mtie">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">mtie</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#mtie"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.mtie" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">mtie</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_af</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.allantools.DevResult" title="allantoolkit.allantools.DevResult">allantoolkit.allantools.DevResult</a><a class="reference internal" href="_modules/allantoolkit/allantools.html#mtie"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.mtie" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum Time Interval Error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -583,34 +583,6 @@ dataset is extended somehow?</p>
 <dd><p>fast binary decomposition algorithm for MTIE</p>
 <p>See: <a class="reference internal" href="references.html#bregni2001" id="id4"><span>[Bregni2001]</span></a> STEFANO BREGNI “Fast Algorithms for TVAR and MTIE Computation in
 Characterization of Network Synchronization Performance”</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="allantoolkit.allantools.mtie_rolling_window">
-<code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">mtie_rolling_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">window</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/allantools.html#mtie_rolling_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.allantools.mtie_rolling_window" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make an ndarray with a rolling window of the last dimension, from
-<a class="reference external" href="http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html">http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>array_like</em>) – Array to add rolling window to</p></li>
-<li><p><strong>window</strong> (<em>int</em>) – Size of rolling window</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>Array that is a view of the original array with a added dimension</em></p></li>
-<li><p><em>of size window.</em></p></li>
-</ul>
-</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This may consume large amounts of memory. See discussion:
-<a class="reference external" href="https://mail.python.org/pipermail/numpy-discussion/2011-January/054364.html">https://mail.python.org/pipermail/numpy-discussion/2011-January/054364.html</a>
-<a class="reference external" href="https://mail.python.org/pipermail/numpy-discussion/2011-January/054370.html">https://mail.python.org/pipermail/numpy-discussion/2011-January/054370.html</a></p>
-</div>
 </dd></dl>
 
 <dl class="py function">
@@ -1940,6 +1912,11 @@ m is averaging factor\end{aligned}\end{align} \]</div>
 </dd></dl>
 
 <dl class="py function">
+<dt id="allantoolkit.stats.calc_mtie">
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_mtie</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">m</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_mtie"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_mtie" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="allantoolkit.stats.calc_mtotvar">
 <code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_mtotvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">m</span></em>, <em class="sig-param"><span class="n">tau</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_mtotvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_mtotvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>PRELIMINARY - REQUIRES FURTHER TESTING.
@@ -2161,6 +2138,34 @@ phase.</p>
 <dd class="field-even"><p>array of phase data.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.utils.mtie_rolling_window">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">mtie_rolling_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">window</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#mtie_rolling_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.mtie_rolling_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make an ndarray with a rolling window of the last dimension, from
+<a class="reference external" href="http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html">http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>array_like</em>) – Array to add rolling window to</p></li>
+<li><p><strong>window</strong> (<em>int</em>) – Size of rolling window</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>Array that is a view of the original array with a added dimension</em></p></li>
+<li><p><em>of size window.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This may consume large amounts of memory. See discussion:
+<a class="reference external" href="https://mail.python.org/pipermail/numpy-discussion/2011-January/054364.html">https://mail.python.org/pipermail/numpy-discussion/2011-January/054364.html</a>
+<a class="reference external" href="https://mail.python.org/pipermail/numpy-discussion/2011-January/054370.html">https://mail.python.org/pipermail/numpy-discussion/2011-January/054370.html</a></p>
+</div>
 </dd></dl>
 
 <dl class="py function">

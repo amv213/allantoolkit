@@ -477,6 +477,47 @@ def calc_theo1(x, m, tau):
     return var, n
 
 
+def calc_mtie(x, m, tau=None):
+
+    try:
+        # the older algorithm uses a lot of memory
+        # but can be used for short datasets.
+        rw = utils.mtie_rolling_window(a=x, window=m+1)
+        win_max = np.max(rw, axis=1)
+        win_min = np.min(rw, axis=1)
+        tie = win_max - win_min
+        dev = np.max(tie)
+
+    except:
+        if int(m + 1) < 1:
+            raise ValueError("`window` must be at least 1.")
+        if int(m + 1) > x.shape[-1]:
+            raise ValueError("`window` is too long.")
+
+        currMax = np.max(x[0:m])
+        currMin = np.min(x[0:m])
+        dev = currMax - currMin
+        for winStartIdx in range(1, int(x.shape[0] - m)):
+            winEndIdx = m + winStartIdx
+            if currMax == x[winStartIdx - 1]:
+                currMax = np.max(x[winStartIdx:winEndIdx])
+            elif currMax < x[winEndIdx]:
+                currMax = x[winEndIdx]
+
+            if currMin == x[winStartIdx - 1]:
+                currMin = np.min(x[winStartIdx:winEndIdx])
+            elif currMin > x[winEndIdx]:
+                currMin = x[winEndIdx]
+
+            if dev < currMax - currMin:
+                dev = currMax - currMin
+
+    var = dev**2
+    ncount = x.shape[0] - m
+
+    return var, ncount
+
+
 def calc_gradev(data, rate, mj, stride, confidence, noisetype):
     """ see http://www.leapsecond.com/tools/adev_lib.c
         stride = mj for nonoverlapping allan deviation

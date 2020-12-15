@@ -520,3 +520,36 @@ def three_cornered_hat_phase(x_ab: Array, x_bc: Array, x_ca: Array,
     err_a = np.array([d/np.sqrt(nn) for (d, nn) in zip(dev_a, ns_ab)])
 
     return tau_ab, dev_a, err_a, ns_ab
+
+
+def mtie_rolling_window(a, window):
+    """
+    Make an ndarray with a rolling window of the last dimension, from
+    http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html
+
+    Parameters
+    ----------
+    a : array_like
+        Array to add rolling window to
+    window : int
+        Size of rolling window
+
+    Returns
+    -------
+    Array that is a view of the original array with a added dimension
+    of size window.
+
+    Note
+    ----
+    This may consume large amounts of memory. See discussion:
+    https://mail.python.org/pipermail/numpy-discussion/2011-January/054364.html
+    https://mail.python.org/pipermail/numpy-discussion/2011-January/054370.html
+
+    """
+    if window < 1:
+        raise ValueError("`window` must be at least 1.")
+    if window > a.shape[-1]:
+        raise ValueError("`window` is too long.")
+    shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
+    strides = a.strides + (a.strides[-1],)
+    return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)

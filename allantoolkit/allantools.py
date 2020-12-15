@@ -510,6 +510,37 @@ def theo1(data: Array, rate: float = 1., data_type: str = "phase",
                taus=taus, max_af=max_af)
 
 
+# FIXME: implement TheoBR and TheoH
+
+
+def mtie(data: Array, rate: float = 1., data_type: str = "phase",
+         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+    """ Maximum Time Interval Error.
+
+    Parameters
+    ----------
+    data: np.array
+        Input data. Provide either phase or frequency (fractional,
+        adimensional).
+    rate: float
+        The sampling rate for data, in Hz. Defaults to 1.0
+    data_type: {'phase', 'freq'}
+        Data type, i.e. phase or frequency. Defaults to "phase".
+    taus: np.array
+        Array of tau values, in seconds, for which to compute statistic.
+        Optionally set taus=["all"|"octave"|"decade"] for automatic
+        tau-list generation.
+
+    Notes
+    -----
+    this seems to correspond to Stable32 setting "Fast(u)"
+    Stable32 also has "Decade" and "Octave" modes where the
+    dataset is extended somehow?
+    """
+    return dev(dev_type='mtie', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
+
+
 def tierms(data, rate=1.0, data_type="phase", taus=None):
     """ Time Interval Error RMS.
 
@@ -556,110 +587,6 @@ def tierms(data, rate=1.0, data_type="phase", taus=None):
 
     return utils.remove_small_ns(taus_used, devs, deverrs, ns)
 
-
-def mtie_rolling_window(a, window):
-    """
-    Make an ndarray with a rolling window of the last dimension, from
-    http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html
-
-    Parameters
-    ----------
-    a : array_like
-        Array to add rolling window to
-    window : int
-        Size of rolling window
-
-    Returns
-    -------
-    Array that is a view of the original array with a added dimension
-    of size window.
-    
-    Note
-    ----
-    This may consume large amounts of memory. See discussion:
-    https://mail.python.org/pipermail/numpy-discussion/2011-January/054364.html
-    https://mail.python.org/pipermail/numpy-discussion/2011-January/054370.html
-
-    """
-    if window < 1:
-        raise ValueError("`window` must be at least 1.")
-    if window > a.shape[-1]:
-        raise ValueError("`window` is too long.")
-    shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
-    strides = a.strides + (a.strides[-1],)
-    return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
-
-
-def mtie(data, rate=1.0, data_type="phase", taus=None):
-    """ Maximum Time Interval Error.
-
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
-
-    Notes
-    -----
-    this seems to correspond to Stable32 setting "Fast(u)"
-    Stable32 also has "Decade" and "Octave" modes where the
-    dataset is extended somehow?
-    """
-    phase = utils.input_to_phase(data, rate, data_type)
-    (taus_used, m) = utils.tau_generator(data=phase, rate=rate,
-                                                dev_type='mtie', taus=taus)
-    devs = np.zeros_like(taus_used)
-    deverrs = np.zeros_like(taus_used)
-    ns = np.zeros_like(taus_used)
-
-    for idx, mj in enumerate(m):
-        try:
-            # the older algorithm uses a lot of memory
-            # but can be used for short datasets.
-            rw = mtie_rolling_window(phase, int(mj + 1))
-            win_max = np.max(rw, axis=1)
-            win_min = np.min(rw, axis=1)
-            tie = win_max - win_min
-            dev = np.max(tie)
-        except:
-            if int(mj + 1) < 1:
-                raise ValueError("`window` must be at least 1.")
-            if int(mj + 1) > phase.shape[-1]:
-                raise ValueError("`window` is too long.")
-
-            mj = int(mj)
-            currMax = np.max(phase[0:mj])
-            currMin = np.min(phase[0:mj])
-            dev = currMax - currMin
-            for winStartIdx in range(1, int(phase.shape[0] - mj)):
-                winEndIdx = mj + winStartIdx
-                if currMax == phase[winStartIdx - 1]:
-                    currMax = np.max(phase[winStartIdx:winEndIdx])
-                elif currMax < phase[winEndIdx]:
-                    currMax = phase[winEndIdx]
-
-                if currMin == phase[winStartIdx - 1]:
-                    currMin = np.min(phase[winStartIdx:winEndIdx])
-                elif currMin > phase[winEndIdx]:
-                    currMin = phase[winEndIdx]
-
-                if dev < currMax - currMin:
-                    dev = currMax - currMin
-
-        ncount = phase.shape[0] - mj
-        devs[idx] = dev
-        deverrs[idx] = dev / np.sqrt(ncount)
-        ns[idx] = ncount
-
-    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
 
 #
 # !!!!!!!

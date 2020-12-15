@@ -245,7 +245,7 @@ def calc_totvar(x, m, tau):
     return var, n
 
 
-def calc_mtotdev(phase, rate, m):
+def calc_mtotvar(x, m, tau):
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
     calculation of mtotdev for one averaging factor m; tau = m*tau0
 
@@ -264,17 +264,16 @@ def calc_mtotdev(phase, rate, m):
     Approach to the Modified Allan Variance," Proc.
     31 st PTTI Meeting, pp. 267-276, Dec. 1999.
     """
-    tau0 = 1.0 / rate
-    N = len(phase)  # phase data, N points
+    tau0 = tau / m
+    N = len(x)  # phase data, N points
     m = int(m)
 
     n = 0  # number of terms in the sum, for error estimation
-    dev = 0.0  # the deviation we are computing
-    err = 0.0  # the error in the deviation
+    var = 0.0  # the variance we are computing
     # print('calc_mtotdev N=%d m=%d' % (N,m) )
     for i in range(0, N - 3 * m + 1):
         # subsequence of length 3m, from the original phase data
-        xs = phase[i:i + 3 * m]
+        xs = x[i:i + 3 * m]
         assert len(xs) == 3 * m
         # Step 1.
         # remove linear trend. by averaging first/last half,
@@ -334,15 +333,14 @@ def calc_mtotdev(phase, rate, m):
             squaresum += pow((xmean1 - 2.0 * xmean2 + xmean3) / float(m), 2)
 
         squaresum = (1.0 / (6.0 * m)) * squaresum
-        dev += squaresum
+        var += squaresum
         n = n + 1
 
     # scaling in front of double-sum
     assert n == N - 3 * m + 1  # sanity check on the number of terms n
-    dev = dev * 1.0 / (2.0 * pow(m * tau0, 2) * (N - 3 * m + 1))
-    dev = np.sqrt(dev)
-    error = dev / np.sqrt(n)
-    return (dev, error, n)
+    var = var * 1.0 / (2.0 * pow(m * tau0, 2) * (N - 3 * m + 1))
+
+    return var, n
 
 
 def calc_htotdev(freq, m):

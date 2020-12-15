@@ -46,6 +46,12 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     # Work with phase data, in units of seconds
     x = utils.input_to_phase(data=data, rate=rate, data_type=data_type)
 
+    # FIXME: remove this once modified mtotdev tests, mtotdev can be autocapped
+    #  by Stable32 to len(x) // 2
+    # Cap max_af for mtotdev to value calibrated for tests
+    if max_af is None and dev_type == 'mtotdev':
+        max_af = len(x) // 3
+
     # Build/Select averaging factors at which to calculate deviations
     taus, afs = utils.tau_generator(data=x, rate=rate, dev_type=dev_type,
                                     taus=taus, maximum_m=max_af)
@@ -281,7 +287,7 @@ def hdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def ohdev(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+          taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
     """ Overlapping Hadamard deviation.
         Better confidence than normal Hadamard.
 
@@ -326,7 +332,7 @@ def ohdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def totdev(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+           taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
     """ Total deviation.
         Better confidence at long averages for Allan deviation.
 
@@ -369,22 +375,8 @@ def totdev(data: Array, rate: float = 1., data_type: str = "phase",
                taus=taus, max_af=max_af)
 
 
-def ttotdev(data, rate=1.0, data_type="phase", taus=None):
-    """ Time Total Deviation
-
-        Modified total variance scaled by tau^2 / 3
-
-        NIST [SP1065]_ eqn (28) page 26.  Note that [SP1065]_ erroneously has tau-cubed here (!).
-    """
-
-    (taus, mtotdevs, mde, ns) = mtotdev(data, data_type=data_type,
-                                        rate=rate, taus=taus)
-    td = taus*mtotdevs / np.sqrt(3.0)
-    tde = td / np.sqrt(ns)
-    return taus, td, tde, ns
-
-
-def mtotdev(data, rate=1.0, data_type="phase", taus=None):
+def mtotdev(data: Array, rate: float = 1., data_type: str = "phase",
+            taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Modified Total deviation.
         Better confidence at long averages for modified Allan
@@ -416,18 +408,24 @@ def mtotdev(data, rate=1.0, data_type="phase", taus=None):
     NIST [SP1065]_ eqn (27) page 25
 
     """
-    phase = utils.input_to_phase(data, rate, data_type)
-    (taus_used, ms)= utils.tau_generator(data=phase, rate=rate,
-                                                 dev_type='mtotdev', taus=taus,
-                                                 maximum_m=float(len(phase))/3.0)
-    devs = np.zeros_like(taus_used)
-    deverrs = np.zeros_like(taus_used)
-    ns = np.zeros_like(taus_used)
+    return dev(dev_type='mtotdev', data=data, rate=rate, data_type=data_type,
+               taus=taus, max_af=max_af)
 
-    for idx, mj in enumerate(ms):
-        devs[idx], deverrs[idx], ns[idx] = stats.calc_mtotdev(phase, rate, mj)
 
-    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
+def ttotdev(data, rate=1.0, data_type="phase", taus=None):
+    """ Time Total Deviation
+
+        Modified total variance scaled by tau^2 / 3
+
+        NIST [SP1065]_ eqn (28) page 26.  Note that [SP1065]_ erroneously has tau-cubed here (!).
+    """
+
+    (taus, mtotdevs, mde, ns) = mtotdev(data, data_type=data_type,
+                                        rate=rate, taus=taus)
+    td = taus*mtotdevs / np.sqrt(3.0)
+    tde = td / np.sqrt(ns)
+    return taus, td, tde, ns
+
 
 
 def htotdev(data, rate=1.0, data_type="phase", taus=None):

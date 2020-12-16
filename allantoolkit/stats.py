@@ -1,7 +1,12 @@
+import logging
 from . import ci
 from . import utils
 import numpy as np
 
+# Spawn module-level logger
+logger = logging.getLogger(__name__)
+
+# shorten type hint to save some space
 Array = np.ndarray
 
 
@@ -24,24 +29,31 @@ def calc_avar(x, m, tau):
            and number of samples used to estimate it
        """
 
-    # minimum number of values needed by algorithm:
-    min_N = 3  # i --> i+2
 
     # Decimate input data, to get sample at this averaging factor
     x = x[::m]
-
-    # Size of sample
     N = x.size
 
-    if N < min_N:
-        RuntimeWarning("Data array length is too small: %i" % len(x))
-        N = min_N
+    d = 2  # second difference algorithm
+
+    if N < d + 1:
+        logger.warning("Not enough phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, x)
+        var = np.NaN
+        return var, 0
+
+    # Calculate second differences
+    summand = x[2:] - 2*x[1:-1] + x[:-2]
+    n = summand[~np.isnan(summand)].size  # N-2 if no NaNs
+
+    if n == 0:
+        logger.warning("Not enough valid phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, x)
+        var = np.NaN
+        return var, 0
 
     # Calculate variance
-    var = 1. / (2 * (N-2) * tau**2) * np.sum((x[2:] - 2*x[1:-1] + x[:-2])**2)
-
-    # num values looped through to gen variance
-    n = N - 2  # capped by i+2
+    var = 1. / (2 * tau**2) * np.nanmean(summand**2)
 
     return var, n
 

@@ -1,3 +1,16 @@
+"""Test data based on a Strontium Optical Lattice Clock. Reference results
+were generated with Stable32 on the data in plot3.txt
+
+Data type: fractional frequency
+Sampling rate: 0.4 Hz
+Gaps: No
+
+This suite of test is useful to check that Allantoolkit works in the same
+way as Stable32 also on data acquired as fractional frequency. This suite of
+test will not check if gaps are handled in the same way, as the dataset has
+no gaps.
+"""
+
 import allantoolkit
 import pathlib
 import pytest
@@ -31,6 +44,8 @@ results = [
 ]
 
 
+# FIXME: add tests of noise type identified, and upper and minimum error
+#  bounds once implemented those calculations in allantoolkit
 @pytest.mark.parametrize('result, fct', results)
 def test_generic_octave(result, fct):
     """Test allantoolkit deviations give the same results as Stable32"""

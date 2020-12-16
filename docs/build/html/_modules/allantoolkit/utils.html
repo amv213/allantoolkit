@@ -499,11 +499,7 @@
     <span class="c1"># Calculate requested averaging factors</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
 
-        <span class="k">if</span> <span class="n">taus</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
-            <span class="c1"># 1, 2, 3, 4, 5, 6, 7, ...</span>
-            <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="n">taus</span> <span class="o">==</span> <span class="s2">&quot;octave&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">taus</span> <span class="o">==</span> <span class="s2">&quot;octave&quot;</span><span class="p">:</span>
             <span class="c1"># 1, 2, 4, 8, 16, 32, 64, ...</span>
             <span class="n">maxn</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span>
             <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">maxn</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">maxn</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
@@ -516,9 +512,24 @@
             <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="n">pwrs</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span>
                 <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
+        <span class="k">elif</span> <span class="n">taus</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+
+            <span class="c1"># Too memory intensive for mtie. Set Stable32 `fastu` mode instead</span>
+            <span class="c1"># to support algorithm based on binary decomposition</span>
+            <span class="k">if</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s2">&quot;mtie&quot;</span><span class="p">:</span>
+                <span class="c1"># 1, 3, 7, 15, 31, 63, 127, ...</span>
+                <span class="n">maxn</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span>
+                <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">maxn</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">maxn</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+                                  <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+            <span class="c1"># Everyone else can use the real `all`</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># 1, 2, 3, 4, 5, 6, 7, ...</span>
+                <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid averaging mode selected: </span><span class="si">{</span><span class="n">taus</span><span class="si">}</span><span class="s2">. &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;Should be either `all`, `octave` or `decade`.&quot;</span><span class="p">)</span>
+                             <span class="sa">f</span><span class="s2">&quot;Should be either `all`, `octave`, `decade`.&quot;</span><span class="p">)</span>
 
     <span class="c1"># Get closest integer averaging factors for requested averaging times</span>
     <span class="k">else</span><span class="p">:</span>

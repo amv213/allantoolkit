@@ -302,11 +302,7 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     # Calculate requested averaging factors
     if isinstance(taus, str):
 
-        if taus == "all":
-            # 1, 2, 3, 4, 5, 6, 7, ...
-            afs = np.linspace(start=1, stop=N, num=N + 1, dtype=int)
-
-        elif taus == "octave":
+        if taus == "octave":
             # 1, 2, 4, 8, 16, 32, 64, ...
             maxn = int(np.floor(np.log2(N)))
             afs = np.logspace(start=0, stop=maxn, num=maxn + 1, base=2.0,
@@ -319,9 +315,24 @@ def tau_generator(data: Array, rate: float, dev_type: str,
             afs = np.outer(np.array([1, 2, 4]), pwrs).flatten(
                 order='F').astype(int)
 
+        elif taus == "all":
+
+            # Too memory intensive for mtie. Set Stable32 `fastu` mode instead
+            # to support algorithm based on binary decomposition
+            if dev_type == "mtie":
+                # 1, 3, 7, 15, 31, 63, 127, ...
+                maxn = int(np.floor(np.log2(N)))
+                afs = np.logspace(start=1, stop=maxn, num=maxn, base=2.0,
+                                  dtype=int) - 1
+
+            # Everyone else can use the real `all`
+            else:
+                # 1, 2, 3, 4, 5, 6, 7, ...
+                afs = np.linspace(start=1, stop=N, num=N + 1, dtype=int)
+
         else:
             raise ValueError(f"Invalid averaging mode selected: {taus}. "
-                             f"Should be either `all`, `octave` or `decade`.")
+                             f"Should be either `all`, `octave`, `decade`.")
 
     # Get closest integer averaging factors for requested averaging times
     else:

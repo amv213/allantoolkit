@@ -108,14 +108,14 @@ def calc_mvar(x, m, tau):
     # this is a 'loop-unrolled' algorithm following
     # http://www.leapsecond.com/tools/adev_lib.c
 
-    # First loop sum
+    # First loop sum: i=j -> + m-1
     d0 = x[0:m]
     d1 = x[m:2 * m]
     d2 = x[2 * m:3 * m]
     e = min(len(d0), len(d1), len(d2))
 
-    v = np.sum(d2[:e] - 2 * d1[:e] + d0[:e])
-    s = v * v
+    v = np.nansum(d2[:e] - 2 * d1[:e] + d0[:e])
+    s = v ** 2
 
     # Second part of sum
     d3 = x[3 * m:]
@@ -126,9 +126,9 @@ def calc_mvar(x, m, tau):
     e = min(len(d0), len(d1), len(d2), len(d3))
     n = e + 1
 
-    v_arr = v + np.cumsum(d3[:e] - 3 * d2[:e] + 3 * d1[:e] - d0[:e])
+    v_arr = v + np.nancumsum(d3[:e] - 3 * d2[:e] + 3 * d1[:e] - d0[:e])
 
-    s = s + np.sum(v_arr * v_arr)
+    s = s + np.nansum(v_arr * v_arr)
     s /= 2 * m**2 * tau**2 * n
 
     return s, n

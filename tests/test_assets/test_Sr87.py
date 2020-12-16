@@ -41,6 +41,11 @@ def test_frequency2phase():
 results = [
     ('adev_octave.txt', allantoolkit.allantools.adev),
     ('oadev_octave.txt', allantoolkit.allantools.oadev),
+    ('mdev_octave.txt', allantoolkit.allantools.mdev),
+    ('tdev_octave.txt', allantoolkit.allantools.tdev),
+    ('hdev_octave.txt', allantoolkit.allantools.hdev),
+    ('ohdev_octave.txt', allantoolkit.allantools.ohdev),
+    ('totdev_octave.txt', allantoolkit.allantools.totdev),
 ]
 
 

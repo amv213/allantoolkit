@@ -103,10 +103,28 @@ def calc_oavar(x: Array, m: int, tau: float) -> VarResult:
     return calc_o_avar(x=x, m=m, tau=tau, stride=1)
 
 
-def calc_mvar(x, m, tau):
+def calc_mvar(x: Array, m: int, tau: float) -> VarResult:
+    """Main algorithm for MVAR calculation.
 
-    # this is a 'loop-unrolled' algorithm following
-    # http://www.leapsecond.com/tools/adev_lib.c
+    This implementation is a `loop-unrolled` algorithm, as per
+    http://www.leapsecond.com/tools/adev_lib.c
+
+
+    References:
+        [RileyStable32]_ (5.2.5, pg.22)
+        TODO: add reference justifying loop unrolled algorithm
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
+
+    # TODO: make gap resistant and return correct number of non-NaN samples
 
     # First loop sum: i=j -> + m-1
     d0 = x[0:m]
@@ -134,125 +152,159 @@ def calc_mvar(x, m, tau):
     return s, n
 
 
-def calc_tvar(x, m, tau):
+def calc_tvar(x: Array, m: int, tau: float) -> VarResult:
+    """Main algorithm for TVAR calculation.
+
+    References:
+        [RileyStable32]_ (5.2.6, pg.23)
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
 
     mvar, n = calc_mvar(x=x, m=m, tau=tau)
 
-    tvar = (tau**2 / 3) * mvar
+    var = (tau**2 / 3) * mvar
 
-    return tvar, n
+    return VarResult(var=var, n=n)
 
 
-def calc_hvar(x, m, tau):
-    """ main calculation fungtion for HDEV and OHDEV
+def calc_o_hvar(x: Array, m: int, tau: float, stride: int) -> VarResult:
+    """Main algorithm for HVAR and OHVAR calculation.
 
-    Parameters
-    ----------
-    phase: np.array
-        Phase data in seconds.
-    rate: float
-        The sampling rate for phase or frequency, in Hz
-    mj: int
-        M index value for stride
-    stride: int
-        Size of stride
+    References:
+        [RileyStable32]_ (5.2.8-9, pg.25-27)
+        http://www.leapsecond.com/tools/adev_lib.c
 
-    Returns
-    -------
-    (dev, deverr, n): tuple
-        Array of computed values.
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
+        stride: stride at which to parse input phase data.
+                `m` for HVAR, `1` for OHVAR.
 
-    Notes
-    -----
-    http://www.leapsecond.com/tools/adev_lib.c
-
-    .. math::
-
-        \\sigma^2_{y}(t) = { 1 \\over 6\\tau^2 (N-3m) }
-            \\sum_{i=1}^{N-3} [ x(i+3) - 3x(i+2) + 3x(i+1) - x(i) ]^2
-
-        N=M+1 phase measurements
-        m is averaging factor
-
-    NIST [SP1065]_ eqn (18) and (20) pages 20 and 21
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
     """
 
-    # Decimate values (non-overlapping)
-    x = x[::m]
-
-    d = 3  # 3rd difference algorithm
-
-    # minimum number of values needed by algorithm:
-    min_N = d + 1
-
     N = x.size
 
-    # del with invalid number of samples
-    if N < min_N:
-        RuntimeWarning("Data array length is too small: %i" % len(x))
-        N = min_N
+    d = 3  # third difference algorithm
+
+    if N < d*m + 1:
+        logger.warning("Not enough phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, x)
+        var = np.NaN
+        return var, 0
+
+    # Calculate third differences
+    summand = x[3*m::stride] - 3*x[2*m:-m:stride] + 3*x[m:-2*m:stride] - x[:-3*m:stride]
+    n = summand[~np.isnan(summand)].size  # (N-3*m)/stride if no NaNs
+
+    if n == 0:
+        logger.warning("Not enough valid phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, x)
+        var = np.NaN
+        return var, 0
 
     # Calculate variance
-    var = 1. / (6. * tau**2 * (N-3)) * np.sum(
-        (x[3:] - 3 * x[2:-1] + 3 * x[1:-2] - x[:-3])**2
-    )
+    var = 1. / (6 * tau**2) * np.nanmean(summand**2)
 
-    # num values looped through to gen variance
-    n = N-3  # sum i=1 --> N-3
-
-    return var, n
+    return VarResult(var=var, n=n)
 
 
-def calc_ohvar(x, m, tau):
+def calc_hvar(x: Array, m: int, tau: float) -> VarResult:
+    """Main algorithm for HVAR calculation.
 
-    d = 3  # 3rd difference algorithm
+    References:
+        [RileyStable32]_ (5.2.8, pg.25-26)
 
-    # minimum number of values needed by algorithm:
-    min_N = d*m + 1  # (overlapping)
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
+
+    return calc_o_hvar(x=x, m=m, tau=tau, stride=m)
+
+
+def calc_ohvar(x: Array, m: int, tau: float) -> VarResult:
+    """Main algorithm for OHVAR calculation.
+
+    References:
+        [RileyStable32]_ (5.2.9, pg.26-27)
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
+
+    return calc_o_hvar(x=x, m=m, tau=tau, stride=1)
+
+
+def calc_totvar(x: Array, m: int, tau: float) -> VarResult:
+    """Main algorithm for TOTVAR calculation.
+
+    References:
+        [RileyStable32]_ (5.2.11, pg.29-31)
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
 
     N = x.size
 
-    # del with invalid number of samples
-    if N < min_N:
-        RuntimeWarning("Data array length is too small: %i" % len(x))
-        N = min_N
+    # Need more than 3 values to build an extended dataset with at least 3
+    # samples on which to calculate algorithm
+    if N < 3:
+        logger.warning("Not enough phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, x)
+        var = np.NaN
+        return var, 0
 
-    # Calculate variance
-    var = 1. / (6. * tau ** 2 * (N - 3*m)) * np.sum(
-        (x[3*m:] - 3 * x[2*m:-1*m] + 3 * x[1*m:-2*m] - x[:-3*m]) ** 2
-    )
-
-    # num values looped through to gen variance
-    n = N - 3*m  # sum i=1 --> N-3
-
-    return var, n
-
-
-def calc_totvar(x, m, tau):
-
-    N = x.size
-
-    # extend dataset by reflection, as required by totdev
+    # Build extended virtual dataset as required by totvar, of size 3N - 4
     xxx = np.pad(x, N-1, 'symmetric', reflect_type='odd')
     xxx = np.delete(xxx, [N-2, -N+1])  # pop duplicate edge values
-    M = len(xxx)
-    assert M == 3 * N - 4
 
-    # index of start of original dataset
+    # index at which the original dataset starts
     i0 = N - 2  # `i` = 1
+    # index at which summation starts
+    i = i0 + 1  # `i` = 2
 
-    d0 = xxx[i0 + 1:]
-    d1 = xxx[i0 + 1 + m:]
-    d1n = xxx[i0 + 1 -m:]
-    e = min(len(d0), len(d1), len(d1n))
+    # Calculate differences
+    summand = (xxx[i-m:][:N-2] - 2*xxx[i:][:N-2] + xxx[i+m:][:N-2])
+    n = summand[~np.isnan(summand)].size  # (N-2) if no NaNs
+
+    if n == 0:
+        logger.warning("Not enough valid phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, x)
+        var = np.NaN
+        return var, 0
 
     # Calculate variance
-    var = 1. / (2 * tau**2 * (N - 2)) * np.sum(
-        (d1n[:e] - 2.0 * d0[:e] + d1[:e])[:i0]**2
-    )
-
-    # num values looped through to gen variance
-    n = N - 2  # sum i=2 --> N-1
+    var = 1. / (2 * tau**2) * np.nanmean(summand**2)
 
     return var, n
 

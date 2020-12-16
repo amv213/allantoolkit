@@ -578,26 +578,25 @@ def calc_theo1(x: Array, m: int, tau: float) -> VarResult:
 
         N = x.size
 
-        var = 0
-        n = 0
-        for i in range(N-m):  # main sum
+        m2 = m // 2
 
-            s = 0
-            for d in range(m2 := (m // 2)):  # inner sum
+        vals = np.zeros((N-m, m2))  # i x delta array of values
 
-                pre = 1. / (m2 - d)
+        for i in range(vals.shape[0]):
+            for d in range(vals.shape[1]):
 
-                s += pre * (x[i] - x[i - d + m2] + x[i + m] - x[i + d + m2])**2
-                n = n + 1
+                vals[i, d] = 1. / (m2 - d) * (
+                    x[i] - x[i - d + m2] + x[i + m] - x[i + d + m2]
+                )**2
 
-            var += s
+        # Total number of samples, (N-m)*m2 if no NaNs
+        n = vals[~np.isnan(vals)].size
 
-        assert n == (N - m) * m / 2  # N-m outer sums, m/2 inner sums
+        inner_sum = np.nansum(vals, axis=1)
+        outer_mean = np.nanmean(inner_sum)
 
-        var = var * 0.75 / ((N - m) * tau**2)
+        var = (0.75 / tau**2) * outer_mean
 
-        # TODO: is the effective n to return this one or just N-m?
-        # allantools had it at N-m...
         return var, n
 
 

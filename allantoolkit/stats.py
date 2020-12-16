@@ -15,6 +15,52 @@ Array = np.ndarray
 VarResult = NamedTuple('VarResult', [('var', float), ('n', int)])
 
 
+def calc_o_avar(x: Array, m: int, tau: float, stride: int) -> VarResult:
+    """Main algorithm for AVAR and OAVAR calculation.
+
+    References:
+        [RileyStable32]_ (5.2.2, pg.19)
+        [Wikipedia]_
+        http://www.leapsecond.com/tools/adev_lib.c
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
+        stride: stride at which to parse input phase data.
+                `m` for AVAR, `1` for OAVAR.
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
+
+    N = x.size
+
+    d = 2  # second difference algorithm
+
+    if N < d*m + 1:
+        logger.warning("Not enough phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, x)
+        var = np.NaN
+        return var, 0
+
+    # Calculate second differences
+    summand = x[2*m::stride] - 2*x[m:-m:stride] + x[:-2*m:stride]
+    n = summand[~np.isnan(summand)].size  # (N-2*m)/stride if no NaNs
+
+    if n == 0:
+        logger.warning("Not enough valid phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, x)
+        var = np.NaN
+        return var, 0
+
+    # Calculate variance
+    var = 1. / (2 * tau**2) * np.nanmean(summand**2)
+
+    return VarResult(var=var, n=n)
+
+
 def calc_avar(x: Array, m: int, tau: float) -> VarResult:
     """Main algorithm for AVAR calculation.
 
@@ -33,35 +79,10 @@ def calc_avar(x: Array, m: int, tau: float) -> VarResult:
         number of samples used to estimate it.
     """
 
-    # Decimate input data, to get sample at this averaging factor
-    x = x[::m]
-    N = x.size
-
-    d = 2  # second difference algorithm
-
-    if N < d + 1:
-        logger.warning("Not enough phase measurements to compute "
-                       "variance at averaging factor %i: %s", m, x)
-        var = np.NaN
-        return var, 0
-
-    # Calculate second differences
-    summand = x[2:] - 2*x[1:-1] + x[:-2]
-    n = summand[~np.isnan(summand)].size  # N-2 if no NaNs
-
-    if n == 0:
-        logger.warning("Not enough valid phase measurements to compute "
-                       "variance at averaging factor %i: %s", m, x)
-        var = np.NaN
-        return var, 0
-
-    # Calculate variance
-    var = 1. / (2 * tau**2) * np.nanmean(summand**2)
-
-    return VarResult(var=var, n=n)
+    return calc_o_avar(x=x, m=m, tau=tau, stride=m)
 
 
-def calc_oavar(x, m, tau):
+def calc_oavar(x: Array, m: int, tau: float) -> VarResult:
     """Main algorithm for OAVAR calculation.
 
     References:
@@ -79,30 +100,7 @@ def calc_oavar(x, m, tau):
         number of samples used to estimate it.
     """
 
-    N = x.size
-
-    d = 2  # second difference algorithm
-
-    if N < d*m + 1:  # overlapping
-        logger.warning("Not enough phase measurements to compute "
-                       "variance at averaging factor %i: %s", m, x)
-        var = np.NaN
-        return var, 0
-
-    # Calculate second differences
-    summand = x[2*m:] - 2*x[m:-m] + x[:-2*m]
-    n = summand[~np.isnan(summand)].size  # N-2*m if no NaNs
-
-    if n == 0:
-        logger.warning("Not enough valid phase measurements to compute "
-                       "variance at averaging factor %i: %s", m, x)
-        var = np.NaN
-        return var, 0
-
-    # Calculate variance
-    var = 1. / (2 * tau ** 2) * np.nanmean(summand ** 2)
-
-    return VarResult(var=var, n=n)
+    return calc_o_avar(x=x, m=m, tau=tau, stride=1)
 
 
 def calc_mvar(x, m, tau):

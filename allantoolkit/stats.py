@@ -595,50 +595,49 @@ def calc_theo1(x: Array, m: int, tau: float) -> VarResult:
         inner_sum = np.nansum(vals, axis=1)
         outer_mean = np.nanmean(inner_sum)
 
+        # tau passed here is 0.75*m*tau_0 -> so need to multiply by 0.75
+        # nominator to get a single 0.75 multiplier on the denominator
         var = (0.75 / tau**2) * outer_mean
 
         return var, n
 
 
-def calc_mtie(x, m, tau=None):
+def calc_mtie(x: Array, m: int, tau: float = None) -> VarResult:
+    """Main algorithm for MTIE var calculation.
 
-    try:
-        # the older algorithm uses a lot of memory
-        # but can be used for short datasets.
-        rw = utils.mtie_rolling_window(a=x, window=m+1)
-        win_max = np.max(rw, axis=1)
-        win_min = np.min(rw, axis=1)
-        tie = win_max - win_min
-        dev = np.max(tie)
+    References:
+        [RileyStable32]_ (5.2.17, pg.41-42)
 
-    except:
-        if int(m + 1) < 1:
-            raise ValueError("`window` must be at least 1.")
-        if int(m + 1) > x.shape[-1]:
-            raise ValueError("`window` is too long.")
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time.
 
-        currMax = np.max(x[0:m])
-        currMin = np.min(x[0:m])
-        dev = currMax - currMin
-        for winStartIdx in range(1, int(x.shape[0] - m)):
-            winEndIdx = m + winStartIdx
-            if currMax == x[winStartIdx - 1]:
-                currMax = np.max(x[winStartIdx:winEndIdx])
-            elif currMax < x[winEndIdx]:
-                currMax = x[winEndIdx]
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
 
-            if currMin == x[winStartIdx - 1]:
-                currMin = np.min(x[winStartIdx:winEndIdx])
-            elif currMin > x[winEndIdx]:
-                currMin = x[winEndIdx]
+    # Move an n-point window through the phase data, and find the difference
+    # between the max nad min values at each windows position
+    n = m + 1  # n is defined as m+1
 
-            if dev < currMax - currMin:
-                dev = currMax - currMin
+    if m < 1 or m >= x.size:
+        logger.warning("Cannot calculate MTIE over this time interval: %f",
+                       n*tau/m)
+        return np.NaN, 0
 
-    var = dev**2
-    ncount = x.shape[0] - m
+    grads = utils.rollingGrad(x, n)
+    assert grads.size == x.size - (n-1)
+    n = grads.size
 
-    return var, ncount
+    # MTIE is the overall maximum of this time interval error
+    mtie = np.max(grads)
+
+    # Need to return variance to match function signature
+    var = mtie**2
+
+    return var, n
 
 
 # FIXME: mtie_phase_fast() is incomplete.

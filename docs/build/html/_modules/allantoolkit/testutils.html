@@ -320,8 +320,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="p">(</span><span class="n">taus2</span><span class="p">,</span> <span class="n">devs2</span><span class="p">,</span> <span class="n">errs2</span><span class="p">,</span> <span class="n">ns2</span><span class="p">)</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">datarate</span><span class="p">,</span>
                                                   <span class="n">taus</span><span class="o">=</span><span class="p">[</span><span class="n">tau_ori</span><span class="p">])</span>
-        
-        <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_equal</span><span class="p">(</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">],</span> <span class="n">ns2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
+
+        <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_equal</span><span class="p">(</span><span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">],</span> <span class="n">ns2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
 
         <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_equal</span><span class="p">(</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">],</span> <span class="n">taus2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
 

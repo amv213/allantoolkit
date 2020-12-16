@@ -123,8 +123,8 @@ def test_row_by_row(function, datafile, datarate, resultfile, verbose=False, tol
         else:
             (taus2, devs2, errs2, ns2) = function(data, rate=datarate,
                                                   taus=[tau_ori])
-        
-        n_errors += check_equal( s32data['n'], ns2[0] )
+
+        n_errors += check_equal(s32data['n'], ns2[0] )
 
         n_errors += check_equal( s32data['tau'], taus2[0] )
 

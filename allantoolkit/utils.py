@@ -435,8 +435,6 @@ def remove_small_ns(taus: Array, devs: Array,
 
     mask = ns > 1
 
-    print(devs)
-    print(ns)
     # Filter out results
     devs = devs[mask]
 
@@ -562,3 +560,39 @@ def mtie_rolling_window(a, window):
     shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
     strides = a.strides + (a.strides[-1],)
     return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
+
+
+def rollingGrad(x: Array, n: int):
+    """Adapted from:
+    https://stackoverflow.com/questions/43288542/max-in-a-sliding-window-in-numpy-array"""
+
+    def eachValue(width=n):
+
+        w = x[:width].copy()
+        mx = np.nanmax(w)
+        mn = np.nanmin(w)
+        yield mx-mn
+
+        i = 0
+        j = width
+        while j < x.size:
+
+            oldValue = w[i]
+            newValue = w[i] = x[j]
+
+            if newValue > mx:
+                mx = newValue
+            elif oldValue == mx:
+                mx = np.nanmax(w)
+
+            if newValue < mn:
+                mn = newValue
+            elif oldValue == mn:
+                mn = np.nanmin(w)
+
+            yield mx-mn
+
+            i = (i + 1) % width
+            j += 1
+
+    return np.array(list((eachValue())))

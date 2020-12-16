@@ -459,6 +459,9 @@
 <span class="sd">    stability runs, which automatically calculates the maximum averaging</span>
 <span class="sd">    factor to use for the given deviation [RileyEvolution]_ (pg.9 Table III).</span>
 
+<span class="sd">    If requesting averaging times for a `theo1` statistic, the resulting</span>
+<span class="sd">    averaging times will be `effective` times tau = 0.75*tau</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        data:                   data array of phase or fractional frequency</span>
 <span class="sd">                                measurements.</span>
@@ -549,7 +552,9 @@
         <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&lt;=</span> <span class="n">stop_m</span><span class="p">]</span>
 
     <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">afs</span><span class="p">)</span>  <span class="c1"># remove duplicates and sort</span>
-    <span class="n">taus</span> <span class="o">=</span> <span class="n">tau_0</span><span class="o">*</span><span class="n">afs</span>  <span class="c1"># Recalculate averaging times, now sanitised.</span>
+
+    <span class="c1"># Recalculate averaging times, now sanitised.</span>
+    <span class="n">taus</span> <span class="o">=</span> <span class="n">tau_0</span><span class="o">*</span><span class="n">afs</span> <span class="k">if</span> <span class="n">dev_type</span> <span class="o">!=</span> <span class="s1">&#39;theo1&#39;</span> <span class="k">else</span> <span class="mf">0.75</span><span class="o">*</span><span class="n">tau_0</span><span class="o">*</span><span class="n">afs</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not generate valid averaging factors at which &quot;</span>
@@ -627,12 +632,15 @@
 
     <span class="n">mask</span> <span class="o">=</span> <span class="n">ns</span> <span class="o">&gt;</span> <span class="mi">1</span>
 
+    <span class="nb">print</span><span class="p">(</span><span class="n">devs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
     <span class="c1"># Filter out results</span>
     <span class="n">devs</span> <span class="o">=</span> <span class="n">devs</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">devs</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Deviation calculated on too little samples. All &quot;</span>
                        <span class="s2">&quot;results have been filtered out!&quot;</span><span class="p">)</span>
+
         <span class="k">raise</span> <span class="ne">UserWarning</span>
 
     <span class="c1"># Filter supporting arrays as well</span>

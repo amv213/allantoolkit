@@ -77,8 +77,13 @@ def test_outputs_related(data_with_gaps, dev_type, taus):
     output = allantoolkit.utils.tau_generator(data_with_gaps, rate=RATE,
                                               dev_type=dev_type, taus=taus)
 
-    assert np.allclose(output.taus, output.afs / RATE, rtol=1e-12, atol=1e-12,
-                       equal_nan=True)
+    if dev_type == 'theo1':
+        # Effective theo 1 taus are 0.75 of the original taus
+        assert np.allclose(output.taus / 0.75, output.afs / RATE, rtol=1e-12,
+                           atol=1e-12, equal_nan=True)
+    else:
+        assert np.allclose(output.taus, output.afs / RATE, rtol=1e-12,
+                           atol=1e-12, equal_nan=True)
 
 
 @pytest.mark.parametrize('dev_type', dev_types)

@@ -261,7 +261,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>  <span class="c1"># typical ADEV result file has 7 columns of data</span>
             <span class="n">d</span><span class="o">=</span><span class="p">{}</span>
             <span class="n">d</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">datarate</span><span class="p">))</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">d</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
             <span class="n">d</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
             <span class="n">d</span><span class="p">[</span><span class="s1">&#39;dev_min&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
@@ -272,7 +272,7 @@
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># the MTIE/TIErms results are formatted slightly differently</span>
             <span class="n">d</span><span class="o">=</span><span class="p">{}</span>
             <span class="n">d</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">datarate</span><span class="p">))</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">d</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
             <span class="n">d</span><span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
             <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
@@ -308,13 +308,18 @@
     <span class="c1"># run allantoolkit algorithm, row by row</span>
     <span class="k">for</span> <span class="n">s32data</span> <span class="ow">in</span> <span class="n">s32rows</span><span class="p">:</span>
 
+        <span class="c1"># If checking a theo1, the file will have an effective 75% of the</span>
+        <span class="c1"># original one</span>
+        <span class="n">tau_ori</span> <span class="o">=</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">function</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="s1">&#39;theo1&#39;</span> <span class="k">else</span> \
+            <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">0.75</span>
+
         <span class="k">if</span> <span class="n">frequency</span><span class="p">:</span>
             <span class="p">(</span><span class="n">taus2</span><span class="p">,</span> <span class="n">devs2</span><span class="p">,</span> <span class="n">errs2</span><span class="p">,</span> <span class="n">ns2</span><span class="p">)</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">datarate</span><span class="p">,</span>
                                                   <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;freq&quot;</span><span class="p">,</span>
-                                                  <span class="n">taus</span><span class="o">=</span><span class="p">[</span><span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]])</span>
+                                                  <span class="n">taus</span><span class="o">=</span><span class="p">[</span><span class="n">tau_ori</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="p">(</span><span class="n">taus2</span><span class="p">,</span> <span class="n">devs2</span><span class="p">,</span> <span class="n">errs2</span><span class="p">,</span> <span class="n">ns2</span><span class="p">)</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">datarate</span><span class="p">,</span>
-                                                  <span class="n">taus</span><span class="o">=</span><span class="p">[</span><span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]])</span>
+                                                  <span class="n">taus</span><span class="o">=</span><span class="p">[</span><span class="n">tau_ori</span><span class="p">])</span>
         
         <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_equal</span><span class="p">(</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">],</span> <span class="n">ns2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
 

@@ -2083,7 +2083,8 @@ number of samples used to estimate it.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>tau</strong> – corresponding theo1 <cite>effective</cite> averaging time. This should be
+0.75 of the normal m*tau_0</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2467,6 +2468,8 @@ Uses ‘octave’ by default if no taus= argument is given.</p>
 <p>This function implements a Stable32 stop-ratio for <cite>octave</cite> and <cite>decade</cite>
 stability runs, which automatically calculates the maximum averaging
 factor to use for the given deviation <a class="reference internal" href="references.html#rileyevolution" id="id45"><span>[RileyEvolution]</span></a> (pg.9 Table III).</p>
+<p>If requesting averaging times for a <cite>theo1</cite> statistic, the resulting
+averaging times will be <cite>effective</cite> times tau = 0.75*tau</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

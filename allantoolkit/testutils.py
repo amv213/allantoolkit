@@ -64,7 +64,7 @@ def read_stable32(resultfile, datarate):
         if len(row) == 7:  # typical ADEV result file has 7 columns of data
             d={}
             d['m']= row[0]
-            d['tau']= row[0] * (1 / float(datarate))
+            d['tau']= row[1]
             d['n']=row[2]
             d['alpha']=row[3]
             d['dev_min']=row[4]
@@ -75,7 +75,7 @@ def read_stable32(resultfile, datarate):
         elif len(row) == 4:  # the MTIE/TIErms results are formatted slightly differently
             d={}
             d['m']= row[0]
-            d['tau']= row[0] * (1 / float(datarate))
+            d['tau']= row[1]
             d['n']=row[2]
             d['dev']=row[3]
             rows.append(d)
@@ -111,13 +111,18 @@ def test_row_by_row(function, datafile, datarate, resultfile, verbose=False, tol
     # run allantoolkit algorithm, row by row
     for s32data in s32rows:
 
+        # If checking a theo1, the file will have an effective 75% of the
+        # original one
+        tau_ori = s32data['tau'] if function.__name__ != 'theo1' else \
+            s32data['tau'] / 0.75
+
         if frequency:
             (taus2, devs2, errs2, ns2) = function(data, rate=datarate,
                                                   data_type="freq",
-                                                  taus=[s32data['tau']])
+                                                  taus=[tau_ori])
         else:
             (taus2, devs2, errs2, ns2) = function(data, rate=datarate,
-                                                  taus=[s32data['tau']])
+                                                  taus=[tau_ori])
         
         n_errors += check_equal( s32data['n'], ns2[0] )
 

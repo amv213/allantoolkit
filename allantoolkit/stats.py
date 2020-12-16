@@ -561,36 +561,44 @@ def calc_theo1(x: Array, m: int, tau: float) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        tau:    corresponding theo1 `effective` averaging time. This should be
+                0.75 of the normal m*tau_0
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
         number of samples used to estimate it.
     """
 
-    assert m % 2 == 0  # m must be even
+    if m % 2 != 0 or m < 10:  # m must be even and >= 10
+        logger.warning("Theo1 statistic is not compatible with an "
+                       "averaging factor m=%i", m)
+        return np.NaN, 0
 
-    N = x.size
+    else:
 
-    var = 0
-    n = 0
-    for i in range(int(N - m)):
-        s = 0
-        for d in range(int(m / 2)):  # inner sum
-            pre = 1.0 / (float(m) / 2 - float(d))
-            s += pre * pow(x[i] - x[i - d + int(m / 2)] +
-                           x[i + m] - x[i + d + int(m / 2)], 2)
-            n = n + 1
-        var += s
-    assert n == (N - m) * m / 2  # N-m outer sums, m/2 inner sums
+        N = x.size
 
-    var = var / (0.75 * (N - m) * tau**2)
-    # factor 0.75 used here? http://tf.nist.gov/general/pdf/1990.pdf
-    # but not here? http://tf.nist.gov/timefreq/general/pdf/2220.pdf page 29
+        var = 0
+        n = 0
+        for i in range(N-m):  # main sum
 
-    # TODO: is the effective n to return this one or just N-m?
-    # allantools had it at N-m...
-    return var, n
+            s = 0
+            for d in range(m2 := (m // 2)):  # inner sum
+
+                pre = 1. / (m2 - d)
+
+                s += pre * (x[i] - x[i - d + m2] + x[i + m] - x[i + d + m2])**2
+                n = n + 1
+
+            var += s
+
+        assert n == (N - m) * m / 2  # N-m outer sums, m/2 inner sums
+
+        var = var * 0.75 / ((N - m) * tau**2)
+
+        # TODO: is the effective n to return this one or just N-m?
+        # allantools had it at N-m...
+        return var, n
 
 
 def calc_mtie(x, m, tau=None):

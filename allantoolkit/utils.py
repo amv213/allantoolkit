@@ -262,6 +262,9 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     stability runs, which automatically calculates the maximum averaging
     factor to use for the given deviation [RileyEvolution]_ (pg.9 Table III).
 
+    If requesting averaging times for a `theo1` statistic, the resulting
+    averaging times will be `effective` times tau = 0.75*tau
+
     Args:
         data:                   data array of phase or fractional frequency
                                 measurements.
@@ -352,7 +355,9 @@ def tau_generator(data: Array, rate: float, dev_type: str,
         afs = afs[afs <= stop_m]
 
     afs = np.unique(afs)  # remove duplicates and sort
-    taus = tau_0*afs  # Recalculate averaging times, now sanitised.
+
+    # Recalculate averaging times, now sanitised.
+    taus = tau_0*afs if dev_type != 'theo1' else 0.75*tau_0*afs
 
     if not afs.size:
         logger.warning("Could not generate valid averaging factors at which "
@@ -430,12 +435,15 @@ def remove_small_ns(taus: Array, devs: Array,
 
     mask = ns > 1
 
+    print(devs)
+    print(ns)
     # Filter out results
     devs = devs[mask]
 
     if not devs.size:
         logger.warning("Deviation calculated on too little samples. All "
                        "results have been filtered out!")
+
         raise UserWarning
 
     # Filter supporting arrays as well

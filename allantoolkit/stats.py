@@ -1,7 +1,9 @@
 import logging
+import numpy as np
 from . import ci
 from . import utils
-import numpy as np
+from typing import NamedTuple
+
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -9,26 +11,27 @@ logger = logging.getLogger(__name__)
 # shorten type hint to save some space
 Array = np.ndarray
 
+# define named tuple to hold var results
+VarResult = NamedTuple('VarResult', [('var', float), ('n', int)])
 
-def calc_avar(x, m, tau):
-    """Main algorithm for adev() and oadev() calculations.
 
-       References:
-           [SP1065]_ eqn (7) and (11) page 16
-           [Wikipedia]_
-           http://www.leapsecond.com/tools/adev_lib.c
+def calc_avar(x: Array, m: int, tau: float) -> VarResult:
+    """Main algorithm for AVAR calculation.
 
-       Args:
-           x:      input phase data, in units of seconds.
-           rate:   sampling rate of the input data, in Hz.
-           af:     averaging factor at which to calculate deviation
-           stride: size of stride. 1 for overlapping, `af` for non-overlapping
+    References:
+        [RileyStable32]_ (5.2.2, pg.19)
+        [Wikipedia]_
+        http://www.leapsecond.com/tools/adev_lib.c
 
-       Returns:
-           (dev, deverr, n) tuple of computed deviation, estimated error,
-           and number of samples used to estimate it
-       """
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
 
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
 
     # Decimate input data, to get sample at this averaging factor
     x = x[::m]
@@ -55,28 +58,51 @@ def calc_avar(x, m, tau):
     # Calculate variance
     var = 1. / (2 * tau**2) * np.nanmean(summand**2)
 
-    return var, n
+    return VarResult(var=var, n=n)
 
 
 def calc_oavar(x, m, tau):
+    """Main algorithm for OAVAR calculation.
 
-    # minimum number of values needed by algorithm:
-    min_N = 2*m + 1  # i --> i+2m
+    References:
+        [RileyStable32]_ (5.2.2, pg.19)
+        [Wikipedia]_
+        http://www.leapsecond.com/tools/adev_lib.c
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
 
     N = x.size
 
-    if N < min_N:
-        RuntimeWarning("Data array length is too small: %i" % len(x))
-        N = min_N
+    d = 2  # second difference algorithm
+
+    if N < d*m + 1:  # overlapping
+        logger.warning("Not enough phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, x)
+        var = np.NaN
+        return var, 0
+
+    # Calculate second differences
+    summand = x[2*m:] - 2*x[m:-m] + x[:-2*m]
+    n = summand[~np.isnan(summand)].size  # N-2*m if no NaNs
+
+    if n == 0:
+        logger.warning("Not enough valid phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, x)
+        var = np.NaN
+        return var, 0
 
     # Calculate variance
-    var = 1. / (2 * (N-2*m) * tau**2) * np.sum(
-        (x[2*m:] - 2*x[m:-m] + x[:-2*m])**2)
+    var = 1. / (2 * tau ** 2) * np.nanmean(summand ** 2)
 
-    # num values looped through to gen variance
-    n = N - 2*m  # capped by i+2m
-
-    return var, n
+    return VarResult(var=var, n=n)
 
 
 def calc_mvar(x, m, tau):

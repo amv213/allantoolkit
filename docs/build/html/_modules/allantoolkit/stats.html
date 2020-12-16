@@ -196,9 +196,11 @@
                 
   <h1>Source code for allantoolkit.stats</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ci</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">NamedTuple</span>
+
 
 <span class="c1"># Spawn module-level logger</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -206,26 +208,27 @@
 <span class="c1"># shorten type hint to save some space</span>
 <span class="n">Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 
+<span class="c1"># define named tuple to hold var results</span>
+<span class="n">VarResult</span> <span class="o">=</span> <span class="n">NamedTuple</span><span class="p">(</span><span class="s1">&#39;VarResult&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;var&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)])</span>
 
-<div class="viewcode-block" id="calc_avar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_avar">[docs]</a><span class="k">def</span> <span class="nf">calc_avar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Main algorithm for adev() and oadev() calculations.</span>
 
-<span class="sd">       References:</span>
-<span class="sd">           [SP1065]_ eqn (7) and (11) page 16</span>
-<span class="sd">           [Wikipedia]_</span>
-<span class="sd">           http://www.leapsecond.com/tools/adev_lib.c</span>
+<div class="viewcode-block" id="calc_avar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_avar">[docs]</a><span class="k">def</span> <span class="nf">calc_avar</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Main algorithm for AVAR calculation.</span>
 
-<span class="sd">       Args:</span>
-<span class="sd">           x:      input phase data, in units of seconds.</span>
-<span class="sd">           rate:   sampling rate of the input data, in Hz.</span>
-<span class="sd">           af:     averaging factor at which to calculate deviation</span>
-<span class="sd">           stride: size of stride. 1 for overlapping, `af` for non-overlapping</span>
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32]_ (5.2.2, pg.19)</span>
+<span class="sd">        [Wikipedia]_</span>
+<span class="sd">        http://www.leapsecond.com/tools/adev_lib.c</span>
 
-<span class="sd">       Returns:</span>
-<span class="sd">           (dev, deverr, n) tuple of computed deviation, estimated error,</span>
-<span class="sd">           and number of samples used to estimate it</span>
-<span class="sd">       &quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        x:      input phase data, in units of seconds.</span>
+<span class="sd">        m:      averaging factor at which to calculate variance</span>
+<span class="sd">        tau:    corresponding averaging time</span>
 
+<span class="sd">    Returns:</span>
+<span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
+<span class="sd">        number of samples used to estimate it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Decimate input data, to get sample at this averaging factor</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[::</span><span class="n">m</span><span class="p">]</span>
@@ -252,28 +255,51 @@
     <span class="c1"># Calculate variance</span>
     <span class="n">var</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">tau</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">summand</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="n">n</span></div>
+    <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="calc_oavar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_oavar">[docs]</a><span class="k">def</span> <span class="nf">calc_oavar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Main algorithm for OAVAR calculation.</span>
 
-    <span class="c1"># minimum number of values needed by algorithm:</span>
-    <span class="n">min_N</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># i --&gt; i+2m</span>
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32]_ (5.2.2, pg.19)</span>
+<span class="sd">        [Wikipedia]_</span>
+<span class="sd">        http://www.leapsecond.com/tools/adev_lib.c</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x:      input phase data, in units of seconds.</span>
+<span class="sd">        m:      averaging factor at which to calculate variance</span>
+<span class="sd">        tau:    corresponding averaging time</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
+<span class="sd">        number of samples used to estimate it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
 
-    <span class="k">if</span> <span class="n">N</span> <span class="o">&lt;</span> <span class="n">min_N</span><span class="p">:</span>
-        <span class="ne">RuntimeWarning</span><span class="p">(</span><span class="s2">&quot;Data array length is too small: </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-        <span class="n">N</span> <span class="o">=</span> <span class="n">min_N</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># second difference algorithm</span>
+
+    <span class="k">if</span> <span class="n">N</span> <span class="o">&lt;</span> <span class="n">d</span><span class="o">*</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># overlapping</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not enough phase measurements to compute &quot;</span>
+                       <span class="s2">&quot;variance at averaging factor </span><span class="si">%i</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+        <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="mi">0</span>
+
+    <span class="c1"># Calculate second differences</span>
+    <span class="n">summand</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">:]</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">m</span><span class="p">:</span><span class="o">-</span><span class="n">m</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">summand</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">summand</span><span class="p">)]</span><span class="o">.</span><span class="n">size</span>  <span class="c1"># N-2*m if no NaNs</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not enough valid phase measurements to compute &quot;</span>
+                       <span class="s2">&quot;variance at averaging factor </span><span class="si">%i</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+        <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="mi">0</span>
 
     <span class="c1"># Calculate variance</span>
-    <span class="n">var</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="n">tau</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-        <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">:]</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">m</span><span class="p">:</span><span class="o">-</span><span class="n">m</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">var</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">summand</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
-    <span class="c1"># num values looped through to gen variance</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">m</span>  <span class="c1"># capped by i+2m</span>
-
-    <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="n">n</span></div>
+    <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="calc_mvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_mvar">[docs]</a><span class="k">def</span> <span class="nf">calc_mvar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>

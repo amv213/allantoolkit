@@ -46,6 +46,8 @@ results = [
     ('hdev_octave.txt', allantoolkit.allantools.hdev),
     ('ohdev_octave.txt', allantoolkit.allantools.ohdev),
     ('totdev_octave.txt', allantoolkit.allantools.totdev),
+    pytest.param('mtotdev_octave.txt', allantoolkit.allantools.mtotdev,
+                 marks=pytest.mark.slow),
 ]
 
 
@@ -65,6 +67,5 @@ def test_generic_octave(result, fct):
     assert np.allclose(expected_taus, output.taus)
     assert np.allclose(expected_ns, output.ns)
     assert np.allclose(expected_devs, output.devs)
-
 
 

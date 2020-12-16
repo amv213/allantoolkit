@@ -309,25 +309,30 @@ def calc_totvar(x: Array, m: int, tau: float) -> VarResult:
     return var, n
 
 
-def calc_mtotvar(x, m, tau):
-    """ PRELIMINARY - REQUIRES FURTHER TESTING.
-    calculation of mtotdev for one averaging factor m; tau = m*tau0
+def calc_mtotvar(x: Array, m: int, tau: float) -> VarResult:
+    """Main algorithm for TOTVAR calculation.
 
-    NIST [SP1065]_ Eqn (27), page 25.
+    PRELIMINARY - REQUIRES FURTHER TESTING.
 
-    Computed from a set of N - 3m + 1 subsequences of 3m points.
+    References:
+        [RileyStable32]_ (5.2.12, pg.31-32)
+        [Howe1999]_
+        D.A. Howe and F. Vernotte, "Generalization of the Total Variance
+        Approach to the Modified Allan Variance," Proc.
+        31 st PTTI Meeting, pp. 267-276, Dec. 1999.
+        TODO: find justification for last part of algorithm
 
-    1. A linear trend (frequency offset) is removed from the subsequence by
-    averaging the first and last halves of the subsequence and dividing by
-    half the interval.
-    2. The offset-removed subsequence is extended at both ends by
-    uninverted, even reflection.
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
 
-    [Howe1999]_
-    D.A. Howe and F. Vernotte, "Generalization of the Total Variance
-    Approach to the Modified Allan Variance," Proc.
-    31 st PTTI Meeting, pp. 267-276, Dec. 1999.
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
     """
+
+    # TODO: make gap resistant and return correct number of non-NaN samples
 
     # Start with N phase data points to be analysed at averaging time tau
     N = x.size
@@ -390,9 +395,10 @@ def calc_mtotvar(x, m, tau):
 
             squaresum += pow((xmean1 - 2.0 * xmean2 + xmean3) / float(m), 2)
 
-        squaresum = (1.0 / (6.0 * m)) * squaresum
         var += squaresum
         n = n + 1
+
+    var = 1./(6*m) * var
 
     # scaling in front of double sum
     assert n == N - 3 * m + 1  # sanity check on the number of terms n
@@ -401,52 +407,78 @@ def calc_mtotvar(x, m, tau):
     return var, n
 
 
-def calc_ttotvar(x, m, tau):
+def calc_ttotvar(x: Array, m: int, tau: float) -> VarResult:
+    """Main algorithm for TTOTVAR calculation.
+
+    PRELIMINARY - REQUIRES FURTHER TESTING.
+
+    References:
+        [RileyStable32]_ (5.2.13, pg.31)
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
 
     mtotvar, n = calc_mtotvar(x=x, m=m, tau=tau)
 
-    ttotvar = (tau**2 / 3) * mtotvar
+    var = (tau**2 / 3) * mtotvar
 
-    return ttotvar, n
+    return VarResult(var=var, n=n)
 
 
-def calc_htotvar(x, m, tau):
-    """ PRELIMINARY - REQUIRES FURTHER TESTING.
-        calculation of htotdev for one averaging factor m
-        tau = m*tau0
+def calc_htotvar(x: Array, m: int, tau: float) -> VarResult:
+    """Main algorithm for HTOTVAR calculation.
 
-        Parameters
-        ----------
-        frequency: np.array
-            Fractional frequency data (nondimensional).
-        m: int
-            Averaging factor. tau = m*tau0, where tau0=1/rate.
+    PRELIMINARY - REQUIRES FURTHER TESTING.
+
+    References:
+        [RileyStable32]_ (5.2.14, pg.33-37)
+        http://www.wriley.com/paper4ht.htm
+
+    Args:
+        x:      input FRACTIONAL FREQUENCY data.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
     """
+
+    # TODO: make gap resistant and return correct number of non-NaN samples
 
     # NOTE: had to call parameter `x` to match the signature of all other
     # callables, but this functions operates on fractional frequency datasets!!
     # so this `x` should be an array of frequencies
-    freq = x
+    y = x
 
-    # NOTE at mj==1 we use ohdev(), based on comment from here:
-    # http://www.wriley.com/paper4ht.htm
     # "For best consistency, the overlapping Hadamard variance is used
     # instead of the Hadamard total variance at m=1"
     # FIXME: this uses both freq and phase datasets, which uses double the
     #  memory really needed...
     if m == 1:
-        x = utils.frequency2phase(y=freq, rate=m/tau)
+
+        x = utils.frequency2phase(y=y, rate=m/tau)
         var, n = calc_hvar(x=x, m=m, tau=tau)
         return var, n
 
     else:
-        N = int(len(freq))  # frequency data, N points
+
+        N = y.size  # frequency data, N points
 
         n = 0  # number of terms in the sum, for error estimation
         var = 0.0  # the deviation we are computing
         for i in range(0, N - 3 * m + 1):
+
             # subsequence of length 3m, from the original phase data
-            xs = freq[i:i + 3 * m]
+            xs = y[i:i + 3 * m]
+
             assert len(xs) == 3 * m
             # remove linear trend. by averaging first/last half,
             # computing slope, and subtracting
@@ -469,6 +501,7 @@ def calc_htotvar(x, m, tau):
             x0 = [x - slope * (idx - np.floor(3 * m / 2)) for (idx, x) in
                   enumerate(xs)]
             x0_flip = x0[::-1]  # left-right flipped version of array
+
             # extended sequence, to length 9m, by uninverted even reflection
             xstar = np.concatenate((x0_flip, x0, x0_flip))
             assert len(xstar) == 9 * m
@@ -480,13 +513,16 @@ def calc_htotvar(x, m, tau):
             squaresum = 0.0
             k = 0
             for j in range(0, 6 * int(m)):  # summation of the 6m terms.
+
                 # old naive code
                 # xmean1 = np.mean(xstar[j+0*m : j+1*m])
                 # xmean2 = np.mean(xstar[j+1*m : j+2*m])
                 # xmean3 = np.mean(xstar[j+2*m : j+3*m])
                 # squaresum += pow(xmean1 - 2.0*xmean2 + xmean3, 2)
+
                 # new faster way of doing the sums
                 if j == 0:
+
                     # intialize the sum
                     xmean1 = np.sum(xstar[0:m])
                     xmean2 = np.sum(xstar[m:2 * m])
@@ -501,6 +537,7 @@ def calc_htotvar(x, m, tau):
                 squaresum += pow((xmean1 - 2.0 * xmean2 + xmean3) / float(m), 2)
 
                 k = k + 1
+
             assert k == 6 * m  # check number of terms in the sum
             squaresum = (1.0 / (6.0 * k)) * squaresum
             var += squaresum
@@ -513,7 +550,23 @@ def calc_htotvar(x, m, tau):
         return var, n
 
 
-def calc_theo1(x, m, tau):
+def calc_theo1(x: Array, m: int, tau: float) -> VarResult:
+    """Main algorithm for THEO1 calculation.
+
+    PRELIMINARY - REQUIRES FURTHER TESTING.
+
+    References:
+        [RileyStable32]_ (5.2.15, pg.37-8)
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
 
     assert m % 2 == 0  # m must be even
 

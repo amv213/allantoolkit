@@ -34,7 +34,7 @@ def data_with_only_gaps(data):
 
 @pytest.fixture
 def dataset():
-    return allantoolkit.dataset.Dataset(allantoolkit.noise.white(10))
+    return allantoolkit.dataset.Dataset(allantoolkit.noise.white(100))
 
 
 @pytest.fixture

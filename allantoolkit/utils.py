@@ -337,6 +337,7 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     afs = afs[afs > 0]  # make sure minimum averaging time is at least 1
     afs = afs[afs <= maximum_m]  # make sure afs within maximum allowed
     afs = afs[afs % 2 == 0] if dev_type == 'theo1' else afs
+    afs = afs[afs >= 10] if dev_type == 'theo1' else afs
 
     # Apply a Stable32 `stop-ratio`
     if isinstance(taus, str) and (taus == 'octave' or taus == 'decade'):

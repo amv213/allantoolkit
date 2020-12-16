@@ -506,25 +506,30 @@
     <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="n">n</span></div>
 
 
-<div class="viewcode-block" id="calc_mtotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_mtotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_mtotvar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
-<span class="sd">    calculation of mtotdev for one averaging factor m; tau = m*tau0</span>
+<div class="viewcode-block" id="calc_mtotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_mtotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_mtotvar</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Main algorithm for TOTVAR calculation.</span>
 
-<span class="sd">    NIST [SP1065]_ Eqn (27), page 25.</span>
+<span class="sd">    PRELIMINARY - REQUIRES FURTHER TESTING.</span>
 
-<span class="sd">    Computed from a set of N - 3m + 1 subsequences of 3m points.</span>
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32]_ (5.2.12, pg.31-32)</span>
+<span class="sd">        [Howe1999]_</span>
+<span class="sd">        D.A. Howe and F. Vernotte, &quot;Generalization of the Total Variance</span>
+<span class="sd">        Approach to the Modified Allan Variance,&quot; Proc.</span>
+<span class="sd">        31 st PTTI Meeting, pp. 267-276, Dec. 1999.</span>
+<span class="sd">        TODO: find justification for last part of algorithm</span>
 
-<span class="sd">    1. A linear trend (frequency offset) is removed from the subsequence by</span>
-<span class="sd">    averaging the first and last halves of the subsequence and dividing by</span>
-<span class="sd">    half the interval.</span>
-<span class="sd">    2. The offset-removed subsequence is extended at both ends by</span>
-<span class="sd">    uninverted, even reflection.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        x:      input phase data, in units of seconds.</span>
+<span class="sd">        m:      averaging factor at which to calculate variance</span>
+<span class="sd">        tau:    corresponding averaging time</span>
 
-<span class="sd">    [Howe1999]_</span>
-<span class="sd">    D.A. Howe and F. Vernotte, &quot;Generalization of the Total Variance</span>
-<span class="sd">    Approach to the Modified Allan Variance,&quot; Proc.</span>
-<span class="sd">    31 st PTTI Meeting, pp. 267-276, Dec. 1999.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
+<span class="sd">        number of samples used to estimate it.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO: make gap resistant and return correct number of non-NaN samples</span>
 
     <span class="c1"># Start with N phase data points to be analysed at averaging time tau</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
@@ -587,9 +592,10 @@
 
             <span class="n">squaresum</span> <span class="o">+=</span> <span class="nb">pow</span><span class="p">((</span><span class="n">xmean1</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">xmean2</span> <span class="o">+</span> <span class="n">xmean3</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
 
-        <span class="n">squaresum</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">6.0</span> <span class="o">*</span> <span class="n">m</span><span class="p">))</span> <span class="o">*</span> <span class="n">squaresum</span>
         <span class="n">var</span> <span class="o">+=</span> <span class="n">squaresum</span>
         <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">var</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mi">6</span><span class="o">*</span><span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="n">var</span>
 
     <span class="c1"># scaling in front of double sum</span>
     <span class="k">assert</span> <span class="n">n</span> <span class="o">==</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># sanity check on the number of terms n</span>
@@ -598,52 +604,78 @@
     <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="n">n</span></div>
 
 
-<div class="viewcode-block" id="calc_ttotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_ttotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_ttotvar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+<div class="viewcode-block" id="calc_ttotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_ttotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_ttotvar</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Main algorithm for TTOTVAR calculation.</span>
+
+<span class="sd">    PRELIMINARY - REQUIRES FURTHER TESTING.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32]_ (5.2.13, pg.31)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x:      input phase data, in units of seconds.</span>
+<span class="sd">        m:      averaging factor at which to calculate variance</span>
+<span class="sd">        tau:    corresponding averaging time</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
+<span class="sd">        number of samples used to estimate it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">mtotvar</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">calc_mtotvar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
 
-    <span class="n">ttotvar</span> <span class="o">=</span> <span class="p">(</span><span class="n">tau</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">mtotvar</span>
+    <span class="n">var</span> <span class="o">=</span> <span class="p">(</span><span class="n">tau</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">mtotvar</span>
 
-    <span class="k">return</span> <span class="n">ttotvar</span><span class="p">,</span> <span class="n">n</span></div>
+    <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="calc_htotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_htotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_htotvar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
-<span class="sd">        calculation of htotdev for one averaging factor m</span>
-<span class="sd">        tau = m*tau0</span>
+<div class="viewcode-block" id="calc_htotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_htotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_htotvar</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Main algorithm for HTOTVAR calculation.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        frequency: np.array</span>
-<span class="sd">            Fractional frequency data (nondimensional).</span>
-<span class="sd">        m: int</span>
-<span class="sd">            Averaging factor. tau = m*tau0, where tau0=1/rate.</span>
+<span class="sd">    PRELIMINARY - REQUIRES FURTHER TESTING.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32]_ (5.2.14, pg.33-37)</span>
+<span class="sd">        http://www.wriley.com/paper4ht.htm</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x:      input FRACTIONAL FREQUENCY data.</span>
+<span class="sd">        m:      averaging factor at which to calculate variance</span>
+<span class="sd">        tau:    corresponding averaging time</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
+<span class="sd">        number of samples used to estimate it.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO: make gap resistant and return correct number of non-NaN samples</span>
 
     <span class="c1"># NOTE: had to call parameter `x` to match the signature of all other</span>
     <span class="c1"># callables, but this functions operates on fractional frequency datasets!!</span>
     <span class="c1"># so this `x` should be an array of frequencies</span>
-    <span class="n">freq</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span>
 
-    <span class="c1"># NOTE at mj==1 we use ohdev(), based on comment from here:</span>
-    <span class="c1"># http://www.wriley.com/paper4ht.htm</span>
     <span class="c1"># &quot;For best consistency, the overlapping Hadamard variance is used</span>
     <span class="c1"># instead of the Hadamard total variance at m=1&quot;</span>
     <span class="c1"># FIXME: this uses both freq and phase datasets, which uses double the</span>
     <span class="c1">#  memory really needed...</span>
     <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">frequency2phase</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">m</span><span class="o">/</span><span class="n">tau</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">frequency2phase</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">m</span><span class="o">/</span><span class="n">tau</span><span class="p">)</span>
         <span class="n">var</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">calc_hvar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="n">n</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">N</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span>  <span class="c1"># frequency data, N points</span>
+
+        <span class="n">N</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">size</span>  <span class="c1"># frequency data, N points</span>
 
         <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># number of terms in the sum, for error estimation</span>
         <span class="n">var</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># the deviation we are computing</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+
             <span class="c1"># subsequence of length 3m, from the original phase data</span>
-            <span class="n">xs</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">]</span>
+            <span class="n">xs</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">]</span>
+
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span>
             <span class="c1"># remove linear trend. by averaging first/last half,</span>
             <span class="c1"># computing slope, and subtracting</span>
@@ -666,6 +698,7 @@
             <span class="n">x0</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">-</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">idx</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span>
                   <span class="nb">enumerate</span><span class="p">(</span><span class="n">xs</span><span class="p">)]</span>
             <span class="n">x0_flip</span> <span class="o">=</span> <span class="n">x0</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># left-right flipped version of array</span>
+
             <span class="c1"># extended sequence, to length 9m, by uninverted even reflection</span>
             <span class="n">xstar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">x0_flip</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x0_flip</span><span class="p">))</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">xstar</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span> <span class="o">*</span> <span class="n">m</span>
@@ -677,13 +710,16 @@
             <span class="n">squaresum</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="p">)):</span>  <span class="c1"># summation of the 6m terms.</span>
+
                 <span class="c1"># old naive code</span>
                 <span class="c1"># xmean1 = np.mean(xstar[j+0*m : j+1*m])</span>
                 <span class="c1"># xmean2 = np.mean(xstar[j+1*m : j+2*m])</span>
                 <span class="c1"># xmean3 = np.mean(xstar[j+2*m : j+3*m])</span>
                 <span class="c1"># squaresum += pow(xmean1 - 2.0*xmean2 + xmean3, 2)</span>
+
                 <span class="c1"># new faster way of doing the sums</span>
                 <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
                     <span class="c1"># intialize the sum</span>
                     <span class="n">xmean1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">m</span><span class="p">])</span>
                     <span class="n">xmean2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xstar</span><span class="p">[</span><span class="n">m</span><span class="p">:</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">])</span>
@@ -698,6 +734,7 @@
                 <span class="n">squaresum</span> <span class="o">+=</span> <span class="nb">pow</span><span class="p">((</span><span class="n">xmean1</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">xmean2</span> <span class="o">+</span> <span class="n">xmean3</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
 
                 <span class="n">k</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span>
+
             <span class="k">assert</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">m</span>  <span class="c1"># check number of terms in the sum</span>
             <span class="n">squaresum</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">6.0</span> <span class="o">*</span> <span class="n">k</span><span class="p">))</span> <span class="o">*</span> <span class="n">squaresum</span>
             <span class="n">var</span> <span class="o">+=</span> <span class="n">squaresum</span>
@@ -710,7 +747,23 @@
         <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="n">n</span></div>
 
 
-<div class="viewcode-block" id="calc_theo1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_theo1">[docs]</a><span class="k">def</span> <span class="nf">calc_theo1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+<div class="viewcode-block" id="calc_theo1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_theo1">[docs]</a><span class="k">def</span> <span class="nf">calc_theo1</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Main algorithm for THEO1 calculation.</span>
+
+<span class="sd">    PRELIMINARY - REQUIRES FURTHER TESTING.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32]_ (5.2.15, pg.37-8)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x:      input phase data, in units of seconds.</span>
+<span class="sd">        m:      averaging factor at which to calculate variance</span>
+<span class="sd">        tau:    corresponding averaging time</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
+<span class="sd">        number of samples used to estimate it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">assert</span> <span class="n">m</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span>  <span class="c1"># m must be even</span>
 

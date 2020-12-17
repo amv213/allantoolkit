@@ -627,7 +627,7 @@ def calc_mtie(x: Array, m: int, tau: float = None) -> VarResult:
                        n*tau/m)
         return np.NaN, 0
 
-    grads = utils.rollingGrad(x, n)
+    grads = utils.rolling_grad(x, n)
     assert grads.size == x.size - (n-1)
     n = grads.size
 

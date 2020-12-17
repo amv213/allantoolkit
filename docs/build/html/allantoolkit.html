@@ -2376,34 +2376,6 @@ phase.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="allantoolkit.utils.mtie_rolling_window">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">mtie_rolling_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">window</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#mtie_rolling_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.mtie_rolling_window" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make an ndarray with a rolling window of the last dimension, from
-<a class="reference external" href="http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html">http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>array_like</em>) – Array to add rolling window to</p></li>
-<li><p><strong>window</strong> (<em>int</em>) – Size of rolling window</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>Array that is a view of the original array with a added dimension</em></p></li>
-<li><p><em>of size window.</em></p></li>
-</ul>
-</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This may consume large amounts of memory. See discussion:
-<a class="reference external" href="https://mail.python.org/pipermail/numpy-discussion/2011-January/054364.html">https://mail.python.org/pipermail/numpy-discussion/2011-January/054364.html</a>
-<a class="reference external" href="https://mail.python.org/pipermail/numpy-discussion/2011-January/054370.html">https://mail.python.org/pipermail/numpy-discussion/2011-January/054370.html</a></p>
-</div>
-</dd></dl>
-
-<dl class="py function">
 <dt id="allantoolkit.utils.nan_helper">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">nan_helper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>Callable<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#nan_helper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.nan_helper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper to handle indices and logical indices of NaNs.</p>
@@ -2494,8 +2466,8 @@ values with low ns have been removed.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="allantoolkit.utils.rollingGrad">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">rollingGrad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#rollingGrad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.rollingGrad" title="Permalink to this definition">¶</a></dt>
+<dt id="allantoolkit.utils.rolling_grad">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">rolling_grad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#rolling_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.rolling_grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adapted from:
 <a class="reference external" href="https://stackoverflow.com/questions/43288542/max-in-a-sliding-window-in-numpy-array">https://stackoverflow.com/questions/43288542/max-in-a-sliding-window-in-numpy-array</a></p>
 </dd></dl>

@@ -342,10 +342,6 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     # Get closest integer averaging factors for requested averaging times
     else:
 
-        # FIXME: fix pipeline up to here so that other functions are not
-        #  passing lists
-        taus = np.array(taus)
-
         taus = taus[~np.isnan(taus)]  # remove NaNs in input taus
         afs = np.array(taus) // tau_0
         afs = afs.astype(int)
@@ -358,7 +354,7 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     afs = afs[afs % 2 == 0] if dev_type == 'theo1' else afs
     afs = afs[afs >= 10] if dev_type == 'theo1' else afs
 
-    # Apply a Stable32 `stop-ratio`
+    # Apply a Stable32 `stop-ratio`. Only applies to 'octave' and 'decade'
     if isinstance(taus, str) and (taus == 'octave' or taus == 'decade'):
 
         stop_ratio = tables.STOP_RATIOS.get(dev_type)
@@ -540,44 +536,11 @@ def three_cornered_hat_phase(x_ab: Array, x_bc: Array, x_ca: Array,
     return tau_ab, dev_a, err_a_lo, err_a_hi, ns_ab
 
 
-def mtie_rolling_window(a, window):
-    """
-    Make an ndarray with a rolling window of the last dimension, from
-    http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html
-
-    Parameters
-    ----------
-    a : array_like
-        Array to add rolling window to
-    window : int
-        Size of rolling window
-
-    Returns
-    -------
-    Array that is a view of the original array with a added dimension
-    of size window.
-
-    Note
-    ----
-    This may consume large amounts of memory. See discussion:
-    https://mail.python.org/pipermail/numpy-discussion/2011-January/054364.html
-    https://mail.python.org/pipermail/numpy-discussion/2011-January/054370.html
-
-    """
-    if window < 1:
-        raise ValueError("`window` must be at least 1.")
-    if window > a.shape[-1]:
-        raise ValueError("`window` is too long.")
-    shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
-    strides = a.strides + (a.strides[-1],)
-    return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
-
-
-def rollingGrad(x: Array, n: int):
+def rolling_grad(x: Array, n: int):
     """Adapted from:
     https://stackoverflow.com/questions/43288542/max-in-a-sliding-window-in-numpy-array"""
 
-    def eachValue(width=n):
+    def each_value(width=n):
 
         w = x[:width].copy()
         mx = np.nanmax(w)
@@ -606,4 +569,4 @@ def rollingGrad(x: Array, n: int):
             i = (i + 1) % width
             j += 1
 
-    return np.array(list((eachValue())))
+    return np.array(list((each_value())))

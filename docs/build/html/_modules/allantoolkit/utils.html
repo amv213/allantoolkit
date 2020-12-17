@@ -539,10 +539,6 @@
     <span class="c1"># Get closest integer averaging factors for requested averaging times</span>
     <span class="k">else</span><span class="p">:</span>
 
-        <span class="c1"># FIXME: fix pipeline up to here so that other functions are not</span>
-        <span class="c1">#  passing lists</span>
-        <span class="n">taus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">taus</span><span class="p">)</span>
-
         <span class="n">taus</span> <span class="o">=</span> <span class="n">taus</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">taus</span><span class="p">)]</span>  <span class="c1"># remove NaNs in input taus</span>
         <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">taus</span><span class="p">)</span> <span class="o">//</span> <span class="n">tau_0</span>
         <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -555,7 +551,7 @@
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s1">&#39;theo1&#39;</span> <span class="k">else</span> <span class="n">afs</span>
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">]</span> <span class="k">if</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s1">&#39;theo1&#39;</span> <span class="k">else</span> <span class="n">afs</span>
 
-    <span class="c1"># Apply a Stable32 `stop-ratio`</span>
+    <span class="c1"># Apply a Stable32 `stop-ratio`. Only applies to &#39;octave&#39; and &#39;decade&#39;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;octave&#39;</span> <span class="ow">or</span> <span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;decade&#39;</span><span class="p">):</span>
 
         <span class="n">stop_ratio</span> <span class="o">=</span> <span class="n">tables</span><span class="o">.</span><span class="n">STOP_RATIOS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dev_type</span><span class="p">)</span>
@@ -737,44 +733,11 @@
     <span class="k">return</span> <span class="n">tau_ab</span><span class="p">,</span> <span class="n">dev_a</span><span class="p">,</span> <span class="n">err_a_lo</span><span class="p">,</span> <span class="n">err_a_hi</span><span class="p">,</span> <span class="n">ns_ab</span></div>
 
 
-<div class="viewcode-block" id="mtie_rolling_window"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.mtie_rolling_window">[docs]</a><span class="k">def</span> <span class="nf">mtie_rolling_window</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Make an ndarray with a rolling window of the last dimension, from</span>
-<span class="sd">    http://mail.scipy.org/pipermail/numpy-discussion/2011-January/054401.html</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    a : array_like</span>
-<span class="sd">        Array to add rolling window to</span>
-<span class="sd">    window : int</span>
-<span class="sd">        Size of rolling window</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    Array that is a view of the original array with a added dimension</span>
-<span class="sd">    of size window.</span>
-
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
-<span class="sd">    This may consume large amounts of memory. See discussion:</span>
-<span class="sd">    https://mail.python.org/pipermail/numpy-discussion/2011-January/054364.html</span>
-<span class="sd">    https://mail.python.org/pipermail/numpy-discussion/2011-January/054370.html</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">window</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`window` must be at least 1.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">window</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`window` is too long.&quot;</span><span class="p">)</span>
-    <span class="n">shape</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">window</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
-    <span class="n">strides</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">strides</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">stride_tricks</span><span class="o">.</span><span class="n">as_strided</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">strides</span><span class="o">=</span><span class="n">strides</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="rollingGrad"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.rollingGrad">[docs]</a><span class="k">def</span> <span class="nf">rollingGrad</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="rolling_grad"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.rolling_grad">[docs]</a><span class="k">def</span> <span class="nf">rolling_grad</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Adapted from:</span>
 <span class="sd">    https://stackoverflow.com/questions/43288542/max-in-a-sliding-window-in-numpy-array&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">eachValue</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">each_value</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">n</span><span class="p">):</span>
 
         <span class="n">w</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="n">width</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
@@ -803,7 +766,7 @@
             <span class="n">i</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">width</span>
             <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">((</span><span class="n">eachValue</span><span class="p">())))</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">((</span><span class="n">each_value</span><span class="p">())))</span></div>
 </pre></div>
 
               </div>

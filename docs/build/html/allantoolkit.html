@@ -2249,11 +2249,6 @@ number of samples used to estimate it.</p>
 <span id="allantoolkit-testutils"></span><h2>allantoolkit.testutils<a class="headerlink" href="#module-allantoolkit.testutils" title="Permalink to this headline">¶</a></h2>
 <p>Useful collection of functions for the allantoolkit test-suite</p>
 <dl class="py function">
-<dt id="allantoolkit.testutils.change_to_test_dir">
-<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">change_to_test_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#change_to_test_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.change_to_test_dir" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt id="allantoolkit.testutils.check_approx_equal">
 <code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">check_approx_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a1</span></em>, <em class="sig-param"><span class="n">a2</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#check_approx_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.check_approx_equal" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2270,8 +2265,20 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.testutils.read_datafile">
-<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">read_datafile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#read_datafile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.read_datafile" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">read_datafile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fn</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/testutils.html#read_datafile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.read_datafile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract phase or frequency data from an input .txt file (optionally
+compressed to .gz) or .DAT file.</p>
+<p>If present, a first column with associated timestamps will be omitted.
+Lines to omit should be commented out with <cite>#</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fn</strong> – path of the datafile from which to extract data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array of input data.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="allantoolkit.testutils.read_resultfile">
@@ -2280,31 +2287,13 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.testutils.read_stable32">
-<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">read_stable32</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">resultfile</span></em>, <em class="sig-param"><span class="n">datarate</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#read_stable32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.read_stable32" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">read_stable32</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fn</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/testutils.html#read_stable32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.read_stable32" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="allantoolkit.testutils.test_row_by_row">
-<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">test_row_by_row</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">function</span></em>, <em class="sig-param"><span class="n">datafile</span></em>, <em class="sig-param"><span class="n">datarate</span></em>, <em class="sig-param"><span class="n">resultfile</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">frequency</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#test_row_by_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.test_row_by_row" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">test_row_by_row</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">datafile</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">datarate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">resultfile</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">frequency</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#test_row_by_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.test_row_by_row" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="py function">
-<dt id="allantoolkit.testutils.this_working_directory">
-<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">this_working_directory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#this_working_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.this_working_directory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Changes working directory to directory calling function and returns to
-previous on exit.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="allantoolkit.testutils.to_fractional">
-<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">to_fractional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#to_fractional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.to_fractional" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="allantoolkit.testutils.working_directory">
-<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">working_directory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#working_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.working_directory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Changes working directory and returns to previous on exit.</p>
-</dd></dl>
 
 </div>
 <div class="section" id="module-allantoolkit.utils">
@@ -2369,12 +2358,12 @@ frequency of dataset.</p></li>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.frequency2phase">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2phase" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2phase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Integrates fractional frequency data to output phase data (with
 arbitrary initial value), in units of second.</p>
 <p>Frequency to phase conversion is done by piecewise  integration  using
 the  averaging  time  as  the  integration  interval
-<a class="reference internal" href="references.html#rileystable32manual" id="id44"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
+<a class="reference internal" href="references.html#rileystable32manual" id="id44"><span>[RileyStable32Manual]</span></a> (pg. 173-174):</p>
 <div class="math notranslate nohighlight">
 \[x_{i+1} = x_i + y_i \tau\]</div>
 <p>Any gaps in the frequency data are filled to obtain phase continuity.</p>
@@ -2383,6 +2372,7 @@ the  averaging  time  as  the  integration  interval
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>y</strong> – data array of fractional frequency measurements</p></li>
 <li><p><strong>rate</strong> – sampling rate of the input data, in Hz</p></li>
+<li><p><strong>normalize</strong> (<em>optional</em>) – remove average frequency before conversion</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

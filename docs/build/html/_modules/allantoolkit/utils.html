@@ -339,27 +339,31 @@
     <span class="k">return</span> <span class="n">y</span></div>
 
 
-<div class="viewcode-block" id="frequency2phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2phase">[docs]</a><span class="k">def</span> <span class="nf">frequency2phase</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+<div class="viewcode-block" id="frequency2phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2phase">[docs]</a><span class="k">def</span> <span class="nf">frequency2phase</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Integrates fractional frequency data to output phase data (with</span>
 <span class="sd">    arbitrary initial value), in units of second.</span>
 
 <span class="sd">    Frequency to phase conversion is done by piecewise  integration  using</span>
 <span class="sd">    the  averaging  time  as  the  integration  interval</span>
-<span class="sd">    [RileyStable32Manual]_ (pg. 174):</span>
+<span class="sd">    [RileyStable32Manual]_ (pg. 173-174):</span>
 
 <span class="sd">    .. math:: x_{i+1} = x_i + y_i \\tau</span>
 
 <span class="sd">    Any gaps in the frequency data are filled to obtain phase continuity.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        y:      data array of fractional frequency measurements</span>
-<span class="sd">        rate:   sampling rate of the input data, in Hz</span>
+<span class="sd">        y:                      data array of fractional frequency measurements</span>
+<span class="sd">        rate:                   sampling rate of the input data, in Hz</span>
+<span class="sd">        normalize (optional):   remove average frequency before conversion</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        time integral of fractional frequency data, i.e. phase (time) data</span>
 <span class="sd">        in units of seconds. For phase in units of radians, see</span>
 <span class="sd">        `phase2radians()`. Size: y.size + 1 - leading_and_trailing_gaps.size</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
     <span class="n">y</span> <span class="o">=</span> <span class="n">fill_gaps</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 

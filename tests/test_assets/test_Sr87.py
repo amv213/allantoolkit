@@ -18,11 +18,14 @@ import numpy as np
 
 # top level directory with original (frequency) data for these tests
 ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/Sr87'
-y_ref = np.loadtxt(ASSETS_DIR / 'freq_data_ori.txt', skiprows=10)[:, 1]
 
-# Directory with (un-normalised) phase data, obtained by Stable32 conversion
-PHASE_ASSETS_DIR = ASSETS_DIR / 'phase0'
-x_ref = np.loadtxt(PHASE_ASSETS_DIR / 'phase0_data.txt', skiprows=10)
+# Raw frequency data collected from experiment
+Y = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'freq/freq_data.txt')
+
+# Phase and normalised phase data, obtained by Stable32 conversion of freq
+X = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'phase/phase_data.txt')
+X0 = allantoolkit.testutils.read_datafile(ASSETS_DIR /
+                                          'phase0/phase0_data.txt')
 
 # Data sampling rate
 RATE = 0.4  # Hz, tau_0 = 2.5s
@@ -33,9 +36,9 @@ def test_frequency2phase():
     same way as Stable32. This will make sure all Stable32 deviations
     calculated on frequency data should match allantoolkit deviations which
     are (mostly) calculated on phase data behind the scenes."""
-    output = allantoolkit.utils.frequency2phase(y=y_ref, rate=RATE)
+    output = allantoolkit.utils.frequency2phase(y=Y, rate=RATE)
 
-    assert np.allclose(x_ref, output, rtol=1e-12)
+    assert np.allclose(X, output)
 
 
 # input result files and function which should replicate them
@@ -64,12 +67,40 @@ def test_generic_phase_octave(fct):
     averaging times, give the same results as Stable32 deviations calculated
     on phase data at octave averaging times"""
 
-    datafile = PHASE_ASSETS_DIR / 'phase0_data.txt'
+    datafile = ASSETS_DIR / 'phase0/phase0_data.txt'
 
     result_fn = fct.__name__ + '.txt'
-    resultfile = PHASE_ASSETS_DIR / 'octave' / result_fn
+    resultfile = ASSETS_DIR / 'phase0/octave' / result_fn
 
     return allantoolkit.testutils.test_row_by_row(fct, datafile, RATE,
                                                   resultfile, tolerance=1e-4)
 
 
+@pytest.mark.parametrize('fct', fcts)
+def test_generic_phase_decade(fct):
+    """Test allantoolkit deviations calculated on phase data at octave
+    averaging times, give the same results as Stable32 deviations calculated
+    on phase data at octave averaging times"""
+
+    datafile = ASSETS_DIR / 'phase0/phase0_data.txt'
+
+    result_fn = fct.__name__ + '.txt'
+    resultfile = ASSETS_DIR / 'phase0/decade' / result_fn
+
+    return allantoolkit.testutils.test_row_by_row(fct, datafile, RATE,
+                                                  resultfile, tolerance=1e-4)
+
+
+@pytest.mark.parametrize('fct', fcts)
+def test_generic_phase_all(fct):
+    """Test allantoolkit deviations calculated on phase data at octave
+    averaging times, give the same results as Stable32 deviations calculated
+    on phase data at octave averaging times"""
+
+    datafile = ASSETS_DIR / 'phase0/phase0_data.txt'
+
+    result_fn = fct.__name__ + '.txt'
+    resultfile = ASSETS_DIR / 'phase0/all' / result_fn
+
+    return allantoolkit.testutils.test_row_by_row(fct, datafile, RATE,
+                                                  resultfile, tolerance=1e-4)

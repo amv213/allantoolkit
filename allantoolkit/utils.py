@@ -142,27 +142,31 @@ def phase2frequency(x: Array, rate: float) -> Array:
     return y
 
 
-def frequency2phase(y: Array, rate: float) -> Array:
+def frequency2phase(y: Array, rate: float, normalize: bool = True) -> Array:
     """Integrates fractional frequency data to output phase data (with
     arbitrary initial value), in units of second.
 
     Frequency to phase conversion is done by piecewise  integration  using
     the  averaging  time  as  the  integration  interval
-    [RileyStable32Manual]_ (pg. 174):
+    [RileyStable32Manual]_ (pg. 173-174):
 
     .. math:: x_{i+1} = x_i + y_i \\tau
 
     Any gaps in the frequency data are filled to obtain phase continuity.
 
     Args:
-        y:      data array of fractional frequency measurements
-        rate:   sampling rate of the input data, in Hz
+        y:                      data array of fractional frequency measurements
+        rate:                   sampling rate of the input data, in Hz
+        normalize (optional):   remove average frequency before conversion
 
     Returns:
         time integral of fractional frequency data, i.e. phase (time) data
         in units of seconds. For phase in units of radians, see
         `phase2radians()`. Size: y.size + 1 - leading_and_trailing_gaps.size
     """
+
+    if normalize:
+        y -= np.nanmean(y)
 
     y = fill_gaps(y)
 

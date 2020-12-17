@@ -200,34 +200,56 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">gzip</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span>
 
 <span class="c1"># Spawn module-level logger</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
+<span class="c1"># shorten type hint to save some space</span>
+<span class="n">Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 
-<span class="c1"># read a simple data-file with phase or frequency numbers on each line</span>
-<div class="viewcode-block" id="read_datafile"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.read_datafile">[docs]</a><span class="k">def</span> <span class="nf">read_datafile</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
 
-    <span class="n">p</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s1">&#39;.gz&#39;</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<div class="viewcode-block" id="read_datafile"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.read_datafile">[docs]</a><span class="k">def</span> <span class="nf">read_datafile</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Extract phase or frequency data from an input .txt file (optionally</span>
+<span class="sd">    compressed to .gz) or .DAT file.</span>
+
+<span class="sd">    If present, a first column with associated timestamps will be omitted.</span>
+<span class="sd">    Lines to omit should be commented out with `#`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fn:   path of the datafile from which to extract data</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        array of input data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">fn</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s1">&#39;.gz&#39;</span><span class="p">:</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>  <span class="c1"># skip comments</span>
-                    <span class="n">p</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">fn</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s1">&#39;.txt&#39;</span> <span class="ow">or</span> <span class="n">fn</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s1">&#39;.DAT&#39;</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Data might or might not have a first column with timetags</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input data should be a `.txt`, `.DAT` or `.txt.gz` &quot;</span>
+                         <span class="s2">&quot;file.&quot;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 
 
 <span class="c1"># read a result-file, produced by copy/paste from Stable32</span>
@@ -252,87 +274,77 @@
 <span class="c1"># AF = m, averaging factor i.e. tau=m*tau0</span>
 <span class="c1"># # = n, number of pairs in the dev calculation</span>
 <span class="c1"># alpha = noise PSD coefficient</span>
-<div class="viewcode-block" id="read_stable32"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.read_stable32">[docs]</a><span class="k">def</span> <span class="nf">read_stable32</span><span class="p">(</span><span class="n">resultfile</span><span class="p">,</span> <span class="n">datarate</span><span class="p">):</span>
+<div class="viewcode-block" id="read_stable32"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.read_stable32">[docs]</a><span class="k">def</span> <span class="nf">read_stable32</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
 
-    <span class="n">devresults</span> <span class="o">=</span> <span class="n">read_resultfile</span><span class="p">(</span><span class="n">resultfile</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Read &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">devresults</span><span class="p">),</span> <span class="s2">&quot; rows from &quot;</span><span class="p">,</span> <span class="n">resultfile</span><span class="p">)</span>
-    <span class="n">rows</span><span class="o">=</span><span class="p">[]</span> 
-    <span class="c1"># parse textfile produced by Stable32</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">devresults</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>  <span class="c1"># typical ADEV result file has 7 columns of data</span>
-            <span class="n">d</span><span class="o">=</span><span class="p">{}</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;dev_min&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;dev_max&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Read %n entries from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">fn</span><span class="p">)</span>
 
-            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># the MTIE/TIErms results are formatted slightly differently</span>
-            <span class="n">d</span><span class="o">=</span><span class="p">{}</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">rows</span></div>
-
-
-<div class="viewcode-block" id="to_fractional"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.to_fractional">[docs]</a><span class="k">def</span> <span class="nf">to_fractional</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="n">mu</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">[(</span><span class="n">x</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">mu</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span></div>
-
+    <span class="k">return</span> <span class="n">data</span></div>
 
 <span class="c1"># test one tau-value (i.e. one row in the result file) at a time</span>
 <span class="c1"># test a deviation function by:</span>
 <span class="c1"># - running the function on the datafile</span>
 <span class="c1"># - reading the correct answers from the resultfile</span>
 <span class="c1"># - checking that tau, n, and dev are correct</span>
-<div class="viewcode-block" id="test_row_by_row"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.test_row_by_row">[docs]</a><span class="k">def</span> <span class="nf">test_row_by_row</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">datafile</span><span class="p">,</span> <span class="n">datarate</span><span class="p">,</span> <span class="n">resultfile</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="test_row_by_row"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.test_row_by_row">[docs]</a><span class="k">def</span> <span class="nf">test_row_by_row</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+                    <span class="n">datafile</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+                    <span class="n">datarate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                    <span class="n">resultfile</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+                    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">,</span>
+                    <span class="n">frequency</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
     <span class="c1"># if Stable32 results were given with more digits we could decrease tolerance</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="n">read_datafile</span><span class="p">(</span><span class="n">datafile</span><span class="p">)</span>
+    <span class="nb">input</span> <span class="o">=</span> <span class="n">read_datafile</span><span class="p">(</span><span class="n">datafile</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>  <span class="c1"># convert frequencies in Hz to fractional frequencies</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">to_fractional</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Read %n entries from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">),</span> <span class="n">datafile</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Read &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="s2">&quot; values from &quot;</span><span class="p">,</span> <span class="n">datafile</span><span class="p">)</span>
+    <span class="n">expected_output</span> <span class="o">=</span> <span class="n">read_stable32</span><span class="p">(</span><span class="n">resultfile</span><span class="p">)</span>
 
-    <span class="n">s32rows</span> <span class="o">=</span> <span class="n">read_stable32</span><span class="p">(</span><span class="n">resultfile</span><span class="p">,</span> <span class="n">datarate</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test of function &quot;</span><span class="p">,</span> <span class="n">function</span> <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test of function &quot;</span><span class="p">,</span> <span class="n">function</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tau N  </span><span class="se">\t</span><span class="s2"> DEV(Stable32) </span><span class="se">\t</span><span class="s2"> DEV(allantoolkit) </span><span class="se">\t</span><span class="s2"> rel.error</span><span class="se">\t</span><span class="s2"> bias&quot;</span><span class="p">)</span>
-    
-    <span class="n">n_errors</span><span class="o">=</span><span class="mi">0</span>
+
+    <span class="c1"># Unpack resultfile columns</span>
+    <span class="k">if</span> <span class="n">expected_output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+        <span class="c1"># Typical Stable32 Result structure</span>
+        <span class="n">ms</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">alphas</span><span class="p">,</span> <span class="n">dev_mins</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">dev_maxs</span> <span class="o">=</span> <span class="n">expected_output</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">elif</span> <span class="n">expected_output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="c1"># the MTIE/TIErms results are formatted slightly differently</span>
+        <span class="n">ms</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">devs</span> <span class="o">=</span> <span class="n">expected_output</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Stable32 Result File format not recognised&quot;</span><span class="p">)</span>
+
+    <span class="n">n_errors</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="c1"># run allantoolkit algorithm, row by row</span>
-    <span class="k">for</span> <span class="n">s32data</span> <span class="ow">in</span> <span class="n">s32rows</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">expected_output</span><span class="p">):</span>
 
         <span class="c1"># If checking a theo1, the file will have an effective 75% of the</span>
         <span class="c1"># original one</span>
-        <span class="n">tau_ori</span> <span class="o">=</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">function</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="s1">&#39;theo1&#39;</span> <span class="k">else</span> \
-            <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">0.75</span>
+        <span class="n">tau_ori</span> <span class="o">=</span> <span class="n">taus</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">function</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="s1">&#39;theo1&#39;</span> <span class="k">else</span> <span class="n">taus</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="mf">0.75</span>
 
         <span class="k">if</span> <span class="n">frequency</span><span class="p">:</span>
             <span class="p">(</span><span class="n">taus2</span><span class="p">,</span> <span class="n">devs2</span><span class="p">,</span> <span class="n">errs_lo2</span><span class="p">,</span> <span class="n">errs_hi2</span><span class="p">,</span> <span class="n">ns2</span><span class="p">)</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span>
-                <span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">datarate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">tau_ori</span><span class="p">)</span>
+                <span class="nb">input</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">datarate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">tau_ori</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="p">(</span><span class="n">taus2</span><span class="p">,</span> <span class="n">devs2</span><span class="p">,</span> <span class="n">errs_lo2</span><span class="p">,</span> <span class="n">errs_hi2</span><span class="p">,</span> <span class="n">ns2</span><span class="p">)</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span>
-                <span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">datarate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">tau_ori</span><span class="p">)</span>
+                <span class="nb">input</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">datarate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">tau_ori</span><span class="p">)</span>
 
-        <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_equal</span><span class="p">(</span><span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">],</span> <span class="n">ns2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_equal</span><span class="p">(</span><span class="n">ns</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ns2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_equal</span><span class="p">(</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">],</span> <span class="n">taus2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_equal</span><span class="p">(</span><span class="n">taus</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">taus2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_approx_equal</span><span class="p">(</span><span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">],</span> <span class="n">devs2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">n_errors</span> <span class="o">+=</span> <span class="n">check_approx_equal</span><span class="p">(</span><span class="n">devs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">devs2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                                        <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">rel_error</span> <span class="o">=</span> <span class="p">(</span><span class="n">devs2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">]</span>
-            <span class="n">bias</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">devs2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.1f</span><span class="s2"> </span><span class="si">%d</span><span class="s2"> </span><span class="si">%0.6g</span><span class="s2"> </span><span class="se">\t</span><span class="s2"> </span><span class="si">%0.6g</span><span class="s2"> </span><span class="se">\t</span><span class="s2"> </span><span class="si">%0.6f</span><span class="s2"> </span><span class="se">\t</span><span class="s2"> </span><span class="si">%0.4f</span><span class="s2"> OK!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">],</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">],</span> <span class="n">s32data</span><span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">],</span> <span class="n">devs2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rel_error</span><span class="p">,</span><span class="n">bias</span><span class="p">))</span></div>
+            <span class="n">rel_error</span> <span class="o">=</span> <span class="p">(</span><span class="n">devs2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">devs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">devs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">devs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">devs2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.1f</span><span class="s2"> </span><span class="si">%d</span><span class="s2"> </span><span class="si">%0.6g</span><span class="s2"> </span><span class="se">\t</span><span class="s2"> </span><span class="si">%0.6g</span><span class="s2"> </span><span class="se">\t</span><span class="s2"> </span><span class="si">%0.6f</span><span class="s2"> </span><span class="se">\t</span><span class="s2"> </span><span class="si">%0.4f</span><span class="s2"> OK!&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="n">taus</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ns</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">devs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">devs2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rel_error</span><span class="p">,</span> <span class="n">bias</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="check_equal"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.check_equal">[docs]</a><span class="k">def</span> <span class="nf">check_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">):</span>
@@ -368,40 +380,6 @@
                 <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">,</span> <span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start0</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="change_to_test_dir"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.change_to_test_dir">[docs]</a><span class="k">def</span> <span class="nf">change_to_test_dir</span><span class="p">():</span>
-    <span class="c1"># hack to run script from its own directory</span>
-    <span class="n">abspath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">abspath</span><span class="p">)</span>
-    <span class="n">dname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">abspath</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">dname</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="working_directory"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.working_directory">[docs]</a><span class="nd">@contextmanager</span>
-<span class="k">def</span> <span class="nf">working_directory</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Changes working directory and returns to previous on exit.&quot;&quot;&quot;</span>
-    <span class="n">prev_cwd</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">yield</span>
-    <span class="k">finally</span><span class="p">:</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">prev_cwd</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="this_working_directory"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.this_working_directory">[docs]</a><span class="nd">@contextmanager</span>
-<span class="k">def</span> <span class="nf">this_working_directory</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Changes working directory to directory calling function and returns to</span>
-<span class="sd">    previous on exit.&quot;&quot;&quot;</span>
-
-    <span class="n">this_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
-
-    <span class="n">prev_cwd</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">this_dir</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">yield</span>
-    <span class="k">finally</span><span class="p">:</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">prev_cwd</span><span class="p">)</span></div>
 </pre></div>
 
               </div>

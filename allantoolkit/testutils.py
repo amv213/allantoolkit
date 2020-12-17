@@ -85,12 +85,6 @@ def read_stable32(fn: Union[str, Path]) -> Array:
 
     return data
 
-
-def to_fractional(data):
-    mu = numpy.mean(data)
-    return [(x-mu)/mu for x in data]
-
-
 # test one tau-value (i.e. one row in the result file) at a time
 # test a deviation function by:
 # - running the function on the datafile
@@ -108,9 +102,6 @@ def test_row_by_row(function: Callable,
     # if Stable32 results were given with more digits we could decrease tolerance
 
     input = read_datafile(datafile)
-
-    if normalize:  # convert frequencies in Hz to fractional frequencies
-        input = to_fractional(input)
 
     logger.info("Read %n entries from %s", len(input), datafile)
 

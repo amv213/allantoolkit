@@ -67,7 +67,8 @@ def test_single_value():
     # fill one value
     data = np.array([1.])
 
-    output = allantoolkit.utils.frequency2phase(data, rate=RATE)
+    output = allantoolkit.utils.frequency2phase(data, rate=RATE,
+                                                normalize=False)
 
     output_theory = np.cumsum(np.array(1.)) * 1 / RATE
     output_theory = np.insert(output_theory, 0, 0)
@@ -82,7 +83,8 @@ def test_almost_all_gaps():
     # fill one value
     data = np.array([np.NaN, np.NaN, 2.4, np.NaN, np.NaN])
 
-    output = allantoolkit.utils.frequency2phase(data, rate=RATE)
+    output = allantoolkit.utils.frequency2phase(data, rate=RATE,
+                                                normalize=False)
 
     output_theory = np.cumsum(np.array(2.4)) * 1 / RATE
     output_theory = np.insert(output_theory, 0, 0)

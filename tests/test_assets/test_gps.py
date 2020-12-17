@@ -56,6 +56,9 @@ results = [
 ]
 
 
+# FIXME: update this to use the latest noise_id algorithm
+# FIXME: this always fails because dev_type is passed wrong (should be
+#  fct.__name__)
 @pytest.mark.slow
 @pytest.mark.parametrize('datafile, verbose, tolerance, rate', assets)
 @pytest.mark.parametrize('result, fct', results)
@@ -85,8 +88,8 @@ def test_generic_ci_and_noiseID(datafile, result, fct, verbose, tolerance,
 
             assert np.isclose(lo2, row[4], rtol=1e-2, atol=0)
             assert np.isclose(hi2, row[6], rtol=1e-2, atol=0)
-            print(" CI OK! tau= %f  lo/s32_lo = %f hi/s32_hi = %f " % (
-                row[1], lo2 / row[4], hi2 / row[6]))
+            print(" CI OK! tau= %f  alpha=%i lo/s32_lo = %f hi/s32_hi = %f "
+                  % (row[1], row[3], lo2 / row[4], hi2 / row[6]))
 
         except NotImplementedError:
             print("can't do CI for tau= %f" % row[1])
@@ -95,21 +98,23 @@ def test_generic_ci_and_noiseID(datafile, result, fct, verbose, tolerance,
 
 @pytest.mark.slow
 @pytest.mark.parametrize('datafile, verbose, tolerance, rate', assets)
-def test_noise_id(datafile, verbose, tolerance, rate):
+@pytest.mark.parametrize('result, fct', results)
+def test_noise_id(datafile, result, fct, verbose, tolerance, rate):
     """ test for noise-identification """
 
     datafile = ASSETS_DIR / datafile
-    result = datafile.parent / 'stable32_ADEV_decade.txt'
+    result = datafile.parent / result
 
     phase = testutils.read_datafile(datafile)
     s32_rows = testutils.read_stable32(result)
 
     # test noise-ID
     for s32 in s32_rows:
-        tau, alpha, AF = s32[1], s32[3], int(s32[0])
+        tau, alpha, AF = s32[1], int(s32[3]), int(s32[0])
         try:
-            alpha_int = allantoolkit.ci.autocorr_noise_id(phase, af=AF)[0]
+            alpha_int = allantoolkit.ci.noise_id(phase, data_type='phase',
+                                                 m=AF, dev_type=fct.__name__)
             print(tau, alpha, alpha_int)
             assert alpha_int == alpha
-        except NotImplementedError:
+        except RuntimeWarning:
             print("can't do noise-ID for tau= %f" % s32[1])

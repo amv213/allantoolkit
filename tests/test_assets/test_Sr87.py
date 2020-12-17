@@ -53,11 +53,108 @@ fcts = [
     pytest.param(allantoolkit.allantools.mtotdev, marks=pytest.mark.slow),
     pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
     pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
+]
+
+
+@pytest.mark.parametrize('fct', fcts)
+def test_noise_id_phase0_octave(fct):
+    """ test for noise-identification """
+
+    datafile = ASSETS_DIR / 'phase0/phase0_data.txt'
+
+    result_fn = fct.__name__ + '.txt'
+    resultfile = ASSETS_DIR / 'phase0/octave' / result_fn
+
+    phase = allantoolkit.testutils.read_datafile(datafile)
+    s32_rows = allantoolkit.testutils.read_stable32(resultfile)
+
+    # test noise-ID
+    for s32 in s32_rows:
+        tau, alpha, AF = s32[1], int(s32[3]), int(s32[0])
+
+        try:
+            alpha_int = allantoolkit.ci.noise_id(phase, data_type='phase',
+                                                 m=AF, dev_type=fct.__name__)
+
+            print(fct.__name__, tau, alpha, alpha_int)
+            assert alpha_int == alpha
+
+        except RuntimeWarning:
+            print("Cannot use ACF at this averaging time")
+
+
+
+@pytest.mark.parametrize('fct', fcts)
+def test_noise_id_freq_octave(fct):
+    """ test for noise-identification """
+
+    datafile = ASSETS_DIR / 'freq/freq_data.txt'
+
+    result_fn = fct.__name__ + '.txt'
+    resultfile = ASSETS_DIR / 'freq/octave' / result_fn
+
+    phase = allantoolkit.testutils.read_datafile(datafile)
+    s32_rows = allantoolkit.testutils.read_stable32(resultfile)
+
+    # test noise-ID
+    for s32 in s32_rows:
+        tau, alpha, AF = s32[1], int(s32[3]), int(s32[0])
+
+        try:
+            alpha_int = allantoolkit.ci.noise_id(phase, data_type='freq',
+                                                 m=AF, dev_type=fct.__name__)
+
+            print(fct.__name__, tau, alpha, alpha_int)
+            assert alpha_int == alpha
+
+        except RuntimeWarning:
+            print("Cannot use ACF at this averaging time")
+
+
+@pytest.mark.parametrize('fct', fcts)
+def test_noise_id_freq_octave(fct):
+    """ test for noise-identification """
+
+    datafile = ASSETS_DIR / 'freq/freq_data.txt'
+
+    result_fn = fct.__name__ + '.txt'
+    resultfile = ASSETS_DIR / 'freq/decade' / result_fn
+
+    phase = allantoolkit.testutils.read_datafile(datafile)
+    s32_rows = allantoolkit.testutils.read_stable32(resultfile)
+
+    # test noise-ID
+    for s32 in s32_rows:
+        tau, alpha, AF = s32[1], int(s32[3]), int(s32[0])
+
+        try:
+            alpha_int = allantoolkit.ci.noise_id(phase, data_type='freq',
+                                                 m=AF, dev_type=fct.__name__)
+
+            print(fct.__name__, tau, alpha, alpha_int)
+            assert alpha_int == alpha
+
+        except RuntimeWarning:
+            print("Cannot use ACF at this averaging time")
+
+
+'''
+# input result files and function which should replicate them
+fcts = [
+    allantoolkit.allantools.adev,
+    allantoolkit.allantools.oadev,
+    allantoolkit.allantools.mdev,
+    allantoolkit.allantools.tdev,
+    allantoolkit.allantools.hdev,
+    allantoolkit.allantools.ohdev,
+    allantoolkit.allantools.totdev,
+    pytest.param(allantoolkit.allantools.mtotdev, marks=pytest.mark.slow),
+    pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
+    pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
     allantoolkit.allantools.theo1,
     pytest.param(allantoolkit.allantools.mtie, marks=pytest.mark.slow),
     allantoolkit.allantools.tierms,
 ]
-
 
 # FIXME: add tests of noise type identified, and upper and minimum error
 #  bounds once implemented those calculations in allantoolkit
@@ -104,3 +201,4 @@ def test_generic_phase_all(fct):
 
     return allantoolkit.testutils.test_row_by_row(fct, datafile, RATE,
                                                   resultfile, tolerance=1e-4)
+'''

@@ -12,6 +12,7 @@ import scipy.special
 import scipy.stats  # used in confidence_intervals()
 import scipy.signal  # decimation in lag-1 acf
 from . import allantools
+from . import tables
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -20,6 +21,160 @@ logger = logging.getLogger(__name__)
 ONE_SIGMA_CI = scipy.special.erf(1/np.sqrt(2))
 #    = 0.68268949213708585
 
+# shorten type hint to save some space
+Array = np.ndarray
+
+
+def acf(z: Array, k: int) -> float:
+    """Lag-k autocorrelation function.
+
+    The autocorrelation function (ACF) is a fundamental way to describe a time
+    series by multiplying it by a delayed version of itself, thereby showing
+    the degree by which its value at one time is similar to its value at a
+    certain later time.
+
+    References:
+         [RileyStable32]_ (5.5.3, pg.53-54)
+
+    Args:
+        z:  timeseries for which to calculate lag-k autocorrelation
+        k:  lag interval
+
+    Returns:
+        timeseries autocorrelation factor at lag-k
+    """
+
+    # Number of (valid) datapoints
+    N = z[~np.isnan(z)].size
+
+    # Mean value of the timeseries
+    zbar = np.nanmean(z)
+
+    # Calculate autocorrelation factor
+    summand = (z[:N-k] - zbar)*(z[k:] - zbar)
+    a = 1./N * np.nansum(summand)
+    b = np.nanmean((z-zbar)**2)
+    r = a/b
+
+    return r
+
+
+def noise_id_core(z: Array, dmax: int, dmin: int = 0):
+    """Core algorithm for the lag1 autocorrelation power law noise
+    identification algorithm.
+
+    References:
+        [RileyStable32]_ (5.5.6 pg.56)
+        http://www.stable32.com/Auto.pdf
+        http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.503.9864&rep=rep1&type=pdf
+        Power law noise identification using the lag 1 autocorrelation
+        Riley,W.J. et al.
+        18th European Frequency and Time Forum (EFTF 2004)
+        https://ieeexplore.ieee.org/document/5075021
+
+    Args:
+        z:                  timeseries for which to calculate lag-1
+                            autocorrelation. Input data should be at the
+                            particular averaging time tau of interest.
+        dmax:               maximum order of differencing
+        dmin (optional):    minimum order of differencing
+
+
+    Returns:
+        an estimate p of the `alpha` of the dominant power law noise type.
+    """
+
+    d = 0
+    done = False
+    while not done:
+
+        # Calculate lag-1 autocorrelation function
+        r1 = acf(z=z, k=1)
+
+        delta = r1/(1 + r1)
+
+        if d >= dmin and (delta < 0.25 or d >= dmax):
+
+            p = -2*(delta + d)
+            done = True
+
+        else:
+
+            z = np.diff(z)
+            d += 1
+
+    return p
+
+
+def noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
+    """Effective method for identifying power law noise factor `alpha` at
+    given averaging time.
+
+    Noise identification based on Lag-1 autocorrelation function. Excellent
+    discrimination for all common power law noises for both phase and
+    frequency data, including difficult cases with mixed noises.
+
+    References:
+        [RileyStable32]_ (5.5.3-6 pg.53-7)
+
+    Args:
+        data:       array of input timeseries data. Before analysis, the data
+                    should be preprocessed to remove outliers, discontinuities,
+                    and  deterministic components
+        data_type:  input data type. Either `phase` or `freq`.
+        m:          averaging factor at which to estimate dominant noise type
+        dev_type:   type of deviation used for analysis, e.g. `adev`.
+
+    Returns:
+        estimate of the `alpha` exponent, the dominant power law noise type.
+    """
+
+    # The input data should be for the particular averaging time, τ, of
+    # interest, and it is therefore be necessary to decimate the phase
+    # data or average the frequency data by the appropriate averaging factor
+    # before applying the noise identification algorithm
+    if data_type == 'phase':
+
+        z = data[::m]
+
+    elif data_type == 'freq':
+
+        z = data[:-(len(data) % m)]
+        z = np.mean(z.reshape(-1, m), axis=1)
+
+    else:
+        raise ValueError(f"Invalid data_type value: {data_type}. Should be "
+                         f"`phase` or `freq`.")
+
+    # Check number of datapoints
+    N = z[~np.isnan(z)].size
+    if N < 32:
+        logger.warning("Noise ID method based on Lag1 ACF might not be "
+                       "reliable at this averaging time")
+        raise RuntimeWarning
+
+    # The dmax parameter should be set to 2 or 3 for an Allan or Hadamard (2
+    # or 3-sample) variance analysis, respectively.
+    dmax = tables.D_ORDER.get(dev_type, None)
+
+    if dmax is None:
+        raise KeyError(f"You provided an invalid {dev_type} "
+                       f"dev_type for noise ID algorithm.")
+
+    # Run lag1 autocorrelation noise id algorithm
+    p = noise_id_core(z=z, dmax=dmax)
+
+    # The alpha result is equal to p+2 or p for phase or frequency data,
+    # respectively, and may be rounded to an integer (although the fractional
+    # part is useful for estimated mixed noises).
+    alpha = p+2 if data_type == 'phase' else p
+    alpha = round(alpha)
+
+    return alpha
+
+
+
+# -----
 
 def get_error_bars(dev, m, tau, n, alpha=0, d=2, overlapping=True,
                    modified=False):
@@ -134,7 +289,9 @@ def confidence_interval_noiseID(x, dev, af, dev_type="adev", data_type="phase", 
     dmax = 2
     if (dev_type == "hdev") or (dev_type == "ohdev"):
         dmax = 3
-    alpha_int = autocorr_noise_id(x, int(af), data_type=data_type, dmin=0, dmax=dmax)[0]
+
+    alpha_int = autocorr_noise_id(x, int(af), data_type=data_type, dmin=0,
+                                  dmax=dmax)[0]
 
     # 2) EDF
     if dev_type == "adev":
@@ -423,9 +580,6 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
         rho = r1/(1.0+r1)
         if d >= dmin and (rho < 0.25 or d >= dmax):
             p = -2*(rho+d)
-            #print r1
-            #assert r1 < 0
-            #assert r1 > -1.0/2.0
             phase_add2 = 0
             if data_type == "phase":
                 phase_add2 = 2

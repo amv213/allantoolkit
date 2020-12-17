@@ -27,3 +27,27 @@ stop_ratios:
   theoH:    1
   mtotdev:  2
   ttotdev:  2
+
+
+d_order:
+  # Table of differencing orders for different variance types.
+  #
+  # There are two categories of stability variances: unmodified variances,
+  # which  use  d^th differences of phase samples, and modified variances,
+  # which use d^th differences of averaged phase samples. The Allan variances
+  # correspond to d = 2, and the Hadamard variances to d = 3.
+  #
+  # [RileyStable32]_ (pg.15)
+
+
+  # Variance Type:  d
+  adev:     2
+  oadev:    2
+  mdev:     2
+  tdev:     2
+  hdev:     3
+  ohdev:    3
+  totdev:   2
+  htotdev:  3
+  mtotdev:  2
+  ttotdev:  2

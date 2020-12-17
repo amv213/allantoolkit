@@ -8,3 +8,4 @@ with open(path_to_tables, 'rb') as f:
     tables = yaml.load(f, Loader=yaml.SafeLoader)
 
 STOP_RATIOS = tables.get('stop_ratios')
+D_ORDER = tables.get('d_order')

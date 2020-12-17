@@ -22,6 +22,11 @@ DevResult = NamedTuple('DevResult', [('taus', Array),
                                      ('ns', Array)])
 
 
+# TODO: Add data preprocessing before feeding to dev:
+# [RileyStable32]_ (10, pg.103)
+# might fix noise type estimation
+
+
 def dev(dev_type: str, data: Array, rate: float, data_type: str,
         taus: Taus, max_af: int) -> DevResult:
     """Dispatches the input data and parameters to the appropriate statistical

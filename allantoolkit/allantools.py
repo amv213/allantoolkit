@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 # shorten type hint to save some space
 Array = np.ndarray
 
+# group allowed taus types to save some space
+Taus = Union[str, float, List, Array]
+
 # define named tuple to hold dev results
 DevResult = NamedTuple('DevResult', [('taus', Array),
                                      ('devs', Array),
@@ -20,7 +23,7 @@ DevResult = NamedTuple('DevResult', [('taus', Array),
 
 
 def dev(dev_type: str, data: Array, rate: float, data_type: str,
-        taus: Union[str, Array], max_af: int) -> DevResult:
+        taus: Taus, max_af: int) -> DevResult:
     """Dispatches the input data and parameters to the appropriate statistical
     algorithm computing the requested deviation.
 
@@ -37,7 +40,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
     Returns:
         (taus, devs, errs, ns) NamedTuple of results:
-        
+
         .taus:      array of averaging times for which deviation was computed.
         .devs:      array with deviation computed at each averaging time.
         .errs_lo:   array with estimated lower bound error in each computed
@@ -102,7 +105,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
 
 def adev(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+         taus: Taus = None, max_af: int = None) -> DevResult:
     """Allan deviation (ADEV):
     classic - use only if required - relatively poor confidence
     [[SP1065]_ (pg.14-15)].
@@ -147,7 +150,7 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def oadev(data: Array, rate: float = 1., data_type: str = "phase",
-          taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+          taus: Taus = None, max_af: int = None) -> DevResult:
     """ overlapping Allan deviation.
         General purpose - most widely used - first choice
 
@@ -172,7 +175,7 @@ def oadev(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def mdev(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+         taus: Taus = None, max_af: int = None) -> DevResult:
     """  Modified Allan deviation.
          Used to distinguish between White and Flicker Phase Modulation.
 
@@ -220,7 +223,7 @@ def mdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def tdev(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+         taus: Taus = None, max_af: int = None) -> DevResult:
     """ Time deviation.
         Based on modified Allan variance.
 
@@ -269,7 +272,7 @@ def tdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def hdev(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+         taus: Taus = None, max_af: int = None) -> DevResult:
     """ Hadamard deviation.
         Rejects frequency drift, and handles divergent noise.
 
@@ -302,7 +305,7 @@ def hdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def ohdev(data: Array, rate: float = 1., data_type: str = "phase",
-          taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+          taus: Taus = None, max_af: int = None) -> DevResult:
     """ Overlapping Hadamard deviation.
         Better confidence than normal Hadamard.
 
@@ -347,7 +350,7 @@ def ohdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def totdev(data: Array, rate: float = 1., data_type: str = "phase",
-           taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+           taus: Taus = None, max_af: int = None) -> DevResult:
     """ Total deviation.
         Better confidence at long averages for Allan deviation.
 
@@ -391,7 +394,7 @@ def totdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def mtotdev(data: Array, rate: float = 1., data_type: str = "phase",
-            taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+            taus: Taus = None, max_af: int = None) -> DevResult:
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Modified Total deviation.
         Better confidence at long averages for modified Allan
@@ -428,7 +431,7 @@ def mtotdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def ttotdev(data: Array, rate: float = 1., data_type: str = "phase",
-            taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+            taus: Taus = None, max_af: int = None) -> DevResult:
     """ Time Total Deviation
 
         Modified total variance scaled by tau^2 / 3
@@ -441,7 +444,7 @@ def ttotdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
-            taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+            taus: Taus = None, max_af: int = None) -> DevResult:
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Hadamard Total deviation.
         Better confidence at long averages for Hadamard deviation
@@ -479,7 +482,7 @@ def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def theo1(data: Array, rate: float = 1., data_type: str = "phase",
-          taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+          taus: Taus = None, max_af: int = None) -> DevResult:
     """ PRELIMINARY - REQUIRES FURTHER TESTING.
         Theo1 is a two-sample variance with improved confidence and
         extended averaging factor range. [Howe_theo1]_
@@ -522,7 +525,7 @@ def theo1(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def mtie(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+         taus: Taus = None, max_af: int = None) -> DevResult:
     """ Maximum Time Interval Error.
 
     Parameters
@@ -550,7 +553,7 @@ def mtie(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def tierms(data: Array, rate: float = 1., data_type: str = "phase",
-           taus: Union[str, Array] = None, max_af: int = None) -> DevResult:
+           taus: Taus = None, max_af: int = None) -> DevResult:
     """ Time Interval Error RMS.
 
     Parameters

@@ -12,8 +12,11 @@ logger = logging.getLogger(__name__)
 # shorten type hint to save some space
 Array = np.ndarray
 
+# group allowed taus types to save some space
+Taus = Union[str, float, List, Array]
+
 # define named tuple to hold averaging times and factors
-Taus = NamedTuple('Taus', [('taus', Array), ('afs', Array)])
+TausResult = NamedTuple('TausResult', [('taus', Array), ('afs', Array)])
 
 
 def trim_data(data: Array) -> Array:
@@ -242,8 +245,8 @@ def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
 
 
 def tau_generator(data: Array, rate: float, dev_type: str,
-                  taus: Union[Array, str] = None,
-                  maximum_m: int = None) -> Taus:
+                  taus: Taus = None,
+                  maximum_m: int = None) -> TausResult:
     """Pre-processing of the list of averaging times requested by the user, at
     which to compute statistics.
 
@@ -290,7 +293,9 @@ def tau_generator(data: Array, rate: float, dev_type: str,
         raise ValueError("Cannot calculate averaging times on empty data.")
 
     maximum_m = N if maximum_m is None else maximum_m
+
     taus = 'octave' if taus is None else taus
+    taus = taus if isinstance(taus, str) else np.array(taus)  # force to numpy
 
     # Consistency check sampling interval
     try:
@@ -377,10 +382,10 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     logger.debug("Averaging times: %s", taus)
     logger.debug("Averaging factors: %s", afs)
 
-    return Taus(taus=taus, afs=afs)
+    return TausResult(taus=taus, afs=afs)
 
 
-def tau_reduction(afs: Array, rate: float, n_per_decade: int) -> Taus:
+def tau_reduction(afs: Array, rate: float, n_per_decade: int) -> TausResult:
     """Reduce the number of averaging factors to maximum of n per decade.
 
     This is only useful if more than the "decade" and "octave" but
@@ -424,7 +429,7 @@ def tau_reduction(afs: Array, rate: float, n_per_decade: int) -> Taus:
 
     taus = tau_0*afs
 
-    return Taus(taus=taus, afs=afs)
+    return TausResult(taus=taus, afs=afs)
 
 
 def remove_small_ns(taus: Array, devs: Array, errs_lo: Array, errs_hi: Array ,

@@ -22,7 +22,7 @@ def test_return_type():
     output = allantoolkit.utils.tau_reduction(afs=expected_all, rate=r,
                                               n_per_decade=10)
 
-    assert isinstance(output, allantoolkit.utils.Taus)
+    assert isinstance(output, allantoolkit.utils.TausResult)
 
 
 def test_tau_reduction_10():

@@ -20,7 +20,7 @@ def test_return_type(data_with_gaps, dev_type, taus):
     output = allantoolkit.utils.tau_generator(data_with_gaps, rate=RATE,
                                               dev_type=dev_type, taus=taus)
 
-    assert isinstance(output, allantoolkit.utils.Taus)
+    assert isinstance(output, allantoolkit.utils.TausResult)
 
 
 @pytest.mark.parametrize('dev_type', dev_types)
@@ -149,7 +149,8 @@ def test_m_within_dataset_bound(data_with_gaps, dev_type, taus):
     output = allantoolkit.utils.tau_generator(data_with_gaps, rate=RATE,
                                               dev_type=dev_type, taus=taus)
 
-    assert min(output.afs) < data_with_gaps.size
+    if output.afs.size:
+        assert min(output.afs) < data_with_gaps.size
 
 
 @pytest.mark.parametrize('taus', tau_types)

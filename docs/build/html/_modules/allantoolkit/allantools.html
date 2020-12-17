@@ -208,6 +208,9 @@
 <span class="c1"># shorten type hint to save some space</span>
 <span class="n">Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 
+<span class="c1"># group allowed taus types to save some space</span>
+<span class="n">Taus</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span>
+
 <span class="c1"># define named tuple to hold dev results</span>
 <span class="n">DevResult</span> <span class="o">=</span> <span class="n">NamedTuple</span><span class="p">(</span><span class="s1">&#39;DevResult&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;taus&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
                                      <span class="p">(</span><span class="s1">&#39;devs&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
@@ -217,7 +220,7 @@
 
 
 <div class="viewcode-block" id="dev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.dev">[docs]</a><span class="k">def</span> <span class="nf">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">],</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+        <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Dispatches the input data and parameters to the appropriate statistical</span>
 <span class="sd">    algorithm computing the requested deviation.</span>
 
@@ -234,7 +237,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (taus, devs, errs, ns) NamedTuple of results:</span>
-<span class="sd">        </span>
+
 <span class="sd">        .taus:      array of averaging times for which deviation was computed.</span>
 <span class="sd">        .devs:      array with deviation computed at each averaging time.</span>
 <span class="sd">        .errs_lo:   array with estimated lower bound error in each computed</span>
@@ -299,7 +302,7 @@
 
 
 <div class="viewcode-block" id="adev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.adev">[docs]</a><span class="k">def</span> <span class="nf">adev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-         <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+         <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Allan deviation (ADEV):</span>
 <span class="sd">    classic - use only if required - relatively poor confidence</span>
 <span class="sd">    [[SP1065]_ (pg.14-15)].</span>
@@ -344,7 +347,7 @@
 
 
 <div class="viewcode-block" id="oadev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.oadev">[docs]</a><span class="k">def</span> <span class="nf">oadev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-          <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+          <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; overlapping Allan deviation.</span>
 <span class="sd">        General purpose - most widely used - first choice</span>
 
@@ -369,7 +372,7 @@
 
 
 <div class="viewcode-block" id="mdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.mdev">[docs]</a><span class="k">def</span> <span class="nf">mdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-         <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+         <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;  Modified Allan deviation.</span>
 <span class="sd">         Used to distinguish between White and Flicker Phase Modulation.</span>
 
@@ -417,7 +420,7 @@
 
 
 <div class="viewcode-block" id="tdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.tdev">[docs]</a><span class="k">def</span> <span class="nf">tdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-         <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+         <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Time deviation.</span>
 <span class="sd">        Based on modified Allan variance.</span>
 
@@ -466,7 +469,7 @@
 
 
 <div class="viewcode-block" id="hdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.hdev">[docs]</a><span class="k">def</span> <span class="nf">hdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-         <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+         <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Hadamard deviation.</span>
 <span class="sd">        Rejects frequency drift, and handles divergent noise.</span>
 
@@ -499,7 +502,7 @@
 
 
 <div class="viewcode-block" id="ohdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.ohdev">[docs]</a><span class="k">def</span> <span class="nf">ohdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-          <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+          <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Overlapping Hadamard deviation.</span>
 <span class="sd">        Better confidence than normal Hadamard.</span>
 
@@ -544,7 +547,7 @@
 
 
 <div class="viewcode-block" id="totdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.totdev">[docs]</a><span class="k">def</span> <span class="nf">totdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-           <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+           <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Total deviation.</span>
 <span class="sd">        Better confidence at long averages for Allan deviation.</span>
 
@@ -588,7 +591,7 @@
 
 
 <div class="viewcode-block" id="mtotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.mtotdev">[docs]</a><span class="k">def</span> <span class="nf">mtotdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-            <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+            <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
 <span class="sd">        Modified Total deviation.</span>
 <span class="sd">        Better confidence at long averages for modified Allan</span>
@@ -625,7 +628,7 @@
 
 
 <div class="viewcode-block" id="ttotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.ttotdev">[docs]</a><span class="k">def</span> <span class="nf">ttotdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-            <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+            <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Time Total Deviation</span>
 
 <span class="sd">        Modified total variance scaled by tau^2 / 3</span>
@@ -638,7 +641,7 @@
 
 
 <div class="viewcode-block" id="htotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.htotdev">[docs]</a><span class="k">def</span> <span class="nf">htotdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-            <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+            <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
 <span class="sd">        Hadamard Total deviation.</span>
 <span class="sd">        Better confidence at long averages for Hadamard deviation</span>
@@ -676,7 +679,7 @@
 
 
 <div class="viewcode-block" id="theo1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.theo1">[docs]</a><span class="k">def</span> <span class="nf">theo1</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-          <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+          <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
 <span class="sd">        Theo1 is a two-sample variance with improved confidence and</span>
 <span class="sd">        extended averaging factor range. [Howe_theo1]_</span>
@@ -719,7 +722,7 @@
 
 
 <div class="viewcode-block" id="mtie"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.mtie">[docs]</a><span class="k">def</span> <span class="nf">mtie</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-         <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+         <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Maximum Time Interval Error.</span>
 
 <span class="sd">    Parameters</span>
@@ -747,7 +750,7 @@
 
 
 <div class="viewcode-block" id="tierms"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.tierms">[docs]</a><span class="k">def</span> <span class="nf">tierms</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
-           <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
+           <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Time Interval Error RMS.</span>
 
 <span class="sd">    Parameters</span>

@@ -83,7 +83,6 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         dev = np.sqrt(var)
 
         # Calculate error
-        # FIXME: check if this also applies to tierms
         err = dev / np.sqrt(n)
 
         devs[i], errs[i], ns[i] = dev, err, n

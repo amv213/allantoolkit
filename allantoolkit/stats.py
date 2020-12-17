@@ -149,7 +149,7 @@ def calc_mvar(x: Array, m: int, tau: float) -> VarResult:
     s = s + np.nansum(v_arr * v_arr)
     s /= 2 * m**2 * tau**2 * n
 
-    return s, n
+    return VarResult(var=s, n=n)
 
 
 def calc_tvar(x: Array, m: int, tau: float) -> VarResult:
@@ -306,7 +306,7 @@ def calc_totvar(x: Array, m: int, tau: float) -> VarResult:
     # Calculate variance
     var = 1. / (2 * tau**2) * np.nanmean(summand**2)
 
-    return var, n
+    return VarResult(var=var, n=n)
 
 
 def calc_mtotvar(x: Array, m: int, tau: float) -> VarResult:
@@ -404,7 +404,7 @@ def calc_mtotvar(x: Array, m: int, tau: float) -> VarResult:
     assert n == N - 3 * m + 1  # sanity check on the number of terms n
     var = var * 1.0 / (2.0 * pow(tau, 2) * (N - 3 * m + 1))
 
-    return var, n
+    return VarResult(var=var, n=n)
 
 
 def calc_ttotvar(x: Array, m: int, tau: float) -> VarResult:
@@ -547,7 +547,7 @@ def calc_htotvar(x: Array, m: int, tau: float) -> VarResult:
         assert n == N - 3 * m + 1  # sanity check on the number of terms n
         var = var * 1.0 / (N - 3 * m + 1)
 
-        return var, n
+        return VarResult(var=var, n=n)
 
 
 def calc_theo1(x: Array, m: int, tau: float) -> VarResult:
@@ -599,7 +599,7 @@ def calc_theo1(x: Array, m: int, tau: float) -> VarResult:
         # nominator to get a single 0.75 multiplier on the denominator
         var = (0.75 / tau**2) * outer_mean
 
-        return var, n
+        return VarResult(var=var, n=n)
 
 
 def calc_mtie(x: Array, m: int, tau: float = None) -> VarResult:
@@ -641,7 +641,7 @@ def calc_mtie(x: Array, m: int, tau: float = None) -> VarResult:
 
 
 # FIXME: mtie_phase_fast() is incomplete.
-# TODO: Complete and swap in
+# TODO: Complete and swap in for when `fastu` selected
 def calc_mtie_fast(phase, rate=1.0, data_type="phase", taus=None):
     """ fast binary decomposition algorithm for MTIE
 
@@ -700,21 +700,29 @@ def calc_mtie_fast(phase, rate=1.0, data_type="phase", taus=None):
     return utils.remove_small_ns(taus_used, devs, deverrs, ns)
 
 
-def calc_tierms(x, m, tau=None):
+def calc_tierms(x: Array, m: int, tau: float = None) -> VarResult:
+    """Main algorithm for TIErms calculation.
 
-    count = x.size
+    References:
+        [RileyStable32]_ (5.2.18, pg.42-43)
 
-    # This seems like an unusual way to
-    phases = np.column_stack((x[:-m], x[m:]))
-    p_max = np.max(phases, axis=1)
-    p_min = np.min(phases, axis=1)
-    phases = p_max - p_min
-    tie = np.sqrt(np.mean(phases * phases))
+    Args:
+        x:              input phase data, in units of seconds.
+        m:              averaging factor at which to calculate variance
+        tau (optional): corresponding averaging time. Not used here.
 
-    var = tie**2
-    ncount = count - m
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
 
-    return var, ncount
+    summand = x[m:] - x[:-m]
+    n = summand[~np.isnan(summand)].size  # x.size - m if no NaNs
+
+    var = 1*np.nanmean(summand**2)
+
+    return VarResult(var=var, n=n)
+
 
 # FIXME: integrate this in normal adev i.e. make all stats gap resistant
 def calc_gradev(data, rate, mj, stride, confidence, noisetype):

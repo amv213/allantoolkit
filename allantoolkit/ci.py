@@ -21,6 +21,50 @@ ONE_SIGMA_CI = scipy.special.erf(1/np.sqrt(2))
 #    = 0.68268949213708585
 
 
+def get_error_bars(dev, m, tau, n, alpha=0, d=2, overlapping=True,
+                   modified=False):
+    """Calculate non-naive Allan deviation errors. Equivalent to Stable32.
+
+    References:
+        [RileyStable32]_ (5.3, pg.45-46)
+        https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf
+
+    Args:
+        dev:                    raw deviation for which to compute error bars
+        m:                      averaging factor at which deviation was
+                                computed
+        tau:                    averaging time  for which deviation was
+                                computed
+        n:                      number of samples on which deviation was
+                                computed
+        alpha (optional):       +2,...,-4 dominant noise type , either
+                                estimated or known
+        d (optional):           statistic code: 1 first-difference variance,
+                                2 allan variance, 3 hadamard variance
+        overlapping (optional): True if overlapping statistic used. False if
+                                standard statistic used
+        modified (optional):    True if modified statistic used. False if
+                                standard statistic used.
+
+    Returns:
+        err_lo:                 non-naive lower 1-sigma error bar
+        err_high:               non-naive higher 1-sigma error_bar
+    """
+
+    # Greenhalls EDF (Equivalent Degrees of Freedom)
+    edf = edf_greenhall(alpha=alpha, d=d, m=m, N=n, overlapping=overlapping,
+                        modified=modified)
+
+
+    # with the known EDF we get CIs
+    (lo, hi) = confidence_interval(dev=dev, edf=edf)
+
+    err_lo = dev - lo
+    err_hi = hi - dev
+
+    return err_lo, err_hi
+
+
 def confidence_interval(dev, edf, ci=ONE_SIGMA_CI):
     """ returns confidence interval (dev_min, dev_max)
         for a given deviation dev, equivalent degrees of freedom edf,

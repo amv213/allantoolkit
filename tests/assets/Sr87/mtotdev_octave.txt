@@ -6,7 +6,7 @@
 # Sigma Type Modified Total
 # Confidence Factor = 0.683
 # Deadtime TTau = 1.000000
-
+#
 # AF          Tau        #     Alpha  Min Sigma     Mod Totdev      Max Sigma
     1   2.5000e+00     1251    -1   6.2540e-17    6.3842e-17     6.5230e-17
     2   5.0000e+00     1248    -2   6.4501e-17    6.6538e-17     6.8782e-17

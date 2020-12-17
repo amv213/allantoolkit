@@ -1,4 +1,4 @@
-# File: C:\Users\av5\Downloads\Sr87\plot3..txt
+# File: C:\Users\av5\Downloads\Sr87\plot3.txt
 # Date: 12/16/20 09:09:26
 # Type: Freq
 # Points: 1252

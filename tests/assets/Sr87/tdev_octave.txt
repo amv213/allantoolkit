@@ -6,7 +6,7 @@
 # Sigma Type: Time
 # Confidence Factor = 0.683
 # Deadtime T/Tau = 1.000000
-
+#
 #  AF        Tau         #    Alpha  Min Sigma    Time Sigma      Max Sigma
     1   2.5000e+00     1251    -1   1.2767e-16    1.3032e-16     1.3314e-16
     2   5.0000e+00     1248    -2   2.2027e-16    2.2722e-16     2.3489e-16

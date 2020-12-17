@@ -57,15 +57,28 @@ results = [
 def test_generic_octave(result, fct):
     """Test allantoolkit deviations give the same results as Stable32"""
 
-    ref = np.loadtxt(ASSETS_DIR / result)
-    expected_taus = ref[:, 1]
-    expected_ns = ref[:, 2]
-    expected_devs = ref[:, 5]
+    datafile = ASSETS_DIR / 'plot3.txt'
+    result = datafile.parent / result
 
-    output = fct(data=y_ref, rate=RATE, data_type='freq', taus='octave')
+    s32rows = allantoolkit.testutils.read_stable32(resultfile=result,
+                                                   datarate=RATE)
 
-    assert np.allclose(expected_taus, output.taus)
-    assert np.allclose(expected_ns, output.ns)
-    assert np.allclose(expected_devs, output.devs)
+    for row in s32rows:
+
+        data = allantoolkit.testutils.read_datafile(datafile)
+
+        (taus, devs, errs_lo, errs_hi, ns) = fct(data=data, rate=RATE,
+                                                 data_type='freq',
+                                                 taus=row['tau'])
+
+        print("n check: ", allantoolkit.testutils.check_equal(ns[0], row['n']))
+        print("dev check: ", allantoolkit.testutils.check_approx_equal(
+            devs[0], row['dev']))
+
+
+        #print("min dev check: ",  lo, row['dev_min'],
+        # testutils.check_approx_equal( lo, row['dev_min'], tolerance=1e-3 ) )
+        #print("max dev check: ", hi, row['dev_max'],
+        # testutils.check_approx_equal( hi, row['dev_max'], tolerance=1e-3 ) )
 
 

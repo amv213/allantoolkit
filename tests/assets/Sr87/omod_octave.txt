@@ -6,8 +6,8 @@
 # Sigma Type: Overlapping and Modified Allan
 # Confidence Factor = 0.683
 # Deadtime T/Tau = 1.000000
-
-  AF        Tau         #    Alpha   Std Dev        Sigma        Mod Sigma
+#
+#  AF        Tau         #    Alpha   Std Dev        Sigma        Mod Sigma
     1   2.5000e+00     1251    -1   1.6800e-16    9.0286e-17     9.0286e-17
     2   5.0000e+00     1249    -2   1.5530e-16    8.8948e-17     7.8712e-17
     4   1.0000e+01     1245    -1   1.4192e-16    1.0512e-16     8.8417e-17

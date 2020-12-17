@@ -24,11 +24,11 @@ def read_datafile(filename: Path):
             for line in f:
                 if not line.startswith("#"):  # skip comments
                     p.append(float(line))
+
     else:
-        with open(filename) as f:
-            for line in f:
-                if not line.startswith("#"):  # skip comments
-                    p.append(float(line))
+        # Data might or might not have a first column with timetags
+        data = numpy.loadtxt(str(filename))
+        p = data if data.ndim == 1 else data[:, 1]
 
     return numpy.array(p)
 
@@ -56,7 +56,9 @@ def read_resultfile(filename):
 # # = n, number of pairs in the dev calculation
 # alpha = noise PSD coefficient
 def read_stable32(resultfile, datarate):
+
     devresults = read_resultfile(resultfile)
+
     print("Read ", len(devresults), " rows from ", resultfile)
     rows=[] 
     # parse textfile produced by Stable32

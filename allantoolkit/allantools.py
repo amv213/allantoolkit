@@ -91,6 +91,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         dev = np.sqrt(var)
 
         # Noise ID
+        alpha = 0
 
         # Calculate error
         err_lo, err_hi = dev / np.sqrt(n), dev / np.sqrt(n)

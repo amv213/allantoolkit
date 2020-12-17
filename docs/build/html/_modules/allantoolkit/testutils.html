@@ -221,11 +221,11 @@
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>  <span class="c1"># skip comments</span>
                     <span class="n">p</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>  <span class="c1"># skip comments</span>
-                    <span class="n">p</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+        <span class="c1"># Data might or might not have a first column with timetags</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div>
 
@@ -253,7 +253,9 @@
 <span class="c1"># # = n, number of pairs in the dev calculation</span>
 <span class="c1"># alpha = noise PSD coefficient</span>
 <div class="viewcode-block" id="read_stable32"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.read_stable32">[docs]</a><span class="k">def</span> <span class="nf">read_stable32</span><span class="p">(</span><span class="n">resultfile</span><span class="p">,</span> <span class="n">datarate</span><span class="p">):</span>
+
     <span class="n">devresults</span> <span class="o">=</span> <span class="n">read_resultfile</span><span class="p">(</span><span class="n">resultfile</span><span class="p">)</span>
+
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Read &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">devresults</span><span class="p">),</span> <span class="s2">&quot; rows from &quot;</span><span class="p">,</span> <span class="n">resultfile</span><span class="p">)</span>
     <span class="n">rows</span><span class="o">=</span><span class="p">[]</span> 
     <span class="c1"># parse textfile produced by Stable32</span>

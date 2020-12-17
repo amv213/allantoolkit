@@ -26,7 +26,7 @@ ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets'
 
 # input data files, and associated verbosity, tolerance, and acquisition rate
 assets = [
-    ('Cs5071A/5071A_phase.txt.gz', 1, 1e-4, 1.),
+    ('Cs5071A/5071A_phase.txt.gz', True, 1e-4, 1.),
 ]
 
 # input result files and function which should replicate them
@@ -78,26 +78,31 @@ def test_generic_ci(datafile, result, fct, verbose, tolerance, rate,
     datafile = ASSETS_DIR / datafile
     result = datafile.parent / result
 
-    s32rows = testutils.read_stable32(resultfile=result, datarate=rate)
+    s32rows = testutils.read_stable32(result)
 
-    for row in s32rows:
+    # Typical Stable32 Result structure
+    ms, taus, ns, alphas, dev_mins, devs, dev_maxs = s32rows.T
+
+    for i, _ in enumerate(s32rows):
 
         data = testutils.read_datafile(datafile)
 
-        (taus, devs, errs_lo, errs_hi, ns) = fct(data, rate=rate,
-                                                 taus=np.array([row['tau']]))
+        (taus2, devs2, errs_lo2, errs_hi2, ns2) = fct(data, rate=rate,
+                                                      taus=taus[i])
 
         edf = ci_fct(
-            alpha=row['alpha'], d=d, m=row['m'], N=len(data),
+            alpha=alphas[i], d=d, m=ms[i], N=len(data),
             overlapping=overlapping, modified=modified, verbose=True)
 
-        (lo, hi) = allantoolkit.ci.confidence_interval(
-            devs[0], ci=0.68268949213708585, edf=edf)
+        (lo2, hi2) = allantoolkit.ci.confidence_interval(
+            devs2[0], ci=0.68268949213708585, edf=edf)
 
-        print("n check: ", testutils.check_equal( ns[0], row['n']))
-        print("dev check: ", testutils.check_approx_equal( devs[0], row['dev'] ) )
-        print("min dev check: ",  lo, row['dev_min'], testutils.check_approx_equal( lo, row['dev_min'], tolerance=1e-3 ) )
-        print("max dev check: ", hi, row['dev_max'], testutils.check_approx_equal( hi, row['dev_max'], tolerance=1e-3 ) )
+        print("n check: ", testutils.check_equal(ns2[0], ns[i]))
+        print("dev check: ", testutils.check_approx_equal(devs2[0], devs[i]))
+        print("min dev check: ",  lo2, dev_mins[i],
+              testutils.check_approx_equal(lo2, dev_mins[i], tolerance=1e-3))
+        print("max dev check: ", hi2, dev_maxs[i],
+              testutils.check_approx_equal(hi2, dev_maxs[i], tolerance=1e-3))
 
 
 #  Need custom test for totdev due to different edf signature
@@ -108,22 +113,26 @@ def test_totdev_ci(datafile, verbose, tolerance, rate):
     datafile = ASSETS_DIR / datafile
     result = datafile.parent / 'totdev_decade.txt'
 
-    s32rows = testutils.read_stable32(resultfile=result, datarate=rate)
+    s32rows = testutils.read_stable32(result)
 
-    for row in s32rows:
+    # Typical Stable32 Result structure
+    ms, taus, ns, alphas, dev_mins, devs, dev_maxs = s32rows.T
+
+    for i, _ in enumerate(s32rows):
 
         data = testutils.read_datafile(datafile)
 
-        (taus, devs, errs_lo, errs_hi, ns) = allantoolkit.allantools.totdev(
-            data, rate=rate, taus=np.array([row['tau']]))
+        (taus2, devs2, errs_lo2, errs_hi2, ns2) = \
+            allantoolkit.allantools.totdev(data, rate=rate, taus=taus[i])
 
-        edf = allantoolkit.ci.edf_totdev(
-            alpha=row['alpha'], m=row['m'], N=len(data))
+        edf = allantoolkit.ci.edf_totdev(alpha=alphas[i], m=ms[i], N=len(data))
 
-        (lo, hi) = allantoolkit.ci.confidence_interval(
-            devs[0], ci=0.68268949213708585, edf=edf)
+        (lo2, hi2) = allantoolkit.ci.confidence_interval(
+            devs2[0], ci=0.68268949213708585, edf=edf)
 
-        print("n check: ", testutils.check_equal( ns[0], row['n']))
-        print("dev check: ", testutils.check_approx_equal( devs[0], row['dev'] ) )
-        print("min dev check: ",  lo, row['dev_min'], testutils.check_approx_equal( lo, row['dev_min'], tolerance=1e-3 ) )
-        print("max dev check: ", hi, row['dev_max'], testutils.check_approx_equal( hi, row['dev_max'], tolerance=1e-3 ) )
+        print("n check: ", testutils.check_equal(ns2[0], ns[i]))
+        print("dev check: ", testutils.check_approx_equal(devs2[0], devs[i]))
+        print("min dev check: ",  lo2, dev_mins[i],
+              testutils.check_approx_equal(lo2, dev_mins[i], tolerance=1e-3))
+        print("max dev check: ", hi2, dev_maxs[i],
+              testutils.check_approx_equal(hi2, dev_maxs[i], tolerance=1e-3))

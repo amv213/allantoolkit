@@ -1,12 +1,12 @@
-File: C:\Users\av5\Downloads\Sr87\phase_data.txt
-Date: 12/17/20 10:48:15
-Type: Phase
-Points: 1253
-Tau: 2.500000e+00
-Addend: 0.000000e+00
-Multiplier: 1.000000e+00
-Tag Scale: 8.640000e+04
-Tag Offset: 0.000000e+00
+# File: C:\Users\av5\Downloads\Sr87\phase_data.txt
+# Date: 12/17/20 10:48:15
+# Type: Phase
+# Points: 1253
+# Tau: 2.500000e+00
+# Addend: 0.000000e+00
+# Multiplier: 1.000000e+00
+# Tag Scale: 8.640000e+04
+# Tag Offset: 0.000000e+00
 # Header End
 0.000000000000000e+00
 2.192122250000000e-16

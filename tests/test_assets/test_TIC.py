@@ -16,7 +16,7 @@ ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets'
 
 # input data files, and associated verbosity, tolerance, and acquisition rate
 assets = [
-    ('Keysight53230A_ti_noise_floor/tic_phase.txt', 1, 1e-4, 1.),
+    ('Keysight53230A_ti_noise_floor/tic_phase.txt', True, 1e-4, 1.),
 ]
 
 # input result files and function which should replicate them
@@ -51,11 +51,12 @@ def test_noise_id(datafile, verbose, tolerance, rate):
     datafile = ASSETS_DIR / datafile
     result = datafile.parent / 'tic_oadev.txt'
 
-    s32_rows = testutils.read_stable32(result, rate)
+    s32_rows = testutils.read_stable32(result)
     phase = testutils.read_datafile(datafile)
 
     for s32 in s32_rows:
-        tau, alpha, af = s32['tau'], s32['alpha'], int(s32['m'])
+
+        tau, alpha, af = s32[1], s32[3], int(s32[0])
 
         try:
             alpha_int = allantoolkit.ci.autocorr_noise_id(

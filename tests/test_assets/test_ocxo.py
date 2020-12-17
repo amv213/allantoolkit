@@ -52,7 +52,7 @@ def test_generic_ci(datafile, result, fct, verbose, tolerance, rate,
     datafile = ASSETS_DIR / datafile
     result = datafile.parent / result
 
-    s32rows = testutils.read_stable32(resultfile=result, datarate=rate)
+    s32rows = testutils.read_stable32(result)
 
     for row in s32rows:
         data = testutils.read_datafile(datafile)
@@ -60,22 +60,22 @@ def test_generic_ci(datafile, result, fct, verbose, tolerance, rate,
         (taus, devs, err_lo, errs_hi, ns) = fct(data,
                                                 rate=rate,
                                                 data_type="freq",
-                                                taus=np.array([row['tau']]))
+                                                taus=row[1])
 
         # NOTE! Here we use alhpa from Stable32-results for the allantools edf computation!
-        edf = ci_fct(alpha=row['alpha'], d=d, m=row['m'], N=len(data),
+        edf = ci_fct(alpha=row[3], d=d, m=row[0], N=len(data),
                      overlapping=overlapping, modified=modified, verbose=True)
 
         (lo, hi) = allantoolkit.ci.confidence_interval(devs[0], edf=edf)
 
-        print("n check: ", testutils.check_equal(ns[0], row['n']))
-        print("dev check: ", devs[0], row['dev'],
-              testutils.check_approx_equal(devs[0], row['dev'],
+        print("n check: ", testutils.check_equal(ns[0], row[2]))
+        print("dev check: ", devs[0], row[5],
+              testutils.check_approx_equal(devs[0], row[5],
                                            tolerance=2e-3))
-        print("min dev check: ", lo, row['dev_min'],
-              testutils.check_approx_equal(lo, row['dev_min'], tolerance=2e-3))
-        print("max dev check: ", hi, row['dev_max'],
-              testutils.check_approx_equal(hi, row['dev_max'], tolerance=5e-3))
+        print("min dev check: ", lo, row[4],
+              testutils.check_approx_equal(lo, row[4], tolerance=2e-3))
+        print("max dev check: ", hi, row[6],
+              testutils.check_approx_equal(hi, row[6], tolerance=5e-3))
 
 
 #  Need custom test for totdev due to different edf signature
@@ -88,7 +88,7 @@ def test_totdev_ci(datafile, verbose, tolerance, rate):
     datafile = ASSETS_DIR / datafile
     result = datafile.parent / 'totdev_octave.txt'
 
-    s32rows = testutils.read_stable32(resultfile=result, datarate=rate)
+    s32rows = testutils.read_stable32(result)
 
     for row in s32rows:
         data = testutils.read_datafile(datafile)
@@ -119,14 +119,13 @@ def test_noise_id(datafile, verbose, tolerance, rate):
     datafile = ASSETS_DIR / datafile
     result = datafile.parent / 'mdev_octave.txt'
 
-    s32_rows = testutils.read_stable32(result, rate)
+    s32_rows = testutils.read_stable32(result)
 
     freq = testutils.read_datafile(datafile)
     phase = allantoolkit.utils.frequency2phase(freq, rate)
 
     for s32 in s32_rows:
-        s32_tau, s32_alpha, s32_AF = s32['tau'], s32['alpha'], int(
-            s32['m'])
+        s32_tau, s32_alpha, s32_AF = s32[1], s32[3], int(s32[0])
 
         # noise-ID from frequency
         if len(phase) / s32_AF > 20:

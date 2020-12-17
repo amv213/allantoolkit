@@ -67,8 +67,8 @@ def test_generic_ci_and_noiseID(datafile, result, fct, verbose, tolerance,
 
     phase = testutils.read_datafile(datafile)
 
-    s32rows = testutils.read_stable32(resultfile=result, datarate=rate)
-    s32taus = np.array([row['tau'] for row in s32rows])
+    s32rows = testutils.read_stable32(result)
+    s32taus = np.array([row[1] for row in s32rows])
 
     (taus, devs, errs_lo, errs_hi, ns) = allan.adev(phase, rate=rate,
                                                     data_type="phase",
@@ -80,16 +80,16 @@ def test_generic_ci_and_noiseID(datafile, result, fct, verbose, tolerance,
         try:
             # CI including noise-ID
             (lo2, hi2) = allantoolkit.ci.confidence_interval_noiseID(
-                phase, dev, af=int(row['m']), dev_type=str(fct).split('.')[-1],
+                phase, dev, af=int(row[0]), dev_type=str(fct).split('.')[-1],
                 data_type="phase")
 
-            assert np.isclose(lo2, row['dev_min'], rtol=1e-2, atol=0)
-            assert np.isclose(hi2, row['dev_max'], rtol=1e-2, atol=0)
+            assert np.isclose(lo2, row[4], rtol=1e-2, atol=0)
+            assert np.isclose(hi2, row[6], rtol=1e-2, atol=0)
             print(" CI OK! tau= %f  lo/s32_lo = %f hi/s32_hi = %f " % (
-            row['tau'], lo2 / row['dev_min'], hi2 / row['dev_max']))
+                row[1], lo2 / row[4], hi2 / row[6]))
 
         except NotImplementedError:
-            print("can't do CI for tau= %f" % row['tau'])
+            print("can't do CI for tau= %f" % row[1])
             pass
 
 
@@ -102,14 +102,14 @@ def test_noise_id(datafile, verbose, tolerance, rate):
     result = datafile.parent / 'stable32_ADEV_decade.txt'
 
     phase = testutils.read_datafile(datafile)
-    s32_rows = testutils.read_stable32(result, rate)
+    s32_rows = testutils.read_stable32(result)
 
     # test noise-ID
     for s32 in s32_rows:
-        tau, alpha, AF = s32['tau'], s32['alpha'], int(s32['m'])
+        tau, alpha, AF = s32[1], s32[3], int(s32[0])
         try:
             alpha_int = allantoolkit.ci.autocorr_noise_id(phase, af=AF)[0]
             print(tau, alpha, alpha_int)
             assert alpha_int == alpha
         except NotImplementedError:
-            print("can't do noise-ID for tau= %f" % s32['tau'])
+            print("can't do noise-ID for tau= %f" % s32[1])

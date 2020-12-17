@@ -50,11 +50,11 @@ def test_generic_ci(datafile, result, fct, verbose, tolerance, rate,
     datafile = ASSETS_DIR / datafile
     result = datafile.parent / result
 
-    s32_rows = testutils.read_stable32(result, rate)
+    s32_rows = testutils.read_stable32(result)
     phase = np.array(testutils.read_datafile(datafile))
 
     (taus, devs, errs_lo, errs_hi, ns) = fct(phase, taus=np.array([
-                                            s32['tau'] for s32 in s32_rows]))
+                                            s32[1] for s32 in s32_rows]))
 
     # separate CI computation
     los = []
@@ -67,8 +67,8 @@ def test_generic_ci(datafile, result, fct, verbose, tolerance, rate,
 
         (lo, hi) = allantoolkit.ci.confidence_interval(dev=dev, edf=edf2)
 
-        assert np.isclose(lo, s32['dev_min'], rtol=1e-2)
-        assert np.isclose(hi, s32['dev_max'], rtol=1e-2)
+        assert np.isclose(lo, s32[4], rtol=1e-2)
+        assert np.isclose(hi, s32[6], rtol=1e-2)
         print(" alpha=0 FIXED, CI OK! tau = %f" % t)
 
         los.append(lo)
@@ -77,8 +77,8 @@ def test_generic_ci(datafile, result, fct, verbose, tolerance, rate,
             (lo2, hi2) = allantoolkit.ci.confidence_interval_noiseID(
                 phase, dev, af=int(t), dev_type=str(fct).split('.')[-1],
                 data_type="phase")
-            assert np.isclose(lo2, s32['dev_min'], rtol=1e-2)
-            assert np.isclose(hi2, s32['dev_max'], rtol=1e-2)
+            assert np.isclose(lo2, s32[4], rtol=1e-2)
+            assert np.isclose(hi2, s32[6], rtol=1e-2)
             print(" ACF_NID CI OK! tau = %f" % t)
         except NotImplementedError:
             print("can't do CI for tau = %f" % t)
@@ -89,13 +89,13 @@ def test_generic_ci(datafile, result, fct, verbose, tolerance, rate,
     print("    n   tau dev_min  dev      dev_max ")
     for (s32, t2, d2, lo2, hi2, n2) in zip(s32_rows, taus, devs, los, his, ns):
         print("S32 %03d %03.1f %1.6f %1.6f %1.6f" % (
-        s32['n'], s32['tau'], s32['dev_min'], s32['dev'], s32['dev_max']))
+        s32[2], s32[1], s32[4], s32[5], s32[6]))
         print("AT  %03d %03.1f %1.6f %1.6f %1.6f" % (
         n2, t2, round(lo2, 5), round(d2, 5), round(hi2, 5)))
-        testutils.check_approx_equal(s32['n'], n2, tolerance=1e-9)
-        testutils.check_approx_equal(s32['dev_min'], lo2, tolerance=1e-3)
-        testutils.check_approx_equal(s32['dev'], d2, tolerance=1e-4)
-        testutils.check_approx_equal(s32['dev_max'], hi2, tolerance=1e-3)
+        testutils.check_approx_equal(s32[2], n2, tolerance=1e-9)
+        testutils.check_approx_equal(s32[4], lo2, tolerance=1e-3)
+        testutils.check_approx_equal(s32[5], d2, tolerance=1e-4)
+        testutils.check_approx_equal(s32[6], hi2, tolerance=1e-3)
     print("----")
 
 
@@ -108,11 +108,11 @@ def test_phasedat_totdev(datafile, verbose, tolerance, rate):
     datafile = ASSETS_DIR / datafile
     result = datafile.parent / 'phase_dat_totdev_octave.txt'
 
-    s32_rows = testutils.read_stable32(result, rate)
+    s32_rows = testutils.read_stable32(result)
     phase = testutils.read_datafile(datafile)
 
     (taus, devs, errs_lo, errs_hi, ns) = allantoolkit.allantools.totdev(
-        phase, taus=np.array([s32['tau'] for s32 in s32_rows]))
+        phase, taus=np.array([s32[1] for s32 in s32_rows]))
 
     los=[]
     his=[]
@@ -126,10 +126,12 @@ def test_phasedat_totdev(datafile, verbose, tolerance, rate):
 
     print("totdev()")
     for (s32, t2, d2, lo2, hi2, n2) in zip(s32_rows, taus, devs, los, his, ns):
-        print("s32 %03d %03f %1.6f %1.6f %1.6f" % (s32['n'], s32['tau'], s32['dev_min'], s32['dev'], s32['dev_max']))
+        print("s32 %03d %03f %1.6f %1.6f %1.6f" % (s32[2], s32[1],
+                                                   s32[4], s32[5],
+                                                   s32[6]))
         print("at  %03d %03f %1.6f %1.6f %1.6f" % (n2, t2, round(lo2,5), round(d2,5), round(hi2,5) ))
-        testutils.check_approx_equal(s32['dev_min'], lo2, tolerance=1e-3)
-        testutils.check_approx_equal(s32['dev_max'], hi2, tolerance=1e-3)
+        testutils.check_approx_equal(s32[4], lo2, tolerance=1e-3)
+        testutils.check_approx_equal(s32[6], hi2, tolerance=1e-3)
     print("----")
 
 
@@ -143,7 +145,7 @@ def test_slow_failing_phasedat_mtotdev(datafile, verbose, tolerance, rate):
     datafile = ASSETS_DIR / datafile
     result = datafile.parent / 'phase_dat_mtotdev_octave_alpha0.txt'
 
-    s32_rows = testutils.read_stable32(result, rate)
+    s32_rows = testutils.read_stable32(result)
     phase = testutils.read_datafile(datafile)
 
     (taus, devs, errs, ns) = allantoolkit.allantools.mtotdev(
@@ -186,11 +188,11 @@ def test_noise_id(datafile, verbose, tolerance, rate):
     datafile = ASSETS_DIR / datafile
     result = datafile.parent / 'phase_dat_oadev_octave.txt'
 
-    s32_rows = testutils.read_stable32(result, rate)
+    s32_rows = testutils.read_stable32(result)
     phase = testutils.read_datafile(datafile)
 
     for s32 in s32_rows:
-        tau, alpha, af = s32['tau'], s32['alpha'], int(s32['m'])
+        tau, alpha, af = s32[1], s32[3], int(s32[0])
         try:
             alpha_int = allantoolkit.ci.autocorr_noise_id(phase, af=af)[0]
             assert alpha_int == alpha

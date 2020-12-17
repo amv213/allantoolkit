@@ -18,7 +18,7 @@ ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets'
 
 # input data files, and associated verbosity, tolerance, and acquisition rate
 assets = [
-    ('pink_frequency/pink_frequency.txt', 1, 1e-4, 1/float(42.0)),
+    ('pink_frequency/pink_frequency.txt', False, 1e-4, 1/float(42.0)),
 ]
 
 
@@ -55,11 +55,11 @@ def test_noise_id(datafile, verbose, tolerance, rate):
     datafile = ASSETS_DIR / datafile
     result = datafile.parent / 's32_oadev_octave.txt'
 
-    s32_rows = testutils.read_stable32(result, 1.0)
+    s32_rows = testutils.read_stable32(result)
     phase = testutils.read_datafile(datafile)
 
     for s32 in s32_rows:
-        tau, alpha, af = s32['tau'], s32['alpha'], int(s32['m'])
+        tau, alpha, af = s32[1], s32[3], int(s32[0])
         try:
             alpha_int = allantoolkit.ci.autocorr_noise_id(
                 phase, data_type='freq', af=af)[0]

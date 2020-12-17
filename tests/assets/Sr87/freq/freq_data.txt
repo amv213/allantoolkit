@@ -1,12 +1,12 @@
-File: C:\Users\av5\Downloads\Sr87\freq_data.txt
-Date: 12/17/20 10:46:30
-Type: Freq
-Points: 1252
-Tau: 2.500000e+00
-Addend: 0.000000e+00
-Multiplier: 1.000000e+00
-Tag Scale: 8.640000e+04
-Tag Offset: 0.000000e+00
+# File: C:\Users\av5\Downloads\Sr87\freq_data.txt
+# Date: 12/17/20 10:46:30
+# Type: Freq
+# Points: 1252
+# Tau: 2.500000e+00
+# Addend: 0.000000e+00
+# Multiplier: 1.000000e+00
+# Tag Scale: 8.640000e+04
+# Tag Offset: 0.000000e+00
 # Header End
 3.661957841370000e+09 8.768489000000000e-17
 3.661957842680000e+09 9.874540000000001e-17

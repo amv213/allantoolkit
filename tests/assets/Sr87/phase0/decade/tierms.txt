@@ -1,0 +1,17 @@
+ STATISTICS FOR FILE: phase0_data.txt
+ Phase Data Points 1 thru 1253 of 1253
+ Maximum = 8.741842e-15
+ Minimum = -4.242057e-14
+ Average = -1.682385e-14
+ Sigma Type: TIE rms
+ Deadtime T/Tau = 1.000000
+
+  AF      Tau           #      TIE rms
+    1   2.5000e+00     1252   4.1983e-16
+    2   5.0000e+00     1251   7.7679e-16
+    4   1.0000e+01     1249   1.4212e-15
+   10   2.5000e+01     1243   2.8370e-15
+   20   5.0000e+01     1233   4.5102e-15
+   40   1.0000e+02     1213   6.7127e-15
+  100   2.5000e+02     1153   1.1041e-14
+  200   5.0000e+02     1053   1.3926e-14

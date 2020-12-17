@@ -16,12 +16,13 @@ import pathlib
 import pytest
 import numpy as np
 
-# top level directory with asset files for these tests
+# top level directory with original (frequency) data for these tests
 ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/Sr87'
+y_ref = np.loadtxt(ASSETS_DIR / 'freq_data_ori.txt', skiprows=10)[:, 1]
 
-y_ref = np.loadtxt(ASSETS_DIR / 'plot3.txt')[:, 1]
-x_ref = np.loadtxt(ASSETS_DIR / 'plot3_phase.txt')
-x0_ref = np.loadtxt(ASSETS_DIR / 'plot3_phase_norm.txt')
+# Directory with (un-normalised) phase data, obtained by Stable32 conversion
+PHASE_ASSETS_DIR = ASSETS_DIR / 'phase'
+x_ref = np.loadtxt(PHASE_ASSETS_DIR / 'phase_data.txt', skiprows=10)
 
 # Data sampling rate
 RATE = 0.4  # Hz, tau_0 = 2.5s
@@ -38,43 +39,52 @@ def test_frequency2phase():
 
 
 # input result files and function which should replicate them
-results = [
-    ('adev_octave.txt', allantoolkit.allantools.adev),
-    ('oadev_octave.txt', allantoolkit.allantools.oadev),
-    ('mdev_octave.txt', allantoolkit.allantools.mdev),
-    ('tdev_octave.txt', allantoolkit.allantools.tdev),
-    ('hdev_octave.txt', allantoolkit.allantools.hdev),
-    ('ohdev_octave.txt', allantoolkit.allantools.ohdev),
-    ('totdev_octave.txt', allantoolkit.allantools.totdev),
-    pytest.param('mtotdev_octave.txt', allantoolkit.allantools.mtotdev,
-                 marks=pytest.mark.slow),
+fcts = [
+    allantoolkit.allantools.adev,
+    allantoolkit.allantools.oadev,
+    allantoolkit.allantools.mdev,
+    allantoolkit.allantools.tdev,
+    allantoolkit.allantools.hdev,
+    allantoolkit.allantools.ohdev,
+    allantoolkit.allantools.totdev,
+    pytest.param(allantoolkit.allantools.mtotdev, marks=pytest.mark.slow),
+    pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
+    pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
+    allantoolkit.allantools.theo1,
+    pytest.param(allantoolkit.allantools.mtie, marks=pytest.mark.slow),
+    allantoolkit.allantools.tierms,
 ]
 
 
 # FIXME: add tests of noise type identified, and upper and minimum error
 #  bounds once implemented those calculations in allantoolkit
-@pytest.mark.parametrize('result, fct', results)
-def test_generic_octave(result, fct):
-    """Test allantoolkit deviations give the same results as Stable32"""
+@pytest.mark.parametrize('fct', fcts)
+def test_generic_phase_octave(fct):
+    """Test allantoolkit deviations calculated on phase data at octave
+    averaging times, give the same results as Stable32 deviations calculated
+    on phase data at octave averaging times"""
 
-    datafile = ASSETS_DIR / 'plot3.txt'
-    result = datafile.parent / result
+    datafile = PHASE_ASSETS_DIR / 'phase_data.txt'
+    x = allantoolkit.testutils.read_datafile(datafile)
 
-    s32rows = allantoolkit.testutils.read_stable32(resultfile=result,
+    result_filename = fct.__name__ + '.txt'
+    stable32file = datafile.parent / 'octave' / result_filename
+    s32rows = allantoolkit.testutils.read_stable32(resultfile=stable32file,
                                                    datarate=RATE)
 
     for row in s32rows:
 
-        data = allantoolkit.testutils.read_datafile(datafile)
+        print(f"Ref results: {row}")
 
-        (taus, devs, errs_lo, errs_hi, ns) = fct(data=data, rate=RATE,
-                                                 data_type='freq',
-                                                 taus=row['tau'])
+        # If checking a theo1, the file will have an effective tau 75% of the
+        # original one
+        tau_ori = row['tau'] if fct.__name__ != 'theo1' else row['tau'] / 0.75
 
-        print("n check: ", allantoolkit.testutils.check_equal(ns[0], row['n']))
-        print("dev check: ", allantoolkit.testutils.check_approx_equal(
-            devs[0], row['dev']))
+        (taus, devs, errs_lo, errs_hi, ns) = fct(data=x, rate=RATE,
+                                                 taus=tau_ori)
 
+        allantoolkit.testutils.check_equal(ns[0], row['n'])
+        allantoolkit.testutils.check_approx_equal(devs[0], row['dev'])
 
         #print("min dev check: ",  lo, row['dev_min'],
         # testutils.check_approx_equal( lo, row['dev_min'], tolerance=1e-3 ) )

@@ -1,0 +1,18 @@
+ STATISTICS FOR FILE: freq_data.txt
+ Frequency Data Points 1 thru 1252 of 1252
+ Maximum = 4.913690e-16
+ Minimum = -5.805638e-16
+ Average = -5.181081e-18
+ Sigma Type: Hadamard
+ Confidence Factor = 0.683
+ Deadtime T/Tau = 1.000000
+
+  AF        Tau         #    Alpha  Min Sigma   Hadamard Sig     Max Sigma
+    1   2.5000e+00     1250    -1   8.0777e-17    8.2651e-17     8.4662e-17
+    2   5.0000e+00      624    -2   6.8912e-17    7.1052e-17     7.3405e-17
+    4   1.0000e+01      311    -1   8.9010e-17    9.3316e-17     9.8319e-17
+    8   2.0000e+01      154     0   8.9728e-17    9.6518e-17     1.0512e-16
+   16   4.0000e+01       76     0   7.1578e-17    7.9154e-17     8.9789e-17
+   32   8.0000e+01       37     0   6.0078e-17    6.8932e-17     8.3362e-17
+   64   1.6000e+02       17     0   3.4736e-17    4.1884e-17     5.6642e-17
+  128   3.2000e+02        7     0   3.5987e-17    4.6331e-17     7.8696e-17

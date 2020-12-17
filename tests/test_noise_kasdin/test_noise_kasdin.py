@@ -55,8 +55,8 @@ def test_adev_average(noisegen, b, tau, qd, nr=pow(2, 16),
     for n in range(N_averages):
 
         noisegen.generateNoise()
-        (taus, devs, errs, ns) = allantoolkit.allantools.adev(
-            noisegen.time_series, taus=[tau], rate=1.0)
+        (taus, devs, errs_lo, errs_hi, ns) = allantoolkit.allantools.adev(
+            noisegen.time_series, taus=np.array([tau]), rate=1.0)
         adev_calculated = devs[0]
         adevs.append(adev_calculated)
 
@@ -79,8 +79,8 @@ def test_adev(noisegen, b, tau, qd):
 
     noisegen.set_input(nr=pow(2, 16), qd=qd, b=b)
     noisegen.generateNoise()
-    (taus, devs, errs, ns) = allantoolkit.allantools.adev(
-        noisegen.time_series, taus=[tau], rate=1.0)
+    (taus, devs, errs_lo, errs_hi, ns) = allantoolkit.allantools.adev(
+        noisegen.time_series, taus=np.array([tau]), rate=1.0)
     
     adev_calculated = devs[0]
     adev_predicted = noisegen.adev(tau0=1.0, tau=tau)
@@ -109,8 +109,8 @@ def test_mdev(noisegen, b, tau, qd):
     """
     noisegen.set_input(nr=pow(2, 16), qd=qd, b=b)
     noisegen.generateNoise()
-    (taus, devs, errs, ns) = allantoolkit.allantools.mdev(
-        noisegen.time_series, taus=[tau], rate=1.0)
+    (taus, devs, errs_lo, errs_hi, ns) = allantoolkit.allantools.mdev(
+        noisegen.time_series, taus=np.array([tau]), rate=1.0)
 
     mdev_calculated = devs[0]
     mdev_predicted = noisegen.mdev(tau0=1.0, tau=tau)

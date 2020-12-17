@@ -113,10 +113,10 @@ class TestNBS14_1000Point:
         rate=1.0
         
         if pdata is not None and fdata is None:
-            (taus2, devs, deverrs, ns) = function(pdata,
+            (taus2, devs, errs_lo, errs_hi, ns) = function(pdata,
                                                   rate=rate, taus=taus)
         elif pdata is None and fdata is not None:
-            (taus2, devs, deverrs, ns) = function(fdata,
+            (taus2, devs, errs_lo, errs_hi, ns) = function(fdata,
                                                   data_type="freq",
                                                   rate=rate, taus=taus)
         else:

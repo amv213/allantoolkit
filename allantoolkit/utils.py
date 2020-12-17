@@ -427,21 +427,20 @@ def tau_reduction(afs: Array, rate: float, n_per_decade: int) -> Taus:
     return Taus(taus=taus, afs=afs)
 
 
-def remove_small_ns(taus: Array, devs: Array,
-                    deverrs: Union[List[Array], Array], ns: Array) \
-        -> Tuple[Array, Array, Union[List[Array], Array], Array]:
+def remove_small_ns(taus: Array, devs: Array, errs_lo: Array, errs_hi: Array ,
+                    ns: Array) -> Tuple[Array, Array, Array, Array, Array]:
     """ Remove results calculated on one or less samples.
 
     Args:
         taus:       array of averaging times for which deviation were computed
         devs:       array of computed deviations
-        deverrs:    array of estimated errors (possibly an array containing two
-                    arrays, one with upper values, and one with lower values)
+        errs_lo:    array of estimated lower bound errors
+        errs_hi:    array of estimated higher bound errors
         ns:         array with number of samples for each point
 
     Returns:
-        (taus, devs, deverrs, ns) iddentical to input, except that values
-        with low ns have been removed.
+        (taus, devs, errs_lo, errs_hi, ns) identical to input, except that
+        values with low ns have been removed.
     """
 
     mask = ns > 1
@@ -458,21 +457,16 @@ def remove_small_ns(taus: Array, devs: Array,
     # Filter supporting arrays as well
     taus = taus[mask]
     ns = ns[mask]
+    errs_lo = errs_lo[mask]
+    errs_hi = errs_hi[mask]
 
-    if deverrs.ndim == 1:
-        deverrs = deverrs[mask]
-    elif deverrs.ndim == 2:
-        deverrs = np.array([deverrs[0][mask], deverrs[1][mask]])
-    else:
-        raise TypeError("Array of estimated errors should be 1D or 2D.")
-
-    return taus, devs, deverrs, ns
+    return taus, devs, errs_lo, errs_hi, ns
 
 
 def three_cornered_hat_phase(x_ab: Array, x_bc: Array, x_ca: Array,
                              rate: float, taus: Union[Array, str],
                              dev_type: str) -> \
-        Tuple[Array, Array, Array, Array]:
+        Tuple[Array, Array, Array, Array, Array]:
     """
     Three Cornered Hat Method [Riley3CHat]_
 
@@ -512,18 +506,18 @@ def three_cornered_hat_phase(x_ab: Array, x_bc: Array, x_ca: Array,
         dev_type:   type of deviation to compute e.g. `oadev`
 
     Returns:
-        (taus_ab, devs_a, err_a, ns_ab) Tuple of averaging times
+        (taus_ab, devs_a, err_a_lo, err_a_hi, ns_ab) Tuple of averaging times
         corresponding to output deviations, clock A deviations, clock A
         estimated errors, number of samples used to calculate each deviaiton.
     """
 
-    tau_ab, dev_ab, _, ns_ab = getattr(allantools, dev_type)(
+    tau_ab, dev_ab, _, _, ns_ab = getattr(allantools, dev_type)(
         data=x_ab, data_type='phase', rate=rate, taus=taus)
 
-    _, dev_bc, _, _ = getattr(allantools, dev_type)(
+    _, dev_bc, _, _, _ = getattr(allantools, dev_type)(
         data=x_bc, data_type='phase', rate=rate, taus=taus)
 
-    _, dev_ca, _, _ = getattr(allantools, dev_type)(
+    _, dev_ca, _, _, _ = getattr(allantools, dev_type)(
         data=x_ca, data_type='phase', rate=rate, taus=taus)
 
     var_ab = dev_ab * dev_ab
@@ -535,9 +529,10 @@ def three_cornered_hat_phase(x_ab: Array, x_bc: Array, x_ca: Array,
     var_a[var_a < 0] = 0  # don't return imaginary deviations (?)
 
     dev_a = np.sqrt(var_a)
-    err_a = np.array([d/np.sqrt(nn) for (d, nn) in zip(dev_a, ns_ab)])
+    err_a_lo = np.array([d/np.sqrt(nn) for (d, nn) in zip(dev_a, ns_ab)])
+    err_a_hi = err_a_lo
 
-    return tau_ab, dev_a, err_a, ns_ab
+    return tau_ab, dev_a, err_a_lo, err_a_hi, ns_ab
 
 
 def mtie_rolling_window(a, window):

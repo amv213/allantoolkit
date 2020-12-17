@@ -1,3 +1,4 @@
+import pytest
 import allantoolkit
 import numpy as np
 
@@ -16,6 +17,8 @@ for i in range(1, len(ns)):
         last_i = i + 1
 
 
+# 4 params option is not implemented anymore
+@pytest.mark.skip
 def test_4params():
     (o_taus, o_devs, o_deverrs, o_ns) = allantoolkit.utils.remove_small_ns(
         taus, devs, deverrs_l, ns)
@@ -26,9 +29,9 @@ def test_4params():
 
 
 def test_5params():
-    (o_taus, o_devs, [o_deverrs_l, o_deverrs_h], o_ns) = \
+    (o_taus, o_devs, o_deverrs_l, o_deverrs_h, o_ns) = \
         allantoolkit.utils.remove_small_ns(
-        taus, devs, np.array([deverrs_l, deverrs_h]), ns)
+        taus, devs, deverrs_l, deverrs_h, ns)
 
     np.testing.assert_array_equal(o_taus, taus[:last_i])
     np.testing.assert_array_equal(o_devs, devs[:last_i])

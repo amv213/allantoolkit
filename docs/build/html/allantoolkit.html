@@ -320,7 +320,7 @@
 <span id="allantoolkit-allantools"></span><h2>allantoolkit.allantools<a class="headerlink" href="#module-allantoolkit.allantools" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="allantoolkit.allantools.DevResult">
-<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">DevResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">taus</span></em>, <em class="sig-param"><span class="n">devs</span></em>, <em class="sig-param"><span class="n">errs</span></em>, <em class="sig-param"><span class="n">ns</span></em><span class="sig-paren">)</span><a class="headerlink" href="#allantoolkit.allantools.DevResult" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">DevResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">taus</span></em>, <em class="sig-param"><span class="n">devs</span></em>, <em class="sig-param"><span class="n">errs_lo</span></em>, <em class="sig-param"><span class="n">errs_hi</span></em>, <em class="sig-param"><span class="n">ns</span></em><span class="sig-paren">)</span><a class="headerlink" href="#allantoolkit.allantools.DevResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
 <dl class="py attribute">
 <dt id="allantoolkit.allantools.DevResult.devs">
@@ -329,15 +329,21 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="allantoolkit.allantools.DevResult.errs">
-<code class="sig-name descname">errs</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.errs" title="Permalink to this definition">¶</a></dt>
+<dt id="allantoolkit.allantools.DevResult.errs_hi">
+<code class="sig-name descname">errs_hi</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.errs_hi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="allantoolkit.allantools.DevResult.errs_lo">
+<code class="sig-name descname">errs_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.errs_lo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="allantoolkit.allantools.DevResult.ns">
 <code class="sig-name descname">ns</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.ns" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 3</p>
+<dd><p>Alias for field number 4</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -402,10 +408,13 @@ Defaults to length of dataset.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>.taus:  array of averaging times for which deviation was computed.
-.devs:  array with deviation computed at each averaging time.
-.errs:  array with estimated error in each computed deviation.
-.ns:    array with number of values used to compute each deviation.</p>
+<dd class="field-even"><p>.taus:      array of averaging times for which deviation was computed.
+.devs:      array with deviation computed at each averaging time.
+.errs_lo:   array with estimated lower bound error in each computed
+deviation.
+.errs_hi:   array with estimated higher bound error in each computed
+deviation.
+.ns:        array with number of values used to compute each deviation.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>(taus, devs, errs, ns) NamedTuple of results</p>
@@ -2465,21 +2474,21 @@ rate:   sampling rate of the input data, in Hz</p>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.remove_small_ns">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">remove_small_ns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">devs</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">deverrs</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>List<span class="p">[</span>numpy.ndarray<span class="p">]</span><span class="p">, </span>numpy.ndarray<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">ns</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>Union<span class="p">[</span>List<span class="p">[</span>numpy.ndarray<span class="p">]</span><span class="p">, </span>numpy.ndarray<span class="p">]</span><span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#remove_small_ns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.remove_small_ns" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">remove_small_ns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">devs</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">errs_lo</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">errs_hi</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">ns</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#remove_small_ns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.remove_small_ns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove results calculated on one or less samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>taus</strong> – array of averaging times for which deviation were computed</p></li>
 <li><p><strong>devs</strong> – array of computed deviations</p></li>
-<li><p><strong>deverrs</strong> – array of estimated errors (possibly an array containing two
-arrays, one with upper values, and one with lower values)</p></li>
+<li><p><strong>errs_lo</strong> – array of estimated lower bound errors</p></li>
+<li><p><strong>errs_hi</strong> – array of estimated higher bound errors</p></li>
 <li><p><strong>ns</strong> – array with number of samples for each point</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(taus, devs, deverrs, ns) iddentical to input, except that values
-with low ns have been removed.</p>
+<dd class="field-even"><p>(taus, devs, errs_lo, errs_hi, ns) identical to input, except that
+values with low ns have been removed.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2563,7 +2572,7 @@ factors.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.three_cornered_hat_phase">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_ab</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_bc</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_ca</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#three_cornered_hat_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_ab</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_bc</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_ca</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#three_cornered_hat_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Three Cornered Hat Method <a class="reference internal" href="references.html#riley3chat" id="id48"><span>[Riley3CHat]</span></a></p>
 <p>Given three clocks A, B, C, we seek to find their variances</p>
 <p><span class="math notranslate nohighlight">\(\sigma^2_A\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_B\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_C\)</span></p>
@@ -2591,7 +2600,7 @@ Defaults to <cite>octave</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(taus_ab, devs_a, err_a, ns_ab) Tuple of averaging times
+<dd class="field-even"><p>(taus_ab, devs_a, err_a_lo, err_a_hi, ns_ab) Tuple of averaging times
 corresponding to output deviations, clock A deviations, clock A
 estimated errors, number of samples used to calculate each deviaiton.</p>
 </dd>

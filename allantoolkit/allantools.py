@@ -14,7 +14,8 @@ Array = np.ndarray
 # define named tuple to hold dev results
 DevResult = NamedTuple('DevResult', [('taus', Array),
                                      ('devs', Array),
-                                     ('errs', Array),
+                                     ('errs_lo', Array),
+                                     ('errs_hi', Array),
                                      ('ns', Array)])
 
 
@@ -36,11 +37,14 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
     Returns:
         (taus, devs, errs, ns) NamedTuple of results:
-
-        .taus:  array of averaging times for which deviation was computed.
-        .devs:  array with deviation computed at each averaging time.
-        .errs:  array with estimated error in each computed deviation.
-        .ns:    array with number of values used to compute each deviation.
+        
+        .taus:      array of averaging times for which deviation was computed.
+        .devs:      array with deviation computed at each averaging time.
+        .errs_lo:   array with estimated lower bound error in each computed
+        deviation.
+        .errs_hi:   array with estimated higher bound error in each computed
+        deviation.
+        .ns:        array with number of values used to compute each deviation.
     """
 
     if dev_type == 'htotdev':
@@ -70,7 +74,8 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     func = getattr(stats, 'calc_' + dev_type.replace('dev', 'var'))
 
     # Initialise arrays
-    devs, errs = np.zeros(len(afs)), np.zeros(len(afs))
+    devs = np.zeros(len(afs))
+    errs_lo, errs_hi = np.zeros(len(afs)),  np.zeros(len(afs))
     ns = np.zeros(len(afs), dtype=int)
 
     # Calculate metrics at each averaging time / factor
@@ -83,14 +88,17 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         dev = np.sqrt(var)
 
         # Calculate error
-        err = dev / np.sqrt(n)
+        err_lo, err_hi = dev / np.sqrt(n), dev / np.sqrt(n)
 
-        devs[i], errs[i], ns[i] = dev, err, n
+        devs[i], errs_lo[i], errs_hi[i], ns[i] = dev, err_lo, err_hi, n
 
     # Cleanup datapoints calculated on too few samples
-    taus, devs, errs, ns = utils.remove_small_ns(taus, devs, errs, ns)
+    taus, devs, errs_lo, errs_hi, ns = utils.remove_small_ns(taus, devs,
+                                                             errs_lo, errs_hi,
+                                                             ns)
 
-    return DevResult(taus=taus, devs=devs, errs=errs, ns=ns)
+    return DevResult(taus=taus, devs=devs, errs_lo=errs_lo, errs_hi=errs_hi,
+                     ns=ns)
 
 
 def adev(data: Array, rate: float = 1., data_type: str = "phase",
@@ -635,7 +643,7 @@ def gradev(data, rate=1.0, data_type="phase", taus=None,
         adn[idx] = n
 
     # Note that errors are split in 2 arrays
-    return utils.remove_small_ns(taus_used, ad, np.array([ade_l, ade_h]), adn)
+    return utils.remove_small_ns(taus_used, ad, ade_l, ade_h, adn)
 
 
 

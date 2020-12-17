@@ -53,7 +53,8 @@ def test_generic_ci(datafile, result, fct, verbose, tolerance, rate,
     s32_rows = testutils.read_stable32(result, rate)
     phase = np.array(testutils.read_datafile(datafile))
 
-    (taus, devs, errs, ns) = fct(phase, taus=[s32['tau'] for s32 in s32_rows])
+    (taus, devs, errs_lo, errs_hi, ns) = fct(phase, taus=np.array([
+                                            s32['tau'] for s32 in s32_rows]))
 
     # separate CI computation
     los = []
@@ -110,8 +111,8 @@ def test_phasedat_totdev(datafile, verbose, tolerance, rate):
     s32_rows = testutils.read_stable32(result, rate)
     phase = testutils.read_datafile(datafile)
 
-    (taus,devs,errs,ns) = allantoolkit.allantools.totdev(
-        phase, taus=[s32['tau'] for s32 in s32_rows])
+    (taus, devs, errs_lo, errs_hi, ns) = allantoolkit.allantools.totdev(
+        phase, taus=np.array([s32['tau'] for s32 in s32_rows]))
 
     los=[]
     his=[]

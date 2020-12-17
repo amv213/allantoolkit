@@ -68,10 +68,11 @@ def test_generic_ci_and_noiseID(datafile, result, fct, verbose, tolerance,
     phase = testutils.read_datafile(datafile)
 
     s32rows = testutils.read_stable32(resultfile=result, datarate=rate)
-    s32taus = [row['tau'] for row in s32rows]
+    s32taus = np.array([row['tau'] for row in s32rows])
 
-    (taus, devs, errs, ns) = allan.adev(phase, rate=rate, data_type="phase",
-                                        taus=s32taus)
+    (taus, devs, errs_lo, errs_hi, ns) = allan.adev(phase, rate=rate,
+                                                    data_type="phase",
+                                                    taus=s32taus)
 
     for idx, row in enumerate(s32rows):
 

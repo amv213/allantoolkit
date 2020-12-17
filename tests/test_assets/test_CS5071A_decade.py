@@ -19,6 +19,7 @@ import pytest
 import pathlib
 import allantoolkit
 import allantoolkit.testutils as testutils
+import numpy as np
 
 # top level directory with asset files
 ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets'
@@ -83,7 +84,8 @@ def test_generic_ci(datafile, result, fct, verbose, tolerance, rate,
 
         data = testutils.read_datafile(datafile)
 
-        (taus, devs, errs, ns) = fct(data, rate=rate, taus=[row['tau']])
+        (taus, devs, errs_lo, errs_hi, ns) = fct(data, rate=rate,
+                                                 taus=np.array([row['tau']]))
 
         edf = ci_fct(
             alpha=row['alpha'], d=d, m=row['m'], N=len(data),
@@ -112,8 +114,8 @@ def test_totdev_ci(datafile, verbose, tolerance, rate):
 
         data = testutils.read_datafile(datafile)
 
-        (taus, devs, errs, ns) = allantoolkit.allantools.totdev(
-            data, rate=rate, taus=[row['tau']])
+        (taus, devs, errs_lo, errs_hi, ns) = allantoolkit.allantools.totdev(
+            data, rate=rate, taus=np.array([row['tau']]))
 
         edf = allantoolkit.ci.edf_totdev(
             alpha=row['alpha'], m=row['m'], N=len(data))

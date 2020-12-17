@@ -13,6 +13,7 @@ import pathlib
 import pytest
 import allantoolkit
 import allantoolkit.testutils as testutils
+import numpy as np
 
 
 # top level directory with asset files
@@ -56,8 +57,10 @@ def test_generic_ci(datafile, result, fct, verbose, tolerance, rate,
     for row in s32rows:
         data = testutils.read_datafile(datafile)
         data = allantoolkit.utils.frequency2fractional(data, v0=1.0e7)
-        (taus, devs, errs, ns) = fct(data, rate=rate, data_type="freq",
-                                     taus=[row['tau']])
+        (taus, devs, err_lo, errs_hi, ns) = fct(data,
+                                                rate=rate,
+                                                data_type="freq",
+                                                taus=np.array([row['tau']]))
 
         # NOTE! Here we use alhpa from Stable32-results for the allantools edf computation!
         edf = ci_fct(alpha=row['alpha'], d=d, m=row['m'], N=len(data),

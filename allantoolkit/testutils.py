@@ -117,23 +117,24 @@ def test_row_by_row(function, datafile, datarate, resultfile, verbose=False, tol
             s32data['tau'] / 0.75
 
         if frequency:
-            (taus2, devs2, errs2, ns2) = function(data, rate=datarate,
-                                                  data_type="freq",
-                                                  taus=[tau_ori])
+            (taus2, devs2, errs_lo2, errs_hi2, ns2) = function(
+                data, rate=datarate, data_type="freq", taus=[tau_ori])
         else:
-            (taus2, devs2, errs2, ns2) = function(data, rate=datarate,
-                                                  taus=[tau_ori])
+            (taus2, devs2, errs_lo2, errs_hi2, ns2) = function(
+                data, rate=datarate, taus=[tau_ori])
 
-        n_errors += check_equal(s32data['n'], ns2[0] )
+        n_errors += check_equal(s32data['n'], ns2[0])
 
-        n_errors += check_equal( s32data['tau'], taus2[0] )
+        n_errors += check_equal( s32data['tau'], taus2[0])
 
-        n_errors += check_approx_equal( s32data['dev'], devs2[0], tolerance=tolerance, verbose=verbose )
+        n_errors += check_approx_equal(s32data['dev'], devs2[0],
+                                       tolerance=tolerance, verbose=verbose)
 
         if verbose:
             rel_error = (devs2[0] - s32data['dev']) / s32data['dev']
             bias = pow(s32data['dev']/devs2[0],2)
-            print("%.1f %d %0.6g \t %0.6g \t %0.6f \t %0.4f OK!" % ( s32data['tau'], s32data['n'], s32data['dev'], devs2[0], rel_error,bias))
+            print("%.1f %d %0.6g \t %0.6g \t %0.6f \t %0.4f OK!" % (s32data['tau'], s32data['n'], s32data['dev'], devs2[0], rel_error,bias))
+
 
 def check_equal(a,b):
     try:

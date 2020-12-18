@@ -9,3 +9,4 @@ with open(path_to_tables, 'rb') as f:
 
 STOP_RATIOS = tables.get('stop_ratios')
 D_ORDER = tables.get('d_order')
+ALPHA_TO_MU = tables.get('alpha_to_mu')

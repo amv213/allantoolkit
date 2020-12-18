@@ -51,3 +51,24 @@ d_order:
   htotdev:  3
   mtotdev:  2
   ttotdev:  2
+
+
+alpha_to_mu:
+  # Mapping between fractional frequency noise type exponent `alpha` and
+  # phase noise type exponent `mu`
+  #
+  # Howe, Beard, Greenhall, Riley,
+  # A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
+  # 32nd PTTI, 2000
+  # https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
+  # (Table 4, pg. 263)
+
+
+  # alpha:  mu
+  -4:   3
+  -3:   2
+  -2:   1
+  -1:   0
+  0:    -1
+  1:    -2
+  2:    -2

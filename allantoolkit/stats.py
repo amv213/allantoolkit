@@ -36,14 +36,49 @@ def calc_svar(x: Array, m: int, tau: float = None) -> VarResult:
 
     y = np.diff(x) / tau
     ybar = np.nanmean(y)
+    summand = (y-ybar)**2
 
+    n = summand[~np.isnan(summand)].size
+
+    if n < 2:
+        logger.warning("Not enough phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, x)
+        var = np.NaN
+        return VarResult(var=var, n=0)
+
+    var = np.nansum(summand) / (n - 1)
+
+    return VarResult(var=var, n=n)
+
+
+def calc_svar_freq(y: Array, m: int, tau: float = None) -> VarResult:
+    """Main algorithm for standard variance calculation on fractional
+    frequency data.
+
+    References:
+        [RileyStable32]_ (5.2.1, pg.17)
+
+    Args:
+        y:      input fractional frequency data.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time. Not used here.
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
+
+    # average at given averaging factor
+    y = utils.decimate(data=y, m=m, data_type='freq')
+
+    ybar = np.nanmean(y)
     summation = np.nansum((y-ybar)**2)
 
     n = summation[~np.isnan(summation)].size
 
     if n < 2:
-        logger.warning("Not enough phase measurements to compute "
-                       "variance at averaging factor %i: %s", m, x)
+        logger.warning("Not enough fractional frequency measurements to "
+                       "compute variance at averaging factor %i: %s", m, y)
         var = np.NaN
         return VarResult(var=var, n=0)
 
@@ -138,6 +173,51 @@ def calc_oavar(x: Array, m: int, tau: float) -> VarResult:
     """
 
     return calc_o_avar(x=x, m=m, tau=tau, stride=1)
+
+
+def calc_avar_freq(y: Array, m: int, tau: float) -> VarResult:
+    """Main algorithm for AVAR calculation on fractional frequency data.
+
+    References:
+        [RileyStable32]_ (5.2.2, pg.19)
+
+    Args:
+        y:      input phase fractional frequency data.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
+
+    # average at given averaging factor
+    y = utils.decimate(data=y, m=m, data_type='freq')
+
+    M = y[~np.isnan(y)].size
+
+    if M < 2:
+        logger.warning("Not enough fractional frequency measurements to "
+                       "compute variance at averaging factor %i: %s", m, y)
+        var = np.NaN
+        return var, 0
+
+    # Calculate first difference
+    summand = np.diff(y)
+    m = summand[~np.isnan(summand)].size  # M - 1 if no NaNs
+
+    if m == 0:
+        logger.warning("Not enough valid phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, y)
+        var = np.NaN
+        return var, 0
+
+    # Calculate variance
+    var = (1. / 2) * np.nanmean(summand**2)
+
+    return VarResult(var=var, n=m)
+
+
 
 
 def calc_mvar(x: Array, m: int, tau: float) -> VarResult:

@@ -212,6 +212,7 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tables</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">stats</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
 
 <span class="c1"># Spawn module-level logger</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -332,24 +333,14 @@
     <span class="c1"># interest, and it is therefore be necessary to decimate the phase</span>
     <span class="c1"># data or average the frequency data by the appropriate averaging factor</span>
     <span class="c1"># before applying the noise identification algorithm</span>
-    <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;phase&#39;</span><span class="p">:</span>
-
-        <span class="n">z</span> <span class="o">=</span> <span class="n">data</span><span class="p">[::</span><span class="n">m</span><span class="p">]</span>
-
-    <span class="k">elif</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span><span class="p">:</span>
-
-        <span class="n">z</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">%</span> <span class="n">m</span><span class="p">)]</span>
-        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid data_type value: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">. Should be &quot;</span>
-                         <span class="sa">f</span><span class="s2">&quot;`phase` or `freq`.&quot;</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">decimate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span>
 
     <span class="c1"># Check number of datapoints</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">z</span><span class="p">)]</span><span class="o">.</span><span class="n">size</span>
     <span class="k">if</span> <span class="n">N</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Noise ID method based on Lag1 ACF might not be &quot;</span>
-                       <span class="s2">&quot;reliable at this averaging time&quot;</span><span class="p">)</span>
+                       <span class="s2">&quot;reliable at this averaging time. Switching to &quot;</span>
+                       <span class="s2">&quot;alternative noise ID algorithm&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">RuntimeWarning</span>
 
     <span class="c1"># The dmax parameter should be set to 2 or 3 for an Allan or Hadamard (2</span>
@@ -414,30 +405,69 @@
 
         <span class="k">return</span> <span class="o">-</span><span class="mi">99</span>
 
+    <span class="c1"># Estimate alpha when there are less than 30 analysis datapoints (</span>
+    <span class="c1"># acf_noise_1d throws this warning when it is the case)</span>
     <span class="k">except</span> <span class="ne">RuntimeWarning</span><span class="p">:</span>
 
-        <span class="c1"># Estimate alpha when there are less than 30 analysis datapoints:</span>
-        <span class="c1"># TODO: implement</span>
-
-
+        <span class="c1"># B1 ratios expect phase data</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">m</span><span class="o">/</span><span class="n">tau</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span>
+        <span class="n">phase_data_size</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span><span class="o">.</span><span class="n">size</span>
 
         <span class="c1"># compare b1 bias factor = standard variance / allan variance vs</span>
         <span class="c1"># expected value of this same ratio for pure noise types</span>
 
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;For </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> datapoints and m: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
         <span class="c1"># Actual</span>
         <span class="n">svar</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_svar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;svar: </span><span class="si">{</span><span class="n">svar</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
         <span class="n">avar</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_avar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
-        <span class="n">b1_actual</span> <span class="o">=</span> <span class="n">svar</span> <span class="o">/</span> <span class="n">avar</span>
 
-        <span class="c1"># Expected</span>
-        <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># number of frequency data points</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;avar: </span><span class="si">{</span><span class="n">avar</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
+        <span class="n">b1</span> <span class="o">=</span> <span class="n">svar</span> <span class="o">/</span> <span class="n">avar</span>
 
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Measured B1 ratio: </span><span class="si">{</span><span class="n">b1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># B1 noise_id</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">phase_data_size</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># number of frequency data points</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">b1_noise_id</span><span class="p">(</span><span class="n">measured</span><span class="o">=</span><span class="n">b1</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
 
         <span class="c1"># If modified family of variances MVAR, TVAR or TOTMVAR</span>
         <span class="c1"># distinguish between WPM vs FPM by:</span>
         <span class="c1"># Supplement with R(n) ratio = mod allan / allan variance</span>
+        <span class="k">if</span> <span class="n">mu</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>  <span class="c1"># find if alpha = 1 or 2</span>
+
+            <span class="c1"># Actual</span>
+            <span class="n">mvar</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_mvar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+            <span class="n">rn</span> <span class="o">=</span> <span class="n">mvar</span> <span class="o">/</span> <span class="n">avar</span>
+
+            <span class="c1"># Rn noise_id</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">rn_noise_id</span><span class="p">(</span><span class="n">measured</span><span class="o">=</span><span class="n">rn</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">alpha</span>
+
+        <span class="c1"># For the Hadamard variance, for which RRFM noise can apply (mu=3,</span>
+        <span class="c1"># alpha=-4) the B1 ratio can be applied to frequency (rather than</span>
+        <span class="c1"># phase) data, and adding 2 to the resulting mu</span>
+        <span class="k">elif</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># find if alpha = -3 or -4</span>
+
+            <span class="c1"># *B1 ratio applies to frequency data</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span> <span class="k">else</span> <span class="n">utils</span><span class="o">.</span><span class="n">phase2frequency</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                                                                       <span class="n">rate</span><span class="o">=</span><span class="n">m</span><span class="o">/</span><span class="n">tau</span><span class="p">)</span>
+            <span class="n">svar</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_svar_freq</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+            <span class="n">avar</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_avar_freq</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+            <span class="n">b1star</span> <span class="o">=</span> <span class="n">svar</span> <span class="o">/</span> <span class="n">avar</span>
+
+            <span class="c1"># B1 noise_id</span>
+            <span class="n">mu</span> <span class="o">=</span> <span class="n">b1_noise_id</span><span class="p">(</span><span class="n">measured</span><span class="o">=</span><span class="n">b1star</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+            <span class="n">mu</span> <span class="o">+=</span> <span class="mi">2</span>
+
+            <span class="k">assert</span> <span class="n">mu</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Invalid phase noise type mu: </span><span class="si">{</span><span class="n">mu</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Get alpha value corresponding to identified mu</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">tables</span><span class="o">.</span><span class="n">ALPHA_TO_MU</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="n">mu</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="o">-</span><span class="mi">99</span></div>
 
@@ -588,6 +618,7 @@
 <span class="c1">########################################################################</span>
 <span class="c1"># Noise Identification using R(n)</span>
 
+<span class="c1"># FIXME: get rid of this / update with new function contents</span>
 <div class="viewcode-block" id="rn"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.rn">[docs]</a><span class="k">def</span> <span class="nf">rn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">af</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; R(n) ratio for noise identification</span>
 
@@ -602,10 +633,90 @@
     <span class="k">return</span> <span class="nb">pow</span><span class="p">(</span><span class="n">mdev_x</span><span class="o">/</span><span class="n">oadev_x</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="rn_theory"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.rn_theory">[docs]</a><span class="k">def</span> <span class="nf">rn_theory</span><span class="p">(</span><span class="n">af</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; R(n) ratio expected from theory for given noise type</span>
+<div class="viewcode-block" id="rn_expected"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.rn_expected">[docs]</a><span class="k">def</span> <span class="nf">rn_expected</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;R(n) ratio expected from theory for given noise type and number of</span>
+<span class="sd">    phase samples</span>
 
-<span class="sd">        alpha = b + 2</span>
+<span class="sd">    References:</span>
+
+<span class="sd">        D. B. Sullivan, D. W. Allan, D. A. Howe, and F. L. Walls (editors)</span>
+<span class="sd">        1990, “Characterization of Clocks and  Oscillators, ” National</span>
+<span class="sd">        Institute of Standards and Technology  Technical Note 1337, Sec. A-6.</span>
+<span class="sd">        Table 2.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        m:      averaging factor</span>
+<span class="sd">        alpha:  fractional frequency noise power-law exponent for which to</span>
+<span class="sd">                calculate expected R(n) ratio</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        R(n) ratio for given fractional frequency noise exponent</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+        <span class="c1"># assume measurement bandwidth `f_h` is 1/(2*tau_0)</span>
+        <span class="c1"># then `w_h` == 2*pi*f_h = pi / tau_0</span>
+        <span class="c1"># which means w_h*tau == w_h*m*tu_0 = pi * m</span>
+
+        <span class="k">return</span> <span class="mf">3.37</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.04</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">m</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">alpha</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">m</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Use B1 ratio instead for other noise types&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="rn_noise_id"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.rn_noise_id">[docs]</a><span class="k">def</span> <span class="nf">rn_noise_id</span><span class="p">(</span><span class="n">measured</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Identify fractional frequency noise power-law exponent type `alpha`</span>
+<span class="sd">    from measured R(n) ratio.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        Howe, Beard, Greenhall, Riley,</span>
+<span class="sd">        A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS</span>
+<span class="sd">        32nd PTTI, 2000</span>
+<span class="sd">        https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf</span>
+<span class="sd">        (Table 4, pg. 263)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        measured:   measured R(n) ratio</span>
+<span class="sd">        m:          averaging factor at which ratio was calculated</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        identified `alpha` fractional frequency noise power-law exponent</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1"># Expected R(n) ratio for each phase noise type</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">alpha</span><span class="p">:</span> <span class="n">rn_expected</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span> <span class="k">for</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="n">alphas</span><span class="p">}</span>
+
+    <span class="c1"># Boundary between FLPM (alpha=1) and WHPM (alpha=2)</span>
+    <span class="n">bndry</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="c1"># Compare measured result against boundary</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">measured</span> <span class="o">&gt;</span> <span class="n">bndry</span> <span class="k">else</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">alpha</span></div>
+
+
+<span class="c1"># TODO: check if calculation is equivalent / better and then get rid</span>
+<div class="viewcode-block" id="rn_theory"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.rn_theory">[docs]</a><span class="k">def</span> <span class="nf">rn_theory</span><span class="p">(</span><span class="n">af</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;R(n) ratio expected from theory for given noise type and number of</span>
+<span class="sd">    phase samples</span>
+
+<span class="sd">        alpha = beta + 2</span>
+
+<span class="sd">    References:</span>
+
+<span class="sd">        D. B. Sullivan, D. W. Allan, D. A. Howe, and F. L. Walls (editors)</span>
+<span class="sd">        1990, “Characterization of Clocks and  Oscillators, ” National</span>
+<span class="sd">        Institute of Standards and Technology  Technical Note 1337, Sec. A-6.</span>
+<span class="sd">        Table 2.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># From IEEE1139-2008</span>
@@ -631,6 +742,7 @@
         <span class="k">return</span> <span class="nb">pow</span><span class="p">(</span><span class="n">af</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
 
 
+<span class="c1"># TODO: get rid</span>
 <div class="viewcode-block" id="rn_boundary"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.rn_boundary">[docs]</a><span class="k">def</span> <span class="nf">rn_boundary</span><span class="p">(</span><span class="n">af</span><span class="p">,</span> <span class="n">b_hi</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    R(n) ratio boundary for selecting between [b_hi-1, b_hi]</span>
@@ -641,7 +753,7 @@
 <span class="c1">########################################################################</span>
 <span class="c1"># Noise Identification using B1</span>
 
-
+<span class="c1"># FIXME: get rid of this / update with new function contents</span>
 <div class="viewcode-block" id="b1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.b1">[docs]</a><span class="k">def</span> <span class="nf">b1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">af</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; B1 ratio for noise identification</span>
 <span class="sd">        (and bias correction?)</span>
@@ -671,53 +783,106 @@
     <span class="k">return</span> <span class="n">var</span><span class="o">/</span><span class="n">avar</span></div>
 
 
-<div class="viewcode-block" id="b1_theory"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.b1_theory">[docs]</a><span class="k">def</span> <span class="nf">b1_theory</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Expected B1 ratio for given time-series length N and exponent mu</span>
+<div class="viewcode-block" id="b1_expected"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.b1_expected">[docs]</a><span class="k">def</span> <span class="nf">b1_expected</span><span class="p">(</span><span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Expected B1 ratio for a timeseries of N fractional frequency</span>
+<span class="sd">    datapoints and phase noise exponent mu</span>
 
-<span class="sd">    FIXME: add reference (paper &amp; link)</span>
+<span class="sd">    References:</span>
+<span class="sd">        Howe, Beard, Greenhall, Riley,</span>
+<span class="sd">        A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS</span>
+<span class="sd">        32nd PTTI, 2000</span>
+<span class="sd">        https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf</span>
+<span class="sd">        (Table 3, pg. 261-2)</span>
 
-<span class="sd">    The exponents are defined as</span>
-<span class="sd">    S_y(f) = h_a f^alpha    (power spectrum of y)</span>
-<span class="sd">    S_x(f) = g_b f^b        (power spectrum of x)</span>
-<span class="sd">    bias = const * tau^mu</span>
+<span class="sd">    Args:</span>
+<span class="sd">        N:  number of fractional frequency datapoints. This is M-1,</span>
+<span class="sd">            for M phase data points.</span>
+<span class="sd">        mu: phase noise power-law exponent for which to calculate expected</span>
+<span class="sd">            B1 ratio</span>
+<span class="sd">        r:  dead time ratio. Set to 1.</span>
 
-<span class="sd">    and (b, alpha, mu) relate to eachother by:</span>
-<span class="sd">    b    alpha   mu</span>
-<span class="sd">    0    +2      -2</span>
-<span class="sd">    -1    +1      -2   resolve between -2 cases with R(n)</span>
-<span class="sd">    -2     0      -1</span>
-<span class="sd">    -3    -1       0</span>
-<span class="sd">    -4    -2      +1</span>
-<span class="sd">    -5    -3      +2</span>
-<span class="sd">    -6    -4      +3 for HDEV, by applying B1 to frequency data, and add +2</span>
-<span class="sd">    to resulting mu</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        B1 ratio for given phase noise exponent.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># see Table 3 of Howe 2000</span>
-    <span class="k">if</span> <span class="n">mu</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">+</span><span class="mf">1.0</span><span class="p">)</span><span class="o">/</span><span class="mf">6.0</span>
-    <span class="k">elif</span> <span class="n">mu</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
-    <span class="k">elif</span> <span class="n">mu</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">N</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">mu</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mu</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># FWFM</span>
+        <span class="k">return</span> <span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">6.0</span>
+
+    <span class="k">elif</span> <span class="n">mu</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># RWFM</span>
+        <span class="k">return</span> <span class="n">N</span> <span class="o">/</span> <span class="mf">2.</span>
+
+    <span class="k">elif</span> <span class="n">mu</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># FLFM</span>
+        <span class="k">return</span> <span class="n">N</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">mu</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>  <span class="c1"># WHFM</span>
         <span class="k">return</span> <span class="mi">1</span>
-    <span class="k">elif</span> <span class="n">mu</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1.5</span><span class="o">*</span><span class="n">N</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">mu</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>  <span class="c1"># WHPM or FLPM</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">N</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.5</span><span class="o">*</span><span class="n">N</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mf">1.</span><span class="p">))</span>
+
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">up</span> <span class="o">=</span> <span class="n">N</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="nb">pow</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">mu</span><span class="p">))</span>
-        <span class="n">down</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="nb">pow</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">mu</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">up</span><span class="o">/</span><span class="n">down</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Calculating B1 ratio for phase noise exponent outside &quot;</span>
+                       <span class="s2">&quot;bounds&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">N</span><span class="o">**</span><span class="n">mu</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span><span class="o">**</span><span class="n">mu</span><span class="p">))</span></div>
 
 
+<div class="viewcode-block" id="b1_noise_id"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.b1_noise_id">[docs]</a><span class="k">def</span> <span class="nf">b1_noise_id</span><span class="p">(</span><span class="n">measured</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Identify phase noise power-law exponent type `mu` from measured B1</span>
+<span class="sd">    ratio.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        Howe, Beard, Greenhall, Riley,</span>
+<span class="sd">        A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS</span>
+<span class="sd">        32nd PTTI, 2000</span>
+<span class="sd">        https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf</span>
+<span class="sd">        (Table 4, pg. 263)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        measured:   measured B1 ratio</span>
+<span class="sd">        N:          number of fractional frequency datapoints on which</span>
+<span class="sd">                    measured B1 ratio was calculated. This is M-1,</span>
+<span class="sd">                    for M phase data points.</span>
+<span class="sd">        r:          dead time ratio. Set to 1.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        identified `mu` phase noise power-law exponent</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">mus</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1"># Expected B1 ratio for each phase noise type</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">mu</span><span class="p">:</span> <span class="n">b1_expected</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="n">mus</span><span class="p">}</span>
+
+    <span class="c1"># Boundaries between noise types</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">mu</span><span class="p">,</span> <span class="n">b1</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="k">if</span> <span class="n">mu</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+
+            <span class="n">bndry</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">b1</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="n">mu</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">mu</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">b1</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="n">mu</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">b</span><span class="p">[</span><span class="n">mu</span><span class="p">]</span> <span class="o">=</span> <span class="n">bndry</span>
+
+    <span class="c1"># Assign measured b1 to most plausible noise type:</span>
+    <span class="c1"># the actual measured ratio is tested against mu values downwards from</span>
+    <span class="c1"># the largest applicable mu</span>
+    <span class="k">for</span> <span class="n">mu</span><span class="p">,</span> <span class="n">bndry</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="k">if</span> <span class="n">measured</span> <span class="o">&gt;</span> <span class="n">bndry</span><span class="p">:</span>
+
+            <span class="k">return</span> <span class="n">mu</span>
+
+    <span class="c1"># If the above didn&#39;t return anything, give lowest possible noise type</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">2</span></div>
+
+<span class="c1"># TODO: get rid</span>
 <div class="viewcode-block" id="b1_boundary"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.b1_boundary">[docs]</a><span class="k">def</span> <span class="nf">b1_boundary</span><span class="p">(</span><span class="n">b_hi</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    B1 ratio boundary for selecting between [b_hi-1, b_hi]</span>
 <span class="sd">    alpha = b + 2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">b_lo</span> <span class="o">=</span> <span class="n">b_hi</span><span class="o">-</span><span class="mi">1</span>
-    <span class="n">b1_lo</span> <span class="o">=</span> <span class="n">b1_theory</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">b_to_mu</span><span class="p">(</span><span class="n">b_lo</span><span class="p">))</span>
-    <span class="n">b1_hi</span> <span class="o">=</span> <span class="n">b1_theory</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">b_to_mu</span><span class="p">(</span><span class="n">b_hi</span><span class="p">))</span>
+    <span class="n">b1_lo</span> <span class="o">=</span> <span class="n">b1_expected</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">b_to_mu</span><span class="p">(</span><span class="n">b_lo</span><span class="p">))</span>
+    <span class="n">b1_hi</span> <span class="o">=</span> <span class="n">b1_expected</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">b_to_mu</span><span class="p">(</span><span class="n">b_hi</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">b1_lo</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">4</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">b1_lo</span><span class="o">*</span><span class="n">b1_hi</span><span class="p">)</span>  <span class="c1"># geometric mean</span>
     <span class="k">else</span><span class="p">:</span>

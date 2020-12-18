@@ -70,6 +70,7 @@ def test_noise_id_phase0_octave(fct):
 
     # test noise-ID
     for s32 in s32_rows:
+
         m, tau, n, alpha = int(s32[0]), s32[1], int(s32[2]), int(s32[3])
 
         alpha_int = allantoolkit.ci.noise_id(phase, data_type='phase',

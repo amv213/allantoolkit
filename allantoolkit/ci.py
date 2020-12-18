@@ -15,6 +15,7 @@ from . import allantools
 from . import tables
 from . import stats
 from . import utils
+from typing import Dict
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -135,24 +136,14 @@ def acf_noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
     # interest, and it is therefore be necessary to decimate the phase
     # data or average the frequency data by the appropriate averaging factor
     # before applying the noise identification algorithm
-    if data_type == 'phase':
-
-        z = data[::m]
-
-    elif data_type == 'freq':
-
-        z = data[:-(len(data) % m)]
-        z = np.mean(z.reshape(-1, m), axis=1)
-
-    else:
-        raise ValueError(f"Invalid data_type value: {data_type}. Should be "
-                         f"`phase` or `freq`.")
+    z = utils.decimate(data=data, m=m, data_type=data_type)
 
     # Check number of datapoints
     N = z[~np.isnan(z)].size
     if N < 30:
         logger.warning("Noise ID method based on Lag1 ACF might not be "
-                       "reliable at this averaging time")
+                       "reliable at this averaging time. Switching to "
+                       "alternative noise ID algorithm")
         raise RuntimeWarning
 
     # The dmax parameter should be set to 2 or 3 for an Allan or Hadamard (2
@@ -217,30 +208,69 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
 
         return -99
 
+    # Estimate alpha when there are less than 30 analysis datapoints (
+    # acf_noise_1d throws this warning when it is the case)
     except RuntimeWarning:
 
-        # Estimate alpha when there are less than 30 analysis datapoints:
-        # TODO: implement
-
-
+        # B1 ratios expect phase data
         x = utils.input_to_phase(data=data, rate=m/tau, data_type=data_type)
+        phase_data_size = x[~np.isnan(x)].size
 
         # compare b1 bias factor = standard variance / allan variance vs
         # expected value of this same ratio for pure noise types
 
+        print(f"For {x.size} datapoints and m: {m}")
+
         # Actual
         svar, _ = stats.calc_svar(x=x, m=m, tau=tau)
+
+        print(f"svar: {svar}")
+
         avar, _ = stats.calc_avar(x=x, m=m, tau=tau)
-        b1_actual = svar / avar
 
-        # Expected
-        N = x[~np.isnan(x)].size - 1  # number of frequency data points
+        print(f"avar: {avar}")
 
+        b1 = svar / avar
 
+        print(f"Measured B1 ratio: {b1}")
+
+        # B1 noise_id
+        N = phase_data_size - 1  # number of frequency data points
+        mu = b1_noise_id(measured=b1, N=N)
 
         # If modified family of variances MVAR, TVAR or TOTMVAR
         # distinguish between WPM vs FPM by:
         # Supplement with R(n) ratio = mod allan / allan variance
+        if mu == -2:  # find if alpha = 1 or 2
+
+            # Actual
+            mvar, _ = stats.calc_mvar(x=x, m=m, tau=tau)
+            rn = mvar / avar
+
+            # Rn noise_id
+            alpha = rn_noise_id(measured=rn, m=m)
+            return alpha
+
+        # For the Hadamard variance, for which RRFM noise can apply (mu=3,
+        # alpha=-4) the B1 ratio can be applied to frequency (rather than
+        # phase) data, and adding 2 to the resulting mu
+        elif m == 2:  # find if alpha = -3 or -4
+
+            # *B1 ratio applies to frequency data
+            y = data if data_type == 'freq' else utils.phase2frequency(x=data,
+                                                                       rate=m/tau)
+            svar, _ = stats.calc_svar_freq(y=y, m=m, tau=tau)
+            avar, _ = stats.calc_avar_freq(y=x, m=m, tau=tau)
+            b1star = svar / avar
+
+            # B1 noise_id
+            mu = b1_noise_id(measured=b1star, N=N)
+            mu += 2
+
+            assert mu <= 3, f"Invalid phase noise type mu: {mu}"
+
+        # Get alpha value corresponding to identified mu
+        alpha = [a for a, m in tables.ALPHA_TO_MU.items() if m == mu][0]
 
         return -99
 
@@ -391,6 +421,7 @@ def confidence_interval_noiseID(x, dev, af, dev_type="adev", data_type="phase", 
 ########################################################################
 # Noise Identification using R(n)
 
+# FIXME: get rid of this / update with new function contents
 def rn(x, af, rate):
     """ R(n) ratio for noise identification
 
@@ -405,10 +436,90 @@ def rn(x, af, rate):
     return pow(mdev_x/oadev_x, 2)
 
 
-def rn_theory(af, b):
-    """ R(n) ratio expected from theory for given noise type
+def rn_expected(m: int, alpha: int) -> float:
+    """R(n) ratio expected from theory for given noise type and number of
+    phase samples
 
-        alpha = b + 2
+    References:
+
+        D. B. Sullivan, D. W. Allan, D. A. Howe, and F. L. Walls (editors)
+        1990, “Characterization of Clocks and  Oscillators, ” National
+        Institute of Standards and Technology  Technical Note 1337, Sec. A-6.
+        Table 2.
+
+    Args:
+        m:      averaging factor
+        alpha:  fractional frequency noise power-law exponent for which to
+                calculate expected R(n) ratio
+
+    Returns:
+        R(n) ratio for given fractional frequency noise exponent
+    """
+
+    if alpha == 1:
+
+        # assume measurement bandwidth `f_h` is 1/(2*tau_0)
+        # then `w_h` == 2*pi*f_h = pi / tau_0
+        # which means w_h*tau == w_h*m*tu_0 = pi * m
+
+        return 3.37 / (1.04 + 3 * np.log(np.pi*m))
+
+    elif alpha == 2:
+
+        return 1. / m
+
+    else:
+
+        raise ValueError('Use B1 ratio instead for other noise types')
+
+
+
+def rn_noise_id(measured: float, m: int) -> int:
+    """ Identify fractional frequency noise power-law exponent type `alpha`
+    from measured R(n) ratio.
+
+    References:
+        Howe, Beard, Greenhall, Riley,
+        A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
+        32nd PTTI, 2000
+        https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
+        (Table 4, pg. 263)
+
+    Args:
+        measured:   measured R(n) ratio
+        m:          averaging factor at which ratio was calculated
+
+    Returns:
+        identified `alpha` fractional frequency noise power-law exponent
+    """
+
+    alphas = [1, 2]
+
+    # Expected R(n) ratio for each phase noise type
+    d = {alpha: rn_expected(m=m, alpha=alpha) for alpha in alphas}
+
+    # Boundary between FLPM (alpha=1) and WHPM (alpha=2)
+    bndry = np.sqrt(d[1] * d[2])
+
+    # Compare measured result against boundary
+    alpha = 1 if measured > bndry else 2
+
+    return alpha
+
+
+# TODO: check if calculation is equivalent / better and then get rid
+def rn_theory(af, b):
+    """R(n) ratio expected from theory for given noise type and number of
+    phase samples
+
+        alpha = beta + 2
+
+    References:
+
+        D. B. Sullivan, D. W. Allan, D. A. Howe, and F. L. Walls (editors)
+        1990, “Characterization of Clocks and  Oscillators, ” National
+        Institute of Standards and Technology  Technical Note 1337, Sec. A-6.
+        Table 2.
     """
 
     # From IEEE1139-2008
@@ -434,6 +545,7 @@ def rn_theory(af, b):
         return pow(af, 0)
 
 
+# TODO: get rid
 def rn_boundary(af, b_hi):
     """
     R(n) ratio boundary for selecting between [b_hi-1, b_hi]
@@ -444,7 +556,7 @@ def rn_boundary(af, b_hi):
 ########################################################################
 # Noise Identification using B1
 
-
+# FIXME: get rid of this / update with new function contents
 def b1(x, af, rate):
     """ B1 ratio for noise identification
         (and bias correction?)
@@ -474,53 +586,106 @@ def b1(x, af, rate):
     return var/avar
 
 
-def b1_theory(N, mu):
-    """ Expected B1 ratio for given time-series length N and exponent mu
+def b1_expected(N: int, mu: int, r: float = 1) -> float:
+    """ Expected B1 ratio for a timeseries of N fractional frequency
+    datapoints and phase noise exponent mu
 
-    FIXME: add reference (paper & link)
+    References:
+        Howe, Beard, Greenhall, Riley,
+        A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
+        32nd PTTI, 2000
+        https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
+        (Table 3, pg. 261-2)
 
-    The exponents are defined as
-    S_y(f) = h_a f^alpha    (power spectrum of y)
-    S_x(f) = g_b f^b        (power spectrum of x)
-    bias = const * tau^mu
+    Args:
+        N:  number of fractional frequency datapoints. This is M-1,
+            for M phase data points.
+        mu: phase noise power-law exponent for which to calculate expected
+            B1 ratio
+        r:  dead time ratio. Set to 1.
 
-    and (b, alpha, mu) relate to eachother by:
-    b    alpha   mu
-    0    +2      -2
-    -1    +1      -2   resolve between -2 cases with R(n)
-    -2     0      -1
-    -3    -1       0
-    -4    -2      +1
-    -5    -3      +2
-    -6    -4      +3 for HDEV, by applying B1 to frequency data, and add +2
-    to resulting mu
+    Returns:
+        B1 ratio for given phase noise exponent.
     """
 
-    # see Table 3 of Howe 2000
-    if mu == 2:
-        return float(N)*(float(N)+1.0)/6.0
-    elif mu == 1:
-        return float(N)/2.0
-    elif mu == 0:
-        return N*np.log(N)/(2.0*(N-1.0)*np.log(2))
-    elif mu == -1:
+    if mu == 2:  # FWFM
+        return N * (N + 1) / 6.0
+
+    elif mu == 1:  # RWFM
+        return N / 2.
+
+    elif mu == 0:  # FLFM
+        return N*np.log(N) / (2*(N-1)*np.log(2))
+
+    elif mu == -1:  # WHFM
         return 1
-    elif mu == -2:
-        return (pow(N, 2)-1.0)/(1.5*N*(N-1.0))
+
+    elif mu == -2:  # WHPM or FLPM
+        return (N**2 - 1) / (1.5*N*(N-1.))
+
     else:
-        up = N*(1.0-pow(N, mu))
-        down = 2*(N-1.0)*(1-pow(2.0, mu))
-        return up/down
+        logger.warning("Calculating B1 ratio for phase noise exponent outside "
+                       "bounds")
+        return N * (1 - N**mu) / (2 * (N-1) * (1 - 2**mu))
 
 
+def b1_noise_id(measured: float, N: int, r: float = 1) -> int:
+    """ Identify phase noise power-law exponent type `mu` from measured B1
+    ratio.
+
+    References:
+        Howe, Beard, Greenhall, Riley,
+        A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
+        32nd PTTI, 2000
+        https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
+        (Table 4, pg. 263)
+
+    Args:
+        measured:   measured B1 ratio
+        N:          number of fractional frequency datapoints on which
+                    measured B1 ratio was calculated. This is M-1,
+                    for M phase data points.
+        r:          dead time ratio. Set to 1.
+
+    Returns:
+        identified `mu` phase noise power-law exponent
+    """
+
+    mus = [2, 1, 0, -1, -2]
+
+    # Expected B1 ratio for each phase noise type
+    d = {mu: b1_expected(N=N, mu=mu, r=r) for mu in mus}
+
+    # Boundaries between noise types
+    b = {}
+    for mu, b1 in d.items():
+
+        if mu > -2:
+
+            bndry = 0.5*(b1 + d[mu-1]) if mu == 2 else np.sqrt(b1 * d[mu-1])
+            b[mu] = bndry
+
+    # Assign measured b1 to most plausible noise type:
+    # the actual measured ratio is tested against mu values downwards from
+    # the largest applicable mu
+    for mu, bndry in b.items():
+
+        if measured > bndry:
+
+            return mu
+
+    # If the above didn't return anything, give lowest possible noise type
+    return -2
+
+# TODO: get rid
 def b1_boundary(b_hi, N):
     """
     B1 ratio boundary for selecting between [b_hi-1, b_hi]
     alpha = b + 2
     """
     b_lo = b_hi-1
-    b1_lo = b1_theory(N, b_to_mu(b_lo))
-    b1_hi = b1_theory(N, b_to_mu(b_hi))
+    b1_lo = b1_expected(N, b_to_mu(b_lo))
+    b1_hi = b1_expected(N, b_to_mu(b_hi))
     if b1_lo >= -4:
         return np.sqrt(b1_lo*b1_hi)  # geometric mean
     else:

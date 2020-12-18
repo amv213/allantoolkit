@@ -19,6 +19,39 @@ Taus = Union[str, float, List, Array]
 TausResult = NamedTuple('TausResult', [('taus', Array), ('afs', Array)])
 
 
+def decimate(data: Array, m: int, data_type: str) -> Array:
+    """ Average phase or fractional frequency data at given averaging factor.
+
+    Args:
+        data:       data array of input measurements.
+        m:          averaging factor for which to resample data.
+        data_type:  input data type. Either `phase` or `freq`.
+
+    Returns:
+        array of input data sampled at the given averaging factor.
+    """
+
+    if data_type == 'phase':
+
+        # Decimate
+        z = data[::m]
+
+    elif data_type == 'freq':
+
+        # Trim to length if necessary
+        z = data[:-(len(data) % m)] if data.size % m != 0 else data
+
+        # Take average of every m measurements
+        z = np.nanmean(z.reshape(-1, m), axis=1)
+
+    else:
+
+        raise ValueError(f"Invalid data_type value: {data_type}. Should be "
+                         f"`phase` or `freq`.")
+
+    return z
+
+
 def trim_data(data: Array) -> Array:
     """Trim leading and trailing NaNs from dataset.
 

@@ -70,18 +70,17 @@ def test_noise_id_phase0_octave(fct):
 
     # test noise-ID
     for s32 in s32_rows:
-        tau, alpha, AF = s32[1], int(s32[3]), int(s32[0])
+        m, tau, n, alpha = int(s32[0]), s32[1], int(s32[2]), int(s32[3])
 
-        try:
-            alpha_int = allantoolkit.ci.noise_id(phase, data_type='phase',
-                                                 m=AF, dev_type=fct.__name__)
+        alpha_int = allantoolkit.ci.noise_id(phase, data_type='phase',
+                                             m=m, dev_type=fct.__name__,
+                                             n=n)
+
+        if alpha_int != -99:  # not implemented token
 
             print(fct.__name__, tau, alpha, alpha_int)
+
             assert alpha_int == alpha
-
-        except RuntimeWarning:
-            print("Cannot use ACF at this averaging time")
-
 
 
 @pytest.mark.parametrize('fct', fcts)
@@ -98,17 +97,16 @@ def test_noise_id_freq_octave(fct):
 
     # test noise-ID
     for s32 in s32_rows:
-        tau, alpha, AF = s32[1], int(s32[3]), int(s32[0])
+        m, tau, n, alpha = int(s32[0]), s32[1], int(s32[2]), int(s32[3])
 
-        try:
-            alpha_int = allantoolkit.ci.noise_id(phase, data_type='freq',
-                                                 m=AF, dev_type=fct.__name__)
+        alpha_int = allantoolkit.ci.noise_id(phase, data_type='freq',
+                                             m=m, dev_type=fct.__name__,
+                                             n=n)
 
+        if alpha_int != -99:  # not implemented token
             print(fct.__name__, tau, alpha, alpha_int)
-            assert alpha_int == alpha
 
-        except RuntimeWarning:
-            print("Cannot use ACF at this averaging time")
+            assert alpha_int == alpha
 
 
 @pytest.mark.parametrize('fct', fcts)
@@ -125,17 +123,18 @@ def test_noise_id_freq_octave(fct):
 
     # test noise-ID
     for s32 in s32_rows:
-        tau, alpha, AF = s32[1], int(s32[3]), int(s32[0])
+        m, tau, n, alpha = int(s32[0]), s32[1], int(s32[2]), int(s32[3])
 
-        try:
-            alpha_int = allantoolkit.ci.noise_id(phase, data_type='freq',
-                                                 m=AF, dev_type=fct.__name__)
 
+        alpha_int = allantoolkit.ci.noise_id(phase, data_type='freq',
+                                             m=m, dev_type=fct.__name__,
+                                             n=n)
+
+        if alpha_int != -99:  # not implemented token
             print(fct.__name__, tau, alpha, alpha_int)
+
             assert alpha_int == alpha
 
-        except RuntimeWarning:
-            print("Cannot use ACF at this averaging time")
 
 
 '''

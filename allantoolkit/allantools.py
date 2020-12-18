@@ -74,6 +74,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     # Build/Select averaging factors at which to calculate deviations
     taus, afs = utils.tau_generator(data=x, rate=rate, dev_type=dev_type,
                                     taus=taus, maximum_m=max_af)
+    size_afs = afs.size
 
     # CALC DEV
 
@@ -82,26 +83,33 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     func = getattr(stats, 'calc_' + dev_type.replace('dev', 'var'))
 
     # Initialise arrays
-    devs = np.zeros(len(afs))
-    errs_lo, errs_hi = np.zeros(len(afs)),  np.zeros(len(afs))
-    ns = np.zeros(len(afs), dtype=int)
+    devs = np.zeros(afs.size)
+    errs_lo, errs_hi = np.zeros(afs.size),  np.zeros(afs.size)
+    ns, alphas = np.zeros(afs.size, dtype=int), np.zeros(afs.size, dtype=int)
 
     # Calculate metrics at each averaging time / factor
     for i, (tau, m) in enumerate(zip(taus, afs)):
 
-        # Calculate variance, and number of samples it is based on
+        # Calculate variance, and number of analysis points it is based on
         var, n = func(x=x, m=m, tau=tau)
 
         # Calculate deviation
         dev = np.sqrt(var)
 
         # Noise ID
-        alpha = 0
+        if i != afs.size:
+            # Only estimate if not last averaging time
+            alpha = ci.noise_id(data=x, m=m, data_type='phase',
+                                    dev_type=dev_type, n=n)
+        else:
+            # Use previous estimate at longest averaging time
+            alpha = alphas[i-1]
 
         # Calculate error
         err_lo, err_hi = dev / np.sqrt(n), dev / np.sqrt(n)
 
-        devs[i], errs_lo[i], errs_hi[i], ns[i] = dev, err_lo, err_hi, n
+        devs[i], errs_lo[i], errs_hi[i], ns[i], alphas[i] = \
+            dev, err_lo, err_hi, n, alpha
 
     # Cleanup datapoints calculated on too few samples
     taus, devs, errs_lo, errs_hi, ns = utils.remove_small_ns(taus, devs,

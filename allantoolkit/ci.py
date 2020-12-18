@@ -59,7 +59,7 @@ def acf(z: Array, k: int) -> float:
     return r
 
 
-def noise_id_core(z: Array, dmax: int, dmin: int = 0):
+def acf_noise_id_core(z: Array, dmax: int, dmin: int = 0):
     """Core algorithm for the lag1 autocorrelation power law noise
     identification algorithm.
 
@@ -106,7 +106,7 @@ def noise_id_core(z: Array, dmax: int, dmin: int = 0):
     return p
 
 
-def noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
+def acf_noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
     """Effective method for identifying power law noise factor `alpha` at
     given averaging time.
 
@@ -148,7 +148,7 @@ def noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
 
     # Check number of datapoints
     N = z[~np.isnan(z)].size
-    if N < 32:
+    if N < 30:
         logger.warning("Noise ID method based on Lag1 ACF might not be "
                        "reliable at this averaging time")
         raise RuntimeWarning
@@ -162,7 +162,7 @@ def noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
                        f"dev_type for noise ID algorithm.")
 
     # Run lag1 autocorrelation noise id algorithm
-    p = noise_id_core(z=z, dmax=dmax)
+    p = acf_noise_id_core(z=z, dmax=dmax)
 
     # The alpha result is equal to p+2 or p for phase or frequency data,
     # respectively, and may be rounded to an integer (although the fractional
@@ -172,6 +172,55 @@ def noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
 
     return alpha
 
+
+def noise_id(data: Array, data_type: str, m: int, dev_type: str, n: int) -> \
+        int:
+    """Noise identification pipeline, following what prescribed by Stable32.
+
+    References:
+        [RileyStable32Manual]_ (Confidence Intervals pg. 89-93)
+        [RileyStable32]_ (5.5.2-6 pg.53-7)
+
+    Args:
+        data:       array of input timeseries data. Before analysis, the data
+                    should be preprocessed to remove outliers, discontinuities,
+                    and  deterministic components
+        data_type:  input data type. Either `phase` or `freq`.
+        m:          averaging factor at which to estimate dominant noise type
+        dev_type:   type of deviation used for analysis, e.g. `adev`.
+        n:          number of analysis points on which deviation was calculated
+
+    Returns:
+        estimate of the `alpha` exponent, the dominant power law noise type.
+    """
+
+    # Stable32 uses two methods for power law noise identification, based
+    # respectively on the lag 1 autocorrelation and the B1 bias factor. The
+    # former method is preferred, and is used when there are at least 30
+    # analysis  data  points.
+    try:
+
+        return acf_noise_id(data=data, data_type=data_type, m=m,
+                        dev_type=dev_type)
+
+    except KeyError:
+
+        # Estimate alpha for deviations that don't have a 'd'
+
+        return -99
+
+    except RuntimeWarning:
+
+        # Estimate alpha when there are less than 30 analsis datapoints
+
+        return -99
+
+        # compare b1 bias factor = standard variance / allan variance vs
+        # expected value of this same ration for pure noise types
+
+        # If modified family of variances MVAR, TVAR or TOTMVAR
+        # distinguish between WPM vs FPM by:
+        # Supplement with R(n) ratio = mod allan / allan variance
 
 
 # -----

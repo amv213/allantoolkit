@@ -110,11 +110,15 @@ def test_noise_id(datafile, result, fct, verbose, tolerance, rate):
 
     # test noise-ID
     for s32 in s32_rows:
-        tau, alpha, AF = s32[1], int(s32[3]), int(s32[0])
-        try:
-            alpha_int = allantoolkit.ci.noise_id(phase, data_type='phase',
-                                                 m=AF, dev_type=fct.__name__)
-            print(tau, alpha, alpha_int)
+
+        m, tau, n, alpha = int(s32[0]), s32[1], int(s32[2]), int(s32[3])
+
+        alpha_int = allantoolkit.ci.noise_id(phase, data_type='phase',
+                                             m=m, dev_type=fct.__name__,
+                                             n=n)
+
+        if alpha_int != -99:  # not implemented token
+
+            print(fct.__name__, tau, alpha, alpha_int)
+
             assert alpha_int == alpha
-        except RuntimeWarning:
-            print("can't do noise-ID for tau= %f" % s32[1])

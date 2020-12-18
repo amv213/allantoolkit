@@ -210,6 +210,8 @@
 <span class="kn">import</span> <span class="nn">scipy.signal</span>  <span class="c1"># decimation in lag-1 acf</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">allantools</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tables</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
 
 <span class="c1"># Spawn module-level logger</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -370,13 +372,17 @@
     <span class="k">return</span> <span class="n">alpha</span></div>
 
 
-<div class="viewcode-block" id="noise_id"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.noise_id">[docs]</a><span class="k">def</span> <span class="nf">noise_id</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> \
-        <span class="nb">int</span><span class="p">:</span>
+<div class="viewcode-block" id="noise_id"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.noise_id">[docs]</a><span class="k">def</span> <span class="nf">noise_id</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+             <span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Noise identification pipeline, following what prescribed by Stable32.</span>
 
 <span class="sd">    References:</span>
 <span class="sd">        [RileyStable32Manual]_ (Confidence Intervals pg. 89-93)</span>
 <span class="sd">        [RileyStable32]_ (5.5.2-6 pg.53-7)</span>
+<span class="sd">        Howe, Beard, Greenhall, Riley,</span>
+<span class="sd">        A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS</span>
+<span class="sd">        32nd PTTI, 2000</span>
+<span class="sd">        https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data:       array of input timeseries data. Before analysis, the data</span>
@@ -384,6 +390,7 @@
 <span class="sd">                    and  deterministic components</span>
 <span class="sd">        data_type:  input data type. Either `phase` or `freq`.</span>
 <span class="sd">        m:          averaging factor at which to estimate dominant noise type</span>
+<span class="sd">        tau:        corresponding averaging time</span>
 <span class="sd">        dev_type:   type of deviation used for analysis, e.g. `adev`.</span>
 <span class="sd">        n:          number of analysis points on which deviation was calculated</span>
 
@@ -398,27 +405,41 @@
     <span class="k">try</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="n">acf_noise_id</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span>
-                        <span class="n">dev_type</span><span class="o">=</span><span class="n">dev_type</span><span class="p">)</span>
+                            <span class="n">dev_type</span><span class="o">=</span><span class="n">dev_type</span><span class="p">)</span>
 
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
 
         <span class="c1"># Estimate alpha for deviations that don&#39;t have a &#39;d&#39;</span>
+        <span class="c1"># TODO: implement</span>
 
         <span class="k">return</span> <span class="o">-</span><span class="mi">99</span>
 
     <span class="k">except</span> <span class="ne">RuntimeWarning</span><span class="p">:</span>
 
-        <span class="c1"># Estimate alpha when there are less than 30 analsis datapoints</span>
+        <span class="c1"># Estimate alpha when there are less than 30 analysis datapoints:</span>
+        <span class="c1"># TODO: implement</span>
 
-        <span class="k">return</span> <span class="o">-</span><span class="mi">99</span></div>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">m</span><span class="o">/</span><span class="n">tau</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span>
 
         <span class="c1"># compare b1 bias factor = standard variance / allan variance vs</span>
-        <span class="c1"># expected value of this same ration for pure noise types</span>
+        <span class="c1"># expected value of this same ratio for pure noise types</span>
+
+        <span class="c1"># Actual</span>
+        <span class="n">svar</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_svar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+        <span class="n">avar</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_avar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+        <span class="n">b1_actual</span> <span class="o">=</span> <span class="n">svar</span> <span class="o">/</span> <span class="n">avar</span>
+
+        <span class="c1"># Expected</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># number of frequency data points</span>
+
+
 
         <span class="c1"># If modified family of variances MVAR, TVAR or TOTMVAR</span>
         <span class="c1"># distinguish between WPM vs FPM by:</span>
         <span class="c1"># Supplement with R(n) ratio = mod allan / allan variance</span>
 
+        <span class="k">return</span> <span class="o">-</span><span class="mi">99</span></div>
 
 <span class="c1"># -----</span>
 

@@ -13,6 +13,8 @@ import scipy.stats  # used in confidence_intervals()
 import scipy.signal  # decimation in lag-1 acf
 from . import allantools
 from . import tables
+from . import stats
+from . import utils
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -173,13 +175,17 @@ def acf_noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
     return alpha
 
 
-def noise_id(data: Array, data_type: str, m: int, dev_type: str, n: int) -> \
-        int:
+def noise_id(data: Array, data_type: str, m: int, tau: float,
+             dev_type: str, n: int) -> int:
     """Noise identification pipeline, following what prescribed by Stable32.
 
     References:
         [RileyStable32Manual]_ (Confidence Intervals pg. 89-93)
         [RileyStable32]_ (5.5.2-6 pg.53-7)
+        Howe, Beard, Greenhall, Riley,
+        A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
+        32nd PTTI, 2000
+        https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
 
     Args:
         data:       array of input timeseries data. Before analysis, the data
@@ -187,6 +193,7 @@ def noise_id(data: Array, data_type: str, m: int, dev_type: str, n: int) -> \
                     and  deterministic components
         data_type:  input data type. Either `phase` or `freq`.
         m:          averaging factor at which to estimate dominant noise type
+        tau:        corresponding averaging time
         dev_type:   type of deviation used for analysis, e.g. `adev`.
         n:          number of analysis points on which deviation was calculated
 
@@ -201,27 +208,41 @@ def noise_id(data: Array, data_type: str, m: int, dev_type: str, n: int) -> \
     try:
 
         return acf_noise_id(data=data, data_type=data_type, m=m,
-                        dev_type=dev_type)
+                            dev_type=dev_type)
 
     except KeyError:
 
         # Estimate alpha for deviations that don't have a 'd'
+        # TODO: implement
 
         return -99
 
     except RuntimeWarning:
 
-        # Estimate alpha when there are less than 30 analsis datapoints
+        # Estimate alpha when there are less than 30 analysis datapoints:
+        # TODO: implement
 
-        return -99
+
+        x = utils.input_to_phase(data=data, rate=m/tau, data_type=data_type)
 
         # compare b1 bias factor = standard variance / allan variance vs
-        # expected value of this same ration for pure noise types
+        # expected value of this same ratio for pure noise types
+
+        # Actual
+        svar, _ = stats.calc_svar(x=x, m=m, tau=tau)
+        avar, _ = stats.calc_avar(x=x, m=m, tau=tau)
+        b1_actual = svar / avar
+
+        # Expected
+        N = x[~np.isnan(x)].size - 1  # number of frequency data points
+
+
 
         # If modified family of variances MVAR, TVAR or TOTMVAR
         # distinguish between WPM vs FPM by:
         # Supplement with R(n) ratio = mod allan / allan variance
 
+        return -99
 
 # -----
 

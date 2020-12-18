@@ -99,8 +99,8 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         # Noise ID
         if i != afs.size:
             # Only estimate if not last averaging time
-            alpha = ci.noise_id(data=x, m=m, data_type='phase',
-                                    dev_type=dev_type, n=n)
+            alpha = ci.noise_id(data=x, m=m, tau=tau, data_type='phase',
+                                dev_type=dev_type, n=n)
         else:
             # Use previous estimate at longest averaging time
             alpha = alphas[i-1]

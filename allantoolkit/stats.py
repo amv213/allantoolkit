@@ -15,6 +15,43 @@ Array = np.ndarray
 VarResult = NamedTuple('VarResult', [('var', float), ('n', int)])
 
 
+def calc_svar(x: Array, m: int, tau: float = None) -> VarResult:
+    """Main algorithm for standard variance calculation.
+
+    References:
+        [RileyStable32]_ (5.2.1, pg.17)
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding averaging time. Not used here.
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
+
+    # Decimate at given averaging factor
+    x = x[::m]
+
+    y = np.diff(x) / tau
+    ybar = np.nanmean(y)
+
+    summation = np.nansum((y-ybar)**2)
+
+    n = summation[~np.isnan(summation)].size
+
+    if n < 2:
+        logger.warning("Not enough phase measurements to compute "
+                       "variance at averaging factor %i: %s", m, x)
+        var = np.NaN
+        return VarResult(var=var, n=0)
+
+    var = summation / (n - 1)
+
+    return VarResult(var=var, n=n)
+
+
 def calc_o_avar(x: Array, m: int, tau: float, stride: int) -> VarResult:
     """Main algorithm for AVAR and OAVAR calculation.
 

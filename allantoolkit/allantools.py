@@ -97,13 +97,13 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         dev = np.sqrt(var)
 
         # Noise ID
-        if i != afs.size:
-            # Only estimate if not last averaging time
-            alpha = ci.noise_id(data=x, m=m, tau=tau, data_type='phase',
-                                dev_type=dev_type, n=n)
-        else:
+        #if i < afs.size - 1:  # Only estimate if not last averaging time
+        #    alpha = ci.noise_id(data=x, m=m, tau=tau, data_type='phase',
+        #                        dev_type=dev_type, n=n)
+        #else:
             # Use previous estimate at longest averaging time
-            alpha = alphas[i-1]
+        #    alpha = alphas[i-1]
+        alpha = -99
 
         # Calculate error
         err_lo, err_hi = dev / np.sqrt(n), dev / np.sqrt(n)

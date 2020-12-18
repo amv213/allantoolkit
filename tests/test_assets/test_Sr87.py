@@ -69,6 +69,35 @@ def test_noise_id_phase0_octave(fct):
     s32_rows = allantoolkit.testutils.read_stable32(resultfile)
 
     # test noise-ID
+    for s32 in s32_rows[:-1, :]:  # only test up to one to-last
+
+        m, tau, n, alpha = int(s32[0]), s32[1], int(s32[2]), int(s32[3])
+
+        alpha_int = allantoolkit.ci.noise_id(phase, data_type='phase',
+                                             m=m, tau=tau,
+                                             dev_type=fct.__name__,
+                                             n=n)
+
+        if alpha_int != -99:  # not implemented token
+
+            print(fct.__name__, tau, alpha, alpha_int)
+
+            assert alpha_int == alpha
+
+'''
+@pytest.mark.parametrize('fct', fcts)
+def test_noise_id_phase0_all(fct):
+    """ test for noise-identification """
+
+    datafile = ASSETS_DIR / 'phase0/phase0_data.txt'
+
+    result_fn = fct.__name__ + '.txt'
+    resultfile = ASSETS_DIR / 'phase0/all' / result_fn
+
+    phase = allantoolkit.testutils.read_datafile(datafile)
+    s32_rows = allantoolkit.testutils.read_stable32(resultfile)
+
+    # test noise-ID
     for s32 in s32_rows:
 
         m, tau, n, alpha = int(s32[0]), s32[1], int(s32[2]), int(s32[3])
@@ -83,6 +112,8 @@ def test_noise_id_phase0_octave(fct):
             print(fct.__name__, tau, alpha, alpha_int)
 
             assert alpha_int == alpha
+
+
 
 
 @pytest.mark.parametrize('fct', fcts)
@@ -107,13 +138,14 @@ def test_noise_id_freq_octave(fct):
                                              n=n)
 
         if alpha_int != -99:  # not implemented token
-            print(fct.__name__, tau, alpha, alpha_int)
+            print(f"{fct.__name__} @ tau {tau} should have alpha {alpha} and "
+                  f"not {alpha_int}")
 
             assert alpha_int == alpha
 
 
 @pytest.mark.parametrize('fct', fcts)
-def test_noise_id_freq_octave(fct):
+def test_noise_id_freq_decade(fct):
     """ test for noise-identification """
 
     datafile = ASSETS_DIR / 'freq/freq_data.txt'
@@ -135,13 +167,13 @@ def test_noise_id_freq_octave(fct):
                                              n=n)
 
         if alpha_int != -99:  # not implemented token
-            print(fct.__name__, tau, alpha, alpha_int)
+            print(f"{fct.__name__} @ tau {tau} should have alpha {alpha}:"
+                  f"you have {alpha_int}")
 
             assert alpha_int == alpha
 
 
 
-'''
 # input result files and function which should replicate them
 fcts = [
     allantoolkit.allantools.adev,

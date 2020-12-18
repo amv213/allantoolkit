@@ -212,6 +212,8 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
     # acf_noise_1d throws this warning when it is the case)
     except RuntimeWarning:
 
+        print("Using B1 Ratio")
+
         # B1 ratios expect phase data
         x = utils.input_to_phase(data=data, rate=m/tau, data_type=data_type)
         phase_data_size = x[~np.isnan(x)].size
@@ -219,29 +221,25 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
         # compare b1 bias factor = standard variance / allan variance vs
         # expected value of this same ratio for pure noise types
 
-        print(f"For {x.size} datapoints and m: {m}")
-
         # Actual
-        svar, _ = stats.calc_svar(x=x, m=m, tau=tau)
-
-        print(f"svar: {svar}")
-
+        svar, n = stats.calc_svar(x=x, m=m, tau=tau)
         avar, _ = stats.calc_avar(x=x, m=m, tau=tau)
-
-        print(f"avar: {avar}")
-
+        print(f"Adev at af = {m}: {np.sqrt(avar)}")
         b1 = svar / avar
 
-        print(f"Measured B1 ratio: {b1}")
+        print(f"Calculated B1 {b1}")
 
         # B1 noise_id
-        N = phase_data_size - 1  # number of frequency data points
+        N = n - 1  # number of frequency data points
         mu = b1_noise_id(measured=b1, N=N)
+
 
         # If modified family of variances MVAR, TVAR or TOTMVAR
         # distinguish between WPM vs FPM by:
         # Supplement with R(n) ratio = mod allan / allan variance
         if mu == -2:  # find if alpha = 1 or 2
+
+            print("Using Rn ratio")
 
             # Actual
             mvar, _ = stats.calc_mvar(x=x, m=m, tau=tau)
@@ -249,12 +247,14 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
 
             # Rn noise_id
             alpha = rn_noise_id(measured=rn, m=m)
-            return alpha
+            return -99
 
         # For the Hadamard variance, for which RRFM noise can apply (mu=3,
         # alpha=-4) the B1 ratio can be applied to frequency (rather than
         # phase) data, and adding 2 to the resulting mu
         elif m == 2:  # find if alpha = -3 or -4
+
+            print("Using *B1 ratio")
 
             # *B1 ratio applies to frequency data
             y = data if data_type == 'freq' else utils.phase2frequency(x=data,
@@ -665,6 +665,8 @@ def b1_noise_id(measured: float, N: int, r: float = 1) -> int:
             bndry = 0.5*(b1 + d[mu-1]) if mu == 2 else np.sqrt(b1 * d[mu-1])
             b[mu] = bndry
 
+
+    print(f"Boundaries {b}")
     # Assign measured b1 to most plausible noise type:
     # the actual measured ratio is tested against mu values downwards from
     # the largest applicable mu

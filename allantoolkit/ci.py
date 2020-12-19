@@ -47,17 +47,12 @@ def acf(z: Array, k: int) -> float:
         timeseries autocorrelation factor at lag-k
     """
 
-    # Number of (valid) datapoints
-    N = z[~np.isnan(z)].size
-
     # Mean value of the timeseries
     zbar = np.nanmean(z)
+    z0 = z - zbar
 
     # Calculate autocorrelation factor
-    summand = (z[:N-k] - zbar)*(z[k:] - zbar)
-    a = 1./N * np.nansum(summand)
-    b = np.nanmean((z-zbar)**2)
-    r = a/b
+    r = np.nansum(z0[:-k]*z0[k:])/np.nansum(z0**2)
 
     return r
 
@@ -98,7 +93,7 @@ def acf_noise_id_core(z: Array, dmax: int, dmin: int = 0):
 
         if d >= dmin and (delta < 0.25 or d >= dmax):
 
-            p = -2*(delta + d)
+            p = -round(2*delta) - 2*d
             done = True
 
         else:
@@ -138,14 +133,6 @@ def acf_noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
     # before applying the noise identification algorithm
     z = utils.decimate(data=data, m=m, data_type=data_type)
 
-    # Check number of datapoints
-    N = z[~np.isnan(z)].size
-    if N < 30:
-        logger.warning("Noise ID method based on Lag1 ACF might not be "
-                       "reliable at this averaging time. Switching to "
-                       "alternative noise ID algorithm")
-        raise RuntimeWarning
-
     # The dmax parameter should be set to 2 or 3 for an Allan or Hadamard (2
     # or 3-sample) variance analysis, respectively.
     dmax = tables.D_ORDER.get(dev_type, None)
@@ -161,7 +148,6 @@ def acf_noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
     # respectively, and may be rounded to an integer (although the fractional
     # part is useful for estimated mixed noises).
     alpha = p+2 if data_type == 'phase' else p
-    alpha = round(alpha)
 
     return alpha
 
@@ -171,6 +157,7 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
     """Noise identification pipeline, following what prescribed by Stable32.
 
     References:
+        [RileyStable32Manual]_ (Table pg. 97)
         [RileyStable32Manual]_ (Confidence Intervals pg. 89-93)
         [RileyStable32]_ (5.5.2-6 pg.53-7)
         Howe, Beard, Greenhall, Riley,
@@ -192,52 +179,56 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
         estimate of the `alpha` exponent, the dominant power law noise type.
     """
 
+    use_acf = ['adev', 'oadev', 'mdev', 'tdev', 'hdev', 'ohdev', 'totdev',
+               'mtotdev', 'ttotdev', 'theo1', 'theoh']
+    use_b1 = ['adev', 'oadev', 'mdev', 'tdev', 'hdev', 'ohdev', 'totdev',
+               'mtotdev', 'ttotdev', 'theo1', 'theoh']  # hdev yes or no??!
+    use_rn = ['mdev', 'tdev', 'mtotdev', 'ttotdev', 'theo1', 'theoh']
+
+
     # Stable32 uses two methods for power law noise identification, based
     # respectively on the lag 1 autocorrelation and the B1 bias factor. The
     # former method is preferred, and is used when there are at least 30
     # analysis  data  points.
-    try:
+
+    # Size of dataset at given averaging factor:
+    nn = utils.decimate(data=data, m=m, data_type=data_type).size
+
+    if nn >= 30 and dev_type in use_acf:
 
         return acf_noise_id(data=data, data_type=data_type, m=m,
                             dev_type=dev_type)
 
-    except KeyError:
-
-        # Estimate alpha for deviations that don't have a 'd'
-        # TODO: implement
-
-        return -99
-
     # Estimate alpha when there are less than 30 analysis datapoints (
     # acf_noise_1d throws this warning when it is the case)
-    except RuntimeWarning:
+    elif dev_type in use_b1:
 
-        print("Using B1 Ratio")
+        #print(f"Using B1 noise id")
 
         # B1 ratios expect phase data
         x = utils.input_to_phase(data=data, rate=m/tau, data_type=data_type)
-        phase_data_size = x[~np.isnan(x)].size
+        y = utils.phase2frequency(x=x, rate=m/tau)
+        #print(f"\tInput phase data has size {len(x)}")
+        #print(f"\tInput frequency data has size {len(y)}, {len(x) - 1}")
 
         # compare b1 bias factor = standard variance / allan variance vs
         # expected value of this same ratio for pure noise types
 
         # Actual
-        svar, n = stats.calc_svar(x=x, m=m, tau=tau)
+        svar, nn = stats.calc_svar(x=x, m=m, tau=tau)
         avar, _ = stats.calc_avar(x=x, m=m, tau=tau)
-        print(f"Adev at af = {m}: {np.sqrt(avar)}")
         b1 = svar / avar
-
-        print(f"Calculated B1 {b1}")
+        #print(f"\tB1 ratio: {b1}")
 
         # B1 noise_id
-        N = n - 1  # number of frequency data points
+        N = nn + 1  # number of frequency data points
         mu = b1_noise_id(measured=b1, N=N)
 
-
+        '''
         # If modified family of variances MVAR, TVAR or TOTMVAR
         # distinguish between WPM vs FPM by:
         # Supplement with R(n) ratio = mod allan / allan variance
-        if mu == -2:  # find if alpha = 1 or 2
+        if mu == -2 and dev_type in use_rn:  # find if alpha = 1 or 2
 
             print("Using Rn ratio")
 
@@ -247,7 +238,7 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
 
             # Rn noise_id
             alpha = rn_noise_id(measured=rn, m=m)
-            return -99
+            return alpha
 
         # For the Hadamard variance, for which RRFM noise can apply (mu=3,
         # alpha=-4) the B1 ratio can be applied to frequency (rather than
@@ -268,11 +259,14 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
             mu += 2
 
             assert mu <= 3, f"Invalid phase noise type mu: {mu}"
+        '''
 
         # Get alpha value corresponding to identified mu
+
         alpha = [a for a, m in tables.ALPHA_TO_MU.items() if m == mu][0]
 
-        return -99
+        #print(f"\tAssigned -> mu={mu} -> alpha={alpha}")
+        return alpha
 
 # -----
 
@@ -557,7 +551,7 @@ def rn_boundary(af, b_hi):
 # Noise Identification using B1
 
 # FIXME: get rid of this / update with new function contents
-def b1(x, af, rate):
+def b1_old(x, af, rate):
     """ B1 ratio for noise identification
         (and bias correction?)
 
@@ -571,9 +565,11 @@ def b1(x, af, rate):
         [Barnes1974]_
         https://tf.nist.gov/general/pdf/11.pdf
     """
-    (taus, devs, errs, ns) = allantools.adev(x, taus=[af*rate], data_type="phase", rate=rate)
-    oadev_x = devs[0]
-    avar = pow(oadev_x, 2.0)
+    #(taus, devs, errs, ns) = allantools.adev(x, taus=[af*rate],
+    # data_type="phase", rate=rate)
+    #oadev_x = devs[0]
+    #avar = pow(oadev_x, 2.0)
+    avar  = 1
 
     # variance of y, at given af
     y = np.diff(x)
@@ -666,7 +662,8 @@ def b1_noise_id(measured: float, N: int, r: float = 1) -> int:
             b[mu] = bndry
 
 
-    print(f"Boundaries {b}")
+    #print(f"\tBoundaries {b}")
+
     # Assign measured b1 to most plausible noise type:
     # the actual measured ratio is tested against mu values downwards from
     # the largest applicable mu
@@ -827,29 +824,6 @@ def autocorr_noise_id(x, af, data_type="phase", dmin=0, dmax=2):
         else:
             x = np.diff(x)
             d = d + 1
-
-
-def detrend(x, deg=1):
-    """
-    remove polynomial from data.
-    used by autocorr_noise_id()
-
-    Parameters
-    ----------
-    x: numpy.array
-        time-series
-    deg: int
-        degree of polynomial to remove from x
-
-    Returns
-    -------
-    x_detrended: numpy.array
-        detrended time-series
-    """
-    t = range(len(x))
-    p = np.polyfit(t, x, deg)
-    residual = x - np.polyval(p, t)
-    return residual
 
 ########################################################################
 # Equivalent Degrees of Freedom

@@ -48,9 +48,6 @@ d_order:
   hdev:     3
   ohdev:    3
   totdev:   2
-  htotdev:  3
-  mtotdev:  2
-  ttotdev:  2
 
 
 alpha_to_mu:
@@ -72,3 +69,40 @@ alpha_to_mu:
   0:    -1
   1:    -2
   2:    -2
+
+
+bias_totvar:
+  # Coefficient for computing normalised bias of TOTVAR in the presence of
+  # FM noise
+  #
+  # D.A. Howe, "Total Variance Explained", Proc. 1999 Joint Meeting of the
+  # European Freq. and Time Forum and the IEEE Freq. Contrl. Symp.,
+  # pp. 1093-1099, April 1999.
+  # https://www.nist.gov/publications/total-variance-explained (Table 1)
+
+  # alpha:  a
+  0:  0
+  -1: 0.48089834696298783  # (3*ln2)^-1
+  -2: 0.75
+
+
+
+alpha_to_names:
+  # Mapping between fractional frequency noise type exponent `alpha` and
+  # noise names
+  #
+  # Howe, Beard, Greenhall, Riley,
+  # A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
+  # 32nd PTTI, 2000
+  # https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
+  # (Table 4, pg. 263)
+
+
+  # alpha:  name
+  -4: 'RRFM'
+  -3: 'FWFM'
+  -2: 'RWFM'
+  -1: 'FLFM'
+  0:  'WHFM'
+  1:  'FLPM'
+  2:  'WHPM'

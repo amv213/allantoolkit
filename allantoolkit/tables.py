@@ -10,3 +10,5 @@ with open(path_to_tables, 'rb') as f:
 STOP_RATIOS = tables.get('stop_ratios')
 D_ORDER = tables.get('d_order')
 ALPHA_TO_MU = tables.get('alpha_to_mu')
+BIAS_TOTVAR = tables.get('bias_totvar')
+ALPHA_TO_NAMES = tables.get('alpha_to_names')

@@ -72,9 +72,9 @@ def calc_svar_freq(y: Array, m: int, tau: float = None) -> VarResult:
     y = utils.decimate(data=y, m=m, data_type='freq')
 
     ybar = np.nanmean(y)
-    summation = np.nansum((y-ybar)**2)
+    summand = (y-ybar)**2
 
-    n = summation[~np.isnan(summation)].size
+    n = summand[~np.isnan(summand)].size
 
     if n < 2:
         logger.warning("Not enough fractional frequency measurements to "
@@ -82,7 +82,7 @@ def calc_svar_freq(y: Array, m: int, tau: float = None) -> VarResult:
         var = np.NaN
         return VarResult(var=var, n=0)
 
-    var = summation / (n - 1)
+    var = np.nansum(summand) / (n - 1)
 
     return VarResult(var=var, n=n)
 

@@ -31,16 +31,118 @@ X0 = allantoolkit.testutils.read_datafile(ASSETS_DIR /
 RATE = 0.4  # Hz, tau_0 = 2.5s
 
 
+# INPUT DATA MANIPULATIONS:
+
 def test_frequency2phase():
     """Test that fractional frequency data is converted to phase data in the
     same way as Stable32. This will make sure all Stable32 deviations
     calculated on frequency data should match allantoolkit deviations which
     are (mostly) calculated on phase data behind the scenes."""
-    output = allantoolkit.utils.frequency2phase(y=Y, rate=RATE)
+    output = allantoolkit.utils.frequency2phase(y=Y, rate=RATE,
+                                                normalize=False)
 
-    assert np.allclose(X, output)
+    assert np.allclose(X, output, atol=1e-32)
 
 
+def test_frequency2phase0():
+    """Test that fractional frequency data is converted to phase data in the
+    same way as Stable32. This will make sure all Stable32 deviations
+    calculated on frequency data should match allantoolkit deviations which
+    are (mostly) calculated on phase data behind the scenes."""
+    output = allantoolkit.utils.frequency2phase(y=Y, rate=RATE,
+                                                normalize=True)
+
+    assert np.allclose(X0, output, atol=1e-28)
+    # Note: Looks like Stable32 normalisation introduces discrepancies at
+    # the 1e-29 level
+
+
+def test_phase2frequency():
+    """Test that can losslessly convert fractional frequency data to phase
+    data, and back."""
+
+    x = allantoolkit.utils.frequency2phase(y=Y, rate=RATE, normalize=False)
+
+    y = allantoolkit.utils.phase2frequency(x=x, rate=RATE)
+
+    assert np.allclose(Y, y, atol=1e-32)
+
+
+def test_phase02frequency():
+    """Test that can losslessly convert fractional frequency data to
+    normalised phase data, and back."""
+
+    x0 = allantoolkit.utils.frequency2phase(y=Y, rate=RATE, normalize=True)
+
+    y = allantoolkit.utils.phase2frequency(x=x0, rate=RATE)
+
+    assert np.allclose(Y, y, atol=1e-32)
+
+
+# TEST RESULTS
+
+input_data = [
+    (X0, 'phase'),
+    (Y, 'freq'),
+]
+
+tau_types = [
+    'octave',
+    'decade',
+]
+
+fcts = [
+    allantoolkit.allantools.adev,
+    allantoolkit.allantools.oadev,
+    allantoolkit.allantools.mdev,
+    allantoolkit.allantools.tdev,
+    allantoolkit.allantools.hdev,
+    allantoolkit.allantools.ohdev,
+    allantoolkit.allantools.totdev,
+]
+
+
+@pytest.mark.parametrize('data, data_type', input_data)
+@pytest.mark.parametrize('taus', tau_types)
+@pytest.mark.parametrize('func', fcts)
+def test_adev(data, data_type, func, taus):
+
+    if data_type == 'freq':
+        fn = ASSETS_DIR / data_type / taus / (func.__name__ + '.txt')
+    else:
+        fn = ASSETS_DIR / (data_type + '0') / taus / (func.__name__ + '.txt')
+
+    expected = allantoolkit.testutils.read_stable32(fn)
+
+    output = func(data=data, rate=RATE, data_type=data_type, taus=taus)
+
+    afs2, taus2, ns2, alphas2, devs2, errs_lo2, errs_hi2 = output
+    devs2 = [float(np.format_float_scientific(dev, 4)) for dev in devs2]
+    errs_lo2 = [float(np.format_float_scientific(lo, 4)) for lo in errs_lo2]
+    errs_hi2 = [float(np.format_float_scientific(hi, 4)) for hi in errs_hi2]
+
+    for i, row in enumerate(expected):
+
+        af, tau, n, alpha, minus, dev, plus = row.T
+        af, n, alpha = int(af), int(n), int(alpha)
+
+        af2, tau2, n2, alpha2, dev2, err_lo2, err_hi2 = \
+            afs2[i], taus2[i], ns2[i], alphas2[i], devs2[i], errs_lo2[i], \
+            errs_hi2[i]
+
+        print("AF  TAU   #   ALPHA   DEV")
+        print([af, tau, n, alpha, dev], '<-REF')
+        print([af2, tau2, n2, alpha2, dev2], '<-ME')
+
+        assert af == af2, f'S32:{af} vs. AT {af2}'
+        assert tau == tau2, f'S32:{tau} vs. AT {tau2}'
+        assert n == n2, f'S32:{n} vs. AT {n2}'
+        assert alpha == alpha2, f'S32:{alpha} vs. AT {alpha2}'
+        assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
+
+
+
+'''
 # input result files and function which should replicate them
 fcts = [
     allantoolkit.allantools.adev,
@@ -84,7 +186,7 @@ def test_noise_id_phase0_octave(fct):
 
             assert alpha_int == alpha
 
-'''
+
 @pytest.mark.parametrize('fct', fcts)
 def test_noise_id_phase0_all(fct):
     """ test for noise-identification """

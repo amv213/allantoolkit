@@ -372,7 +372,7 @@
     <span class="k">return</span> <span class="n">y</span></div>
 
 
-<div class="viewcode-block" id="frequency2phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2phase">[docs]</a><span class="k">def</span> <span class="nf">frequency2phase</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+<div class="viewcode-block" id="frequency2phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.frequency2phase">[docs]</a><span class="k">def</span> <span class="nf">frequency2phase</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Integrates fractional frequency data to output phase data (with</span>
 <span class="sd">    arbitrary initial value), in units of second.</span>
 
@@ -395,18 +395,18 @@
 <span class="sd">        `phase2radians()`. Size: y.size + 1 - leading_and_trailing_gaps.size</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
-        <span class="n">y</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-
-    <span class="n">y</span> <span class="o">=</span> <span class="n">fill_gaps</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-
     <span class="c1"># if meaningful data to convert (not empty)...</span>
     <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="n">fill_gaps</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">rate</span>
 
         <span class="c1"># insert arbitrary 0 phase point for x_0</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">y</span>
@@ -662,20 +662,20 @@
     <span class="k">return</span> <span class="n">TausResult</span><span class="p">(</span><span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="remove_small_ns"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.remove_small_ns">[docs]</a><span class="k">def</span> <span class="nf">remove_small_ns</span><span class="p">(</span><span class="n">taus</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">devs</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">errs_lo</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">errs_hi</span><span class="p">:</span> <span class="n">Array</span> <span class="p">,</span>
-                    <span class="n">ns</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">]:</span>
+<div class="viewcode-block" id="remove_small_ns"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.remove_small_ns">[docs]</a><span class="k">def</span> <span class="nf">remove_small_ns</span><span class="p">(</span><span class="n">afs</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">taus</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">devs</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> \
+        <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot; Remove results calculated on one or less samples.</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">        afs:        array of averaging factors for which deviations were</span>
+<span class="sd">                    computed</span>
 <span class="sd">        taus:       array of averaging times for which deviation were computed</span>
+<span class="sd">        ns:         array with number of analysis points for each deviation</span>
 <span class="sd">        devs:       array of computed deviations</span>
-<span class="sd">        errs_lo:    array of estimated lower bound errors</span>
-<span class="sd">        errs_hi:    array of estimated higher bound errors</span>
-<span class="sd">        ns:         array with number of samples for each point</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (taus, devs, errs_lo, errs_hi, ns) identical to input, except that</span>
-<span class="sd">        values with low ns have been removed.</span>
+<span class="sd">        (afs, taus, ns, devs) identical to input, except that values with</span>
+<span class="sd">        low ns have been removed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">mask</span> <span class="o">=</span> <span class="n">ns</span> <span class="o">&gt;</span> <span class="mi">1</span>
@@ -690,12 +690,11 @@
         <span class="k">raise</span> <span class="ne">UserWarning</span>
 
     <span class="c1"># Filter supporting arrays as well</span>
+    <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
     <span class="n">taus</span> <span class="o">=</span> <span class="n">taus</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
     <span class="n">ns</span> <span class="o">=</span> <span class="n">ns</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
-    <span class="n">errs_lo</span> <span class="o">=</span> <span class="n">errs_lo</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
-    <span class="n">errs_hi</span> <span class="o">=</span> <span class="n">errs_hi</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">errs_lo</span><span class="p">,</span> <span class="n">errs_hi</span><span class="p">,</span> <span class="n">ns</span></div>
+    <span class="k">return</span> <span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">devs</span></div>
 
 
 <div class="viewcode-block" id="three_cornered_hat_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.three_cornered_hat_phase">[docs]</a><span class="k">def</span> <span class="nf">three_cornered_hat_phase</span><span class="p">(</span><span class="n">x_ab</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">x_bc</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">x_ca</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span>
@@ -804,6 +803,32 @@
             <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">((</span><span class="n">each_value</span><span class="p">())))</span></div>
+
+
+<div class="viewcode-block" id="detrend"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.detrend">[docs]</a><span class="k">def</span> <span class="nf">detrend</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Detrend phase or factional frequency data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:       data array of input measurements.</span>
+<span class="sd">        data_type:  input data type. Either `phase` or `freq`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        detrended data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span><span class="p">:</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># remove frequency drift</span>
+    <span class="k">elif</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;phase&#39;</span><span class="p">:</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># remove frequency offset and drift)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid data_type value: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">. Should be &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;`phase` or `freq`.&quot;</span><span class="p">)</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">deg</span><span class="p">)</span>
+    <span class="n">detrended</span> <span class="o">=</span> <span class="n">data</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">detrended</span></div>
 </pre></div>
 
               </div>

@@ -4,6 +4,7 @@ import allantoolkit.tables
 import allantoolkit.stats
 import allantoolkit.allantools
 import allantoolkit.ci
+import allantoolkit.bias
 import allantoolkit.dataset
 import allantoolkit.noise
 import allantoolkit.noise_kasdin

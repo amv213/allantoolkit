@@ -1,6 +1,7 @@
 import logging
 import numpy as np
 from . import ci
+from . import bias
 from . import stats
 from . import utils
 from typing import List, Tuple, NamedTuple, Union
@@ -15,11 +16,14 @@ Array = np.ndarray
 Taus = Union[str, float, List, Array]
 
 # define named tuple to hold dev results
-DevResult = NamedTuple('DevResult', [('taus', Array),
+DevResult = NamedTuple('DevResult', [('afs', Array),
+                                     ('taus', Array),
+                                     ('ns', Array),
+                                     ('alphas', Array),
                                      ('devs', Array),
                                      ('errs_lo', Array),
                                      ('errs_hi', Array),
-                                     ('ns', Array)])
+                                     ])
 
 
 # TODO: Add data preprocessing before feeding to dev:
@@ -63,8 +67,6 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         # Work with phase data, in units of seconds
         x = utils.input_to_phase(data=data, rate=rate, data_type=data_type)
 
-
-
     # FIXME: remove this once modified mtotdev tests, mtotdev can be autocapped
     #  by Stable32 to len(x) // 2
     # Cap max_af for mtotdev to value calibrated for tests
@@ -74,7 +76,6 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     # Build/Select averaging factors at which to calculate deviations
     taus, afs = utils.tau_generator(data=x, rate=rate, dev_type=dev_type,
                                     taus=taus, maximum_m=max_af)
-    size_afs = afs.size
 
     # CALC DEV
 
@@ -83,9 +84,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     func = getattr(stats, 'calc_' + dev_type.replace('dev', 'var'))
 
     # Initialise arrays
-    devs = np.zeros(afs.size)
-    errs_lo, errs_hi = np.zeros(afs.size),  np.zeros(afs.size)
-    ns, alphas = np.zeros(afs.size, dtype=int), np.zeros(afs.size, dtype=int)
+    ns, vars = np.zeros(afs.size, dtype=int), np.zeros(afs.size)
 
     # Calculate metrics at each averaging time / factor
     for i, (tau, m) in enumerate(zip(taus, afs)):
@@ -93,31 +92,51 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         # Calculate variance, and number of analysis points it is based on
         var, n = func(x=x, m=m, tau=tau)
 
-        # Calculate deviation
-        dev = np.sqrt(var)
+        ns[i], vars[i] = n, var
+
+    # Get rid of averaging times where dev calculated on too few samples (<= 1)
+    afs, taus, ns, vars = utils.remove_small_ns(afs, taus, ns, vars)
+
+    # Initialise arrays
+    alphas = np.zeros(afs.size, dtype=int)
+    devs, errs_lo, errs_hi = np.zeros(afs.size), np.zeros(afs.size),  \
+                             np.zeros(afs.size)
+
+    for i, (tau, m, n, var) in enumerate(zip(taus, afs, ns, vars)):
 
         # Noise ID
-        #if i < afs.size - 1:  # Only estimate if not last averaging time
-        #    alpha = ci.noise_id(data=x, m=m, tau=tau, data_type='phase',
-        #                        dev_type=dev_type, n=n)
-        #else:
+
+        if i < afs.size - 1:  # Only estimate if not last averaging time
+            alpha = ci.noise_id(data=x, m=m, tau=tau, data_type='phase',
+                                dev_type=dev_type, n=n)
+        else:
             # Use previous estimate at longest averaging time
-        #    alpha = alphas[i-1]
-        alpha = -99
+            alpha = alphas[i-1]
+
+        # Apply Bias Corrections
+
+        # Dispatch to appropriate bias calculator for this dev_type:
+        # should be function of this signature: func(x, m, alpha) -> b
+        try:
+
+            bfunc = getattr(bias, 'calc_bias_' + dev_type.replace('dev',
+                                                                  'var'))
+            b = bfunc(data=x, m=m, alpha=alpha)
+
+            var /= b  # correct variance
+
+        except AttributeError:  # no bias function
+            pass
+
+        dev = np.sqrt(var)
 
         # Calculate error
         err_lo, err_hi = dev / np.sqrt(n), dev / np.sqrt(n)
 
-        devs[i], errs_lo[i], errs_hi[i], ns[i], alphas[i] = \
-            dev, err_lo, err_hi, n, alpha
+        alphas[i], devs[i], errs_lo[i], errs_hi[i] = alpha, dev, err_lo, err_hi
 
-    # Cleanup datapoints calculated on too few samples
-    taus, devs, errs_lo, errs_hi, ns = utils.remove_small_ns(taus, devs,
-                                                             errs_lo, errs_hi,
-                                                             ns)
-
-    return DevResult(taus=taus, devs=devs, errs_lo=errs_lo, errs_hi=errs_hi,
-                     ns=ns)
+    return DevResult(afs=afs, taus=taus,  ns=ns, alphas=alphas,
+                     devs=devs, errs_lo=errs_lo, errs_hi=errs_hi)
 
 
 def adev(data: Array, rate: float = 1., data_type: str = "phase",

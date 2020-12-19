@@ -175,7 +175,7 @@ def phase2frequency(x: Array, rate: float) -> Array:
     return y
 
 
-def frequency2phase(y: Array, rate: float, normalize: bool = True) -> Array:
+def frequency2phase(y: Array, rate: float, normalize: bool = False) -> Array:
     """Integrates fractional frequency data to output phase data (with
     arbitrary initial value), in units of second.
 
@@ -198,18 +198,18 @@ def frequency2phase(y: Array, rate: float, normalize: bool = True) -> Array:
         `phase2radians()`. Size: y.size + 1 - leading_and_trailing_gaps.size
     """
 
-    if normalize:
-        y -= np.nanmean(y)
-
-    y = fill_gaps(y)
-
     # if meaningful data to convert (not empty)...
     if y.size > 0:
+
+        if normalize:
+            y -= np.nanmean(y)
+
+        y = fill_gaps(y)
 
         x = np.cumsum(y) / rate
 
         # insert arbitrary 0 phase point for x_0
-        x = np.insert(x, 0, 0)
+        x = np.insert(x, 0, 0.)
 
     else:
         x = y
@@ -465,40 +465,39 @@ def tau_reduction(afs: Array, rate: float, n_per_decade: int) -> TausResult:
     return TausResult(taus=taus, afs=afs)
 
 
-def remove_small_ns(taus: Array, devs: Array, errs_lo: Array, errs_hi: Array ,
-                    ns: Array) -> Tuple[Array, Array, Array, Array, Array]:
+def remove_small_ns(afs: Array, taus: Array, ns: Array, vars: Array) \
+        -> Tuple[Array, Array, Array, Array]:
     """ Remove results calculated on one or less samples.
 
     Args:
+        afs:        array of averaging factors for which deviations were
+                    computed
         taus:       array of averaging times for which deviation were computed
-        devs:       array of computed deviations
-        errs_lo:    array of estimated lower bound errors
-        errs_hi:    array of estimated higher bound errors
-        ns:         array with number of samples for each point
+        ns:         array with number of analysis points for each deviation
+        devs:       array of computed variances
 
     Returns:
-        (taus, devs, errs_lo, errs_hi, ns) identical to input, except that
-        values with low ns have been removed.
+        (afs, taus, ns, devs) identical to input, except that values with
+        low ns have been removed.
     """
 
     mask = ns > 1
 
     # Filter out results
-    devs = devs[mask]
+    vars = vars[mask]
 
-    if not devs.size:
+    if not vars.size:
         logger.warning("Deviation calculated on too little samples. All "
                        "results have been filtered out!")
 
         raise UserWarning
 
     # Filter supporting arrays as well
+    afs = afs[mask]
     taus = taus[mask]
     ns = ns[mask]
-    errs_lo = errs_lo[mask]
-    errs_hi = errs_hi[mask]
 
-    return taus, devs, errs_lo, errs_hi, ns
+    return afs, taus, ns, vars
 
 
 def three_cornered_hat_phase(x_ab: Array, x_bc: Array, x_ca: Array,
@@ -607,3 +606,29 @@ def rolling_grad(x: Array, n: int):
             j += 1
 
     return np.array(list((each_value())))
+
+
+def detrend(data: Array, data_type: str):
+    """Detrend phase or factional frequency data.
+
+    Args:
+        data:       data array of input measurements.
+        data_type:  input data type. Either `phase` or `freq`.
+
+    Returns:
+        detrended data.
+    """
+
+    if data_type == 'freq':
+        deg = 1  # remove frequency drift
+    elif data_type == 'phase':
+        deg = 2  # remove frequency offset and drift)
+    else:
+        raise ValueError(f"Invalid data_type value: {data_type}. Should be "
+                         f"`phase` or `freq`.")
+
+    t = range(data.size)
+    p = np.polyfit(t, data, deg)
+    detrended = data - np.polyval(p, t)
+
+    return detrended

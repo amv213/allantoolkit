@@ -212,11 +212,14 @@
 <span class="n">Taus</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span>
 
 <span class="c1"># define named tuple to hold dev results</span>
-<span class="n">DevResult</span> <span class="o">=</span> <span class="n">NamedTuple</span><span class="p">(</span><span class="s1">&#39;DevResult&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;taus&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
+<span class="n">DevResult</span> <span class="o">=</span> <span class="n">NamedTuple</span><span class="p">(</span><span class="s1">&#39;DevResult&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;afs&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
+                                     <span class="p">(</span><span class="s1">&#39;taus&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
+                                     <span class="p">(</span><span class="s1">&#39;ns&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
+                                     <span class="p">(</span><span class="s1">&#39;alphas&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
                                      <span class="p">(</span><span class="s1">&#39;devs&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
                                      <span class="p">(</span><span class="s1">&#39;errs_lo&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
                                      <span class="p">(</span><span class="s1">&#39;errs_hi&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
-                                     <span class="p">(</span><span class="s1">&#39;ns&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">)])</span>
+                                     <span class="p">])</span>
 
 
 <span class="c1"># TODO: Add data preprocessing before feeding to dev:</span>
@@ -260,8 +263,6 @@
         <span class="c1"># Work with phase data, in units of seconds</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span>
 
-
-
     <span class="c1"># FIXME: remove this once modified mtotdev tests, mtotdev can be autocapped</span>
     <span class="c1">#  by Stable32 to len(x) // 2</span>
     <span class="c1"># Cap max_af for mtotdev to value calibrated for tests</span>
@@ -271,7 +272,6 @@
     <span class="c1"># Build/Select averaging factors at which to calculate deviations</span>
     <span class="n">taus</span><span class="p">,</span> <span class="n">afs</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">dev_type</span><span class="o">=</span><span class="n">dev_type</span><span class="p">,</span>
                                     <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">maximum_m</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span>
-    <span class="n">size_afs</span> <span class="o">=</span> <span class="n">afs</span><span class="o">.</span><span class="n">size</span>
 
     <span class="c1"># CALC DEV</span>
 
@@ -280,9 +280,7 @@
     <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="s1">&#39;calc_&#39;</span> <span class="o">+</span> <span class="n">dev_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;dev&#39;</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">))</span>
 
     <span class="c1"># Initialise arrays</span>
-    <span class="n">devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
-    <span class="n">errs_lo</span><span class="p">,</span> <span class="n">errs_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">),</span>  <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
-    <span class="n">ns</span><span class="p">,</span> <span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">ns</span><span class="p">,</span> <span class="n">devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 
     <span class="c1"># Calculate metrics at each averaging time / factor</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="n">afs</span><span class="p">)):</span>
@@ -293,28 +291,36 @@
         <span class="c1"># Calculate deviation</span>
         <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
 
+        <span class="n">ns</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">devs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span><span class="p">,</span> <span class="n">dev</span>
+
+    <span class="c1"># Get rid of averaging times where dev calculated on too few samples (&lt;= 1)</span>
+    <span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">devs</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_small_ns</span><span class="p">(</span><span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">devs</span><span class="p">)</span>
+
+    <span class="c1"># Initialise arrays</span>
+    <span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">errs_lo</span><span class="p">,</span> <span class="n">errs_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">),</span>  <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="n">afs</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">devs</span><span class="p">)):</span>
+
         <span class="c1"># Noise ID</span>
-        <span class="c1">#if i &lt; afs.size - 1:  # Only estimate if not last averaging time</span>
-        <span class="c1">#    alpha = ci.noise_id(data=x, m=m, tau=tau, data_type=&#39;phase&#39;,</span>
-        <span class="c1">#                        dev_type=dev_type, n=n)</span>
-        <span class="c1">#else:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">afs</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Only estimate if not last averaging time</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">ci</span><span class="o">.</span><span class="n">noise_id</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span>
+                                <span class="n">dev_type</span><span class="o">=</span><span class="n">dev_type</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Use previous estimate at longest averaging time</span>
-        <span class="c1">#    alpha = alphas[i-1]</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="o">-</span><span class="mi">99</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">alphas</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Calculate Bias and correct deviation (sqrt bias) value</span>
+        <span class="n">bias</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># TODO: implement bias corrections</span>
+        <span class="n">dev</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">bias</span><span class="p">)</span>
 
         <span class="c1"># Calculate error</span>
         <span class="n">err_lo</span><span class="p">,</span> <span class="n">err_hi</span> <span class="o">=</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">dev</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
-        <span class="n">devs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">errs_lo</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">errs_hi</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ns</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alphas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> \
-            <span class="n">dev</span><span class="p">,</span> <span class="n">err_lo</span><span class="p">,</span> <span class="n">err_hi</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">alpha</span>
+        <span class="n">alphas</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">devs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">errs_lo</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">errs_hi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">err_lo</span><span class="p">,</span> <span class="n">err_hi</span>
 
-    <span class="c1"># Cleanup datapoints calculated on too few samples</span>
-    <span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">errs_lo</span><span class="p">,</span> <span class="n">errs_hi</span><span class="p">,</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_small_ns</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span>
-                                                             <span class="n">errs_lo</span><span class="p">,</span> <span class="n">errs_hi</span><span class="p">,</span>
-                                                             <span class="n">ns</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">DevResult</span><span class="p">(</span><span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">devs</span><span class="o">=</span><span class="n">devs</span><span class="p">,</span> <span class="n">errs_lo</span><span class="o">=</span><span class="n">errs_lo</span><span class="p">,</span> <span class="n">errs_hi</span><span class="o">=</span><span class="n">errs_hi</span><span class="p">,</span>
-                     <span class="n">ns</span><span class="o">=</span><span class="n">ns</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">DevResult</span><span class="p">(</span><span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span>  <span class="n">ns</span><span class="o">=</span><span class="n">ns</span><span class="p">,</span> <span class="n">alphas</span><span class="o">=</span><span class="n">alphas</span><span class="p">,</span>
+                     <span class="n">devs</span><span class="o">=</span><span class="n">devs</span><span class="p">,</span> <span class="n">errs_lo</span><span class="o">=</span><span class="n">errs_lo</span><span class="p">,</span> <span class="n">errs_hi</span><span class="o">=</span><span class="n">errs_hi</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="adev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.adev">[docs]</a><span class="k">def</span> <span class="nf">adev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>

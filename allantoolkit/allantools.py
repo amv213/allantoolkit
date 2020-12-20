@@ -93,8 +93,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
     for i, (tau, m, n, var) in enumerate(zip(taus, afs, ns, vars)):
 
-        # Noise ID
-
+        # Estimate Noise ID
         if i < afs.size - 1:  # Only estimate if not last averaging time
             alpha = ci.noise_id(data=x, m=m, tau=tau, data_type='phase',
                                 dev_type=dev_type, n=n)
@@ -104,15 +103,20 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
         # Apply Bias Corrections
 
-        # Dispatch to appropriate bias calculator for this dev_type:
-        # should be function of this signature: func(x, m, alpha) -> b
-        bfunc = getattr(bias, 'calc_bias_' + dev_type.replace('dev',
-                                                              'var'))
-        b = bfunc(data=data, m=m, alpha=alpha)
+        if dev_type != 'theo1':
+            # Dispatch to appropriate bias calculator for this dev_type:
+            # should be function of this signature: func(x, m, alpha) -> b
+            bfunc = getattr(bias, 'calc_bias_' + dev_type.replace('dev',
+                                                                  'var'))
+            b = bfunc(data=data, m=m, alpha=alpha)
 
-        print(f"AF: {m} - dev before bias correction: {np.sqrt(var)}")
-        var /= b  # correct variance
-        print(f"\t\tafter bias correction: {np.sqrt(var)}")
+            print(f"AF: {m} - dev before bias correction: {np.sqrt(var)}")
+            var /= b  # correct variance
+            print(f"\t\tafter bias correction: {np.sqrt(var)}")
+
+        else:
+            # FIXME: make faster
+            var = stats.calc_theoBR(x=x, m=m, tau=tau).var
 
         # Calculate deviation
         dev = np.sqrt(var)

@@ -51,6 +51,7 @@ d_order:
   mtotdev:  2
   ttotdev:  2
   htotdev:  3
+  theo1:    2
 
 
 alpha_to_mu:
@@ -139,3 +140,18 @@ bias_htotvar:
   -2:  -0.229
   -3:  -0.283
   -4:  -0.321
+
+bias_theo1:
+  # Constant values for the bias function of THEO1
+  #
+  # Theo1: characterization of very long-term frequency stability
+  # Howe,D.A. et al.
+  # 18th European Frequency and Time Forum (EFTF 2004)
+  # 2004 (Table 1)
+
+  # alpha:  a, b, c
+  2:  [0.09, 0.74, 0.40]
+  1:  [0.14, 0.82, 0.30]
+  0:  [1, 0, 0]
+  -1: [1.87, -1.05, 0.79]
+  -2: [2.70, -1.53, 0.85]

@@ -218,8 +218,6 @@ def calc_avar_freq(y: Array, m: int, tau: float) -> VarResult:
     return VarResult(var=var, n=m)
 
 
-
-
 def calc_mvar(x: Array, m: int, tau: float) -> VarResult:
     """Main algorithm for MVAR calculation.
 
@@ -670,6 +668,16 @@ def calc_theo1(x: Array, m: int, tau: float) -> VarResult:
     PRELIMINARY - REQUIRES FURTHER TESTING.
 
     References:
+        Theo1: characterization of very long-term frequency stability
+        Howe,D.A. et al.
+        18th European Frequency and Time Forum (EFTF 2004)
+        2004
+
+        B. Lewis, "Fast Algorithm for Calculation of  Theo1" Submitted to
+        IEEE Transactions on Ultrasonics Ferroelectrics,  and  Frequency
+        Control, May 2020. This paper presents a fast, recursive algorithm
+        for “all tau” Thêo1 calculations
+
         [RileyStable32]_ (5.2.15, pg.37-8)
 
     Args:
@@ -686,7 +694,7 @@ def calc_theo1(x: Array, m: int, tau: float) -> VarResult:
     if m % 2 != 0 or m < 10:  # m must be even and >= 10
         logger.warning("Theo1 statistic is not compatible with an "
                        "averaging factor m=%i", m)
-        return np.NaN, 0
+        return VarResult(var=np.NaN, n=0)
 
     else:
 
@@ -714,6 +722,198 @@ def calc_theo1(x: Array, m: int, tau: float) -> VarResult:
         var = (0.75 / tau**2) * outer_mean
 
         return VarResult(var=var, n=n)
+
+
+def calc_theo1_fast(x: Array, rate: float):
+    """Main algorithm for an all-tau Fast THEO1 calculation.
+
+    PRELIMINARY - REQUIRES FURTHER TESTING.
+
+    References:
+        B. Lewis, "Fast Algorithm for Calculation of  Theo1" Submitted to
+        IEEE Transactions on Ultrasonics Ferroelectrics,  and  Frequency
+        Control, May 2020. This paper presents a fast, recursive algorithm
+        for “all tau” Thêo1 calculations
+
+       http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf
+
+    Args:
+        x:      input phase data, in units of seconds.
+        rate:   data sampling rate, in Hz.
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
+
+    N = x.size
+
+    # Remove any linear offset in x
+    #i = range(N)
+    #p = np.polyfit(i, x, deg=1)
+    #x -= np.polyval(p, i)
+
+    midpoint = (N - 1) / 2
+    sum1 = 0.
+    sum2 = 0.
+    for i in range(N):
+        sum1 += x[i]
+        sum2 += x[i] * (i-midpoint)
+
+    a = sum1/N
+    b = sum2/N*12/(N*N-1)
+    for i in range(N):
+        x[i] -= a + b*(i - midpoint)
+
+    # Calculate C1
+    # c1 = np.nancumsum(x**2)
+
+    c1 = np.zeros(N)
+    s = 0.
+    for i in range(N):
+        s += x[i]**2
+        c1[i] = s
+
+    # Main loop
+    k_max = int(np.floor((N-1)/2))  # max `theo1` averaging factors (m = 2k)
+    ks = np.zeros(k_max).astype(int)
+    theo1s, taus = np.zeros(k_max), np.zeros(k_max)
+    c3 = np.zeros(k_max + 1)
+    c4 = np.zeros(2*k_max)
+
+    c3[0] = c1[N-1]
+    for k in range(1, k_max+1):  # calc Theo1 at each averaging factor
+
+        # Calculate the required value of c2
+        c2_2k = 0
+        c2_2k_1 = 0
+        for j in range(N-2*k):
+            c2_2k += x[j]*x[j+2*k]
+            c2_2k_1 += x[j]*x[j+2*k-1]
+        c2_2k_1 += x[N-2*k]*x[N-1]
+
+        # Update C3, C4 in place
+        for v in range(k):
+            c3[v] -= x[k-1-v]*x[k-1+v] + x[N-k+v]*x[N-k-v]
+        for v in range(1, 2*k-1):
+            c4[v-1] -= x[2*k-1-v]*x[2*k-1] + x[2*k-2-v]*x[2*k-2] + \
+                       x[N-2*k]*x[N-2*k+v] + x[N-2*k+1]*x[N-2*k+1+v]
+        c3[k] = c2_2k
+        c4[2*k-2] = 2*c2_2k_1 - x[0]*x[2*k-1] - x[N-2*k]*x[N-1]
+        c4[2*k-1] = 2*c2_2k
+
+        # Calculate un-normalised T_k from C1-C4
+        t_k = 0.
+        a0 = c1[N-1] - c1[2*k-1] + c1[N-2*k-1] + 2*c2_2k
+        for v in range(1, k+1):
+            a1 = a0 - c1[v-1] + c1[N-1-v] - c1[2*k-v-1] + c1[N-1-2*k+v]
+            a2 = c3[k-v] - c4[v-1] - c4[2*k-v-1]
+            t_k += (a1+2*a2)/v
+        assert t_k >= 0
+
+        # Apply normalisation to get Theo1 (Lewis' definition)
+        theo1s[k-1] = t_k / (3*(N-2*k)*(k/rate)**2)  # k*tau_0 = tau_star
+
+        # Log corresponding tau
+        taus[k-1] = 1.5*k/rate
+
+        # Log corresponding averaging factor
+        ks[k-1] = k
+
+        # END OF MAIN LOOP
+
+    # This gives a value Theo1(k) @ tau = 1.5*k*tau_0;
+    # as per the definition of Theo1 in Lewis' paper
+
+    # The `Stable32` definition of Theo1 is instead as a function of m,
+    # with Theo1(m) giving you Theo1 @ tau = 0.75*m*tau_0
+
+    # so Stable32 Theo1(m, tau=0.75*m*tau0) = Lewis' Theo1(k) with k=m/2
+
+    return ks, taus, theo1s  # VAR
+
+
+def calc_theoBR(x: Array, m: int, tau: float) -> VarResult:
+    """Main algorithm for THEOBR calculation (`Fast` THEOBR).
+
+    PRELIMINARY - REQUIRES FURTHER TESTING.
+
+    References:
+        Theo1: characterization of very long-term frequency stability
+        Howe,D.A. et al.
+        18th European Frequency and Time Forum (EFTF 2004)
+        2004
+
+        J.A. Taylor and D.A. Howe, “Fast ThêoBR: A Method for Long Data Set
+        Stability  Analysis” (Used by Stable32)
+
+        http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf
+
+        [RileyStable32Manual]_ (TheoBR and TheoH, pg.80)
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        tau:    corresponding theo1 `effective` averaging time. This should be
+                0.75 of the normal m*tau_0
+
+    Returns:
+        (var, n) NamedTuple of computed variance at given averaging time, and
+        number of samples used to estimate it.
+    """
+
+    # Dataset sampling rate
+    rate = m/(tau / 0.75)
+
+    # Create a fast all-tau array of THEO1 values from which to pick at will
+    _, _, theo1s = calc_theo1_fast(x=x, rate=rate)
+
+    # THEOBR ALGORITHM:
+
+    # phase array size
+    N = x.size
+
+    # Number of AVAR/Theo1 variance ratio averages
+    n = int(np.floor(N/30 - 3))
+
+    # Correction factor summation loop
+    kf = 0.
+    for i in range(n+1):
+
+        # Calculate AVAR at AF=9+3i
+        M = 9 + 3*i
+        #avar = calc_avar(x=x, m=M, tau=M/rate).var
+
+        # TODO: Riley uses OAVAR instead of avar:
+        avar = 0.
+        for j in range(N-2*M):
+            avar += (x[j+2*M] - 2*x[j+M] + x[j]) ** 2
+        avar /= (2*(N-2*M)*(M/rate)**2)
+
+        # Calculate THEO1 at AF=12+4i -> k = 6+2i -> theo1s[5+2i] (T[0] is k=1)
+        theo1 = theo1s[5+2*i]
+
+        # ^ In this way we are taking vars at same tau values. AF = 12+4i
+        # is giving a THEO1 value at tau = 3/4 * (12 + 4i) * tau_0 ... which is
+        # the tau value at which the ADEV is calculated for AF=9+3i!
+
+        # Divide AVAR by corresponding Theo1 variance and add that to
+        # correction factor sum
+        kf += (avar / theo1)
+
+    # Divide kf sum by # ratios
+    kf /= (n+1)
+
+    # Calculate standard THEO1 at this averaging factor m i.e. @ k = m/2
+    var = theo1s[m // 2 - 1]  # index 0 is for k=1 i.e. m=2
+
+    # Apply bias correction
+    var *= kf
+
+    # FIXME: need to get this programmatically
+    n = (N-m) * (m // 2)
+
+    return VarResult(var=var, n=n)
 
 
 def calc_mtie(x: Array, m: int, tau: float = None) -> VarResult:

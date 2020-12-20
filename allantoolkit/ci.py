@@ -138,8 +138,9 @@ def acf_noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
     dmax = tables.D_ORDER.get(dev_type, None)
 
     if dmax is None:
-        raise KeyError(f"You provided an invalid {dev_type} "
-                       f"dev_type for noise ID algorithm.")
+        raise KeyError(f"Could not find ACF differencing factor d for"
+                       f" {dev_type}. Maybe ACF does not support this dev "
+                       f"type?")
 
     # Run lag1 autocorrelation noise id algorithm
     p = acf_noise_id_core(z=z, dmax=dmax)
@@ -183,12 +184,21 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
     """
 
     use_acf = ['adev', 'oadev', 'mdev', 'tdev', 'hdev', 'ohdev', 'totdev',
-               'mtotdev', 'ttotdev', 'htotdev', 'theo1', 'theoh']
+               'mtotdev', 'ttotdev', 'htotdev', 'theoh']
     use_b1 = ['adev', 'oadev', 'mdev', 'tdev', 'hdev', 'ohdev', 'totdev',
-               'mtotdev', 'ttotdev', 'htotdev', 'theo1', 'theoh'] # hdev?
-    use_rn = ['mdev', 'tdev', 'mtotdev', 'ttotdev', 'htotdev', 'theo1',
+               'mtotdev', 'ttotdev', 'htotdev', 'theoh']  # hdev?
+    use_rn = ['mdev', 'tdev', 'mtotdev', 'ttotdev', 'htotdev',
               'theoh']
 
+    if dev_type == 'theo1':
+        # Theo1 doesn't need noise estimate as you can just use TheoBR to
+        # calculate a bias removed value of THEO1.
+        # Stable32 seems to just be using a representative estimated `alpha`
+        # noise type at all THEO1 averaging factors matched on ADEV estimated
+        # noise type at m=1.
+        logger.info(f"Returning ADEV-matched noise estimate")
+        dev_type = 'adev'
+        m = 1
 
     # Stable32 uses two methods for power law noise identification, based
     # respectively on the lag 1 autocorrelation and the B1 bias factor. The
@@ -200,6 +210,8 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
 
     if nn >= 30 and dev_type in use_acf:
 
+        print(f"AF: {m} | TAU: {tau} - Using ACF noise id")
+
         return acf_noise_id(data=data, data_type=data_type, m=m,
                             dev_type=dev_type)
 
@@ -207,7 +219,7 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
     # acf_noise_1d throws this warning when it is the case)
     elif dev_type in use_b1:
 
-        print(f"AF: {m} - Using B1 noise id")
+        print(f"AF: {m} | TAU: {tau} - Using B1 noise id")
 
         # B1 ratios expect phase data
         x = utils.input_to_phase(data=data, rate=m/tau, data_type=data_type)

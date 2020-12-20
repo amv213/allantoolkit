@@ -92,16 +92,17 @@ tau_types = [
 ]
 
 fcts = [
-    allantoolkit.allantools.adev,
-    allantoolkit.allantools.oadev,
-    allantoolkit.allantools.mdev,
-    allantoolkit.allantools.tdev,
-    allantoolkit.allantools.hdev,
-    allantoolkit.allantools.ohdev,
-    allantoolkit.allantools.totdev,
-    pytest.param(allantoolkit.allantools.mtotdev,  marks=pytest.mark.slow),
-    pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
-    pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
+    #allantoolkit.allantools.adev,
+    #allantoolkit.allantools.oadev,
+    #allantoolkit.allantools.mdev,
+    #allantoolkit.allantools.tdev,
+    #allantoolkit.allantools.hdev,
+    #allantoolkit.allantools.ohdev,
+    #allantoolkit.allantools.totdev,
+    #pytest.param(allantoolkit.allantools.mtotdev,  marks=pytest.mark.slow),
+    #pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
+    #pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
+    allantoolkit.allantools.theo1
 ]
 
 
@@ -137,12 +138,13 @@ def test_adev(data, data_type, func, taus):
         print([af, tau, n, alpha, dev], '<-REF')
         print([af2, tau2, n2, alpha2, dev2], '<-ME')
 
-        assert af == af2, f'S32:{af} vs. AT {af2}'
-        assert tau == tau2, f'S32:{tau} vs. AT {tau2}'
-        assert n == n2, f'S32:{n} vs. AT {n2}'
-        assert alpha == alpha2, f'S32:{alpha} vs. AT {alpha2}'
-        assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
+        #assert af == af2, f'S32:{af} vs. AT {af2}'
+        #assert tau == tau2, f'S32:{tau} vs. AT {tau2}'
+        #assert n == n2, f'S32:{n} vs. AT {n2}'
+        #assert alpha == alpha2, f'S32:{alpha} vs. AT {alpha2}'
+        #assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
 
+    assert 1 == 2
 
 
 '''

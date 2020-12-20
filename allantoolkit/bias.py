@@ -1,5 +1,6 @@
 import numpy as np
 from . import tables
+from . import stats
 
 # shorten type hint to save some space
 Array = np.ndarray
@@ -262,4 +263,48 @@ def calc_bias_htotvar(data: Array, m: int, alpha: int) -> float:
     # HTOTVAR uses HVAR at m=1, so dispatch to correct bias calculator
     b = 1 + a if m > 1 else calc_bias_hvar(data=data, m=m, alpha=alpha)
 
-    return b  # should return b, but Stable32 doesn't seem to be doing it
+    return b
+
+
+def calc_bias_theo1(data: Array, m: int, alpha: int) -> float:
+    """Calculates bias by which to correct THEO1 results for given noise
+    type.
+
+    The Thêo1 statistic is an unbiased estimator of the Allan variance for
+    white FM noise. For other power law noise types, the following bias
+    corrections should be applied to the Thêo1 deviation.
+
+    References:
+        Theo1: characterization of very long-term frequency stability
+        Howe,D.A. et al.
+        18th European Frequency and Time Forum (EFTF 2004)
+        2004 (Table 1)
+
+        [RileyStable32Manual]_ (Theo1 Bias, pg.80)
+
+
+    Args:
+        data:   array for which variance was computed
+        m:      averaging factor for which variance was computed
+        alpha:  dominant fractional frequency noise type `alpha` at given
+                averaging factor
+
+    Returns:
+         bias correction by which to scale computed variance
+    """
+
+    params = tables.BIAS_THEO1.get(alpha, None)
+
+    if params is None:
+
+        # no bias correction for this noise type
+        return 1
+
+    a, b, c = params
+
+    # The `theo1` tau is 0.75*m
+    b = a + b/(0.75*m)**c
+
+    # this bias is b = AVAR/THEO1 so THEO1/AVAR = 1/b
+
+    return 1/b

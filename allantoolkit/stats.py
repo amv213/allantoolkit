@@ -559,7 +559,7 @@ def calc_htotvar(x: Array, m: int, tau: float) -> VarResult:
         http://www.wriley.com/paper4ht.htm
 
     Args:
-        x:      input FRACTIONAL FREQUENCY data.
+        x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
         tau:    corresponding averaging time
 
@@ -570,22 +570,19 @@ def calc_htotvar(x: Array, m: int, tau: float) -> VarResult:
 
     # TODO: make gap resistant and return correct number of non-NaN samples
 
-    # NOTE: had to call parameter `x` to match the signature of all other
-    # callables, but this functions operates on fractional frequency datasets!!
-    # so this `x` should be an array of frequencies
-    y = x
-
     # "For best consistency, the overlapping Hadamard variance is used
     # instead of the Hadamard total variance at m=1"
     # FIXME: this uses both freq and phase datasets, which uses double the
     #  memory really needed...
     if m == 1:
 
-        x = utils.frequency2phase(y=y, rate=m/tau)
         var, n = calc_hvar(x=x, m=m, tau=tau)
         return var, n
 
     else:
+
+        # This is the frequency version of the algorithm, so use frequency data
+        y = utils.phase2frequency(x=x, rate=m/tau)
 
         N = y.size  # frequency data, N points
 

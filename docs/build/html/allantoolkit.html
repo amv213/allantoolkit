@@ -1296,13 +1296,15 @@ used by autocorr_noise_id()</p>
 <code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">noise_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/allantoolkit/ci.html#noise_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.noise_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Noise identification pipeline, following what prescribed by Stable32.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id22"><span>[RileyStable32Manual]</span></a> (Table pg. 97)
+<p><a class="reference external" href="http://www.wriley.com/CI2.pdf">http://www.wriley.com/CI2.pdf</a>
+<a class="reference internal" href="references.html#rileystable32manual" id="id22"><span>[RileyStable32Manual]</span></a> (Table pg. 97) (missing htotvar)
 <a class="reference internal" href="references.html#rileystable32manual" id="id23"><span>[RileyStable32Manual]</span></a> (Confidence Intervals pg. 89-93)
 <a class="reference internal" href="references.html#rileystable32" id="id24"><span>[RileyStable32]</span></a> (5.5.2-6 pg.53-7)
 Howe, Beard, Greenhall, Riley,
 A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
 32nd PTTI, 2000
 <a class="reference external" href="https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf">https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf</a></p>
+<p># FIXME: find a reference for how to handle htotdev noiseid</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2138,7 +2140,7 @@ see <a class="reference external" href="http://en.wikipedia.org/wiki/Allan_varia
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> – input FRACTIONAL FREQUENCY data.</p></li>
+<li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
 <li><p><strong>tau</strong> – corresponding averaging time</p></li>
 </ul>
@@ -2762,7 +2764,7 @@ rate:   sampling rate of the input data, in Hz</p>
 
 <dl class="py function">
 <dt id="allantoolkit.utils.remove_small_ns">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">remove_small_ns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">afs</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">ns</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">devs</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#remove_small_ns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.remove_small_ns" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">remove_small_ns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">afs</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">ns</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">vars</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#remove_small_ns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.remove_small_ns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove results calculated on one or less samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2771,7 +2773,7 @@ rate:   sampling rate of the input data, in Hz</p>
 computed</p></li>
 <li><p><strong>taus</strong> – array of averaging times for which deviation were computed</p></li>
 <li><p><strong>ns</strong> – array with number of analysis points for each deviation</p></li>
-<li><p><strong>devs</strong> – array of computed deviations</p></li>
+<li><p><strong>devs</strong> – array of computed variances</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

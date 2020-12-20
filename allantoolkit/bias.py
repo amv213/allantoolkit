@@ -5,8 +5,128 @@ from . import tables
 Array = np.ndarray
 
 
+def calc_bias_avar(data: Array, m: int, alpha: int) -> float:
+    """Calculates bias by which to correct AVAR results for given noise type.
+
+    References:
+        [RileyStable32Manual]_ (Table pg. 97)
+
+    Args:
+        data:   array for which variance was computed
+        m:      averaging factor for which variance was computed
+        alpha:  dominant fractional frequency noise type `alpha` at given
+                averaging factor
+
+    Returns:
+         bias correction by which to scale computed variance
+
+    """
+
+    return 1
+
+
+def calc_bias_oavar(data: Array, m: int, alpha: int) -> float:
+    """Calculates bias by which to correct OAVAR results for given noise type.
+
+    References:
+        [RileyStable32Manual]_ (Table pg. 97)
+
+    Args:
+        data:   array for which variance was computed
+        m:      averaging factor for which variance was computed
+        alpha:  dominant fractional frequency noise type `alpha` at given
+                averaging factor
+
+    Returns:
+         bias correction by which to scale computed variance
+
+    """
+
+    return 1
+
+
+def calc_bias_mvar(data: Array, m: int, alpha: int) -> float:
+    """Calculates bias by which to correct MVAR results for given noise type.
+
+    References:
+        [RileyStable32Manual]_ (Table pg. 97)
+
+    Args:
+        data:   array for which variance was computed
+        m:      averaging factor for which variance was computed
+        alpha:  dominant fractional frequency noise type `alpha` at given
+                averaging factor
+
+    Returns:
+         bias correction by which to scale computed variance
+
+    """
+
+    return 1
+
+
+def calc_bias_tvar(data: Array, m: int, alpha: int) -> float:
+    """Calculates bias by which to correct TVAR results for given noise type.
+
+    References:
+        [RileyStable32Manual]_ (Table pg. 97)
+
+    Args:
+        data:   array for which variance was computed
+        m:      averaging factor for which variance was computed
+        alpha:  dominant fractional frequency noise type `alpha` at given
+                averaging factor
+
+    Returns:
+         bias correction by which to scale computed variance
+
+    """
+
+    return 1
+
+
+def calc_bias_hvar(data: Array, m: int, alpha: int) -> float:
+    """Calculates bias by which to correct HVAR results for given noise type.
+
+    References:
+        [RileyStable32Manual]_ (Table pg. 97)
+
+    Args:
+        data:   array for which variance was computed
+        m:      averaging factor for which variance was computed
+        alpha:  dominant fractional frequency noise type `alpha` at given
+                averaging factor
+
+    Returns:
+         bias correction by which to scale computed variance
+
+    """
+
+    return 1
+
+
+def calc_bias_ohvar(data: Array, m: int, alpha: int) -> float:
+    """Calculates bias by which to correct OHVAR results for given noise type.
+
+    References:
+        [RileyStable32Manual]_ (Table pg. 97)
+
+    Args:
+        data:   array for which variance was computed
+        m:      averaging factor for which variance was computed
+        alpha:  dominant fractional frequency noise type `alpha` at given
+                averaging factor
+
+    Returns:
+         bias correction by which to scale computed variance
+
+    """
+
+    return 1
+
+
 def calc_bias_totvar(data: Array, m: int, alpha: int) -> float:
-    """Corrected reported TOTVAR results accounting for bias.
+    """Calculates bias by which to correct TOTVAR results for given noise type.
 
     References:
 
@@ -23,16 +143,123 @@ def calc_bias_totvar(data: Array, m: int, alpha: int) -> float:
 
     Returns:
          bias correction by which to scale computed variance
-
     """
 
     a = tables.BIAS_TOTVAR.get(alpha, None)
 
     if a is None:
 
-        # no bias correction
-        return 1.
+        # no bias correction for this noise type
+        return 1
 
-    return 1 - (a*m/data.size)
+    if m/data.size > 0.5:
+        print(f"No bias correction at m = {m}")
+        # no bias corrections beyond half of dataset size
+        return 1
+
+    b = 1 - (a*m/data.size)
+
+    return b
 
 
+def calc_bias_mtotvar(data: Array, m: int, alpha: int) -> float:
+    """Calculates bias by which to correct MTOTVAR results for given noise
+    type.
+
+    The TOTMVAR bias factor (the ratio of the expected value of TOTMVAR to
+    MVAR) depends on the noise type but is essentially independent of the
+    averaging factor and # of data points.
+
+    FIXME: Bias is now disabled because Stable32 doesn't seem to be applying
+    it (at least not on averaging factors seen so far). Should we implement it
+    and diverge from Stable32?
+
+    References:
+        http://www.wriley.com/CI2.pdf
+        MTOT and TTOT Bias Function, Table Pg.6)
+
+        D.A. Howe and F. Vernotte, "Generalization of the Total Variance
+        Approach to the ModifiedAllan Variance",Proc. 31st PTTI Meeting,
+        pp. 267-276, Dec. 1999
+
+    Args:
+        data:   array for which variance was computed
+        m:      averaging factor for which variance was computed
+        alpha:  dominant fractional frequency noise type `alpha` at given
+                averaging factor
+
+    Returns:
+         bias correction by which to scale computed variance
+    """
+
+    b = tables.BIAS_MTOTVAR.get(alpha, None)
+
+    if b is None:
+
+        # no bias correction for this noise type
+        return 1
+
+    return 1  # should return b, but Stable32 doesn't seem to be doing it
+
+
+def calc_bias_ttotvar(data: Array, m: int, alpha: int) -> float:
+    """Calculates bias by which to correct TTOTVAR results for given noise
+    type.
+
+    Same as MTOTVAR.
+
+    References:
+        http://www.wriley.com/CI2.pdf
+        MTOT and TTOT Bias Function, Table Pg.6)
+
+    Args:
+        data:   array for which variance was computed
+        m:      averaging factor for which variance was computed
+        alpha:  dominant fractional frequency noise type `alpha` at given
+                averaging factor
+
+    Returns:
+         bias correction by which to scale computed variance
+    """
+
+    return calc_bias_mtotvar(data=data, m=m, alpha=alpha)
+
+
+def calc_bias_htotvar(data: Array, m: int, alpha: int) -> float:
+    """Calculates bias by which to correct HTOTVAR results for given noise
+    type.
+
+    The TOTMVAR bias factor (the ratio of the expected value of TOTMVAR to
+    MVAR) depends on the noise type but is essentially independent of the
+    averaging factor and # of data points.
+
+    References:
+        D.A. Howe, et. Al., “A Total Estimator of the Hadamard Function Used
+        for GPS Operations”, Proc. 32nd PTTI Meeting, pp. 255-268, November
+        2000
+
+        http://www.wriley.com/CI2.pdf
+        (HTOT Bias Function, Table Pg.6)
+
+
+    Args:
+        data:   array for which variance was computed
+        m:      averaging factor for which variance was computed
+        alpha:  dominant fractional frequency noise type `alpha` at given
+                averaging factor
+
+    Returns:
+         bias correction by which to scale computed variance
+    """
+
+    a = tables.BIAS_HTOTVAR.get(alpha, None)
+
+    if a is None:
+
+        # no bias correction for this noise type
+        return 1
+
+    # HTOTVAR uses HVAR at m=1, so dispatch to correct bias calculator
+    b = 1 + a if m > 1 else calc_bias_hvar(data=data, m=m, alpha=alpha)
+
+    return b  # should return b, but Stable32 doesn't seem to be doing it

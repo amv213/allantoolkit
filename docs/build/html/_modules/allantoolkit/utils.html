@@ -662,7 +662,7 @@
     <span class="k">return</span> <span class="n">TausResult</span><span class="p">(</span><span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="remove_small_ns"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.remove_small_ns">[docs]</a><span class="k">def</span> <span class="nf">remove_small_ns</span><span class="p">(</span><span class="n">afs</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">taus</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">devs</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> \
+<div class="viewcode-block" id="remove_small_ns"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.remove_small_ns">[docs]</a><span class="k">def</span> <span class="nf">remove_small_ns</span><span class="p">(</span><span class="n">afs</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">taus</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="nb">vars</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> \
         <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Array</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot; Remove results calculated on one or less samples.</span>
 
@@ -671,7 +671,7 @@
 <span class="sd">                    computed</span>
 <span class="sd">        taus:       array of averaging times for which deviation were computed</span>
 <span class="sd">        ns:         array with number of analysis points for each deviation</span>
-<span class="sd">        devs:       array of computed deviations</span>
+<span class="sd">        devs:       array of computed variances</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (afs, taus, ns, devs) identical to input, except that values with</span>
@@ -681,9 +681,9 @@
     <span class="n">mask</span> <span class="o">=</span> <span class="n">ns</span> <span class="o">&gt;</span> <span class="mi">1</span>
 
     <span class="c1"># Filter out results</span>
-    <span class="n">devs</span> <span class="o">=</span> <span class="n">devs</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+    <span class="nb">vars</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">devs</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">vars</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Deviation calculated on too little samples. All &quot;</span>
                        <span class="s2">&quot;results have been filtered out!&quot;</span><span class="p">)</span>
 
@@ -694,7 +694,7 @@
     <span class="n">taus</span> <span class="o">=</span> <span class="n">taus</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
     <span class="n">ns</span> <span class="o">=</span> <span class="n">ns</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">devs</span></div>
+    <span class="k">return</span> <span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="nb">vars</span></div>
 
 
 <div class="viewcode-block" id="three_cornered_hat_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.three_cornered_hat_phase">[docs]</a><span class="k">def</span> <span class="nf">three_cornered_hat_phase</span><span class="p">(</span><span class="n">x_ab</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">x_bc</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">x_ca</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span>

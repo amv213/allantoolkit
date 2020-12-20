@@ -25,8 +25,8 @@ stop_ratios:
   mtie:     2
   theo1:    1
   theoH:    1
-  mtotdev:  2
-  ttotdev:  2
+  mtotdev:  3   # Stable32 seems to use 3, instead of 2
+  ttotdev:  3   # Stable32 seems to use 3, instead of 2
 
 
 d_order:
@@ -48,6 +48,9 @@ d_order:
   hdev:     3
   ohdev:    3
   totdev:   2
+  mtotdev:  2
+  ttotdev:  2
+  htotdev:  3
 
 
 alpha_to_mu:
@@ -71,22 +74,6 @@ alpha_to_mu:
   2:    -2
 
 
-bias_totvar:
-  # Coefficient for computing normalised bias of TOTVAR in the presence of
-  # FM noise
-  #
-  # D.A. Howe, "Total Variance Explained", Proc. 1999 Joint Meeting of the
-  # European Freq. and Time Forum and the IEEE Freq. Contrl. Symp.,
-  # pp. 1093-1099, April 1999.
-  # https://www.nist.gov/publications/total-variance-explained (Table 1)
-
-  # alpha:  a
-  0:  0
-  -1: 0.48089834696298783  # (3*ln2)^-1
-  -2: 0.75
-
-
-
 alpha_to_names:
   # Mapping between fractional frequency noise type exponent `alpha` and
   # noise names
@@ -106,3 +93,49 @@ alpha_to_names:
   0:  'WHFM'
   1:  'FLPM'
   2:  'WHPM'
+
+
+
+bias_totvar:
+  # Coefficient for computing normalised bias of TOTVAR in the presence of
+  # FM noise
+  #
+  # D.A. Howe, "Total Variance Explained", Proc. 1999 Joint Meeting of the
+  # European Freq. and Time Forum and the IEEE Freq. Contrl. Symp.,
+  # pp. 1093-1099, April 1999.
+  # https://www.nist.gov/publications/total-variance-explained (Table 1)
+
+  # alpha:  a
+  0:  0
+  -1: 0.48089834696298783  # (3*ln2)^-1
+  -2: 0.75
+
+
+bias_mtotvar:
+  # Coefficient for computing bias of MTOTVAR/TTOTVAR in the presence of
+  # FM and PM noise
+  #
+  # http://www.wriley.com/CI2.pdf
+  # (MTOT and TTOT Bias Function, Table Pg.6)
+
+  # alpha:  bias factor
+  2:  0.94
+  1:  0.83
+  0:  0.73
+  -1: 0.70
+  -2: 0.69
+
+
+bias_htotvar:
+  # Coefficients for computing bias of HTOTVAR in the presence of
+  # FM and PM noise
+  #
+  # D.A. Howe, et. Al., “A Total Estimator of the Hadamard Function Used
+  # for GPS Operations”, Proc. 32nd PTTI Meeting, pp. 255-268, November 2000
+
+  # alpha:  a
+  0:   -0.005
+  -1:  -0.149
+  -2:  -0.229
+  -3:  -0.283
+  -4:  -0.321

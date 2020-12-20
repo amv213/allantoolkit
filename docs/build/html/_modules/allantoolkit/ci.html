@@ -329,7 +329,6 @@
     <span class="c1"># data or average the frequency data by the appropriate averaging factor</span>
     <span class="c1"># before applying the noise identification algorithm</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">decimate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Num samples used in ACF: </span><span class="si">{</span><span class="n">z</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># The dmax parameter should be set to 2 or 3 for an Allan or Hadamard (2</span>
     <span class="c1"># or 3-sample) variance analysis, respectively.</span>
@@ -355,13 +354,16 @@
     <span class="sd">&quot;&quot;&quot;Noise identification pipeline, following what prescribed by Stable32.</span>
 
 <span class="sd">    References:</span>
-<span class="sd">        [RileyStable32Manual]_ (Table pg. 97)</span>
+<span class="sd">        http://www.wriley.com/CI2.pdf</span>
+<span class="sd">        [RileyStable32Manual]_ (Table pg. 97) (missing htotvar)</span>
 <span class="sd">        [RileyStable32Manual]_ (Confidence Intervals pg. 89-93)</span>
 <span class="sd">        [RileyStable32]_ (5.5.2-6 pg.53-7)</span>
 <span class="sd">        Howe, Beard, Greenhall, Riley,</span>
 <span class="sd">        A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS</span>
 <span class="sd">        32nd PTTI, 2000</span>
 <span class="sd">        https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf</span>
+
+<span class="sd">        # FIXME: find a reference for how to handle htotdev noiseid</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data:       array of input timeseries data. Before analysis, the data</span>
@@ -378,10 +380,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">use_acf</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;adev&#39;</span><span class="p">,</span> <span class="s1">&#39;oadev&#39;</span><span class="p">,</span> <span class="s1">&#39;mdev&#39;</span><span class="p">,</span> <span class="s1">&#39;tdev&#39;</span><span class="p">,</span> <span class="s1">&#39;hdev&#39;</span><span class="p">,</span> <span class="s1">&#39;ohdev&#39;</span><span class="p">,</span> <span class="s1">&#39;totdev&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;mtotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;ttotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;theo1&#39;</span><span class="p">,</span> <span class="s1">&#39;theoh&#39;</span><span class="p">]</span>
+               <span class="s1">&#39;mtotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;ttotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;htotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;theo1&#39;</span><span class="p">,</span> <span class="s1">&#39;theoh&#39;</span><span class="p">]</span>
     <span class="n">use_b1</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;adev&#39;</span><span class="p">,</span> <span class="s1">&#39;oadev&#39;</span><span class="p">,</span> <span class="s1">&#39;mdev&#39;</span><span class="p">,</span> <span class="s1">&#39;tdev&#39;</span><span class="p">,</span> <span class="s1">&#39;hdev&#39;</span><span class="p">,</span> <span class="s1">&#39;ohdev&#39;</span><span class="p">,</span> <span class="s1">&#39;totdev&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;mtotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;ttotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;theo1&#39;</span><span class="p">,</span> <span class="s1">&#39;theoh&#39;</span><span class="p">]</span>  <span class="c1"># hdev yes or no??!</span>
-    <span class="n">use_rn</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mdev&#39;</span><span class="p">,</span> <span class="s1">&#39;tdev&#39;</span><span class="p">,</span> <span class="s1">&#39;mtotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;ttotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;theo1&#39;</span><span class="p">,</span> <span class="s1">&#39;theoh&#39;</span><span class="p">]</span>
+               <span class="s1">&#39;mtotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;ttotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;htotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;theo1&#39;</span><span class="p">,</span> <span class="s1">&#39;theoh&#39;</span><span class="p">]</span> <span class="c1"># hdev?</span>
+    <span class="n">use_rn</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mdev&#39;</span><span class="p">,</span> <span class="s1">&#39;tdev&#39;</span><span class="p">,</span> <span class="s1">&#39;mtotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;ttotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;htotdev&#39;</span><span class="p">,</span> <span class="s1">&#39;theo1&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;theoh&#39;</span><span class="p">]</span>
 
 
     <span class="c1"># Stable32 uses two methods for power law noise identification, based</span>
@@ -401,63 +404,61 @@
     <span class="c1"># acf_noise_1d throws this warning when it is the case)</span>
     <span class="k">elif</span> <span class="n">dev_type</span> <span class="ow">in</span> <span class="n">use_b1</span><span class="p">:</span>
 
-        <span class="c1">#print(f&quot;Using B1 noise id&quot;)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AF: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2"> - Using B1 noise id&quot;</span><span class="p">)</span>
 
         <span class="c1"># B1 ratios expect phase data</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">m</span><span class="o">/</span><span class="n">tau</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">phase2frequency</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">m</span><span class="o">/</span><span class="n">tau</span><span class="p">)</span>
-        <span class="c1">#print(f&quot;\tInput phase data has size {len(x)}&quot;)</span>
-        <span class="c1">#print(f&quot;\tInput frequency data has size {len(y)}, {len(x) - 1}&quot;)</span>
 
         <span class="c1"># compare b1 bias factor = standard variance / allan variance vs</span>
         <span class="c1"># expected value of this same ratio for pure noise types</span>
 
         <span class="c1"># Actual</span>
-        <span class="n">svar</span><span class="p">,</span> <span class="n">nn</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_svar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+        <span class="n">svar</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_svar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
         <span class="n">avar</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_avar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
         <span class="n">b1</span> <span class="o">=</span> <span class="n">svar</span> <span class="o">/</span> <span class="n">avar</span>
         <span class="c1">#print(f&quot;\tB1 ratio: {b1}&quot;)</span>
 
         <span class="c1"># B1 noise_id</span>
-        <span class="n">N</span> <span class="o">=</span> <span class="n">nn</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># number of frequency data points</span>
-        <span class="n">mu</span> <span class="o">=</span> <span class="n">b1_noise_id</span><span class="p">(</span><span class="n">measured</span><span class="o">=</span><span class="n">b1</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">b1_noise_id</span><span class="p">(</span><span class="n">measured</span><span class="o">=</span><span class="n">b1</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>  <span class="c1"># this should be number of</span>
+        <span class="c1"># frequency samples</span>
 
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        # If modified family of variances MVAR, TVAR or TOTMVAR</span>
-<span class="sd">        # distinguish between WPM vs FPM by:</span>
-<span class="sd">        # Supplement with R(n) ratio = mod allan / allan variance</span>
-<span class="sd">        if mu == -2 and dev_type in use_rn:  # find if alpha = 1 or 2</span>
 
-<span class="sd">            print(&quot;Using Rn ratio&quot;)</span>
+        <span class="c1"># If modified family of variances MVAR, TVAR or TOTMVAR</span>
+        <span class="c1"># distinguish between WPM vs FPM by:</span>
+        <span class="c1"># Supplement with R(n) ratio = mod allan / allan variance</span>
+        <span class="k">if</span> <span class="n">mu</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span> <span class="ow">and</span> <span class="n">dev_type</span> <span class="ow">in</span> <span class="n">use_rn</span><span class="p">:</span>  <span class="c1"># find if alpha = 1 or 2</span>
 
-<span class="sd">            # Actual</span>
-<span class="sd">            mvar, _ = stats.calc_mvar(x=x, m=m, tau=tau)</span>
-<span class="sd">            rn = mvar / avar</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using Rn ratio&quot;</span><span class="p">)</span>
 
-<span class="sd">            # Rn noise_id</span>
-<span class="sd">            alpha = rn_noise_id(measured=rn, m=m)</span>
-<span class="sd">            return alpha</span>
+            <span class="c1"># Actual</span>
+            <span class="n">mvar</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_mvar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+            <span class="n">rn</span> <span class="o">=</span> <span class="n">mvar</span> <span class="o">/</span> <span class="n">avar</span>
 
-<span class="sd">        # For the Hadamard variance, for which RRFM noise can apply (mu=3,</span>
-<span class="sd">        # alpha=-4) the B1 ratio can be applied to frequency (rather than</span>
-<span class="sd">        # phase) data, and adding 2 to the resulting mu</span>
-<span class="sd">        elif m == 2:  # find if alpha = -3 or -4</span>
+            <span class="c1"># Rn noise_id</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">rn_noise_id</span><span class="p">(</span><span class="n">measured</span><span class="o">=</span><span class="n">rn</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">alpha</span>
 
-<span class="sd">            print(&quot;Using *B1 ratio&quot;)</span>
+        <span class="c1"># For the Hadamard variance, for which RRFM noise can apply (mu=3,</span>
+        <span class="c1"># alpha=-4) the B1 ratio can be applied to frequency (rather than</span>
+        <span class="c1"># phase) data, and adding 2 to the resulting mu</span>
+        <span class="k">elif</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># find if alpha = -3 or -4</span>
 
-<span class="sd">            # *B1 ratio applies to frequency data</span>
-<span class="sd">            y = data if data_type == &#39;freq&#39; else utils.phase2frequency(x=data,</span>
-<span class="sd">                                                                       rate=m/tau)</span>
-<span class="sd">            svar, _ = stats.calc_svar_freq(y=y, m=m, tau=tau)</span>
-<span class="sd">            avar, _ = stats.calc_avar_freq(y=x, m=m, tau=tau)</span>
-<span class="sd">            b1star = svar / avar</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using *B1 ratio&quot;</span><span class="p">)</span>
 
-<span class="sd">            # B1 noise_id</span>
-<span class="sd">            mu = b1_noise_id(measured=b1star, N=N)</span>
-<span class="sd">            mu += 2</span>
+            <span class="c1"># *B1 ratio applies to frequency data</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span> <span class="k">else</span> <span class="n">utils</span><span class="o">.</span><span class="n">phase2frequency</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                                                                       <span class="n">rate</span><span class="o">=</span><span class="n">m</span><span class="o">/</span><span class="n">tau</span><span class="p">)</span>
+            <span class="n">svar</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_svar_freq</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+            <span class="n">avar</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_avar_freq</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+            <span class="n">b1star</span> <span class="o">=</span> <span class="n">svar</span> <span class="o">/</span> <span class="n">avar</span>
 
-<span class="sd">            assert mu &lt;= 3, f&quot;Invalid phase noise type mu: {mu}&quot;</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+            <span class="c1"># B1 noise_id</span>
+            <span class="n">mu</span> <span class="o">=</span> <span class="n">b1_noise_id</span><span class="p">(</span><span class="n">measured</span><span class="o">=</span><span class="n">b1star</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">mu</span> <span class="o">+=</span> <span class="mi">2</span>
+
+            <span class="k">assert</span> <span class="n">mu</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Invalid phase noise type mu: </span><span class="si">{</span><span class="n">mu</span><span class="si">}</span><span class="s2">&quot;</span>
+
 
         <span class="c1"># Get alpha value corresponding to identified mu</span>
 

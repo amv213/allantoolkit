@@ -157,13 +157,16 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
     """Noise identification pipeline, following what prescribed by Stable32.
 
     References:
-        [RileyStable32Manual]_ (Table pg. 97)
+        http://www.wriley.com/CI2.pdf
+        [RileyStable32Manual]_ (Table pg. 97) (missing htotvar)
         [RileyStable32Manual]_ (Confidence Intervals pg. 89-93)
         [RileyStable32]_ (5.5.2-6 pg.53-7)
         Howe, Beard, Greenhall, Riley,
         A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
         32nd PTTI, 2000
         https://apps.dtic.mil/dtic/tr/fulltext/u2/a484835.pdf
+
+        # FIXME: find a reference for how to handle htotdev noiseid
 
     Args:
         data:       array of input timeseries data. Before analysis, the data
@@ -180,10 +183,11 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
     """
 
     use_acf = ['adev', 'oadev', 'mdev', 'tdev', 'hdev', 'ohdev', 'totdev',
-               'mtotdev', 'ttotdev', 'theo1', 'theoh']
+               'mtotdev', 'ttotdev', 'htotdev', 'theo1', 'theoh']
     use_b1 = ['adev', 'oadev', 'mdev', 'tdev', 'hdev', 'ohdev', 'totdev',
-               'mtotdev', 'ttotdev', 'theo1', 'theoh']  # hdev yes or no??!
-    use_rn = ['mdev', 'tdev', 'mtotdev', 'ttotdev', 'theo1', 'theoh']
+               'mtotdev', 'ttotdev', 'htotdev', 'theo1', 'theoh'] # hdev?
+    use_rn = ['mdev', 'tdev', 'mtotdev', 'ttotdev', 'htotdev', 'theo1',
+              'theoh']
 
 
     # Stable32 uses two methods for power law noise identification, based
@@ -203,28 +207,26 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
     # acf_noise_1d throws this warning when it is the case)
     elif dev_type in use_b1:
 
-        #print(f"Using B1 noise id")
+        print(f"AF: {m} - Using B1 noise id")
 
         # B1 ratios expect phase data
         x = utils.input_to_phase(data=data, rate=m/tau, data_type=data_type)
         y = utils.phase2frequency(x=x, rate=m/tau)
-        #print(f"\tInput phase data has size {len(x)}")
-        #print(f"\tInput frequency data has size {len(y)}, {len(x) - 1}")
 
         # compare b1 bias factor = standard variance / allan variance vs
         # expected value of this same ratio for pure noise types
 
         # Actual
-        svar, nn = stats.calc_svar(x=x, m=m, tau=tau)
+        svar, _ = stats.calc_svar(x=x, m=m, tau=tau)
         avar, _ = stats.calc_avar(x=x, m=m, tau=tau)
         b1 = svar / avar
         #print(f"\tB1 ratio: {b1}")
 
         # B1 noise_id
-        N = nn + 1  # number of frequency data points
-        mu = b1_noise_id(measured=b1, N=N)
+        mu = b1_noise_id(measured=b1, N=n)  # this should be number of
+        # frequency samples
 
-        '''
+
         # If modified family of variances MVAR, TVAR or TOTMVAR
         # distinguish between WPM vs FPM by:
         # Supplement with R(n) ratio = mod allan / allan variance
@@ -255,11 +257,11 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
             b1star = svar / avar
 
             # B1 noise_id
-            mu = b1_noise_id(measured=b1star, N=N)
+            mu = b1_noise_id(measured=b1star, N=n)
             mu += 2
 
             assert mu <= 3, f"Invalid phase noise type mu: {mu}"
-        '''
+
 
         # Get alpha value corresponding to identified mu
 

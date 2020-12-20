@@ -59,19 +59,8 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         .ns:        array with number of values used to compute each deviation.
     """
 
-    if dev_type == 'htotdev':
-        # Work with frequency data
-        x = data if data_type == 'freq' else utils.phase2frequency(x=data,
-                                                                   rate=rate)
-    else:
-        # Work with phase data, in units of seconds
-        x = utils.input_to_phase(data=data, rate=rate, data_type=data_type)
-
-    # FIXME: remove this once modified mtotdev tests, mtotdev can be autocapped
-    #  by Stable32 to len(x) // 2
-    # Cap max_af for mtotdev to value calibrated for tests
-    if max_af is None and (dev_type == 'mtotdev' or dev_type == 'ttotdev'):
-        max_af = len(x) // 3
+    # Work with phase data, in units of seconds
+    x = utils.input_to_phase(data=data, rate=rate, data_type=data_type)
 
     # Build/Select averaging factors at which to calculate deviations
     taus, afs = utils.tau_generator(data=x, rate=rate, dev_type=dev_type,
@@ -117,17 +106,15 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
         # Dispatch to appropriate bias calculator for this dev_type:
         # should be function of this signature: func(x, m, alpha) -> b
-        try:
+        bfunc = getattr(bias, 'calc_bias_' + dev_type.replace('dev',
+                                                              'var'))
+        b = bfunc(data=data, m=m, alpha=alpha)
 
-            bfunc = getattr(bias, 'calc_bias_' + dev_type.replace('dev',
-                                                                  'var'))
-            b = bfunc(data=x, m=m, alpha=alpha)
+        print(f"AF: {m} - dev before bias correction: {np.sqrt(var)}")
+        var /= b  # correct variance
+        print(f"\t\tafter bias correction: {np.sqrt(var)}")
 
-            var /= b  # correct variance
-
-        except AttributeError:  # no bias function
-            pass
-
+        # Calculate deviation
         dev = np.sqrt(var)
 
         # Calculate error

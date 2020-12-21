@@ -210,6 +210,7 @@
 
 <span class="c1"># define named tuple to hold var results</span>
 <span class="n">VarResult</span> <span class="o">=</span> <span class="n">NamedTuple</span><span class="p">(</span><span class="s1">&#39;VarResult&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;var&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)])</span>
+<span class="n">VarResults</span> <span class="o">=</span> <span class="n">NamedTuple</span><span class="p">(</span><span class="s1">&#39;VarResult&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;vars&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;ns&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">)])</span>
 
 
 <div class="viewcode-block" id="calc_svar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_svar">[docs]</a><span class="k">def</span> <span class="nf">calc_svar</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
@@ -861,21 +862,14 @@
         <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="calc_theo1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_theo1">[docs]</a><span class="k">def</span> <span class="nf">calc_theo1</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Main algorithm for THEO1 calculation.</span>
-
-<span class="sd">    PRELIMINARY - REQUIRES FURTHER TESTING.</span>
+<div class="viewcode-block" id="calc_theo1_slow"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_theo1_slow">[docs]</a><span class="k">def</span> <span class="nf">calc_theo1_slow</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Older (naive) algorithm for THEO1 calculation.</span>
 
 <span class="sd">    References:</span>
 <span class="sd">        Theo1: characterization of very long-term frequency stability</span>
 <span class="sd">        Howe,D.A. et al.</span>
 <span class="sd">        18th European Frequency and Time Forum (EFTF 2004)</span>
 <span class="sd">        2004</span>
-
-<span class="sd">        B. Lewis, &quot;Fast Algorithm for Calculation of  Theo1&quot; Submitted to</span>
-<span class="sd">        IEEE Transactions on Ultrasonics Ferroelectrics,  and  Frequency</span>
-<span class="sd">        Control, May 2020. This paper presents a fast, recursive algorithm</span>
-<span class="sd">        for “all tau” Thêo1 calculations</span>
 
 <span class="sd">        [RileyStable32]_ (5.2.15, pg.37-8)</span>
 
@@ -921,7 +915,8 @@
         <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="calc_theo1_fast"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_theo1_fast">[docs]</a><span class="k">def</span> <span class="nf">calc_theo1_fast</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="calc_theo1_fast"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_theo1_fast">[docs]</a><span class="k">def</span> <span class="nf">calc_theo1_fast</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">explode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> \
+        <span class="n">VarResults</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Main algorithm for an all-tau Fast THEO1 calculation.</span>
 
 <span class="sd">    PRELIMINARY - REQUIRES FURTHER TESTING.</span>
@@ -935,21 +930,22 @@
 <span class="sd">       http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        x:      input phase data, in units of seconds.</span>
-<span class="sd">        rate:   data sampling rate, in Hz.</span>
+<span class="sd">        x:                  input phase data, in units of seconds.</span>
+<span class="sd">        rate:               data sampling rate, in Hz.</span>
+<span class="sd">        explode (optional): if True returns exploded arrays for intuitive</span>
+<span class="sd">                            indexing; with Theo1(m) at index m of the array.</span>
+<span class="sd">                            Defaults to False.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
-<span class="sd">        number of samples used to estimate it.</span>
+<span class="sd">        tuple of computed variances at all allowed (even) averaging factors</span>
+<span class="sd">        and corresponding number of analysis points. If `exploded`, the THEO1</span>
+<span class="sd">        variance at averaging factor m will be at index m of the array.</span>
+<span class="sd">        The averaging time for which Theo1 variances apply is 0.75*m*tau_0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
 
     <span class="c1"># Remove any linear offset in x</span>
-    <span class="c1">#i = range(N)</span>
-    <span class="c1">#p = np.polyfit(i, x, deg=1)</span>
-    <span class="c1">#x -= np.polyval(p, i)</span>
-
     <span class="n">midpoint</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
     <span class="n">sum1</span> <span class="o">=</span> <span class="mf">0.</span>
     <span class="n">sum2</span> <span class="o">=</span> <span class="mf">0.</span>
@@ -963,8 +959,6 @@
         <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">midpoint</span><span class="p">)</span>
 
     <span class="c1"># Calculate C1</span>
-    <span class="c1"># c1 = np.nancumsum(x**2)</span>
-
     <span class="n">c1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
     <span class="n">s</span> <span class="o">=</span> <span class="mf">0.</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
@@ -974,7 +968,7 @@
     <span class="c1"># Main loop</span>
     <span class="n">k_max</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>  <span class="c1"># max `theo1` averaging factors (m = 2k)</span>
     <span class="n">ks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k_max</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">theo1s</span><span class="p">,</span> <span class="n">taus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k_max</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k_max</span><span class="p">)</span>
+    <span class="n">theo1s</span><span class="p">,</span> <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k_max</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k_max</span><span class="p">)</span>
     <span class="n">c3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">c4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">k_max</span><span class="p">)</span>
 
@@ -1009,10 +1003,10 @@
         <span class="k">assert</span> <span class="n">t_k</span> <span class="o">&gt;=</span> <span class="mi">0</span>
 
         <span class="c1"># Apply normalisation to get Theo1 (Lewis&#39; definition)</span>
-        <span class="n">theo1s</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_k</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="o">/</span><span class="n">rate</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># k*tau_0 = tau_star</span>
+        <span class="n">theo1s</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_k</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="o">/</span><span class="n">rate</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="c1"># Log corresponding tau</span>
-        <span class="n">taus</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.5</span><span class="o">*</span><span class="n">k</span><span class="o">/</span><span class="n">rate</span>
+        <span class="n">times</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.5</span><span class="o">*</span><span class="n">k</span><span class="o">/</span><span class="n">rate</span>
 
         <span class="c1"># Log corresponding averaging factor</span>
         <span class="n">ks</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
@@ -1027,90 +1021,45 @@
 
     <span class="c1"># so Stable32 Theo1(m, tau=0.75*m*tau0) = Lewis&#39; Theo1(k) with k=m/2</span>
 
-    <span class="k">return</span> <span class="n">ks</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">theo1s</span>  <span class="c1"># VAR</span></div>
+    <span class="nb">vars</span> <span class="o">=</span> <span class="n">theo1s</span>
+    <span class="n">ns</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">ks</span><span class="p">)</span><span class="o">*</span><span class="n">ks</span>  <span class="c1"># TODO: calc this dynamically instead of hard-coding it</span>
+
+    <span class="c1"># Remap to an extended array for easy indexing</span>
+    <span class="k">if</span> <span class="n">explode</span><span class="p">:</span>
+
+        <span class="n">xvars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">ks</span><span class="o">.</span><span class="n">size</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+        <span class="n">xvars</span><span class="p">[</span><span class="mi">2</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">vars</span>  <span class="c1"># np.NaN, np.NaN, theo(k=1), np.NaN, theo1(k=2), ..</span>
+        <span class="nb">vars</span> <span class="o">=</span> <span class="n">xvars</span>
+        <span class="c1"># Now will have Theo1(m) by indexing vars[m]</span>
+
+        <span class="n">xns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ks</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+        <span class="n">xns</span><span class="p">[</span><span class="mi">2</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">ns</span>
+        <span class="n">ns</span> <span class="o">=</span> <span class="n">xns</span>
+
+    <span class="k">return</span> <span class="n">VarResults</span><span class="p">(</span><span class="nb">vars</span><span class="o">=</span><span class="nb">vars</span><span class="p">,</span> <span class="n">ns</span><span class="o">=</span><span class="n">ns</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="calc_theoBR"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_theoBR">[docs]</a><span class="k">def</span> <span class="nf">calc_theoBR</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Main algorithm for THEOBR calculation (`Fast` THEOBR).</span>
+<div class="viewcode-block" id="calc_theo1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_theo1">[docs]</a><span class="k">def</span> <span class="nf">calc_theo1</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Calculate THEO1 variance at single averaging factor. The resulting</span>
+<span class="sd">    variance is at the effective averaging time tau = 0.75*m*tau_0</span>
 
-<span class="sd">    PRELIMINARY - REQUIRES FURTHER TESTING.</span>
-
-<span class="sd">    References:</span>
-<span class="sd">        Theo1: characterization of very long-term frequency stability</span>
-<span class="sd">        Howe,D.A. et al.</span>
-<span class="sd">        18th European Frequency and Time Forum (EFTF 2004)</span>
-<span class="sd">        2004</span>
-
-<span class="sd">        J.A. Taylor and D.A. Howe, “Fast ThêoBR: A Method for Long Data Set</span>
-<span class="sd">        Stability  Analysis” (Used by Stable32)</span>
-
-<span class="sd">        http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf</span>
-
-<span class="sd">        [RileyStable32Manual]_ (TheoBR and TheoH, pg.80)</span>
+<span class="sd">    This is a utility function to match the signatures of the other variance</span>
+<span class="sd">    functions. Note that this is still not efficient as it recalculates the</span>
+<span class="sd">    full `fast` all-tau array of THEO1 vars every-time it is called.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        x:      input phase data, in units of seconds.</span>
 <span class="sd">        m:      averaging factor at which to calculate variance</span>
-<span class="sd">        tau:    corresponding theo1 `effective` averaging time. This should be</span>
-<span class="sd">                0.75 of the normal m*tau_0</span>
+<span class="sd">        rate:   sampling rate of the input data, in Hz.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
 <span class="sd">        number of samples used to estimate it.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Dataset sampling rate</span>
-    <span class="n">rate</span> <span class="o">=</span> <span class="n">m</span><span class="o">/</span><span class="p">(</span><span class="n">tau</span> <span class="o">/</span> <span class="mf">0.75</span><span class="p">)</span>
+    <span class="nb">vars</span><span class="p">,</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">calc_theo1_fast</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">explode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="c1"># Create a fast all-tau array of THEO1 values from which to pick at will</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">theo1s</span> <span class="o">=</span> <span class="n">calc_theo1_fast</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
-
-    <span class="c1"># THEOBR ALGORITHM:</span>
-
-    <span class="c1"># phase array size</span>
-    <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
-
-    <span class="c1"># Number of AVAR/Theo1 variance ratio averages</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">N</span><span class="o">/</span><span class="mi">30</span> <span class="o">-</span> <span class="mi">3</span><span class="p">))</span>
-
-    <span class="c1"># Correction factor summation loop</span>
-    <span class="n">kf</span> <span class="o">=</span> <span class="mf">0.</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-
-        <span class="c1"># Calculate AVAR at AF=9+3i</span>
-        <span class="n">M</span> <span class="o">=</span> <span class="mi">9</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">i</span>
-        <span class="c1">#avar = calc_avar(x=x, m=M, tau=M/rate).var</span>
-
-        <span class="c1"># TODO: Riley uses OAVAR instead of avar:</span>
-        <span class="n">avar</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">M</span><span class="p">):</span>
-            <span class="n">avar</span> <span class="o">+=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">M</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="n">M</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
-        <span class="n">avar</span> <span class="o">/=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">M</span><span class="o">/</span><span class="n">rate</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-
-        <span class="c1"># Calculate THEO1 at AF=12+4i -&gt; k = 6+2i -&gt; theo1s[5+2i] (T[0] is k=1)</span>
-        <span class="n">theo1</span> <span class="o">=</span> <span class="n">theo1s</span><span class="p">[</span><span class="mi">5</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="p">]</span>
-
-        <span class="c1"># ^ In this way we are taking vars at same tau values. AF = 12+4i</span>
-        <span class="c1"># is giving a THEO1 value at tau = 3/4 * (12 + 4i) * tau_0 ... which is</span>
-        <span class="c1"># the tau value at which the ADEV is calculated for AF=9+3i!</span>
-
-        <span class="c1"># Divide AVAR by corresponding Theo1 variance and add that to</span>
-        <span class="c1"># correction factor sum</span>
-        <span class="n">kf</span> <span class="o">+=</span> <span class="p">(</span><span class="n">avar</span> <span class="o">/</span> <span class="n">theo1</span><span class="p">)</span>
-
-    <span class="c1"># Divide kf sum by # ratios</span>
-    <span class="n">kf</span> <span class="o">/=</span> <span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="c1"># Calculate standard THEO1 at this averaging factor m i.e. @ k = m/2</span>
-    <span class="n">var</span> <span class="o">=</span> <span class="n">theo1s</span><span class="p">[</span><span class="n">m</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># index 0 is for k=1 i.e. m=2</span>
-
-    <span class="c1"># Apply bias correction</span>
-    <span class="n">var</span> <span class="o">*=</span> <span class="n">kf</span>
-
-    <span class="c1"># FIXME: need to get this programmatically</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">m</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="nb">vars</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">n</span><span class="o">=</span><span class="n">ns</span><span class="p">[</span><span class="n">m</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="calc_mtie"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_mtie">[docs]</a><span class="k">def</span> <span class="nf">calc_mtie</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>

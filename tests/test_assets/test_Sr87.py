@@ -144,7 +144,6 @@ def test_adev(data, data_type, func, taus):
         assert alpha == alpha2, f'S32:{alpha} vs. AT {alpha2}'
         assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
 
-    # assert 1 == 2
 
 
 '''

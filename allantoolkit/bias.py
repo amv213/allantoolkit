@@ -19,7 +19,7 @@ def calc_bias_avar(data: Array, m: int, alpha: int) -> float:
                 averaging factor
 
     Returns:
-         bias correction by which to scale computed variance
+         bias correction by which to multiply computed variance
 
     """
 
@@ -39,7 +39,7 @@ def calc_bias_oavar(data: Array, m: int, alpha: int) -> float:
                 averaging factor
 
     Returns:
-         bias correction by which to scale computed variance
+         bias correction by which to multiply computed variance
 
     """
 
@@ -59,7 +59,7 @@ def calc_bias_mvar(data: Array, m: int, alpha: int) -> float:
                 averaging factor
 
     Returns:
-         bias correction by which to scale computed variance
+         bias correction by which to multiply computed variance
 
     """
 
@@ -79,7 +79,7 @@ def calc_bias_tvar(data: Array, m: int, alpha: int) -> float:
                 averaging factor
 
     Returns:
-         bias correction by which to scale computed variance
+         bias correction by which to multiply computed variance
 
     """
 
@@ -99,7 +99,7 @@ def calc_bias_hvar(data: Array, m: int, alpha: int) -> float:
                 averaging factor
 
     Returns:
-         bias correction by which to scale computed variance
+         bias correction by which to multiply computed variance
 
     """
 
@@ -119,7 +119,7 @@ def calc_bias_ohvar(data: Array, m: int, alpha: int) -> float:
                 averaging factor
 
     Returns:
-         bias correction by which to scale computed variance
+         bias correction by which to multiply computed variance
 
     """
 
@@ -128,6 +128,7 @@ def calc_bias_ohvar(data: Array, m: int, alpha: int) -> float:
 
 def calc_bias_totvar(data: Array, m: int, alpha: int) -> float:
     """Calculates bias by which to correct TOTVAR results for given noise type.
+
 
     References:
 
@@ -143,7 +144,7 @@ def calc_bias_totvar(data: Array, m: int, alpha: int) -> float:
                 averaging factor
 
     Returns:
-         bias correction by which to scale computed variance
+         bias correction by which to multiply computed variance
     """
 
     a = tables.BIAS_TOTVAR.get(alpha, None)
@@ -160,7 +161,7 @@ def calc_bias_totvar(data: Array, m: int, alpha: int) -> float:
 
     b = 1 - (a*m/data.size)
 
-    return b
+    return 1/b
 
 
 def calc_bias_mtotvar(data: Array, m: int, alpha: int) -> float:
@@ -190,7 +191,7 @@ def calc_bias_mtotvar(data: Array, m: int, alpha: int) -> float:
                 averaging factor
 
     Returns:
-         bias correction by which to scale computed variance
+         bias correction by which to multiply computed variance
     """
 
     b = tables.BIAS_MTOTVAR.get(alpha, None)
@@ -220,7 +221,7 @@ def calc_bias_ttotvar(data: Array, m: int, alpha: int) -> float:
                 averaging factor
 
     Returns:
-         bias correction by which to scale computed variance
+         bias correction by which to multiply computed variance
     """
 
     return calc_bias_mtotvar(data=data, m=m, alpha=alpha)
@@ -250,7 +251,7 @@ def calc_bias_htotvar(data: Array, m: int, alpha: int) -> float:
                 averaging factor
 
     Returns:
-         bias correction by which to scale computed variance
+         bias correction by which to multiply computed variance
     """
 
     a = tables.BIAS_HTOTVAR.get(alpha, None)
@@ -263,7 +264,7 @@ def calc_bias_htotvar(data: Array, m: int, alpha: int) -> float:
     # HTOTVAR uses HVAR at m=1, so dispatch to correct bias calculator
     b = 1 + a if m > 1 else calc_bias_hvar(data=data, m=m, alpha=alpha)
 
-    return b
+    return 1/b
 
 
 def calc_bias_theo1(data: Array, m: int, alpha: int) -> float:
@@ -290,7 +291,7 @@ def calc_bias_theo1(data: Array, m: int, alpha: int) -> float:
                 averaging factor
 
     Returns:
-         bias correction by which to scale computed variance
+         bias correction by which to multiply computed variance
     """
 
     params = tables.BIAS_THEO1.get(alpha, None)
@@ -307,4 +308,74 @@ def calc_bias_theo1(data: Array, m: int, alpha: int) -> float:
 
     # this bias is b = AVAR/THEO1 so THEO1/AVAR = 1/b
 
-    return 1/b
+    return b
+
+
+def calc_bias_theobr(x: Array, rate: float) -> float:
+    """Calculate dynamic correction factor by which to debias THEO1 variances,
+    to get correspoinding THEOBR value. Bias removal via THEOBR does not
+    require the prior estimation of a dominant noise type at any single
+    averaging time.
+
+    There is one bias factor value for the whole run, expressed as a sum of
+    ratios of AVAR / THEO1 over a number of relevant averaging factors.
+
+    References:
+        Theo1: characterization of very long-term frequency stability
+        Howe,D.A. et al.
+        18th European Frequency and Time Forum (EFTF 2004)
+        2004
+
+        J.A. Taylor and D.A. Howe, “Fast ThêoBR: A Method for Long Data Set
+        Stability  Analysis” (Used by Stable32)
+
+        http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf
+
+        [RileyStable32Manual]_ (TheoBR and TheoH, pg.80)
+
+
+    Args:
+        x:      array of phase data for which variance was computed
+        rate:   sampling rate of the input data, in Hz.
+
+    Returns:
+         bias correction by which to scale computed variance
+    """
+
+    # For TheoBR algorithm to work, need to precalculate a support vector of
+    # THEO1 values at all taus
+    theo1s, _ = stats.calc_theo1_fast(x=x, rate=rate, explode=True)
+
+    # phase array size
+    N = x.size
+
+    # Number of AVAR/Theo1 variance ratio averages to use:
+    # - Use 6 on the denominator to end up with the bias correction factor used
+    #   by Stable32 in the `Run` & `Plot` calculations
+    # - Use 30 on the denominator to end up with the bias correction factor
+    #   used by Stable32 in the `Sigma` calculations
+    n = int(np.floor(N / 6 - 3))
+
+    # Correction factor summation loop
+    kf = 0.
+    for i in range(n + 1):
+
+        # Calculate ratio of AVAR to THEO1 at each equivalent taus, starting
+        # from m=12 for THEO1 == m=9 for AVAR
+
+        # FIXME: for some reason replacing this loop with the official stats
+        #  avar function doesn't give the same results ... investigate...
+
+        m = 9 + 3 * i
+        avar = 0.
+        for j in range(N - 2 * m):
+            avar += (x[j + 2 * m] - 2 * x[j + m] + x[j]) * (
+                        x[j + 2 * m] - 2 * x[j + m] + x[j])
+        avar /= (2 * (N - 2 * m) * (m / rate) ** 2)
+
+        kf += (avar / theo1s[12 + 4 * i])
+
+    # Divide kf sum by # ratios
+    kf /= (n + 1)
+
+    return kf

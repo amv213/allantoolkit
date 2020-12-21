@@ -62,74 +62,113 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     # Work with phase data, in units of seconds
     x = utils.input_to_phase(data=data, rate=rate, data_type=data_type)
 
+    # ---------------------
+    # SET AVERAGING TIMES
+    # ---------------------
+    # generates [taus, afs]
+    # ---------------------
+
     # Build/Select averaging factors at which to calculate deviations
     taus, afs = utils.tau_generator(data=x, rate=rate, dev_type=dev_type,
                                     taus=taus, maximum_m=max_af)
 
-    # CALC DEV
+    # ---------------------
+    # CALC VARIANCES
+    # ---------------------
+    # generates [vars, ns]
+    # ---------------------
 
-    # Dispatch to appropriate variance calculator for this dev_type:
-    # should be function of this signature: func(x, m, rate) -> var, n
-    func = getattr(stats, 'calc_' + dev_type.replace('dev', 'var'))
+    if dev_type != 'theo1':
 
-    # Initialise arrays
-    ns, vars = np.zeros(afs.size, dtype=int), np.zeros(afs.size)
+        # Dispatch to appropriate variance calculator for this dev_type:
+        # should be function of this signature: func(x, m, rate) -> var, n
+        func = getattr(stats, 'calc_' + dev_type.replace('dev', 'var'))
 
-    # Calculate metrics at each averaging time
-    for i, m in enumerate(afs):
+        # Initialise arrays
+        ns, vars = np.zeros(afs.size, dtype=int), np.zeros(afs.size)
 
-        # Calculate variance, and number of analysis points it is based on
-        var, n = func(x=x, m=m, rate=rate)
+        # Calculate metrics at each averaging time
+        for i, m in enumerate(afs):
 
-        ns[i], vars[i] = n, var
+            # Calculate variance, and number of analysis points it is based on
+            var, n = func(x=x, m=m, rate=rate)
+
+            ns[i], vars[i] = n, var
+
+    else:  # Fast batch calculation for theo1
+
+        vars, ns = stats.calc_theo1_fast(x=x, rate=rate, explode=True)
+        vars, ns = vars[afs], ns[afs]  # index out only selected AFS
 
     # Get rid of averaging times where dev calculated on too few samples (<= 1)
     afs, taus, ns, vars = utils.remove_small_ns(afs, taus, ns, vars)
 
-    # Initialise arrays
-    alphas = np.zeros(afs.size, dtype=int)
-    devs, errs_lo, errs_hi = np.zeros(afs.size), np.zeros(afs.size),  \
-                             np.zeros(afs.size)
+    # -------------------------
+    # DE-BIAS VARS AND GET DEVS
+    # -------------------------
+    # generates [alphas, devs]
+    # -------------------------
 
-    for i, (m, n, var) in enumerate(zip(afs, ns, vars)):
+    if dev_type != 'theo1':
 
-        # FIXME: remove
-        # calc theo1 using fast algorithm for testing
-        #if dev_type == 'theo1':
-        #    _, _, theo1s = stats.calc_theo1_fast(x=x, rate=m/(tau/0.75))
-        #    var = theo1s[m//2 - 1] # theo1 @ averaging factor m
+        # Initialise arrays
+        alphas, devs = np.zeros(afs.size, dtype=int), np.zeros(afs.size)
 
-        # Estimate Noise ID
-        if i < afs.size - 1:  # Only estimate if not last averaging time
-            alpha = ci.noise_id(data=x, m=m, rate=rate, data_type='phase',
-                                dev_type=dev_type, n=n)
-        else:
-            # Use previous estimate at longest averaging time
-            alpha = alphas[i-1]
+        for i, (m, n, var) in enumerate(zip(afs, ns, vars)):
 
-        # Apply Bias Corrections
+            # Estimate Noise ID
+            if i < afs.size - 1:  # Only estimate if not last averaging time
+                alpha = ci.noise_id(data=x, m=m, rate=rate, data_type='phase',
+                                    dev_type=dev_type, n=n)
+            else:
+                # Use previous estimate at longest averaging time
+                alpha = alphas[i-1]
 
-        #if dev_type != 'theo1':
+            # Apply Bias Corrections
+
             # Dispatch to appropriate bias calculator for this dev_type:
             # should be function of this signature: func(x, m, alpha) -> b
 
-        bfunc = getattr(bias, 'calc_bias_' + dev_type.replace('dev', 'var'))
-        b = bfunc(data=data, m=m, alpha=alpha)
+            bfunc = getattr(bias, 'calc_bias_' + dev_type.replace('dev', 'var'))
+            b = bfunc(data=data, m=m, alpha=alpha)
 
-        var /= b  # correct variance
+            var *= b  # correct variance
 
+            # Calculate deviation
+            dev = np.sqrt(var)
 
-        #else:
-        #    # FIXME: make faster
-        #    var = stats.calc_theoBR(x=x, m=m, tau=tau).var
+            alphas[i], devs[i] = alpha, dev
 
-        # Calculate deviation
-        dev = np.sqrt(var)
+    else:  # batch de-biasing using theoBR
+
+        # Note that if we ever switch from letting users provide an `alpha` to
+        # the API, Stable32 calculates the bias using the hard-coded
+        # biasing factors in bias.calc_bias_theo1() instead
+
+        kf = bias.calc_bias_theobr(x=x, rate=rate)
+        vars = kf*vars
+
+        # Calculate deviations
+        devs = np.sqrt(vars)
+
+        # FIXME: gen alphas for theo1
+        alphas = np.full_like(vars, -1)
+
+    # ------------------------------
+    # CALCULATE CONFIDENCE INTERVALS
+    # ------------------------------
+    # generates [errs_lo, errs_hi]
+    # ------------------------------
+
+    # Initialise arrays
+    errs_lo, errs_hi = np.zeros(afs.size), np.zeros(afs.size)
+
+    for i, (n, dev) in enumerate(zip(ns, devs)):
 
         # Calculate error
         err_lo, err_hi = dev / np.sqrt(n), dev / np.sqrt(n)
 
-        alphas[i], devs[i], errs_lo[i], errs_hi[i] = alpha, dev, err_lo, err_hi
+        errs_lo[i], errs_hi[i] = err_lo, err_hi
 
     return DevResult(afs=afs, taus=taus,  ns=ns, alphas=alphas,
                      devs=devs, errs_lo=errs_lo, errs_hi=errs_hi)

@@ -866,6 +866,9 @@ def calc_theo1(x: Array, m: int, rate: float) -> VarResult:
 def calc_mtie(x: Array, m: int, rate: float = None) -> VarResult:
     """Main algorithm for MTIE var calculation.
 
+    # FIXME: algorithm seems to start giving wrong results if CPU already
+    under heavy load...
+
     References:
         [RileyStable32]_ (5.2.17, pg.41-42)
 
@@ -961,16 +964,16 @@ def calc_mtie_fast(phase, rate=1.0, data_type="phase", taus=None):
     return utils.remove_small_ns(taus_used, devs, deverrs, ns)
 
 
-def calc_tierms(x: Array, m: int, tau: float = None) -> VarResult:
+def calc_tierms(x: Array, m: int, rate: float = None) -> VarResult:
     """Main algorithm for TIErms calculation.
 
     References:
         [RileyStable32]_ (5.2.18, pg.42-43)
 
     Args:
-        x:              input phase data, in units of seconds.
-        m:              averaging factor at which to calculate variance
-        tau (optional): corresponding averaging time. Not used here.
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and

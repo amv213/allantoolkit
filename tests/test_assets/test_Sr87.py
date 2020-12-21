@@ -93,16 +93,16 @@ tau_types = [
 
 fcts = [
     allantoolkit.allantools.adev,
-    #allantoolkit.allantools.oadev,
-    #allantoolkit.allantools.mdev,
-    #allantoolkit.allantools.tdev,
-    #allantoolkit.allantools.hdev,
-    #allantoolkit.allantools.ohdev,
-    #allantoolkit.allantools.totdev,
-    #pytest.param(allantoolkit.allantools.mtotdev,  marks=pytest.mark.slow),
-    #pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
-    #pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
-    #allantoolkit.allantools.theo1
+    allantoolkit.allantools.oadev,
+    allantoolkit.allantools.mdev,
+    allantoolkit.allantools.tdev,
+    allantoolkit.allantools.hdev,
+    allantoolkit.allantools.ohdev,
+    allantoolkit.allantools.totdev,
+    pytest.param(allantoolkit.allantools.mtotdev,  marks=pytest.mark.slow),
+    pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
+    pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
+    allantoolkit.allantools.theo1
 ]
 
 
@@ -152,6 +152,7 @@ tau_types = [
 
 fcts = [
     allantoolkit.allantools.mtie,
+    allantoolkit.allantools.tierms
 ]
 
 
@@ -185,7 +186,6 @@ def test_xtras(func, taus):
         assert tau == tau2, f'S32:{tau} vs. AT {tau2}'
         assert n == n2, f'S32:{n} vs. AT {n2}'
         assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
-
 
 '''
 # input result files and function which should replicate them

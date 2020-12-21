@@ -300,6 +300,15 @@
     <span class="c1"># Get rid of averaging times where dev calculated on too few samples (&lt;= 1)</span>
     <span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="nb">vars</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_small_ns</span><span class="p">(</span><span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="nb">vars</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">dev_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mtie&#39;</span><span class="p">,</span> <span class="s1">&#39;tierms&#39;</span><span class="p">]:</span>  <span class="c1"># Stop here</span>
+
+        <span class="n">devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">vars</span><span class="p">)</span>
+
+        <span class="n">nan_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DevResult</span><span class="p">(</span><span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span>  <span class="n">ns</span><span class="o">=</span><span class="n">ns</span><span class="p">,</span> <span class="n">alphas</span><span class="o">=</span><span class="n">nan_array</span><span class="p">,</span>
+                         <span class="n">devs</span><span class="o">=</span><span class="n">devs</span><span class="p">,</span> <span class="n">errs_lo</span><span class="o">=</span><span class="n">nan_array</span><span class="p">,</span> <span class="n">errs_hi</span><span class="o">=</span><span class="n">nan_array</span><span class="p">)</span>
+
+
     <span class="c1"># -------------------------</span>
     <span class="c1"># DE-BIAS VARS AND GET DEVS</span>
     <span class="c1"># -------------------------</span>

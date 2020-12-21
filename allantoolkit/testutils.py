@@ -77,9 +77,12 @@ def read_resultfile(filename):
 # AF = m, averaging factor i.e. tau=m*tau0
 # # = n, number of pairs in the dev calculation
 # alpha = noise PSD coefficient
-def read_stable32(fn: Union[str, Path]) -> Array:
+def read_stable32(fn: Union[str, Path], file_type: str = None) -> Array:
 
-    data = numpy.genfromtxt(fn, skip_header=10, comments='#')
+    # Number of lines to skip in the file
+    skip_header = 10 if file_type is None else 9  # for TIE-like files
+
+    data = numpy.genfromtxt(fn, skip_header=skip_header, comments='#')
 
     logger.info("Read %n entries from %s", len(data), fn)
 

@@ -863,7 +863,7 @@ def calc_theo1(x: Array, m: int, rate: float) -> VarResult:
     return VarResult(var=vars[m], n=ns[m])
 
 
-def calc_mtie(x: Array, m: int, tau: float = None) -> VarResult:
+def calc_mtie(x: Array, m: int, rate: float = None) -> VarResult:
     """Main algorithm for MTIE var calculation.
 
     References:
@@ -872,7 +872,7 @@ def calc_mtie(x: Array, m: int, tau: float = None) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time.
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
@@ -885,12 +885,11 @@ def calc_mtie(x: Array, m: int, tau: float = None) -> VarResult:
 
     if m < 1 or m >= x.size:
         logger.warning("Cannot calculate MTIE over this time interval: %f",
-                       n*tau/m)
+                       n/rate)
         return np.NaN, 0
 
     grads = utils.rolling_grad(x, n)
     assert grads.size == x.size - (n-1)
-    n = grads.size
 
     # MTIE is the overall maximum of this time interval error
     mtie = np.max(grads)
@@ -898,7 +897,8 @@ def calc_mtie(x: Array, m: int, tau: float = None) -> VarResult:
     # Need to return variance to match function signature
     var = mtie**2
 
-    return var, n
+    # The number of analysis points is the whole dataset
+    return var, x.size
 
 
 # FIXME: mtie_phase_fast() is incomplete.

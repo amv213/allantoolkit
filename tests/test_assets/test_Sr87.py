@@ -93,23 +93,23 @@ tau_types = [
 
 fcts = [
     allantoolkit.allantools.adev,
-    allantoolkit.allantools.oadev,
-    allantoolkit.allantools.mdev,
-    allantoolkit.allantools.tdev,
-    allantoolkit.allantools.hdev,
-    allantoolkit.allantools.ohdev,
-    allantoolkit.allantools.totdev,
-    pytest.param(allantoolkit.allantools.mtotdev,  marks=pytest.mark.slow),
-    pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
-    pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
-    allantoolkit.allantools.theo1
+    #allantoolkit.allantools.oadev,
+    #allantoolkit.allantools.mdev,
+    #allantoolkit.allantools.tdev,
+    #allantoolkit.allantools.hdev,
+    #allantoolkit.allantools.ohdev,
+    #allantoolkit.allantools.totdev,
+    #pytest.param(allantoolkit.allantools.mtotdev,  marks=pytest.mark.slow),
+    #pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
+    #pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
+    #allantoolkit.allantools.theo1
 ]
 
 
 @pytest.mark.parametrize('data, data_type', input_data)
 @pytest.mark.parametrize('taus', tau_types)
 @pytest.mark.parametrize('func', fcts)
-def test_adev(data, data_type, func, taus):
+def test_dev(data, data_type, func, taus):
 
     if data_type == 'freq':
         fn = ASSETS_DIR / data_type / taus / (func.__name__ + '.txt')
@@ -145,8 +145,47 @@ def test_adev(data, data_type, func, taus):
         assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
 
 
+tau_types = [
+    'octave',
+    'decade',
+]
 
-def test_xtras()
+fcts = [
+    allantoolkit.allantools.mtie,
+]
+
+
+@pytest.mark.parametrize('taus', tau_types)
+@pytest.mark.parametrize('func', fcts)
+def test_xtras(func, taus):
+
+    fn = ASSETS_DIR / 'phase0' / taus / (func.__name__ + '.txt')
+
+    expected = allantoolkit.testutils.read_stable32(fn, file_type='tie')
+
+    output = func(data=X0, rate=RATE, data_type='phase', taus=taus)
+
+    afs2, taus2, ns2, alphas2, devs2, errs_lo2, errs_hi2 = output
+    devs2 = [float(np.format_float_scientific(dev, 4)) for dev in devs2]
+
+    for i, row in enumerate(expected):
+
+        af, tau, n, dev = row.T
+        af, n = int(af), int(n)
+
+        af2, tau2, n2, alpha2, dev2, err_lo2, err_hi2 = \
+            afs2[i], taus2[i], ns2[i], alphas2[i], devs2[i], errs_lo2[i], \
+            errs_hi2[i]
+
+        print("AF  TAU   #    DEV")
+        print([af, tau, n, dev], '<-REF')
+        print([af2, tau2, n2, dev2], '<-ME')
+
+        assert af == af2, f'S32:{af} vs. AT {af2}'
+        assert tau == tau2, f'S32:{tau} vs. AT {tau2}'
+        assert n == n2, f'S32:{n} vs. AT {n2}'
+        assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
+
 
 '''
 # input result files and function which should replicate them

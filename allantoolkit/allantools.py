@@ -103,6 +103,15 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     # Get rid of averaging times where dev calculated on too few samples (<= 1)
     afs, taus, ns, vars = utils.remove_small_ns(afs, taus, ns, vars)
 
+    if dev_type in ['mtie', 'tierms']:  # Stop here
+
+        devs = np.sqrt(vars)
+
+        nan_array = np.full(afs.size, np.NaN)
+        return DevResult(afs=afs, taus=taus,  ns=ns, alphas=nan_array,
+                         devs=devs, errs_lo=nan_array, errs_hi=nan_array)
+
+
     # -------------------------
     # DE-BIAS VARS AND GET DEVS
     # -------------------------

@@ -15,6 +15,7 @@ from . import allantools
 from . import tables
 from . import stats
 from . import utils
+from . import bias
 from typing import Dict
 
 # Spawn module-level logger
@@ -190,16 +191,6 @@ def noise_id(data: Array, data_type: str, m: int, rate: float,
     use_rn = ['mdev', 'tdev', 'mtotdev', 'ttotdev', 'htotdev',
               'theoh']
 
-    if dev_type == 'theo1':
-        # Theo1 doesn't need noise estimate as you can just use TheoBR to
-        # calculate a bias removed value of THEO1.
-        # Stable32 seems to just be using a representative estimated `alpha`
-        # noise type at all THEO1 averaging factors matched on ADEV estimated
-        # noise type at m=1.
-        logger.info(f"Returning ADEV-matched noise estimate")
-        dev_type = 'adev'
-        m = 1
-
     # Stable32 uses two methods for power law noise identification, based
     # respectively on the lag 1 autocorrelation and the B1 bias factor. The
     # former method is preferred, and is used when there are at least 30
@@ -232,12 +223,10 @@ def noise_id(data: Array, data_type: str, m: int, rate: float,
         svar, _ = stats.calc_svar(x=x, m=m, rate=rate)
         avar, _ = stats.calc_avar(x=x, m=m, rate=rate)
         b1 = svar / avar
-        #print(f"\tB1 ratio: {b1}")
 
         # B1 noise_id
         mu = b1_noise_id(measured=b1, N=n)  # this should be number of
         # frequency samples
-
 
         # If modified family of variances MVAR, TVAR or TOTMVAR
         # distinguish between WPM vs FPM by:
@@ -274,13 +263,133 @@ def noise_id(data: Array, data_type: str, m: int, rate: float,
 
             assert mu <= 3, f"Invalid phase noise type mu: {mu}"
 
-
         # Get alpha value corresponding to identified mu
-
         alpha = [a for a, m in tables.ALPHA_TO_MU.items() if m == mu][0]
 
-        #print(f"\tAssigned -> mu={mu} -> alpha={alpha}")
         return alpha
+
+
+def noise_id_theoBR(kf: float, afs: Array) -> Array:
+    """ Use Theo1 bias factor to determine noise type. As done by Stable32
+    `Sigma` tool.
+
+    Thresholds for noise sorting are geometric means of nominal Theo1
+    variance bias values.
+
+    PRELIMINARY - REQUIRES FURTHER TESTING.
+
+    This function should probably only be used to emulate the behaviour of
+    Stable32 `Sigma` tool. Although in that case the kf provided here should
+    be the one averaged over /30 and not /6
+
+    References:
+
+        http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf
+
+        [RileyStable32Manual]_ (TheoBR and TheoH, pg.80)
+
+    Args:
+        kf: theoBR correction factor
+
+    Returns:
+        estimate of the `alpha` exponents, the dominant power law noise type
+        for the whole run.
+    """
+
+    # Initialise array
+    alphas = np.full(afs.size, np.NaN)
+
+    # Get nominal Theo1 var bias factors for various power law noise types
+    # at each averaging factor
+    for i, m in enumerate(afs):
+
+        noise_types = [2, 1, 0, -1, -2]
+
+        # Nominal Theo1 bias values for each phase noise type
+        d = {alpha: bias.calc_bias_theo1(None, m=m, alpha=alpha) for alpha
+             in noise_types}
+
+        # Boundaries between noise types
+        b = {}
+        for alpha, b1 in d.items():
+
+            if alpha > -2:
+
+                bndry = np.sqrt(b1 * d[alpha-1])
+                b[alpha] = bndry
+
+        # Assign measured b1 to most plausible noise type:
+        alphas[i] = -2  # prefill with lowest possible noise type
+        for alpha, bndry in b.items():
+
+            if kf < bndry:
+
+                alphas[i] = alpha
+                break
+
+    return alphas
+
+
+def noise_id_theoBR_fixed(kf) -> float:
+    """ Use Theo1 bias factor to determine noise type, as done by Stable32
+    `Run` and `Plot` tools.
+
+    There is one bias factor value and one noise type determination for the
+    whole run. Thresholds for noise sorting are geometric means of nominal
+    Theo1 variance bias values.
+
+    PRELIMINARY - REQUIRES FURTHER TESTING.
+
+    This function should be used to emulate the behaviour of Stable32 `Run`
+    tool. The kf provided here should be the standard one i.e. calculated
+    over the average / 6 (See Notes)
+
+    References:
+
+        http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf
+
+        [RileyStable32Manual]_ (TheoBR and TheoH, pg.80)
+
+    Args:
+        kf: theoBR correction factor
+
+    Returns:
+        estimate of the `alpha` exponent, the dominant power law noise type
+        for the whole run.
+
+    Notes:
+        Slightly different versions of Theo1-like statistics are present in
+        the literature, all stemming from the same core Thêo1 definition. They
+        vary in averaging factor ranges, bias correction methods and other
+        details. Notably, the ThêoBR bias corrections and ThêoH presentations
+        may differ between implementations.
+
+        The correction factor kf to use here can be obtained from
+        allantoolkit.bias.calc_bias_theobr(). Check its documentation for
+        details.
+    """
+
+    # Nominal Theo1 bias values for each phase noise type
+    d = tables.BIAS_THEO1_FIXED
+
+    # Boundaries between noise types
+    b = {}
+    for alpha, b1 in d.items():
+
+        if alpha > -2:
+            bndry = np.sqrt(b1 * d[alpha - 1])
+            b[alpha] = bndry
+
+    # Assign measured b1 to most plausible noise type:
+    for alpha, bndry in b.items():
+
+        if kf < bndry:
+
+            return alpha
+
+    # If the above didn't return anything, give lowest possible noise type
+    return -2
+
 
 # -----
 

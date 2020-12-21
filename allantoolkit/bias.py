@@ -379,3 +379,4 @@ def calc_bias_theobr(x: Array, rate: float) -> float:
     kf /= (n + 1)
 
     return kf
+

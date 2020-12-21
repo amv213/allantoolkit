@@ -277,14 +277,14 @@
 
     <span class="k">if</span> <span class="n">dev_type</span> <span class="o">!=</span> <span class="s1">&#39;theo1&#39;</span><span class="p">:</span>
 
-        <span class="c1"># Dispatch to appropriate variance calculator for this dev_type:</span>
-        <span class="c1"># should be function of this signature: func(x, m, rate) -&gt; var, n</span>
-        <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="s1">&#39;calc_&#39;</span> <span class="o">+</span> <span class="n">dev_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;dev&#39;</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">))</span>
-
         <span class="c1"># Initialise arrays</span>
         <span class="n">ns</span><span class="p">,</span> <span class="nb">vars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 
-        <span class="c1"># Calculate metrics at each averaging time</span>
+        <span class="c1"># Set dispatcher to appropriate variance calculator for this dev_type:</span>
+        <span class="c1"># should be function of this signature: func(x, m, rate) -&gt; var, n</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="s1">&#39;calc_&#39;</span> <span class="o">+</span> <span class="n">dev_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;dev&#39;</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">))</span>
+
+        <span class="c1"># Calculate variance at each averaging time</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">afs</span><span class="p">):</span>
 
             <span class="c1"># Calculate variance, and number of analysis points it is based on</span>
@@ -348,8 +348,9 @@
         <span class="c1"># Calculate deviations</span>
         <span class="n">devs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">vars</span><span class="p">)</span>
 
-        <span class="c1"># FIXME: gen alphas for theo1</span>
-        <span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="nb">vars</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># ID noise type for the whole run</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">ci</span><span class="o">.</span><span class="n">noise_id_theoBR_fixed</span><span class="p">(</span><span class="n">kf</span><span class="o">=</span><span class="n">kf</span><span class="p">)</span>
+        <span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------</span>
     <span class="c1"># CALCULATE CONFIDENCE INTERVALS</span>

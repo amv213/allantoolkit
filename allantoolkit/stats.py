@@ -722,8 +722,6 @@ def calc_theo1_fast(x: Array, rate: float, explode: bool = True) -> \
         VarResults:
     """Main algorithm for an all-tau Fast THEO1 calculation.
 
-    PRELIMINARY - REQUIRES FURTHER TESTING.
-
     References:
         B. Lewis, "Fast Algorithm for Calculation of  Theo1" Submitted to
         IEEE Transactions on Ultrasonics Ferroelectrics,  and  Frequency

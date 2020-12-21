@@ -80,14 +80,14 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
     if dev_type != 'theo1':
 
-        # Dispatch to appropriate variance calculator for this dev_type:
-        # should be function of this signature: func(x, m, rate) -> var, n
-        func = getattr(stats, 'calc_' + dev_type.replace('dev', 'var'))
-
         # Initialise arrays
         ns, vars = np.zeros(afs.size, dtype=int), np.zeros(afs.size)
 
-        # Calculate metrics at each averaging time
+        # Set dispatcher to appropriate variance calculator for this dev_type:
+        # should be function of this signature: func(x, m, rate) -> var, n
+        func = getattr(stats, 'calc_' + dev_type.replace('dev', 'var'))
+
+        # Calculate variance at each averaging time
         for i, m in enumerate(afs):
 
             # Calculate variance, and number of analysis points it is based on
@@ -151,8 +151,9 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         # Calculate deviations
         devs = np.sqrt(vars)
 
-        # FIXME: gen alphas for theo1
-        alphas = np.full_like(vars, -1)
+        # ID noise type for the whole run
+        alpha = ci.noise_id_theoBR_fixed(kf=kf)
+        alphas = np.full(afs.size, alpha)
 
     # ------------------------------
     # CALCULATE CONFIDENCE INTERVALS

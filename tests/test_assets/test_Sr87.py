@@ -146,6 +146,8 @@ def test_adev(data, data_type, func, taus):
 
 
 
+def test_xtras()
+
 '''
 # input result files and function which should replicate them
 fcts = [

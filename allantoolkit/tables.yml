@@ -155,3 +155,19 @@ bias_theo1:
   0:  [1, 0, 0]
   -1: [1.87, -1.05, 0.79]
   -2: [2.70, -1.53, 0.85]
+
+
+bias_theo1_fixed:
+  # Old nominal Theo1 variance bias factors in original 2003 FCS paper. Used
+  # by Stable32 to fix noise type calculated in the `Run` function if
+  # `Alpha` set to `Auto/BR`.
+  #
+  # http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf
+  # TODO: find original reference
+
+  # alpha:  a
+  2:  0.4
+  1:  0.6
+  0:  1.0
+  -1: 1.71
+  -2: 2.24

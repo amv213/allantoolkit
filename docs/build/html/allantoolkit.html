@@ -1293,7 +1293,7 @@ used by autocorr_noise_id()</p>
 
 <dl class="py function">
 <dt id="allantoolkit.ci.noise_id">
-<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">noise_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/allantoolkit/ci.html#noise_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.noise_id" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">noise_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/allantoolkit/ci.html#noise_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.noise_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Noise identification pipeline, following what prescribed by Stable32.</p>
 <p class="rubric">References</p>
 <p><a class="reference external" href="http://www.wriley.com/CI2.pdf">http://www.wriley.com/CI2.pdf</a>
@@ -1313,7 +1313,7 @@ should be preprocessed to remove outliers, discontinuities,
 and  deterministic components</p></li>
 <li><p><strong>data_type</strong> – input data type. Either <cite>phase</cite> or <cite>freq</cite>.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to estimate dominant noise type</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 <li><p><strong>dev_type</strong> – type of deviation used for analysis, e.g. <cite>adev</cite>.</p></li>
 <li><p><strong>n</strong> – number of analysis points on which deviation was calculated</p></li>
 </ul>
@@ -2073,7 +2073,7 @@ Dobrogowski &amp; Kasznia
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_avar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_avar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_avar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_avar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_avar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_avar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_avar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for AVAR calculation.</p>
 <p class="rubric">References</p>
 <p><a class="reference internal" href="references.html#rileystable32" id="id27"><span>[RileyStable32]</span></a> (5.2.2, pg.19)
@@ -2084,7 +2084,7 @@ Dobrogowski &amp; Kasznia
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2096,7 +2096,7 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_avar_freq">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_avar_freq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_avar_freq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_avar_freq" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_avar_freq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_avar_freq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_avar_freq" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for AVAR calculation on fractional frequency data.</p>
 <p class="rubric">References</p>
 <p><a class="reference internal" href="references.html#rileystable32" id="id29"><span>[RileyStable32]</span></a> (5.2.2, pg.19)</p>
@@ -2105,7 +2105,7 @@ number of samples used to estimate it.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>y</strong> – input phase fractional frequency data.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz. Not used here.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2131,7 +2131,7 @@ see <a class="reference external" href="http://en.wikipedia.org/wiki/Allan_varia
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_htotvar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_htotvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_htotvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_htotvar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_htotvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_htotvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_htotvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for HTOTVAR calculation.</p>
 <p>PRELIMINARY - REQUIRES FURTHER TESTING.</p>
 <p class="rubric">References</p>
@@ -2142,7 +2142,7 @@ see <a class="reference external" href="http://en.wikipedia.org/wiki/Allan_varia
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2154,7 +2154,7 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_hvar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_hvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_hvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_hvar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_hvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_hvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_hvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for HVAR calculation.</p>
 <p class="rubric">References</p>
 <p><a class="reference internal" href="references.html#rileystable32" id="id32"><span>[RileyStable32]</span></a> (5.2.8, pg.25-26)</p>
@@ -2163,7 +2163,7 @@ number of samples used to estimate it.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2204,7 +2204,7 @@ Characterization of Network Synchronization Performance”</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_mtotvar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_mtotvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_mtotvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_mtotvar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_mtotvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_mtotvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_mtotvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for TOTVAR calculation.</p>
 <p>PRELIMINARY - REQUIRES FURTHER TESTING.</p>
 <p class="rubric">References</p>
@@ -2219,7 +2219,7 @@ TODO: find justification for last part of algorithm</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2231,7 +2231,7 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_mvar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_mvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_mvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_mvar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_mvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_mvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_mvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for MVAR calculation.</p>
 <p>This implementation is a <cite>loop-unrolled</cite> algorithm, as per
 <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p>
@@ -2243,7 +2243,7 @@ TODO: add reference justifying loop unrolled algorithm</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2255,7 +2255,7 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_o_avar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_o_avar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">stride</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_o_avar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_o_avar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_o_avar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">stride</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_o_avar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_o_avar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for AVAR and OAVAR calculation.</p>
 <p class="rubric">References</p>
 <p><a class="reference internal" href="references.html#rileystable32" id="id38"><span>[RileyStable32]</span></a> (5.2.2, pg.19)
@@ -2266,7 +2266,7 @@ number of samples used to estimate it.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 <li><p><strong>stride</strong> – stride at which to parse input phase data.
 <cite>m</cite> for AVAR, <cite>1</cite> for OAVAR.</p></li>
 </ul>
@@ -2280,7 +2280,7 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_o_hvar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_o_hvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">stride</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_o_hvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_o_hvar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_o_hvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">stride</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_o_hvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_o_hvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for HVAR and OHVAR calculation.</p>
 <p class="rubric">References</p>
 <p><a class="reference internal" href="references.html#rileystable32" id="id40"><span>[RileyStable32]</span></a> (5.2.8-9, pg.25-27)
@@ -2290,7 +2290,7 @@ number of samples used to estimate it.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 <li><p><strong>stride</strong> – stride at which to parse input phase data.
 <cite>m</cite> for HVAR, <cite>1</cite> for OHVAR.</p></li>
 </ul>
@@ -2304,7 +2304,7 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_oavar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_oavar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_oavar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_oavar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_oavar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_oavar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_oavar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for OAVAR calculation.</p>
 <p class="rubric">References</p>
 <p><a class="reference internal" href="references.html#rileystable32" id="id41"><span>[RileyStable32]</span></a> (5.2.2, pg.19)
@@ -2315,7 +2315,7 @@ number of samples used to estimate it.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2327,7 +2327,7 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_ohvar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_ohvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_ohvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_ohvar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_ohvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_ohvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_ohvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for OHVAR calculation.</p>
 <p class="rubric">References</p>
 <p><a class="reference internal" href="references.html#rileystable32" id="id43"><span>[RileyStable32]</span></a> (5.2.9, pg.26-27)</p>
@@ -2336,7 +2336,7 @@ number of samples used to estimate it.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2348,7 +2348,7 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_svar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_svar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_svar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_svar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_svar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_svar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_svar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for standard variance calculation.</p>
 <p class="rubric">References</p>
 <p><a class="reference internal" href="references.html#rileystable32" id="id44"><span>[RileyStable32]</span></a> (5.2.1, pg.17)</p>
@@ -2357,7 +2357,7 @@ number of samples used to estimate it.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time. Not used here.</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2369,7 +2369,7 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_svar_freq">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_svar_freq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_svar_freq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_svar_freq" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_svar_freq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_svar_freq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_svar_freq" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for standard variance calculation on fractional
 frequency data.</p>
 <p class="rubric">References</p>
@@ -2379,7 +2379,7 @@ frequency data.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>y</strong> – input fractional frequency data.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time. Not used here.</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz. Not used here.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2391,11 +2391,75 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_theo1">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_theo1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_theo1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_theo1" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_theo1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_theo1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_theo1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for THEO1 calculation.</p>
 <p>PRELIMINARY - REQUIRES FURTHER TESTING.</p>
 <p class="rubric">References</p>
+<p>Theo1: characterization of very long-term frequency stability
+Howe,D.A. et al.
+18th European Frequency and Time Forum (EFTF 2004)
+2004</p>
+<p>B. Lewis, “Fast Algorithm for Calculation of  Theo1” Submitted to
+IEEE Transactions on Ultrasonics Ferroelectrics,  and  Frequency
+Control, May 2020. This paper presents a fast, recursive algorithm
+for “all tau” Thêo1 calculations</p>
 <p><a class="reference internal" href="references.html#rileystable32" id="id46"><span>[RileyStable32]</span></a> (5.2.15, pg.37-8)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
+<li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(var, n) NamedTuple of computed variance at given averaging time, and
+number of samples used to estimate it.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.stats.calc_theo1_fast">
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_theo1_fast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_theo1_fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_theo1_fast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main algorithm for an all-tau Fast THEO1 calculation.</p>
+<p>PRELIMINARY - REQUIRES FURTHER TESTING.</p>
+<p class="rubric">References</p>
+<p>B. Lewis, “Fast Algorithm for Calculation of  Theo1” Submitted to
+IEEE Transactions on Ultrasonics Ferroelectrics,  and  Frequency
+Control, May 2020. This paper presents a fast, recursive algorithm
+for “all tau” Thêo1 calculations</p>
+<blockquote>
+<div><p><a class="reference external" href="http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf">http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf</a></p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
+<li><p><strong>rate</strong> – data sampling rate, in Hz.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(var, n) NamedTuple of computed variance at given averaging time, and
+number of samples used to estimate it.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.stats.calc_theoBR">
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_theoBR</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_theoBR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_theoBR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main algorithm for THEOBR calculation (<cite>Fast</cite> THEOBR).</p>
+<p>PRELIMINARY - REQUIRES FURTHER TESTING.</p>
+<p class="rubric">References</p>
+<p>Theo1: characterization of very long-term frequency stability
+Howe,D.A. et al.
+18th European Frequency and Time Forum (EFTF 2004)
+2004</p>
+<p>J.A. Taylor and D.A. Howe, “Fast ThêoBR: A Method for Long Data Set
+Stability  Analysis” (Used by Stable32)</p>
+<p><a class="reference external" href="http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf">http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf</a></p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id47"><span>[RileyStable32Manual]</span></a> (TheoBR and TheoH, pg.80)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2417,7 +2481,7 @@ number of samples used to estimate it.</p>
 <code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_tierms</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_tierms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_tierms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for TIErms calculation.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id47"><span>[RileyStable32]</span></a> (5.2.18, pg.42-43)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id48"><span>[RileyStable32]</span></a> (5.2.18, pg.42-43)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2435,16 +2499,16 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_totvar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_totvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_totvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_totvar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_totvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_totvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_totvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for TOTVAR calculation.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id48"><span>[RileyStable32]</span></a> (5.2.11, pg.29-31)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id49"><span>[RileyStable32]</span></a> (5.2.11, pg.29-31)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2456,17 +2520,17 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_ttotvar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_ttotvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_ttotvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_ttotvar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_ttotvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_ttotvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_ttotvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for TTOTVAR calculation.</p>
 <p>PRELIMINARY - REQUIRES FURTHER TESTING.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id49"><span>[RileyStable32]</span></a> (5.2.13, pg.31)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id50"><span>[RileyStable32]</span></a> (5.2.13, pg.31)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2478,16 +2542,16 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_tvar">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_tvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_tvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_tvar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_tvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_tvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_tvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for TVAR calculation.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id50"><span>[RileyStable32]</span></a> (5.2.6, pg.23)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id51"><span>[RileyStable32]</span></a> (5.2.6, pg.23)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which to calculate variance</p></li>
-<li><p><strong>tau</strong> – corresponding averaging time</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2615,7 +2679,7 @@ Lines to omit should be commented out with <cite>#</cite>.</p>
 interpolated values, by first removing any leading and trailing gaps,
 and then using the two values immediately before and after any interior
 gaps to determine linearly interpolated values within the gap
-<a class="reference internal" href="references.html#rileystable32" id="id51"><span>[RileyStable32]</span></a> (pg. 107).</p>
+<a class="reference internal" href="references.html#rileystable32" id="id52"><span>[RileyStable32]</span></a> (pg. 107).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> – data array of frequency or phase measurements, with gaps
@@ -2630,7 +2694,7 @@ represented as NaNs</p>
 <dl class="py function">
 <dt id="allantoolkit.utils.frequency2fractional">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2fractional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">v0</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2fractional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2fractional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert frequency in Hz to fractional frequency <a class="reference internal" href="references.html#wikipedia" id="id52"><span>[Wikipedia]</span></a>.</p>
+<dd><p>Convert frequency in Hz to fractional frequency <a class="reference internal" href="references.html#wikipedia" id="id53"><span>[Wikipedia]</span></a>.</p>
 <div class="math notranslate nohighlight">
 \[y(t) =  ( \nu(t) - \nu_0 )  \over \nu_0\]</div>
 <dl class="field-list simple">
@@ -2654,7 +2718,7 @@ frequency of dataset.</p></li>
 arbitrary initial value), in units of second.</p>
 <p>Frequency to phase conversion is done by piecewise  integration  using
 the  averaging  time  as  the  integration  interval
-<a class="reference internal" href="references.html#rileystable32manual" id="id53"><span>[RileyStable32Manual]</span></a> (pg. 173-174):</p>
+<a class="reference internal" href="references.html#rileystable32manual" id="id54"><span>[RileyStable32Manual]</span></a> (pg. 173-174):</p>
 <div class="math notranslate nohighlight">
 \[x_{i+1} = x_i + y_i \tau\]</div>
 <p>Any gaps in the frequency data are filled to obtain phase continuity.</p>
@@ -2723,13 +2787,13 @@ indices</p>
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2frequency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#phase2frequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert phase data in units of seconds to fractional frequency data.</p>
 <p>Phase to frequency conversion is done by dividing the first differences
-of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id54"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
+of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id55"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
 <div class="math notranslate nohighlight">
 \[y_i = ( x_{i+1} - x_i ) \over \tau\]</div>
 <p>Phase to frequency conversion is straightforward for data having
 gaps. Because two phase points  are  needed  to  determine  each
 frequency  point a single phase gap will cause two frequency gaps, and a
-gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id55"><span>[RileyStable32]</span></a> (pg. 108).</p>
+gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id56"><span>[RileyStable32]</span></a> (pg. 108).</p>
 <dl class="simple">
 <dt>Params:</dt><dd><p>x:      data array of phase measurements, in seconds
 rate:   sampling rate of the input data, in Hz</p>
@@ -2799,13 +2863,13 @@ which to compute statistics.</p>
 Generates a tau-list based on keywords ‘all’, ‘decade’, ‘octave’.
 Uses ‘octave’ by default if no taus= argument is given.</p>
 <p>Averaging times may be integer multiples of the data sampling interval
-<a class="reference internal" href="references.html#rileystable32" id="id56"><span>[RileyStable32]</span></a> (Pg.3):</p>
+<a class="reference internal" href="references.html#rileystable32" id="id57"><span>[RileyStable32]</span></a> (Pg.3):</p>
 <div class="math notranslate nohighlight">
 \[\tau =  m \tau_0\]</div>
 <p>where <cite>m</cite> is the averaging factor.</p>
 <p>This function implements a Stable32 stop-ratio for <cite>octave</cite> and <cite>decade</cite>
 stability runs, which automatically calculates the maximum averaging
-factor to use for the given deviation <a class="reference internal" href="references.html#rileyevolution" id="id57"><span>[RileyEvolution]</span></a> (pg.9 Table III).</p>
+factor to use for the given deviation <a class="reference internal" href="references.html#rileyevolution" id="id58"><span>[RileyEvolution]</span></a> (pg.9 Table III).</p>
 <p>If requesting averaging times for a <cite>theo1</cite> statistic, the resulting
 averaging times will be <cite>effective</cite> times tau = 0.75*tau</p>
 <dl class="field-list simple">
@@ -2863,7 +2927,7 @@ factors.</p>
 <dl class="py function">
 <dt id="allantoolkit.utils.three_cornered_hat_phase">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_ab</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_bc</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_ca</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#three_cornered_hat_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Three Cornered Hat Method <a class="reference internal" href="references.html#riley3chat" id="id58"><span>[Riley3CHat]</span></a></p>
+<dd><p>Three Cornered Hat Method <a class="reference internal" href="references.html#riley3chat" id="id59"><span>[Riley3CHat]</span></a></p>
 <p>Given three clocks A, B, C, we seek to find their variances</p>
 <p><span class="math notranslate nohighlight">\(\sigma^2_A\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_B\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_C\)</span></p>
 <p>We measure three phase differences, assuming no correlation between

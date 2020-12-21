@@ -153,7 +153,7 @@ def acf_noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
     return alpha
 
 
-def noise_id(data: Array, data_type: str, m: int, tau: float,
+def noise_id(data: Array, data_type: str, m: int, rate: float,
              dev_type: str, n: int) -> int:
     """Noise identification pipeline, following what prescribed by Stable32.
 
@@ -175,7 +175,7 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
                     and  deterministic components
         data_type:  input data type. Either `phase` or `freq`.
         m:          averaging factor at which to estimate dominant noise type
-        tau:        corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
         dev_type:   type of deviation used for analysis, e.g. `adev`.
         n:          number of analysis points on which deviation was calculated
 
@@ -210,7 +210,7 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
 
     if nn >= 30 and dev_type in use_acf:
 
-        print(f"AF: {m} | TAU: {tau} - Using ACF noise id")
+        print(f"AF: {m} | TAU: {m/rate} - Using ACF noise id")
 
         return acf_noise_id(data=data, data_type=data_type, m=m,
                             dev_type=dev_type)
@@ -219,18 +219,18 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
     # acf_noise_1d throws this warning when it is the case)
     elif dev_type in use_b1:
 
-        print(f"AF: {m} | TAU: {tau} - Using B1 noise id")
+        print(f"AF: {m} | TAU: {m/rate} - Using B1 noise id")
 
         # B1 ratios expect phase data
-        x = utils.input_to_phase(data=data, rate=m/tau, data_type=data_type)
-        y = utils.phase2frequency(x=x, rate=m/tau)
+        x = utils.input_to_phase(data=data, rate=rate, data_type=data_type)
+        y = utils.phase2frequency(x=x, rate=rate)
 
         # compare b1 bias factor = standard variance / allan variance vs
         # expected value of this same ratio for pure noise types
 
         # Actual
-        svar, _ = stats.calc_svar(x=x, m=m, tau=tau)
-        avar, _ = stats.calc_avar(x=x, m=m, tau=tau)
+        svar, _ = stats.calc_svar(x=x, m=m, rate=rate)
+        avar, _ = stats.calc_avar(x=x, m=m, rate=rate)
         b1 = svar / avar
         #print(f"\tB1 ratio: {b1}")
 
@@ -247,7 +247,7 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
             print("Using Rn ratio")
 
             # Actual
-            mvar, _ = stats.calc_mvar(x=x, m=m, tau=tau)
+            mvar, _ = stats.calc_mvar(x=x, m=m, rate=rate)
             rn = mvar / avar
 
             # Rn noise_id
@@ -263,9 +263,9 @@ def noise_id(data: Array, data_type: str, m: int, tau: float,
 
             # *B1 ratio applies to frequency data
             y = data if data_type == 'freq' else utils.phase2frequency(x=data,
-                                                                       rate=m/tau)
-            svar, _ = stats.calc_svar_freq(y=y, m=m, tau=tau)
-            avar, _ = stats.calc_avar_freq(y=x, m=m, tau=tau)
+                                                                       rate=rate)
+            svar, _ = stats.calc_svar_freq(y=y, m=m, rate=rate)
+            avar, _ = stats.calc_avar_freq(y=x, m=m, rate=rate)
             b1star = svar / avar
 
             # B1 noise_id

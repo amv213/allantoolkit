@@ -15,7 +15,7 @@ Array = np.ndarray
 VarResult = NamedTuple('VarResult', [('var', float), ('n', int)])
 
 
-def calc_svar(x: Array, m: int, tau: float = None) -> VarResult:
+def calc_svar(x: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for standard variance calculation.
 
     References:
@@ -24,7 +24,7 @@ def calc_svar(x: Array, m: int, tau: float = None) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time. Not used here.
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
@@ -34,6 +34,8 @@ def calc_svar(x: Array, m: int, tau: float = None) -> VarResult:
     # Decimate at given averaging factor
     x = x[::m]
 
+    # Integrate to frequency
+    tau = m / rate
     y = np.diff(x) / tau
     ybar = np.nanmean(y)
     summand = (y-ybar)**2
@@ -51,7 +53,7 @@ def calc_svar(x: Array, m: int, tau: float = None) -> VarResult:
     return VarResult(var=var, n=n)
 
 
-def calc_svar_freq(y: Array, m: int, tau: float = None) -> VarResult:
+def calc_svar_freq(y: Array, m: int, rate: float = None) -> VarResult:
     """Main algorithm for standard variance calculation on fractional
     frequency data.
 
@@ -61,7 +63,7 @@ def calc_svar_freq(y: Array, m: int, tau: float = None) -> VarResult:
     Args:
         y:      input fractional frequency data.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time. Not used here.
+        rate:   sampling rate of the input data, in Hz. Not used here.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
@@ -87,7 +89,7 @@ def calc_svar_freq(y: Array, m: int, tau: float = None) -> VarResult:
     return VarResult(var=var, n=n)
 
 
-def calc_o_avar(x: Array, m: int, tau: float, stride: int) -> VarResult:
+def calc_o_avar(x: Array, m: int, rate: float, stride: int) -> VarResult:
     """Main algorithm for AVAR and OAVAR calculation.
 
     References:
@@ -98,7 +100,7 @@ def calc_o_avar(x: Array, m: int, tau: float, stride: int) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
         stride: stride at which to parse input phase data.
                 `m` for AVAR, `1` for OAVAR.
 
@@ -128,12 +130,12 @@ def calc_o_avar(x: Array, m: int, tau: float, stride: int) -> VarResult:
         return var, 0
 
     # Calculate variance
-    var = 1. / (2 * tau**2) * np.nanmean(summand**2)
+    var = 1. / (2 * (m/rate)**2) * np.nanmean(summand**2)
 
     return VarResult(var=var, n=n)
 
 
-def calc_avar(x: Array, m: int, tau: float) -> VarResult:
+def calc_avar(x: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for AVAR calculation.
 
     References:
@@ -144,17 +146,17 @@ def calc_avar(x: Array, m: int, tau: float) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
         number of samples used to estimate it.
     """
 
-    return calc_o_avar(x=x, m=m, tau=tau, stride=m)
+    return calc_o_avar(x=x, m=m, rate=rate, stride=m)
 
 
-def calc_oavar(x: Array, m: int, tau: float) -> VarResult:
+def calc_oavar(x: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for OAVAR calculation.
 
     References:
@@ -165,17 +167,17 @@ def calc_oavar(x: Array, m: int, tau: float) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
         number of samples used to estimate it.
     """
 
-    return calc_o_avar(x=x, m=m, tau=tau, stride=1)
+    return calc_o_avar(x=x, m=m, rate=rate, stride=1)
 
 
-def calc_avar_freq(y: Array, m: int, tau: float) -> VarResult:
+def calc_avar_freq(y: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for AVAR calculation on fractional frequency data.
 
     References:
@@ -184,7 +186,7 @@ def calc_avar_freq(y: Array, m: int, tau: float) -> VarResult:
     Args:
         y:      input phase fractional frequency data.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz. Not used here.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
@@ -218,7 +220,7 @@ def calc_avar_freq(y: Array, m: int, tau: float) -> VarResult:
     return VarResult(var=var, n=m)
 
 
-def calc_mvar(x: Array, m: int, tau: float) -> VarResult:
+def calc_mvar(x: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for MVAR calculation.
 
     This implementation is a `loop-unrolled` algorithm, as per
@@ -232,7 +234,7 @@ def calc_mvar(x: Array, m: int, tau: float) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
@@ -262,12 +264,12 @@ def calc_mvar(x: Array, m: int, tau: float) -> VarResult:
     v_arr = v + np.nancumsum(d3[:e] - 3 * d2[:e] + 3 * d1[:e] - d0[:e])
 
     s = s + np.nansum(v_arr * v_arr)
-    s /= 2 * m**2 * tau**2 * n
+    s /= 2 * m**2 * (m/rate)**2 * n
 
     return VarResult(var=s, n=n)
 
 
-def calc_tvar(x: Array, m: int, tau: float) -> VarResult:
+def calc_tvar(x: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for TVAR calculation.
 
     References:
@@ -276,21 +278,21 @@ def calc_tvar(x: Array, m: int, tau: float) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
         number of samples used to estimate it.
     """
 
-    mvar, n = calc_mvar(x=x, m=m, tau=tau)
+    mvar, n = calc_mvar(x=x, m=m, rate=rate)
 
-    var = (tau**2 / 3) * mvar
+    var = ((m/rate)**2 / 3) * mvar
 
     return VarResult(var=var, n=n)
 
 
-def calc_o_hvar(x: Array, m: int, tau: float, stride: int) -> VarResult:
+def calc_o_hvar(x: Array, m: int, rate: float, stride: int) -> VarResult:
     """Main algorithm for HVAR and OHVAR calculation.
 
     References:
@@ -300,7 +302,7 @@ def calc_o_hvar(x: Array, m: int, tau: float, stride: int) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
         stride: stride at which to parse input phase data.
                 `m` for HVAR, `1` for OHVAR.
 
@@ -330,12 +332,12 @@ def calc_o_hvar(x: Array, m: int, tau: float, stride: int) -> VarResult:
         return var, 0
 
     # Calculate variance
-    var = 1. / (6 * tau**2) * np.nanmean(summand**2)
+    var = 1. / (6 * (m/rate)**2) * np.nanmean(summand**2)
 
     return VarResult(var=var, n=n)
 
 
-def calc_hvar(x: Array, m: int, tau: float) -> VarResult:
+def calc_hvar(x: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for HVAR calculation.
 
     References:
@@ -344,17 +346,17 @@ def calc_hvar(x: Array, m: int, tau: float) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
         number of samples used to estimate it.
     """
 
-    return calc_o_hvar(x=x, m=m, tau=tau, stride=m)
+    return calc_o_hvar(x=x, m=m, rate=rate, stride=m)
 
 
-def calc_ohvar(x: Array, m: int, tau: float) -> VarResult:
+def calc_ohvar(x: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for OHVAR calculation.
 
     References:
@@ -363,17 +365,17 @@ def calc_ohvar(x: Array, m: int, tau: float) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
         number of samples used to estimate it.
     """
 
-    return calc_o_hvar(x=x, m=m, tau=tau, stride=1)
+    return calc_o_hvar(x=x, m=m, rate=rate, stride=1)
 
 
-def calc_totvar(x: Array, m: int, tau: float) -> VarResult:
+def calc_totvar(x: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for TOTVAR calculation.
 
     References:
@@ -382,7 +384,7 @@ def calc_totvar(x: Array, m: int, tau: float) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
@@ -419,12 +421,12 @@ def calc_totvar(x: Array, m: int, tau: float) -> VarResult:
         return var, 0
 
     # Calculate variance
-    var = 1. / (2 * tau**2) * np.nanmean(summand**2)
+    var = 1. / (2 * (m/rate)**2) * np.nanmean(summand**2)
 
     return VarResult(var=var, n=n)
 
 
-def calc_mtotvar(x: Array, m: int, tau: float) -> VarResult:
+def calc_mtotvar(x: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for TOTVAR calculation.
 
     PRELIMINARY - REQUIRES FURTHER TESTING.
@@ -440,7 +442,7 @@ def calc_mtotvar(x: Array, m: int, tau: float) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
@@ -517,12 +519,12 @@ def calc_mtotvar(x: Array, m: int, tau: float) -> VarResult:
 
     # scaling in front of double sum
     assert n == N - 3 * m + 1  # sanity check on the number of terms n
-    var = var * 1.0 / (2.0 * pow(tau, 2) * (N - 3 * m + 1))
+    var = var * 1.0 / (2.0 * (m/rate)**2 * (N - 3 * m + 1))
 
     return VarResult(var=var, n=n)
 
 
-def calc_ttotvar(x: Array, m: int, tau: float) -> VarResult:
+def calc_ttotvar(x: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for TTOTVAR calculation.
 
     PRELIMINARY - REQUIRES FURTHER TESTING.
@@ -533,21 +535,21 @@ def calc_ttotvar(x: Array, m: int, tau: float) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
         number of samples used to estimate it.
     """
 
-    mtotvar, n = calc_mtotvar(x=x, m=m, tau=tau)
+    mtotvar, n = calc_mtotvar(x=x, m=m, rate=rate)
 
-    var = (tau**2 / 3) * mtotvar
+    var = ((m/rate)**2 / 3) * mtotvar
 
     return VarResult(var=var, n=n)
 
 
-def calc_htotvar(x: Array, m: int, tau: float) -> VarResult:
+def calc_htotvar(x: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for HTOTVAR calculation.
 
     PRELIMINARY - REQUIRES FURTHER TESTING.
@@ -559,7 +561,7 @@ def calc_htotvar(x: Array, m: int, tau: float) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding averaging time
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
@@ -574,13 +576,13 @@ def calc_htotvar(x: Array, m: int, tau: float) -> VarResult:
     #  memory really needed...
     if m == 1:
 
-        var, n = calc_hvar(x=x, m=m, tau=tau)
+        var, n = calc_hvar(x=x, m=m, rate=rate)
         return var, n
 
     else:
 
         # This is the frequency version of the algorithm, so use frequency data
-        y = utils.phase2frequency(x=x, rate=m/tau)
+        y = utils.phase2frequency(x=x, rate=rate)
 
         N = y.size  # frequency data, N points
 
@@ -662,7 +664,7 @@ def calc_htotvar(x: Array, m: int, tau: float) -> VarResult:
         return VarResult(var=var, n=n)
 
 
-def calc_theo1(x: Array, m: int, tau: float) -> VarResult:
+def calc_theo1(x: Array, m: int, rate: float) -> VarResult:
     """Main algorithm for THEO1 calculation.
 
     PRELIMINARY - REQUIRES FURTHER TESTING.
@@ -683,8 +685,7 @@ def calc_theo1(x: Array, m: int, tau: float) -> VarResult:
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
-        tau:    corresponding theo1 `effective` averaging time. This should be
-                0.75 of the normal m*tau_0
+        rate:   sampling rate of the input data, in Hz.
 
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
@@ -717,10 +718,9 @@ def calc_theo1(x: Array, m: int, tau: float) -> VarResult:
         inner_sum = np.nansum(vals, axis=1)
         outer_mean = np.nanmean(inner_sum)
 
-        # tau passed here is 0.75*m*tau_0 -> so need to multiply by 0.75
-        # nominator to get a single 0.75 multiplier on the denominator
-        var = (0.75 / tau**2) * outer_mean
+        var = outer_mean / (0.75*(m/rate)**2)
 
+        # Thus Theo1(m) will be giving a variance value @ tau = 0.75*m*tau_0
         return VarResult(var=var, n=n)
 
 

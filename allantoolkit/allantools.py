@@ -69,17 +69,17 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     # CALC DEV
 
     # Dispatch to appropriate variance calculator for this dev_type:
-    # should be function of this signature: func(x, m, tau) -> var, n
+    # should be function of this signature: func(x, m, rate) -> var, n
     func = getattr(stats, 'calc_' + dev_type.replace('dev', 'var'))
 
     # Initialise arrays
     ns, vars = np.zeros(afs.size, dtype=int), np.zeros(afs.size)
 
-    # Calculate metrics at each averaging time / factor
-    for i, (tau, m) in enumerate(zip(taus, afs)):
+    # Calculate metrics at each averaging time
+    for i, m in enumerate(afs):
 
         # Calculate variance, and number of analysis points it is based on
-        var, n = func(x=x, m=m, tau=tau)
+        var, n = func(x=x, m=m, rate=rate)
 
         ns[i], vars[i] = n, var
 
@@ -91,11 +91,17 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     devs, errs_lo, errs_hi = np.zeros(afs.size), np.zeros(afs.size),  \
                              np.zeros(afs.size)
 
-    for i, (tau, m, n, var) in enumerate(zip(taus, afs, ns, vars)):
+    for i, (m, n, var) in enumerate(zip(afs, ns, vars)):
+
+        # FIXME: remove
+        # calc theo1 using fast algorithm for testing
+        #if dev_type == 'theo1':
+        #    _, _, theo1s = stats.calc_theo1_fast(x=x, rate=m/(tau/0.75))
+        #    var = theo1s[m//2 - 1] # theo1 @ averaging factor m
 
         # Estimate Noise ID
         if i < afs.size - 1:  # Only estimate if not last averaging time
-            alpha = ci.noise_id(data=x, m=m, tau=tau, data_type='phase',
+            alpha = ci.noise_id(data=x, m=m, rate=rate, data_type='phase',
                                 dev_type=dev_type, n=n)
         else:
             # Use previous estimate at longest averaging time
@@ -103,20 +109,19 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
         # Apply Bias Corrections
 
-        if dev_type != 'theo1':
+        #if dev_type != 'theo1':
             # Dispatch to appropriate bias calculator for this dev_type:
             # should be function of this signature: func(x, m, alpha) -> b
-            bfunc = getattr(bias, 'calc_bias_' + dev_type.replace('dev',
-                                                                  'var'))
-            b = bfunc(data=data, m=m, alpha=alpha)
 
-            print(f"AF: {m} - dev before bias correction: {np.sqrt(var)}")
-            var /= b  # correct variance
-            print(f"\t\tafter bias correction: {np.sqrt(var)}")
+        bfunc = getattr(bias, 'calc_bias_' + dev_type.replace('dev', 'var'))
+        b = bfunc(data=data, m=m, alpha=alpha)
 
-        else:
-            # FIXME: make faster
-            var = stats.calc_theoBR(x=x, m=m, tau=tau).var
+        var /= b  # correct variance
+
+
+        #else:
+        #    # FIXME: make faster
+        #    var = stats.calc_theoBR(x=x, m=m, tau=tau).var
 
         # Calculate deviation
         dev = np.sqrt(var)

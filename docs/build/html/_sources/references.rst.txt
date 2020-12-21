@@ -81,7 +81,7 @@ Papers
 .. [RileyStable32] http://www.stable32.com/Handbook.pdf
 
 
-.. [RileyStable32Manual] http://stable32.com/Manual154.pdf
+.. [RileyStable32Manual] http://www.stable32.com/Manual154.pdf
 
 .. [Riley3CHat] http://www.wriley.com/3-CornHat.htm
 

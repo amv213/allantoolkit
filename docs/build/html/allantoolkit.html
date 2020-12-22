@@ -320,7 +320,7 @@
 <span id="allantoolkit-allantools"></span><h2>allantoolkit.allantools<a class="headerlink" href="#module-allantoolkit.allantools" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="allantoolkit.allantools.DevResult">
-<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">DevResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">afs</span></em>, <em class="sig-param"><span class="n">taus</span></em>, <em class="sig-param"><span class="n">ns</span></em>, <em class="sig-param"><span class="n">alphas</span></em>, <em class="sig-param"><span class="n">devs</span></em>, <em class="sig-param"><span class="n">errs_lo</span></em>, <em class="sig-param"><span class="n">errs_hi</span></em><span class="sig-paren">)</span><a class="headerlink" href="#allantoolkit.allantools.DevResult" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.allantools.</code><code class="sig-name descname">DevResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">afs</span></em>, <em class="sig-param"><span class="n">taus</span></em>, <em class="sig-param"><span class="n">ns</span></em>, <em class="sig-param"><span class="n">alphas</span></em>, <em class="sig-param"><span class="n">devs_lo</span></em>, <em class="sig-param"><span class="n">devs</span></em>, <em class="sig-param"><span class="n">devs_hi</span></em><span class="sig-paren">)</span><a class="headerlink" href="#allantoolkit.allantools.DevResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
 <dl class="py attribute">
 <dt id="allantoolkit.allantools.DevResult.afs">
@@ -337,19 +337,19 @@
 <dl class="py attribute">
 <dt id="allantoolkit.allantools.DevResult.devs">
 <code class="sig-name descname">devs</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.devs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 4</p>
+<dd><p>Alias for field number 5</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="allantoolkit.allantools.DevResult.errs_hi">
-<code class="sig-name descname">errs_hi</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.errs_hi" title="Permalink to this definition">¶</a></dt>
+<dt id="allantoolkit.allantools.DevResult.devs_hi">
+<code class="sig-name descname">devs_hi</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.devs_hi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 6</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="allantoolkit.allantools.DevResult.errs_lo">
-<code class="sig-name descname">errs_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.errs_lo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 5</p>
+<dt id="allantoolkit.allantools.DevResult.devs_lo">
+<code class="sig-name descname">devs_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.allantools.DevResult.devs_lo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -420,16 +420,29 @@ Defaults to length of dataset.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>.taus:      array of averaging times for which deviation was computed.
-.devs:      array with deviation computed at each averaging time.
-.errs_lo:   array with estimated lower bound error in each computed
-deviation.
-.errs_hi:   array with estimated higher bound error in each computed
-deviation.
-.ns:        array with number of values used to compute each deviation.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>.afs:       array of averaging factors for which deviations were</dt><dd><p>computed</p>
+</dd>
+</dl>
+<p>.taus:      array of corresponding averaging times, in seconds
+.ns:        array with number of analysis points used to compute each</p>
+<blockquote>
+<div><p>deviation.</p>
+</div></blockquote>
+<p>.alphas     array of estimated dominant noise type at each deviation
+.devs_lo:   array of estimated statistical lower bounds for each</p>
+<blockquote>
+<div><p>deviation</p>
+</div></blockquote>
+<p>.devs:      array with deviations computed at each averaging time.
+.devs_hi:   array of estimated statistical higher bounds for each</p>
+<blockquote>
+<div><p>deviation</p>
+</div></blockquote>
+</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(taus, devs, errs, ns) NamedTuple of results</p>
+<dd class="field-odd"><p>(afs, taus, ns, alphas, devs_lo, devs, devs_hi) NamedTuple of results</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1088,27 +1101,25 @@ on Finite Differences”, Proc. 2003 PTTI Meeting , December 2003 (Eq.9)</p>
 
 <dl class="py function">
 <dt id="allantoolkit.ci.confidence_interval">
-<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">confidence_interval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dev</span></em>, <em class="sig-param"><span class="n">edf</span></em>, <em class="sig-param"><span class="n">ci</span><span class="o">=</span><span class="default_value">0.6826894921370859</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#confidence_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.confidence_interval" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>returns confidence interval (dev_min, dev_max)</dt><dd><p>for a given deviation dev, equivalent degrees of freedom edf,
-and degree of confidence ci.</p>
-</dd>
-</dl>
+<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">confidence_interval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">var</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">edf</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">ci</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/ci.html#confidence_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.confidence_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns double-sided statistical limits on the true variance at
+requested confidence factor.</p>
+<p>Calculation based on Chi-square statistics of observed sample variance
+and corresponding equivalent degrees of freedom.</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="http://www.wriley.com/CI2.pdf">http://www.wriley.com/CI2.pdf</a>
+<a class="reference external" href="https://faculty.elgin.edu/dkernler/statistics/ch09/9-3.html">https://faculty.elgin.edu/dkernler/statistics/ch09/9-3.html</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dev</strong> (<em>float</em>) – Mean value (e.g. adev) around which we produce the confidence interval</p></li>
-<li><p><strong>edf</strong> (<em>float</em>) – Equivalent degrees of freedon</p></li>
-<li><p><strong>ci</strong> (<em>float</em><em>, </em><em>defaults to scipy.special.erf</em><em>(</em><em>1/math.sqrt</em><em>(</em><em>2</em><em>)</em><em>) </em><em>for 1-sigma</em>) – </p></li>
-<li><p><strong>error set ci = scipy.special.erf</strong><strong>(</strong><strong>1/math.sqrt</strong><strong>(</strong><strong>2</strong><strong>)</strong><strong>) </strong><strong>=</strong> (<em>standard</em>) – </p></li>
-<li><p><strong>0.68268949213708585</strong> – </p></li>
+<li><p><strong>var</strong> – sample variance from which to calculate confidence intervals</p></li>
+<li><p><strong>edf</strong> – equivalent degrees of freedom</p></li>
+<li><p><strong>ci</strong> – confidence factor for which to set confidence limits on the
+variance e.g. <cite>0.6827</cite> would set a 1-sigma confidence interval.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>(dev_min, dev_max)</strong> – Confidence interval</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(float, float)</p>
+<dd class="field-even"><p>lower and upper bounds for variance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1165,8 +1176,8 @@ FIXME: what is the right behavior for alpha outside 0,-1,-2?</p>
 
 <dl class="py function">
 <dt id="allantoolkit.ci.get_error_bars">
-<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">get_error_bars</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">dev</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#get_error_bars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.get_error_bars" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate non-naive Allan deviation errors. Equivalent to Stable32.</p>
+<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">get_error_bars</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">var</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ci</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.6808213729984988</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#get_error_bars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.get_error_bars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate non-naive variance errors. Equivalent to Stable32.</p>
 <p class="rubric">References</p>
 <p><a class="reference internal" href="references.html#rileystable32manual" id="id12"><span>[RileyStable32Manual]</span></a> (Confidence Intervals, pg.89)
 <a class="reference external" href="http://www.wriley.com/CI2.pdf">http://www.wriley.com/CI2.pdf</a>
@@ -1177,19 +1188,17 @@ FIXME: what is the right behavior for alpha outside 0,-1,-2?</p>
 <li><p><strong>x</strong> – phase data from which deviation was computed, in units of
 seconds.</p></li>
 <li><p><strong>m</strong> – averaging factor at which deviation was computed</p></li>
-<li><p><strong>dev</strong> – deviation value for which to compute error bars</p></li>
+<li><p><strong>var</strong> – variance value for which to compute error bars</p></li>
 <li><p><strong>n</strong> – number of analysis samples used to compute deviation</p></li>
 <li><p><strong>alpha</strong> – dominant power law frequency noise type</p></li>
 <li><p><strong>dev_type</strong> – type of deviation for which error bars are being
 calculated, e.g. <cite>adev</cite>.</p></li>
+<li><p><strong>ci</strong> – confidence factor for which to set confidence limits.
+Defaults to 1-sigma confidence intervals.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>non-naive lower 1-sigma error bar
-err_high:               non-naive higher 1-sigma error_bar</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>err_lo</p>
+<dd class="field-even"><p>lower and upper bounds for variance.</p>
 </dd>
 </dl>
 </dd></dl>

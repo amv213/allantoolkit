@@ -12,6 +12,7 @@ import scipy.stats  # used in confidence_intervals()
 import scipy.signal  # decimation in lag-1 acf
 from . import tables
 from . import utils
+from typing import Tuple
 
 
 # Spawn module-level logger
@@ -19,15 +20,15 @@ logger = logging.getLogger(__name__)
 
 # Confidence Intervals
 ONE_SIGMA_CI = scipy.special.erf(1/np.sqrt(2))
-#    = 0.68268949213708585
+ONE_SIGMA_CI = 0.6808213729984988
 
 # shorten type hint to save some space
 Array = np.ndarray
 
 
-def get_error_bars(x: Array, m: int, dev: float, n: int, alpha: int,
-                   dev_type: str):
-    """Calculate non-naive Allan deviation errors. Equivalent to Stable32.
+def get_error_bars(x: Array, m: int, var: float, n: int, alpha: int,
+                   dev_type: str, ci: float = ONE_SIGMA_CI):
+    """Calculate non-naive variance errors. Equivalent to Stable32.
 
     References:
         [RileyStable32Manual]_ (Confidence Intervals, pg.89)
@@ -38,15 +39,16 @@ def get_error_bars(x: Array, m: int, dev: float, n: int, alpha: int,
         x:          phase data from which deviation was computed, in units of
                     seconds.
         m:          averaging factor at which deviation was computed
-        dev:        deviation value for which to compute error bars
+        var:        variance value for which to compute error bars
         n:          number of analysis samples used to compute deviation
         alpha:      dominant power law frequency noise type
         dev_type:   type of deviation for which error bars are being
                     calculated, e.g. `adev`.
+        ci:         confidence factor for which to set confidence limits.
+                    Defaults to 1-sigma confidence intervals.
 
     Returns:
-        err_lo:                 non-naive lower 1-sigma error bar
-        err_high:               non-naive higher 1-sigma error_bar
+        lower and upper bounds for variance.
     """
 
     # Chi-squared statistics can be applied to calculate single and
@@ -64,20 +66,12 @@ def get_error_bars(x: Array, m: int, dev: float, n: int, alpha: int,
                          f"been implemented.")
 
     edf = edf_func(x=x, m=m, alpha=alpha)
-    edf = round(edf, 3)
-
-    print(f"{dev_type.upper()} | AF: {m} | EDF {edf}")
+    # edf = round(edf, 3)  # this matches stable 32
 
     # with the known EDF we get CIs
-    (lo, hi) = confidence_interval(dev=dev, edf=edf)
+    (lo, hi) = confidence_interval(var=var, edf=edf, ci=ci)
 
-    print(f"\tMIN ADEV {lo} | DEV {dev} | MAX ADEV {hi}")
-
-    # From CIs we get error bars
-    err_lo = dev - lo
-    err_hi = hi - dev
-
-    return err_lo, err_hi
+    return lo, hi
 
 
 # Dispatchers
@@ -238,6 +232,7 @@ def calc_edf_ohdev(x: Array, m: int, alpha: int) -> float:
                 modified=False)
 
 # Combined Greenhall EDF algorithm
+
 
 def cedf(alpha: int, d: int, m: int, N: int, overlapping: bool = False,
          modified: bool = False, version: str = 'full') -> float:
@@ -601,38 +596,39 @@ def cedf_basic_sum(J: float, M: float, S: float, F: float, alpha: int, d: int):
 
 # -----------------------------------
 
-def confidence_interval(dev, edf, ci=ONE_SIGMA_CI):
-    """ returns confidence interval (dev_min, dev_max)
-        for a given deviation dev, equivalent degrees of freedom edf,
-        and degree of confidence ci.
 
-    Parameters
-    ----------
-    dev: float
-        Mean value (e.g. adev) around which we produce the confidence interval
-    edf: float
-        Equivalent degrees of freedon
-    ci: float, defaults to scipy.special.erf(1/math.sqrt(2)) for 1-sigma
-    standard error set ci = scipy.special.erf(1/math.sqrt(2)) =
-    0.68268949213708585
+def confidence_interval(var: float, edf: float, ci: float) -> \
+        Tuple[float, float]:
+    """Returns double-sided statistical limits on the true variance at
+    requested confidence factor.
 
-    Returns
-    -------
-    (dev_min, dev_max): (float, float)
-        Confidence interval
+    Calculation based on Chi-square statistics of observed sample variance
+    and corresponding equivalent degrees of freedom.
+
+    References:
+        http://www.wriley.com/CI2.pdf
+        https://faculty.elgin.edu/dkernler/statistics/ch09/9-3.html
+
+
+    Args:
+        var:    sample variance from which to calculate confidence intervals
+        edf:    equivalent degrees of freedom
+        ci:     confidence factor for which to set confidence limits on the
+                variance e.g. `0.6827` would set a 1-sigma confidence interval.
+
+    Returns:
+        lower and upper bounds for variance.
     """
-    ci_l = min(np.abs(ci), np.abs((ci-1))) / 2
-    ci_h = 1 - ci_l
 
-    # function from scipy, works OK, but scipy is large and slow to build
-    chi2_l = scipy.stats.chi2.ppf(ci_l, edf)
-    chi2_h = scipy.stats.chi2.ppf(ci_h, edf)
 
-    variance = dev*dev
-    var_l = float(edf) * variance / chi2_h  # NIST SP1065 eqn (45)
-    var_h = float(edf) * variance / chi2_l
+    chi2_r, chi2_l = scipy.stats.chi2.interval(ci, edf)
+    print(f"DF: {edf} \t| X2 = {round(chi2_l, 3), round(chi2_r, 3)}")
 
-    return np.sqrt(var_l), np.sqrt(var_h)
+    var_lo = edf * var / chi2_l
+    var_hi = edf * var / chi2_r
+
+    return var_lo, var_hi
+
 
 def edf_totdev(N, m, alpha):
     """ Equivalent degrees of freedom for Total Deviation

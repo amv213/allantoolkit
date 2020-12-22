@@ -120,20 +120,19 @@ def test_dev(data, data_type, func, taus):
 
     output = func(data=data, rate=RATE, data_type=data_type, taus=taus)
 
-    afs2, taus2, ns2, alphas2, devs2, errs_lo2, errs_hi2 = output
-    devminus2, devplus2 = devs2 - errs_lo2, devs2 + errs_hi2
+    afs2, taus2, ns2, alphas2, devs_lo2, devs2, devs_hi2 = output
     devs2 = [float(np.format_float_scientific(dev, 4)) for dev in devs2]
-    devminus2 = [float(np.format_float_scientific(lo, 4)) for lo in devminus2]
-    devplus2 = [float(np.format_float_scientific(hi, 4)) for hi in devplus2]
+    devs_lo2 = [float(np.format_float_scientific(lo, 4)) for lo in devs_lo2]
+    devs_hi2 = [float(np.format_float_scientific(hi, 4)) for hi in devs_hi2]
 
     for i, row in enumerate(expected):
 
         af, tau, n, alpha, minus, dev, plus = row.T
         af, n, alpha = int(af), int(n), int(alpha)
 
-        af2, tau2, n2, alpha2, dev2, minus2, plus2 = \
-            afs2[i], taus2[i], ns2[i], alphas2[i], devs2[i], devminus2[i], \
-            devplus2[i]
+        af2, tau2, n2, alpha2, minus2, dev2, plus2 = \
+            afs2[i], taus2[i], ns2[i], alphas2[i], devs_lo2[i], devs2[i], \
+            devs_hi2[i]
 
         print("AF  TAU   #   ALPHA   DEV_LO  DEV   DEV_HI")
         print([af, tau, n, alpha, minus, dev, plus], '<-REF')

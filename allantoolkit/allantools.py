@@ -21,9 +21,9 @@ DevResult = NamedTuple('DevResult', [('afs', Array),
                                      ('taus', Array),
                                      ('ns', Array),
                                      ('alphas', Array),
+                                     ('devs_lo', Array),
                                      ('devs', Array),
-                                     ('errs_lo', Array),
-                                     ('errs_hi', Array),
+                                     ('devs_hi', Array),
                                      ])
 
 
@@ -49,15 +49,19 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
                     Defaults to length of dataset.
 
     Returns:
-        (taus, devs, errs, ns) NamedTuple of results:
+        (afs, taus, ns, alphas, devs_lo, devs, devs_hi) NamedTuple of results:
 
-        .taus:      array of averaging times for which deviation was computed.
-        .devs:      array with deviation computed at each averaging time.
-        .errs_lo:   array with estimated lower bound error in each computed
-        deviation.
-        .errs_hi:   array with estimated higher bound error in each computed
-        deviation.
-        .ns:        array with number of values used to compute each deviation.
+        .afs:       array of averaging factors for which deviations were
+                    computed
+        .taus:      array of corresponding averaging times, in seconds
+        .ns:        array with number of analysis points used to compute each
+                    deviation.
+        .alphas     array of estimated dominant noise type at each deviation
+        .devs_lo:   array of estimated statistical lower bounds for each
+                    deviation
+        .devs:      array with deviations computed at each averaging time.
+        .devs_hi:   array of estimated statistical higher bounds for each
+                    deviation
     """
 
     # Work with phase data, in units of seconds
@@ -110,12 +114,12 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
         nan_array = np.full(afs.size, np.NaN)
         return DevResult(afs=afs, taus=taus,  ns=ns, alphas=nan_array,
-                         devs=devs, errs_lo=nan_array, errs_hi=nan_array)
+                         devs_lo=nan_array,  devs=devs, devs_hi=nan_array)
 
     # -------------------------
-    # DE-BIAS VARS AND GET DEVS
+    # DE-BIAS VARS AND NOISE ID
     # -------------------------
-    # generates [alphas, devs]
+    # generates [alphas]
     # -------------------------
 
     if dev_type != 'theo1':
@@ -144,10 +148,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
             var *= b  # correct variance
 
-            # Calculate deviation
-            dev = np.sqrt(var)
-
-            alphas[i], devs[i] = alpha, dev
+            alphas[i], vars[i] = alpha, var
 
     else:  # batch de-biasing using theoBR
 
@@ -158,32 +159,33 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         kf = bias.calc_bias_theobr(x=x, rate=rate)
         vars = kf*vars
 
-        # Calculate deviations
-        devs = np.sqrt(vars)
-
         # ID noise type for the whole run
         alpha = noiseid.noise_id_theoBR_fixed(kf=kf)
         alphas = np.full(afs.size, alpha)
 
-    # ------------------------------
-    # CALCULATE CONFIDENCE INTERVALS
-    # ------------------------------
-    # generates [errs_lo, errs_hi]
-    # ------------------------------
+    # ---------------------------------------------
+    # CALCULATE CONFIDENCE INTERVALS AND OUTPUT DEV
+    # ---------------------------------------------
+    # generates [devs, devs_lo, devs_hi]
+    # ---------------------------------------------
 
     # Initialise arrays
-    errs_lo, errs_hi = np.zeros(afs.size), np.zeros(afs.size)
+    devs = np.zeros(afs.size)
+    devs_lo, devs_hi = np.zeros(afs.size), np.zeros(afs.size)
 
-    for i, (m, n, alpha, dev) in enumerate(zip(afs, ns, alphas, devs)):
+    for i, (m, n, alpha, var) in enumerate(zip(afs, ns, alphas, vars)):
 
-        # Calculate error
-        err_lo, err_hi = ci.get_error_bars(x=x, m=m, dev=dev, n=n, alpha=alpha,
+        # Calculate ci bounds
+        var_lo, var_hi = ci.get_error_bars(x=x, m=m, var=var, n=n, alpha=alpha,
                                            dev_type=dev_type)
 
-        errs_lo[i], errs_hi[i] = err_lo, err_hi
+        # Convert variances to deviations
+        dev, dev_lo, dev_hi = np.sqrt(var), np.sqrt(var_lo), np.sqrt(var_hi)
+
+        devs[i], devs_lo[i], devs_hi[i] = dev, dev_lo, dev_hi
 
     return DevResult(afs=afs, taus=taus,  ns=ns, alphas=alphas,
-                     devs=devs, errs_lo=errs_lo, errs_hi=errs_hi)
+                     devs_lo=devs_lo, devs=devs, devs_hi=devs_hi)
 
 
 def adev(data: Array, rate: float = 1., data_type: str = "phase",

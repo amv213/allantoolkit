@@ -1,6 +1,7 @@
 import logging
 import numpy as np
 from . import ci
+from . import noiseid
 from . import bias
 from . import stats
 from . import utils
@@ -127,8 +128,9 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
             # Estimate Noise ID
             if i < afs.size - 1:  # Only estimate if not last averaging time
-                alpha = ci.noise_id(data=x, m=m, rate=rate, data_type='phase',
-                                    dev_type=dev_type, n=n)
+                alpha = noiseid.noise_id(data=x, m=m, rate=rate,
+                                         data_type='phase',
+                                         dev_type=dev_type, n=n)
             else:
                 # Use previous estimate at longest averaging time
                 alpha = alphas[i-1]
@@ -161,7 +163,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         devs = np.sqrt(vars)
 
         # ID noise type for the whole run
-        alpha = ci.noise_id_theoBR_fixed(kf=kf)
+        alpha = noiseid.noise_id_theoBR_fixed(kf=kf)
         alphas = np.full(afs.size, alpha)
 
     # ------------------------------
@@ -479,16 +481,6 @@ def mtotdev(data: Array, rate: float = 1., data_type: str = "phase",
         Modified Total deviation.
         Better confidence at long averages for modified Allan
 
-        FIXME: bias-correction http://www.wriley.com/CI2.pdf page 6
-
-        The variance is scaled up (divided by this number) based on the
-        noise-type identified.
-        WPM 0.94
-        FPM 0.83
-        WFM 0.73
-        FFM 0.70
-        RWFM 0.69
-
     Parameters
     ----------
     data: np.array
@@ -535,12 +527,6 @@ def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
         2. extend sequence by uninverted even reflection
         3. compute Hadamard for extended, length 9m, sequence.
 
-        FIXME: bias corrections from http://www.wriley.com/CI2.pdf
-        W FM    0.995      alpha= 0
-        F FM    0.851      alpha=-1
-        RW FM   0.771      alpha=-2
-        FW FM   0.717      alpha=-3
-        RR FM   0.679      alpha=-4
 
     Parameters
     ----------

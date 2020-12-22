@@ -2,6 +2,7 @@ import logging
 
 import allantoolkit.tables
 import allantoolkit.stats
+import allantoolkit.noiseid
 import allantoolkit.allantools
 import allantoolkit.ci
 import allantoolkit.bias

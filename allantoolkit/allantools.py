@@ -112,7 +112,6 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         return DevResult(afs=afs, taus=taus,  ns=ns, alphas=nan_array,
                          devs=devs, errs_lo=nan_array, errs_hi=nan_array)
 
-
     # -------------------------
     # DE-BIAS VARS AND GET DEVS
     # -------------------------
@@ -175,10 +174,11 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     # Initialise arrays
     errs_lo, errs_hi = np.zeros(afs.size), np.zeros(afs.size)
 
-    for i, (n, dev) in enumerate(zip(ns, devs)):
+    for i, (m, n, alpha, dev) in enumerate(zip(afs, ns, alphas, devs)):
 
         # Calculate error
-        err_lo, err_hi = dev / np.sqrt(n), dev / np.sqrt(n)
+        err_lo, err_hi = ci.get_error_bars(x=x, m=m, dev=dev, n=n, alpha=alpha,
+                                           dev_type=dev_type)
 
         errs_lo[i], errs_hi[i] = err_lo, err_hi
 

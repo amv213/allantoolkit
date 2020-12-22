@@ -21,3 +21,10 @@ BIAS_MTOTVAR = tables.get('bias_mtotvar')
 BIAS_HTOTVAR = tables.get('bias_htotvar')
 BIAS_THEO1 = tables.get('bias_theo1')
 BIAS_THEO1_FIXED = tables.get('bias_theo1_fixed')
+
+
+# CONFIDENCE INTERVALS
+KN_NOISE_FACTOR = tables.get('kn_noise_factor')
+GREENHALL_TABLE1 = tables.get('greenhall_table1')
+GREENHALL_TABLE2 = tables.get('greenhall_table2')
+GREENHALL_TABLE3 = tables.get('greenhall_table3')

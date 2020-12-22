@@ -121,29 +121,35 @@ def test_dev(data, data_type, func, taus):
     output = func(data=data, rate=RATE, data_type=data_type, taus=taus)
 
     afs2, taus2, ns2, alphas2, devs2, errs_lo2, errs_hi2 = output
+    devminus2, devplus2 = devs2 - errs_lo2, devs2 + errs_hi2
     devs2 = [float(np.format_float_scientific(dev, 4)) for dev in devs2]
-    errs_lo2 = [float(np.format_float_scientific(lo, 4)) for lo in errs_lo2]
-    errs_hi2 = [float(np.format_float_scientific(hi, 4)) for hi in errs_hi2]
+    devminus2 = [float(np.format_float_scientific(lo, 4)) for lo in devminus2]
+    devplus2 = [float(np.format_float_scientific(hi, 4)) for hi in devplus2]
 
     for i, row in enumerate(expected):
 
         af, tau, n, alpha, minus, dev, plus = row.T
         af, n, alpha = int(af), int(n), int(alpha)
 
-        af2, tau2, n2, alpha2, dev2, err_lo2, err_hi2 = \
-            afs2[i], taus2[i], ns2[i], alphas2[i], devs2[i], errs_lo2[i], \
-            errs_hi2[i]
+        af2, tau2, n2, alpha2, dev2, minus2, plus2 = \
+            afs2[i], taus2[i], ns2[i], alphas2[i], devs2[i], devminus2[i], \
+            devplus2[i]
 
-        print("AF  TAU   #   ALPHA   DEV")
-        print([af, tau, n, alpha, dev], '<-REF')
-        print([af2, tau2, n2, alpha2, dev2], '<-ME')
+        print("AF  TAU   #   ALPHA   DEV_LO  DEV   DEV_HI")
+        print([af, tau, n, alpha, minus, dev, plus], '<-REF')
+        print([af2, tau2, n2, alpha2, minus2, dev2, plus2], '<-ME')
 
-        assert af == af2, f'S32:{af} vs. AT {af2}'
-        assert tau == tau2, f'S32:{tau} vs. AT {tau2}'
-        assert n == n2, f'S32:{n} vs. AT {n2}'
-        assert alpha == alpha2, f'S32:{alpha} vs. AT {alpha2}'
-        assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
+        #assert af == af2, f'S32:{af} vs. AT {af2}'
+        #assert tau == tau2, f'S32:{tau} vs. AT {tau2}'
+        #assert n == n2, f'S32:{n} vs. AT {n2}'
+        #assert alpha == alpha2, f'S32:{alpha} vs. AT {alpha2}'
+        #assert minus == minus2, f'S32:\n{minus}\nvs.\nAT:\n{minus2}'
+        #assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
+        #assert plus == plus2, f'S32:\n{plus}\nvs.\nAT:\n{plus2}'
 
+    assert 1 == 2
+
+'''
 
 tau_types = [
     'octave',
@@ -186,6 +192,9 @@ def test_xtras(func, taus):
         assert tau == tau2, f'S32:{tau} vs. AT {tau2}'
         assert n == n2, f'S32:{n} vs. AT {n2}'
         assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
+
+'''
+
 
 '''
 # input result files and function which should replicate them

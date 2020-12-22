@@ -1,3 +1,4 @@
+import math
 import logging
 import warnings
 import numpy as np
@@ -17,6 +18,20 @@ Taus = Union[str, float, List, Array]
 
 # define named tuple to hold averaging times and factors
 TausResult = NamedTuple('TausResult', [('taus', Array), ('afs', Array)])
+
+
+def binom(n: int, k: int) -> int:
+    """Calculate binomial coefficient (n k)
+
+    Args:
+        n:  binomial power exponent
+        k:  binomial term index
+
+    Returns:
+        binomial coefficient
+    """
+
+    return math.factorial(n) // math.factorial(k) // math.factorial(n - k)
 
 
 def decimate(data: Array, m: int, data_type: str) -> Array:

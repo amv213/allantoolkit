@@ -280,7 +280,12 @@ def calc_edf_totdev(x: Array, m: int, alpha: int) -> float:
         equivalent number of Chi-squared degrees of freedom (edf)
     """
 
-    b, c = tables.TOTVAR_EDF_COEFFICIENTS[alpha]
+    try:
+        b, c = tables.TOTVAR_EDF_COEFFICIENTS[alpha]
+
+    except KeyError:
+        raise ValueError(f"Noise type alpha = {alpha} not supported for "
+                         f"(T)TOTDEV edf calculation.")
 
     edf = b*(x.size/m) - c
 
@@ -324,7 +329,13 @@ def calc_edf_mtotdev(x: Array, m: int, alpha: int) -> float:
         equivalent number of Chi-squared degrees of freedom (edf)
     """
 
-    b, c = tables.MTOTVAR_EDF_COEFFICIENTS[alpha]
+    try:
+
+        b, c = tables.MTOTVAR_EDF_COEFFICIENTS[alpha]
+
+    except KeyError:
+        raise ValueError(f"Noise type alpha = {alpha} not supported for "
+                         f"MTOT edf calculation.")
 
     edf = b*(x.size/m) - c
 
@@ -352,7 +363,17 @@ def calc_edf_htotdev(x: Array, m: int, alpha: int) -> float:
         equivalent number of Chi-squared degrees of freedom (edf)
     """
 
-    b0, b1 = tables.HTOTVAR_EDF_COEFFICIENTS[alpha]
+    if m < 16:  # see Stable32 Help Manual and paper
+
+        # Use plain Hadamard estimator
+        return calc_edf_hdev(x=x, m=m, alpha=alpha)
+
+    try:
+        b0, b1 = tables.HTOTVAR_EDF_COEFFICIENTS[alpha]
+
+    except KeyError:
+        raise ValueError(f"Noise type alpha = {alpha} not supported for "
+                         f"HTOTDEV edf calculation.")
 
     edf = (x.size/m) / (b0 + b1*m/x.size)
 
@@ -364,6 +385,12 @@ def calc_edf_theo1(x: Array, m: int, alpha: int) -> float:
     for THEO1.
 
     References:
+
+        D.A. Howe and T.K. Peppler, “Estimation of Very Long-Term Frequency
+        Stability Using a Special-Purpose Statistic”, ", Proc. 2003 Joint
+        Meeting of the European Freq. and Time Forum and the IEEE
+        International Freq. Contrl. Symp., May 2003
+
 
         http://www.wriley.com/CI2.pdf (THEO1 EDF)
 
@@ -408,8 +435,8 @@ def calc_edf_theo1(x: Array, m: int, alpha: int) -> float:
 
     return edf
 
-# Combined Greenhall EDF algorithm
 
+# Combined Greenhall EDF algorithm
 
 def cedf(alpha: int, d: int, m: int, N: int, overlapping: bool = False,
          modified: bool = False, version: str = 'full') -> float:
@@ -773,38 +800,9 @@ def cedf_basic_sum(J: float, M: float, S: float, F: float, alpha: int, d: int):
 
 # -----------------------------------
 
-def edf_totdev(N, m, alpha):
-    """ Equivalent degrees of freedom for Total Deviation
-        FIXME: what is the right behavior for alpha outside 0,-1,-2?
 
-        NIST SP1065 page 41, Table 7
-    """
-    alpha = int(alpha)
-    if alpha in [0, -1, -2]:
-        # alpha  0 WFM
-        # alpha -1 FFM
-        # alpha -2 RWFM
-        NIST_SP1065_table7 = [(1.50, 0.0), (1.17, 0.22), (0.93, 0.36)]
-        (b, c) = NIST_SP1065_table7[int(abs(alpha))]
-        return b*(float(N)/float(m))-c
-    # alpha outside 0, -1, -2:
-    return edf_simple(N, m, alpha)
-
-
-def edf_mtotdev(N, m, alpha):
-    """ Equivalent degrees of freedom for Modified Total Deviation
-
-        NIST SP1065 page 41, Table 8
-    """
-    assert(alpha in [2, 1, 0, -1, -2])
-    NIST_SP1065_table8 = [(1.90, 2.1), (1.20, 1.40), (1.10, 1.2), (0.85, 0.50), (0.75, 0.31)]
-    # (b, c) = NIST_SP1065_table8[ abs(alpha-2) ]
-    (b, c) = NIST_SP1065_table8[abs(alpha-2)]
-    edf = b*(float(N)/float(m))-c
-    print("mtotdev b,c= ", (b, c), " edf=", edf)
-    return edf
-
-
+# TODO: check and see if should use this when other edf functions don't
+#  support the given noise type
 def edf_simple(N, m, alpha):
     """Equivalent degrees of freedom.
     Simple approximate formulae.
@@ -873,6 +871,3 @@ def edf_simple(N, m, alpha):
         print("Noise type not recognized. Defaulting to N - 1 degrees of freedom.")
 
     return edf
-
-########################################################################
-# end of ci.py

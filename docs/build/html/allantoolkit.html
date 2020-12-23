@@ -1026,6 +1026,10 @@ seconds.</p></li>
 <dd><p>Calculate equivalent number of Chi-squared degrees of freedom (edf)
 for THEO1.</p>
 <p class="rubric">References</p>
+<p>D.A. Howe and T.K. Peppler, “Estimation of Very Long-Term Frequency
+Stability Using a Special-Purpose Statistic”, “, Proc. 2003 Joint
+Meeting of the European Freq. and Time Forum and the IEEE
+International Freq. Contrl. Symp., May 2003</p>
 <p><a class="reference external" href="http://www.wriley.com/CI2.pdf">http://www.wriley.com/CI2.pdf</a> (THEO1 EDF)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1238,13 +1242,6 @@ variance e.g. <cite>0.6827</cite> would set a 1-sigma confidence interval.</p></
 </dd></dl>
 
 <dl class="py function">
-<dt id="allantoolkit.ci.edf_mtotdev">
-<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">edf_mtotdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">m</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#edf_mtotdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.edf_mtotdev" title="Permalink to this definition">¶</a></dt>
-<dd><p>Equivalent degrees of freedom for Modified Total Deviation</p>
-<p>NIST SP1065 page 41, Table 8</p>
-</dd></dl>
-
-<dl class="py function">
 <dt id="allantoolkit.ci.edf_simple">
 <code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">edf_simple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">m</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#edf_simple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.edf_simple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Equivalent degrees of freedom.
@@ -1277,14 +1274,6 @@ Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.
 <dd class="field-even"><p>float</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="allantoolkit.ci.edf_totdev">
-<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">edf_totdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">m</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#edf_totdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.edf_totdev" title="Permalink to this definition">¶</a></dt>
-<dd><p>Equivalent degrees of freedom for Total Deviation
-FIXME: what is the right behavior for alpha outside 0,-1,-2?</p>
-<p>NIST SP1065 page 41, Table 7</p>
 </dd></dl>
 
 <dl class="py function">

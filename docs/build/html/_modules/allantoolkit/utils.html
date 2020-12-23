@@ -517,6 +517,16 @@
 <span class="sd">    If requesting averaging times for a `theo1` statistic, the resulting</span>
 <span class="sd">    averaging times will be `effective` times tau = 0.75*tau</span>
 
+<span class="sd">    Notes:</span>
+
+<span class="sd">        With the Many Tau option, a selectable subset of the possible tau</span>
+<span class="sd">        values is used to provide a quasi-uniform distribution of points on</span>
+<span class="sd">        the stability plot adequate to give the appearance of a complete</span>
+<span class="sd">        set, which can provide much faster calculating, plotting and printing</span>
+
+<span class="sd">        The Stable32 implementation of `many`-taus was inspired by</span>
+<span class="sd">        http://www.leapsecond.com/tools/adev3.c.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        data:                   data array of phase or fractional frequency</span>
 <span class="sd">                                measurements.</span>
@@ -524,7 +534,7 @@
 <span class="sd">        dev_type:               type of deviation is going to be computed.</span>
 <span class="sd">        taus (optional):        array of averaging times for which to compute</span>
 <span class="sd">                                measurement. Can also be one of the keywords:</span>
-<span class="sd">                                `all`, `octave`, `decade`. Defaults to</span>
+<span class="sd">                                `all`, `many`, `octave`, `decade`. Defaults to</span>
 <span class="sd">                                `octave`.</span>
 <span class="sd">        maximum_m (optional):   maximum averaging factor for which to compute</span>
 <span class="sd">                                measurement. Defaults to length of dataset,</span>
@@ -569,6 +579,28 @@
             <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="n">pwrs</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span>
                 <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
+        <span class="k">elif</span> <span class="n">taus</span> <span class="o">==</span> <span class="s2">&quot;many&quot;</span><span class="p">:</span>
+            <span class="c1"># 1, 2, 3, 4, ... 71, 73, 75, 77, ..., 141, 143, 146, 149, 152, ...</span>
+
+            <span class="c1"># FIXME: add effect of the many-tau `size` (=500) parameter</span>
+
+            <span class="n">density</span> <span class="o">=</span> <span class="mi">72</span>  <span class="c1"># afs per epoch</span>
+
+            <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">density</span><span class="p">,</span> <span class="n">density</span><span class="p">)</span>
+            <span class="n">maxn</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">afs</span><span class="p">)</span>
+
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">maxn</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">:</span>
+
+                <span class="n">new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">density</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">density</span><span class="p">,</span>
+                                  <span class="n">density</span><span class="p">)[</span><span class="n">i</span><span class="p">::</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+                <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">afs</span><span class="p">,</span> <span class="n">new</span><span class="p">])</span>
+
+                <span class="n">maxn</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">afs</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
         <span class="k">elif</span> <span class="n">taus</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
 
             <span class="c1"># Too memory intensive for mtie. Set Stable32 `fastu` mode instead</span>
@@ -582,7 +614,7 @@
             <span class="c1"># Everyone else can use the real `all`</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># 1, 2, 3, 4, 5, 6, 7, ...</span>
-                <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+                <span class="n">afs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid averaging mode selected: </span><span class="si">{</span><span class="n">taus</span><span class="si">}</span><span class="s2">. &quot;</span>

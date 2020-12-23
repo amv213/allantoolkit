@@ -2810,6 +2810,13 @@ stability runs, which automatically calculates the maximum averaging
 factor to use for the given deviation <a class="reference internal" href="references.html#rileyevolution" id="id45"><span>[RileyEvolution]</span></a> (pg.9 Table III).</p>
 <p>If requesting averaging times for a <cite>theo1</cite> statistic, the resulting
 averaging times will be <cite>effective</cite> times tau = 0.75*tau</p>
+<p class="rubric">Notes</p>
+<p>With the Many Tau option, a selectable subset of the possible tau
+values is used to provide a quasi-uniform distribution of points on
+the stability plot adequate to give the appearance of a complete
+set, which can provide much faster calculating, plotting and printing</p>
+<p>The Stable32 implementation of <cite>many</cite>-taus was inspired by
+<a class="reference external" href="http://www.leapsecond.com/tools/adev3.c">http://www.leapsecond.com/tools/adev3.c</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2819,7 +2826,7 @@ measurements.</p></li>
 <li><p><strong>dev_type</strong> – type of deviation is going to be computed.</p></li>
 <li><p><strong>taus</strong> (<em>optional</em>) – array of averaging times for which to compute
 measurement. Can also be one of the keywords:
-<cite>all</cite>, <cite>octave</cite>, <cite>decade</cite>. Defaults to
+<cite>all</cite>, <cite>many</cite>, <cite>octave</cite>, <cite>decade</cite>. Defaults to
 <cite>octave</cite>.</p></li>
 <li><p><strong>maximum_m</strong> (<em>optional</em>) – maximum averaging factor for which to compute
 measurement. Defaults to length of dataset,

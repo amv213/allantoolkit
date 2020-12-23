@@ -320,6 +320,16 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     If requesting averaging times for a `theo1` statistic, the resulting
     averaging times will be `effective` times tau = 0.75*tau
 
+    Notes:
+
+        With the Many Tau option, a selectable subset of the possible tau
+        values is used to provide a quasi-uniform distribution of points on
+        the stability plot adequate to give the appearance of a complete
+        set, which can provide much faster calculating, plotting and printing
+
+        The Stable32 implementation of `many`-taus was inspired by
+        http://www.leapsecond.com/tools/adev3.c.
+
     Args:
         data:                   data array of phase or fractional frequency
                                 measurements.
@@ -327,7 +337,7 @@ def tau_generator(data: Array, rate: float, dev_type: str,
         dev_type:               type of deviation is going to be computed.
         taus (optional):        array of averaging times for which to compute
                                 measurement. Can also be one of the keywords:
-                                `all`, `octave`, `decade`. Defaults to
+                                `all`, `many`, `octave`, `decade`. Defaults to
                                 `octave`.
         maximum_m (optional):   maximum averaging factor for which to compute
                                 measurement. Defaults to length of dataset,
@@ -372,6 +382,28 @@ def tau_generator(data: Array, rate: float, dev_type: str,
             afs = np.outer(np.array([1, 2, 4]), pwrs).flatten(
                 order='F').astype(int)
 
+        elif taus == "many":
+            # 1, 2, 3, 4, ... 71, 73, 75, 77, ..., 141, 143, 146, 149, 152, ...
+
+            # FIXME: add effect of the many-tau `size` (=500) parameter
+
+            density = 72  # afs per epoch
+
+            afs = np.linspace(1, density, density)
+            maxn = max(afs)
+
+            i = 0
+            while maxn < N:
+
+                new = np.linspace((i + 1) * density + 1, (i + 2) * density,
+                                  density)[i::i + 2]
+                afs = np.concatenate([afs, new])
+
+                maxn = max(afs)
+                i += 1
+
+            afs = afs.astype(int)
+
         elif taus == "all":
 
             # Too memory intensive for mtie. Set Stable32 `fastu` mode instead
@@ -385,7 +417,7 @@ def tau_generator(data: Array, rate: float, dev_type: str,
             # Everyone else can use the real `all`
             else:
                 # 1, 2, 3, 4, 5, 6, 7, ...
-                afs = np.linspace(start=1, stop=N, num=N + 1, dtype=int)
+                afs = np.linspace(start=1, stop=N, num=N, dtype=int)
 
         else:
             raise ValueError(f"Invalid averaging mode selected: {taus}. "

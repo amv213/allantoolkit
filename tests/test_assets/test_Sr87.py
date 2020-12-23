@@ -11,10 +11,14 @@ test will not check if gaps are handled in the same way, as the dataset has
 no gaps.
 """
 
+import logging
 import allantoolkit
 import pathlib
 import pytest
 import numpy as np
+
+logging.basicConfig()
+logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 
 # top level directory with original (frequency) data for these tests
 ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/Sr87'
@@ -92,16 +96,16 @@ tau_types = [
 ]
 
 fcts = [
-    #allantoolkit.allantools.adev,
-    #allantoolkit.allantools.oadev,
-    #allantoolkit.allantools.mdev,
-    #allantoolkit.allantools.tdev,
-    #allantoolkit.allantools.hdev,
-    #allantoolkit.allantools.ohdev,
-    #allantoolkit.allantools.totdev,
+    allantoolkit.allantools.adev,
+    allantoolkit.allantools.oadev,
+    allantoolkit.allantools.mdev,
+    allantoolkit.allantools.tdev,
+    allantoolkit.allantools.hdev,
+    allantoolkit.allantools.ohdev,
+    allantoolkit.allantools.totdev,
     #pytest.param(allantoolkit.allantools.mtotdev,  marks=pytest.mark.slow),
     #pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
-    pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
+    #pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
     #allantoolkit.allantools.theo1
 ]
 
@@ -116,37 +120,10 @@ def test_dev(data, data_type, func, taus):
     else:
         fn = ASSETS_DIR / (data_type + '0') / taus / (func.__name__ + '.txt')
 
-    expected = allantoolkit.testutils.read_stable32(fn)
+    allantoolkit.testutils.test_Stable32_run(data=data, func=func, rate=RATE,
+                                             data_type=data_type, taus=taus,
+                                             fn=fn, test_ci=False)
 
-    output = func(data=data, rate=RATE, data_type=data_type, taus=taus)
-
-    afs2, taus2, ns2, alphas2, devs_lo2, devs2, devs_hi2 = output
-    devs2 = [float(np.format_float_scientific(dev, 4)) for dev in devs2]
-    devs_lo2 = [float(np.format_float_scientific(lo, 4)) for lo in devs_lo2]
-    devs_hi2 = [float(np.format_float_scientific(hi, 4)) for hi in devs_hi2]
-
-    for i, row in enumerate(expected):
-
-        af, tau, n, alpha, minus, dev, plus = row.T
-        af, n, alpha = int(af), int(n), int(alpha)
-
-        af2, tau2, n2, alpha2, minus2, dev2, plus2 = \
-            afs2[i], taus2[i], ns2[i], alphas2[i], devs_lo2[i], devs2[i], \
-            devs_hi2[i]
-
-        print("AF  TAU   #   ALPHA   DEV_LO  DEV   DEV_HI")
-        print([af, tau, n, alpha, minus, dev, plus], '<-REF')
-        print([af2, tau2, n2, alpha2, minus2, dev2, plus2], '<-ME')
-
-        #assert af == af2, f'S32:{af} vs. AT {af2}'
-        #assert tau == tau2, f'S32:{tau} vs. AT {tau2}'
-        #assert n == n2, f'S32:{n} vs. AT {n2}'
-        #assert alpha == alpha2, f'S32:{alpha} vs. AT {alpha2}'
-        #assert minus == minus2, f'S32:\n{minus}\nvs.\nAT:\n{minus2}'
-        #assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
-        #assert plus == plus2, f'S32:\n{plus}\nvs.\nAT:\n{plus2}'
-
-    assert 1 == 2
 
 '''
 

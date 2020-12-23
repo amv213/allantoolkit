@@ -281,7 +281,7 @@
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="n">skip_header</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Read %n entries from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">fn</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Read </span><span class="si">%i</span><span class="s2"> entries from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">data</span></div>
 
@@ -303,7 +303,7 @@
 
     <span class="nb">input</span> <span class="o">=</span> <span class="n">read_datafile</span><span class="p">(</span><span class="n">datafile</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Read %n entries from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">),</span> <span class="n">datafile</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Read </span><span class="si">%i</span><span class="s2"> entries from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">),</span> <span class="n">datafile</span><span class="p">)</span>
 
     <span class="n">expected_output</span> <span class="o">=</span> <span class="n">read_stable32</span><span class="p">(</span><span class="n">resultfile</span><span class="p">)</span>
 
@@ -380,9 +380,91 @@
     <span class="n">start0</span> <span class="o">=</span> <span class="n">start0</span> <span class="k">if</span> <span class="n">start0</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">start</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> test done in </span><span class="si">%.2f</span><span class="s2"> s, elapsed= </span><span class="si">%.2f</span><span class="s2"> min&quot;</span><span class="p">,</span>
-                <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">,</span> <span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start0</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="p">))</span>
+                <span class="n">label</span><span class="p">,</span> <span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">,</span> <span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start0</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="test_Stable32_run"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.test_Stable32_run">[docs]</a><span class="k">def</span> <span class="nf">test_Stable32_run</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">],</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+                      <span class="n">test_alpha</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">test_ci</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tests that allantoolkit dev results match exactly refrence `Run`</span>
+<span class="sd">    results from Stable 32.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:       input array of phase or fractional frequency data on which</span>
+<span class="sd">                    to calculate statistics</span>
+<span class="sd">        func:       allantoolkit function implementing the statistic to compute</span>
+<span class="sd">        rate:       sampling rate of the input data, in Hz.</span>
+<span class="sd">        data_type:  input data type. Either `phase` or `freq`.</span>
+<span class="sd">        taus:       array of averaging times for which to compute deviation.</span>
+<span class="sd">                    Can also be one of the keywords: `all`, `octave`, `decade`.</span>
+<span class="sd">        fn:         path to the Stable32 file holding reference expected</span>
+<span class="sd">                    results</span>
+<span class="sd">        test_alpha: if `True` also checks validity of estimated noise type</span>
+<span class="sd">        test_ci:    if `True` also checks validity of  calculated confidence</span>
+<span class="sd">                    intervals</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Check if we are reading a file for a TIE-lik deviation from Stable32 (</span>
+    <span class="c1"># they have a different number of columns from standard)</span>
+    <span class="n">file_type</span> <span class="o">=</span> <span class="s1">&#39;tie&#39;</span> <span class="k">if</span> <span class="s1">&#39;tie&#39;</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="c1"># Read in Stable32 Run results</span>
+    <span class="n">expected_results</span> <span class="o">=</span> <span class="n">read_stable32</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="n">file_type</span><span class="p">)</span>
+
+    <span class="c1"># Calculate equivalent results with allantoolkit</span>
+    <span class="n">actual_results</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
+
+    <span class="c1"># Unpack and format integers</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">!=</span> <span class="s1">&#39;tie&#39;</span><span class="p">:</span>
+        <span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">alphas</span><span class="p">,</span> <span class="n">devs_lo</span><span class="p">,</span> <span class="n">devs</span><span class="p">,</span> <span class="n">devs_hi</span> <span class="o">=</span> <span class="n">expected_results</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">alphas</span> <span class="o">=</span> <span class="n">alphas</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">devs</span> <span class="o">=</span> <span class="n">expected_results</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+        <span class="n">devs_lo</span><span class="p">,</span> <span class="n">devs_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">),</span>  <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+    <span class="n">afs</span><span class="p">,</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">afs</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">ns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="c1"># Unpack and format to same number of significant digits as Stable32</span>
+    <span class="n">afs2</span><span class="p">,</span> <span class="n">taus2</span><span class="p">,</span> <span class="n">ns2</span><span class="p">,</span> <span class="n">alphas2</span><span class="p">,</span> <span class="n">devs_lo2</span><span class="p">,</span> <span class="n">devs2</span><span class="p">,</span> <span class="n">devs_hi2</span> <span class="o">=</span> <span class="n">actual_results</span>
+    <span class="n">devs_lo2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">format_float_scientific</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="k">for</span> <span class="n">lo</span> <span class="ow">in</span> <span class="n">devs_lo2</span><span class="p">]</span>
+    <span class="n">devs2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">format_float_scientific</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="k">for</span> <span class="n">dev</span> <span class="ow">in</span> <span class="n">devs2</span><span class="p">]</span>
+    <span class="n">devs_hi2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">format_float_scientific</span><span class="p">(</span><span class="n">hi</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="k">for</span> <span class="n">hi</span> <span class="ow">in</span> <span class="n">devs_hi2</span><span class="p">]</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; AF TAU   #   ALPHA   DEV_LO       DEV      DEV_HI&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Test results match row-by-row</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">expected_results</span><span class="p">):</span>
+
+        <span class="c1"># Extract individual fields from Stable32 results</span>
+        <span class="n">af</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">minus</span><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">plus</span> <span class="o">=</span> \
+            <span class="n">afs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">taus</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ns</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alphas</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">devs_lo</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">devs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">devs_hi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># Extract individual fields from Allantoolkit results</span>
+        <span class="n">af2</span><span class="p">,</span> <span class="n">tau2</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">alpha2</span><span class="p">,</span> <span class="n">minus2</span><span class="p">,</span> <span class="n">dev2</span><span class="p">,</span> <span class="n">plus2</span> <span class="o">=</span> \
+            <span class="n">afs2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">taus2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ns2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alphas2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">devs_lo2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">devs2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> \
+            <span class="n">devs_hi2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> &lt;-REF&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">af</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">minus</span><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">plus</span><span class="p">])</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> &lt;-ACTUAL&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">af2</span><span class="p">,</span> <span class="n">tau2</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">alpha2</span><span class="p">,</span> <span class="n">minus2</span><span class="p">,</span> <span class="n">dev2</span><span class="p">,</span>
+                                    <span class="n">plus2</span><span class="p">])</span>
+
+        <span class="k">assert</span> <span class="n">af</span> <span class="o">==</span> <span class="n">af2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;S32:</span><span class="si">{</span><span class="n">af</span><span class="si">}</span><span class="s1"> vs. AT </span><span class="si">{</span><span class="n">af2</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">assert</span> <span class="n">tau</span> <span class="o">==</span> <span class="n">tau2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;S32:</span><span class="si">{</span><span class="n">tau</span><span class="si">}</span><span class="s1"> vs. AT </span><span class="si">{</span><span class="n">tau2</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">assert</span> <span class="n">n</span> <span class="o">==</span> <span class="n">n2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;S32:</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1"> vs. AT </span><span class="si">{</span><span class="n">n2</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">assert</span> <span class="n">dev</span> <span class="o">==</span> <span class="n">dev2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;S32:</span><span class="se">\n</span><span class="si">{</span><span class="n">dev</span><span class="si">}</span><span class="se">\n</span><span class="s1">vs.</span><span class="se">\n</span><span class="s1">AT:</span><span class="se">\n</span><span class="si">{</span><span class="n">dev2</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="c1"># Test also estimated noise type</span>
+        <span class="k">if</span> <span class="n">test_alpha</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">alpha</span> <span class="o">==</span> <span class="n">alpha2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;S32:</span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s1"> vs. AT </span><span class="si">{</span><span class="n">alpha2</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="c1"># Test also confidence intervals</span>
+        <span class="k">if</span> <span class="n">test_ci</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">minus</span><span class="p">,</span> <span class="n">minus2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> \
+                <span class="sa">f</span><span class="s1">&#39;S32:</span><span class="se">\n</span><span class="si">{</span><span class="n">minus</span><span class="si">}</span><span class="se">\n</span><span class="s1">vs.</span><span class="se">\n</span><span class="s1">AT:</span><span class="se">\n</span><span class="si">{</span><span class="n">minus2</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">plus</span><span class="p">,</span> <span class="n">plus2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> \
+                <span class="sa">f</span><span class="s1">&#39;S32:</span><span class="se">\n</span><span class="si">{</span><span class="n">plus</span><span class="si">}</span><span class="se">\n</span><span class="s1">vs.</span><span class="se">\n</span><span class="s1">AT:</span><span class="se">\n</span><span class="si">{</span><span class="n">plus2</span><span class="si">}</span><span class="s1">&#39;</span></div>
 </pre></div>
 
               </div>

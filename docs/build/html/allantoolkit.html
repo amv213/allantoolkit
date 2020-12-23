@@ -2515,6 +2515,31 @@ Lines to omit should be commented out with <cite>#</cite>.</p>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt id="allantoolkit.testutils.test_Stable32_run">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">test_Stable32_run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>numpy.ndarray<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">fn</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">test_alpha</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">test_ci</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#test_Stable32_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.test_Stable32_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests that allantoolkit dev results match exactly refrence <cite>Run</cite>
+results from Stable 32.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input array of phase or fractional frequency data on which
+to calculate statistics</p></li>
+<li><p><strong>func</strong> – allantoolkit function implementing the statistic to compute</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
+<li><p><strong>data_type</strong> – input data type. Either <cite>phase</cite> or <cite>freq</cite>.</p></li>
+<li><p><strong>taus</strong> – array of averaging times for which to compute deviation.
+Can also be one of the keywords: <cite>all</cite>, <cite>octave</cite>, <cite>decade</cite>.</p></li>
+<li><p><strong>fn</strong> – path to the Stable32 file holding reference expected
+results</p></li>
+<li><p><strong>test_alpha</strong> – if <cite>True</cite> also checks validity of estimated noise type</p></li>
+<li><p><strong>test_ci</strong> – if <cite>True</cite> also checks validity of  calculated confidence
+intervals</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="allantoolkit.testutils.test_row_by_row">
 <code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">test_row_by_row</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">datafile</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">datarate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">resultfile</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">frequency</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#test_row_by_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.test_row_by_row" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>

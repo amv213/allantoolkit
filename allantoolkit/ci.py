@@ -96,8 +96,10 @@ def confidence_interval(var: float, edf: float, ci: float) -> \
         lower and upper bounds for variance.
     """
 
+    # FIXME: this doesn't give quite the same results as Stable32 (you can
+    #  check the X2 values in the `Sigma` tool). Maybe Stable32 uses a
+    #  different X2 implementation?
     chi2_r, chi2_l = scipy.stats.chi2.interval(ci, edf)
-    print(f"DF: {edf} \t| X2 = {round(chi2_l, 3), round(chi2_r, 3)}")
 
     var_lo = edf * var / chi2_l
     var_hi = edf * var / chi2_r
@@ -284,8 +286,13 @@ def calc_edf_totdev(x: Array, m: int, alpha: int) -> float:
         b, c = tables.TOTVAR_EDF_COEFFICIENTS[alpha]
 
     except KeyError:
-        raise ValueError(f"Noise type alpha = {alpha} not supported for "
-                         f"(T)TOTDEV edf calculation.")
+        logger.warning(f"Noise type alpha = {alpha} not supported for "
+                       f"(T)TOTDEV edf calculation. Falling back to CEDF.")
+
+        # TODO: check this fallback is correct. Old program was falling back
+        #  to old NIST SP 1065, Table 5 instead
+        return cedf(alpha=alpha, d=2, m=m, N=int(x.size), overlapping=True,
+                    modified=True)
 
     edf = b*(x.size/m) - c
 

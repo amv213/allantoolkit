@@ -364,7 +364,7 @@ def noise_id(data: Array, data_type: str, m: int, rate: float,
 
     if nn >= 30 and dev_type in use_acf:
 
-        print(f"AF: {m} | TAU: {m/rate} - Using ACF noise id")
+        # print(f"AF: {m} | TAU: {m/rate} - Using ACF noise id")
 
         return acf_noise_id(data=data, data_type=data_type, m=m,
                             dev_type=dev_type)
@@ -373,7 +373,7 @@ def noise_id(data: Array, data_type: str, m: int, rate: float,
     # acf_noise_1d throws this warning when it is the case)
     elif dev_type in use_b1:
 
-        print(f"AF: {m} | TAU: {m/rate} - Using B1 noise id")
+        # print(f"AF: {m} | TAU: {m/rate} - Using B1 noise id")
 
         # B1 ratios expect phase data
         x = utils.input_to_phase(data=data, rate=rate, data_type=data_type)
@@ -396,7 +396,7 @@ def noise_id(data: Array, data_type: str, m: int, rate: float,
         # Supplement with R(n) ratio = mod allan / allan variance
         if mu == -2 and dev_type in use_rn:  # find if alpha = 1 or 2
 
-            print("Using Rn ratio")
+            # print("Using Rn ratio")
 
             # Actual
             mvar, _ = stats.calc_mvar(x=x, m=m, rate=rate)
@@ -411,7 +411,7 @@ def noise_id(data: Array, data_type: str, m: int, rate: float,
         # phase) data, and adding 2 to the resulting mu
         elif m == 2:  # find if alpha = -3 or -4
 
-            print("Using *B1 ratio")
+            # print("Using *B1 ratio")
 
             # *B1 ratio applies to frequency data
             y = data if data_type == 'freq' else utils.phase2frequency(x=data,

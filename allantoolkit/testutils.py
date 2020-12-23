@@ -84,7 +84,7 @@ def read_stable32(fn: Union[str, Path], file_type: str = None) -> Array:
 
     data = numpy.genfromtxt(fn, skip_header=skip_header, comments='#')
 
-    logger.info("Read %n entries from %s", len(data), fn)
+    logger.info("Read %i entries from %s", data.size, fn)
 
     return data
 
@@ -106,7 +106,7 @@ def test_row_by_row(function: Callable,
 
     input = read_datafile(datafile)
 
-    logger.info("Read %n entries from %s", len(input), datafile)
+    logger.info("Read %i entries from %s", len(input), datafile)
 
     expected_output = read_stable32(resultfile)
 
@@ -183,6 +183,88 @@ def print_elapsed(label, start, start0=None):
     start0 = start0 if start0 is not None else start
 
     logger.info("%s test done in %.2f s, elapsed= %.2f min",
-                (label, end-start, (end-start0)/60))
+                label, end-start, (end-start0)/60)
 
     return time.clock()
+
+
+def test_Stable32_run(data: Array, func: Callable, rate: float, data_type: str,
+                      taus: Union[str, Array], fn: Union[str, Path],
+                      test_alpha: bool, test_ci: bool):
+    """Tests that allantoolkit dev results match exactly refrence `Run`
+    results from Stable 32.
+
+    Args:
+        data:       input array of phase or fractional frequency data on which
+                    to calculate statistics
+        func:       allantoolkit function implementing the statistic to compute
+        rate:       sampling rate of the input data, in Hz.
+        data_type:  input data type. Either `phase` or `freq`.
+        taus:       array of averaging times for which to compute deviation.
+                    Can also be one of the keywords: `all`, `octave`, `decade`.
+        fn:         path to the Stable32 file holding reference expected
+                    results
+        test_alpha: if `True` also checks validity of estimated noise type
+        test_ci:    if `True` also checks validity of  calculated confidence
+                    intervals
+    """
+
+    # Check if we are reading a file for a TIE-lik deviation from Stable32 (
+    # they have a different number of columns from standard)
+    file_type = 'tie' if 'tie' in func.__name__ else None
+
+    # Read in Stable32 Run results
+    expected_results = read_stable32(fn, file_type=file_type)
+
+    # Calculate equivalent results with allantoolkit
+    actual_results = func(data=data, rate=rate, data_type=data_type, taus=taus)
+
+    # Unpack and format integers
+    if file_type != 'tie':
+        afs, taus, ns, alphas, devs_lo, devs, devs_hi = expected_results.T
+        alphas = alphas.astype(int)
+    else:
+        afs, taus, ns, devs = expected_results.T
+        alphas = np.full(afs.size, np.NaN)
+        devs_lo, devs_hi = np.full(afs.size, np.NaN),  np.full(afs.size, np.NaN)
+    afs, ns = afs.astype(int), ns.astype(int)
+
+    # Unpack and format to same number of significant digits as Stable32
+    afs2, taus2, ns2, alphas2, devs_lo2, devs2, devs_hi2 = actual_results
+    devs_lo2 = [float(np.format_float_scientific(lo, 4)) for lo in devs_lo2]
+    devs2 = [float(np.format_float_scientific(dev, 4)) for dev in devs2]
+    devs_hi2 = [float(np.format_float_scientific(hi, 4)) for hi in devs_hi2]
+
+    logger.debug(" AF TAU   #   ALPHA   DEV_LO       DEV      DEV_HI")
+
+    # Test results match row-by-row
+    for i, row in enumerate(expected_results):
+
+        # Extract individual fields from Stable32 results
+        af, tau, n, alpha, minus, dev, plus = \
+            afs[i], taus[i], ns[i], alphas[i], devs_lo[i], devs[i], devs_hi[i]
+
+        # Extract individual fields from Allantoolkit results
+        af2, tau2, n2, alpha2, minus2, dev2, plus2 = \
+            afs2[i], taus2[i], ns2[i], alphas2[i], devs_lo2[i], devs2[i], \
+            devs_hi2[i]
+
+        logger.debug("%s <-REF", [af, tau, n, alpha, minus, dev, plus])
+        logger.debug("%s <-ACTUAL", [af2, tau2, n2, alpha2, minus2, dev2,
+                                    plus2])
+
+        assert af == af2, f'S32:{af} vs. AT {af2}'
+        assert tau == tau2, f'S32:{tau} vs. AT {tau2}'
+        assert n == n2, f'S32:{n} vs. AT {n2}'
+        assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
+
+        # Test also estimated noise type
+        if test_alpha:
+            assert alpha == alpha2, f'S32:{alpha} vs. AT {alpha2}'
+
+        # Test also confidence intervals
+        if test_ci:
+            assert np.isclose(minus, minus2, rtol=1e-3, atol=0), \
+                f'S32:\n{minus}\nvs.\nAT:\n{minus2}'
+            assert np.isclose(plus, plus2, rtol=1e-2, atol=0), \
+                f'S32:\n{plus}\nvs.\nAT:\n{plus2}'

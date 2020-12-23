@@ -5,67 +5,48 @@
   AW2015-03-29
 """
 
+import logging
 import pytest
 import pathlib
 import allantoolkit
-import allantoolkit.testutils as testutils
 
+# Set testing logger to debug mode
+logging.basicConfig()
+logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 
-# top level directory with asset files
-ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets'
+# Directory with asset files
+ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/Keysight53230A_ti_noise_floor'
 
-# input data files, and associated verbosity, tolerance, and acquisition rate
-assets = [
-    ('Keysight53230A_ti_noise_floor/tic_phase.txt', True, 1e-4, 1.),
+# Raw data onto which to perform statistics and check it matches
+X = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'tic_phase.txt')
+
+# Data sampling rate
+RATE = 1.  # Hz
+
+# Function to check
+params = [
+    # allantoolkit.allantools.adev,  # ADEV file is on many-tau instead of oct
+    allantoolkit.allantools.oadev,
+    allantoolkit.allantools.mdev,
+    allantoolkit.allantools.tdev,
+    allantoolkit.allantools.hdev,
+    allantoolkit.allantools.ohdev,
+    allantoolkit.allantools.totdev,
+    allantoolkit.allantools.tierms,
 ]
 
-# input result files and function which should replicate them
-results = [
-    ('tic_adev.txt', allantoolkit.allantools.adev),
-    ('tic_oadev.txt', allantoolkit.allantools.oadev),
-    ('tic_mdev.txt', allantoolkit.allantools.mdev),
-    ('tic_tdev.txt', allantoolkit.allantools.tdev),
-    ('tic_hdev.txt', allantoolkit.allantools.hdev),
-    ('tic_ohdev.txt', allantoolkit.allantools.ohdev),
-    ('tic_totdev.txt', allantoolkit.allantools.totdev),
-    ('tic_tierms.txt', allantoolkit.allantools.tierms),
-]
 
+@pytest.mark.parametrize('func', params)
+def test_dev(func):
+    """Test that Allantoolkit deviation results match the reference Stable32
+    results."""
 
-@pytest.mark.slow
-@pytest.mark.parametrize('datafile, verbose, tolerance, rate', assets)
-@pytest.mark.parametrize('result, fct', results)
-def test_generic(datafile, result, fct, verbose, tolerance, rate):
+    fn = ASSETS_DIR / ('tic_' + func.__name__ + '.txt')
 
-    datafile = ASSETS_DIR / datafile
-    result = datafile.parent / result
+    allantoolkit.testutils.test_Stable32_run(data=X, func=func, rate=RATE,
+                                             data_type='phase', taus='octave',
+                                             fn=fn, test_alpha=True,
+                                             test_ci=False)
 
-    testutils.test_row_by_row(fct, datafile, rate, result,
-                              verbose=verbose, tolerance=tolerance)
-
-
-@pytest.mark.parametrize('datafile, verbose, tolerance, rate', assets)
-def test_noise_id(datafile, verbose, tolerance, rate):
-    """ test for noise-identification """
-
-    datafile = ASSETS_DIR / datafile
-    result = datafile.parent / 'tic_oadev.txt'
-
-    s32_rows = testutils.read_stable32(result)
-    phase = testutils.read_datafile(datafile)
-
-    for s32 in s32_rows:
-
-        tau, alpha, af = s32[1], s32[3], int(s32[0])
-
-        try:
-            alpha_int = allantoolkit.ci.autocorr_noise_id(
-                phase, af=af)[0]
-
-            # if len(phase)/af > 30: # noise-id only works for length 30
-            # or longer time-series
-            assert alpha_int == alpha
-            print(tau, alpha, alpha_int)
-
-        except NotImplementedError:
-            print("no noise-ID: ", tau, alpha, alpha_int)
+    # FIXME: Test_ci is set to False because CI implementation doesn't match
+    #  yet Stable32 results.

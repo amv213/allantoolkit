@@ -110,24 +110,24 @@ class TestNBS14_1000Point:
         self.nbs14_tester( allan.theo1, pdata, None,nbs14_1000_devs[11], taus =[10, 100,1000] )
         
     def nbs14_tester(self, function, pdata, fdata, correct_devs, taus =[1, 10, 100], soft=False ):
-        rate=1.0
+
+        rate = 1.0
         
         if pdata is not None and fdata is None:
-            (taus2, devs, errs_lo, errs_hi, ns) = function(pdata,
-                                                  rate=rate, taus=taus)
+            out = function(pdata, data_type='phase', rate=rate, taus=taus)
+
         elif pdata is None and fdata is not None:
-            (taus2, devs, errs_lo, errs_hi, ns) = function(fdata,
-                                                  data_type="freq",
-                                                  rate=rate, taus=taus)
+            out = function(fdata, data_type="freq", rate=rate, taus=taus)
+
         else:
             raise Exception("Ambiguous input data")
 
         for i in range(3):
             if soft:
-                print(' calculated ', devs[i] )
+                print(' calculated ', out.devs[i] )
                 print('      table ', correct_devs[i])
             else:
-                assert( self.check_devs( devs[i], correct_devs[i] ) )
+                assert( self.check_devs(out.devs[i], correct_devs[i] ) )
 
     def check_devs(self, dev2, dev1, soft=False):
         rel_error = (dev2-dev1)/dev1

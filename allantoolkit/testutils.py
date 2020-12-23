@@ -258,13 +258,15 @@ def test_Stable32_run(data: Array, func: Callable, rate: float, data_type: str,
         assert n == n2, f'S32:{n} vs. AT {n2}'
         assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
 
-        # Test also estimated noise type
-        if test_alpha:
-            assert alpha == alpha2, f'S32:{alpha} vs. AT {alpha2}'
+        if file_type != 'tie':
 
-        # Test also confidence intervals
-        if test_ci:
-            assert np.isclose(minus, minus2, rtol=1e-3, atol=0), \
-                f'S32:\n{minus}\nvs.\nAT:\n{minus2}'
-            assert np.isclose(plus, plus2, rtol=1e-2, atol=0), \
-                f'S32:\n{plus}\nvs.\nAT:\n{plus2}'
+            # Test also estimated noise type
+            if test_alpha:
+                assert alpha == alpha2, f'S32:{alpha} vs. AT {alpha2}'
+
+            # Test also confidence intervals
+            if test_ci:
+                assert np.isclose(minus, minus2, rtol=1e-3, atol=0), \
+                    f'S32:\n{minus}\nvs.\nAT:\n{minus2}'
+                assert np.isclose(plus, plus2, rtol=1e-2, atol=0), \
+                    f'S32:\n{plus}\nvs.\nAT:\n{plus2}'

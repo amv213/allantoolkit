@@ -6,66 +6,47 @@
 
 """
 
+import logging
 import pytest
 import pathlib
 import allantoolkit.ci
-import allantoolkit.allantools as allan
-import allantoolkit.testutils as testutils
 
+# Set testing logger to debug mode
+logging.basicConfig()
+logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 
-# top level directory with asset files
-ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets'
+# Directory with asset files
+ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/pink_frequency'
 
-# input data files, and associated verbosity, tolerance, and acquisition rate
-assets = [
-    ('pink_frequency/pink_frequency.txt', False, 1e-4, 1/float(42.0)),
+# Raw data onto which to perform statistics and check it matches
+Y = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'pink_frequency.txt')
+
+# Data sampling rate
+RATE = 1./42  # Hz
+
+# Function to check
+params = [
+    allantoolkit.allantools.adev,
+    allantoolkit.allantools.oadev,
+    allantoolkit.allantools.mdev,
+    allantoolkit.allantools.tdev,
+    allantoolkit.allantools.hdev,
+    allantoolkit.allantools.ohdev,
+    allantoolkit.allantools.totdev,
 ]
 
 
-# input result files and function which should replicate them
-results = [
-    ('adev.txt', allantoolkit.allantools.adev),
-    ('oadev.txt', allantoolkit.allantools.oadev),
-    ('mdev.txt', allantoolkit.allantools.mdev),
-    ('tdev.txt', allantoolkit.allantools.tdev),
-    ('hdev.txt', allantoolkit.allantools.hdev),
-    ('ohdev.txt', allantoolkit.allantools.ohdev),
-    ('totdev_alpha0.txt', allantoolkit.allantools.totdev),
-]
+@pytest.mark.parametrize('func', params)
+def test_dev(func):
+    """Test that Allantoolkit deviation results match the reference Stable32
+    results."""
 
+    fn = ASSETS_DIR / (func.__name__ + '.txt')
 
-@pytest.mark.slow
-@pytest.mark.parametrize('datafile, verbose, tolerance, rate', assets)
-@pytest.mark.parametrize('result, fct', results)
-def test_generic(datafile, result, fct, verbose, tolerance, rate):
+    allantoolkit.testutils.test_Stable32_run(data=Y, func=func, rate=RATE,
+                                             data_type='freq', taus='all',
+                                             fn=fn, test_alpha=True,
+                                             test_ci=False)
 
-    datafile = ASSETS_DIR / datafile
-    result = datafile.parent / result
-
-    testutils.test_row_by_row(fct, datafile, rate, result,
-                              verbose=verbose, tolerance=tolerance,
-                              frequency=True, normalize=False)
-
-
-@pytest.mark.slow
-@pytest.mark.parametrize('datafile, verbose, tolerance, rate', assets)
-def test_noise_id(datafile, verbose, tolerance, rate):
-    """ test for noise-identification """
-
-    datafile = ASSETS_DIR / datafile
-    result = datafile.parent / 's32_oadev_octave.txt'
-
-    s32_rows = testutils.read_stable32(result)
-    phase = testutils.read_datafile(datafile)
-
-    for s32 in s32_rows:
-        tau, alpha, af = s32[1], s32[3], int(s32[0])
-        try:
-            alpha_int = allantoolkit.ci.autocorr_noise_id(
-                phase, data_type='freq', af=af)[0]
-
-            # if len(phase)/af > 30: # noise-id only works for length 30 or longer time-series
-            assert alpha_int == alpha
-            print(tau, alpha, alpha_int)
-        except NotImplementedError:
-            print("no noise-ID: ", tau, alpha, alpha_int)
+    # FIXME: Test_ci is set to False because CI implementation doesn't match
+    #  yet Stable32 results.

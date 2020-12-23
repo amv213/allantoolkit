@@ -1,5 +1,4 @@
 import allantoolkit
-import allantoolkit.allantools as at
 import numpy as np
 import pytest
 
@@ -18,43 +17,43 @@ expected_reduced_2 = [1., 5., 17.]
 
 
 def test_tau_generator_empty():
-    (taus_used, _, _, _, _) = at.adev(d)
-    np.testing.assert_allclose(taus_used, expected_octave)
+    out = allantoolkit.allantools.adev(d)
+    np.testing.assert_allclose(out.taus, expected_octave)
 
 # TODO: Revisit what behaviour should be if passing an empty string
 @pytest.mark.skip
 def test_tau_generator_empty_list():
-    (taus_used, _, _, _, _) = at.adev(d, taus=[])
-    np.testing.assert_allclose(taus_used, expected_octave)
+    out = allantoolkit.allantools.adev(d, taus=[])
+    np.testing.assert_allclose(out.taus, expected_octave)
 
 
 def test_tau_generator_all():
-    (taus_used, _, _, _, _) = at.adev(d, rate=r, taus="all")
-    np.testing.assert_allclose(taus_used, expected_all)
+    out = allantoolkit.allantools.adev(d, rate=r, taus="all")
+    np.testing.assert_allclose(out.taus, expected_all)
 
 
 def test_tau_generator_octave():
-    (taus_used, _, _, _, _) = at.adev(d, rate=r, taus="octave")
-    np.testing.assert_allclose(taus_used, expected_octave)
+    out = allantoolkit.allantools.adev(d, rate=r, taus="octave")
+    np.testing.assert_allclose(out.taus, expected_octave)
 
 
 def test_tau_generator_decade():
-    (taus_used, _, _, _, _) = at.adev(d, rate=r, taus="decade")
-    np.testing.assert_allclose(taus_used, expected_decade)
+    out = allantoolkit.allantools.adev(d, rate=r, taus="decade")
+    np.testing.assert_allclose(out.taus, expected_decade)
 
 
 def test_tau_generator_1234():
     wanted_taus = [1, 2, 3, 4]
-    (taus_used, _, _, _, _) = at.adev(d, rate=r, taus=wanted_taus)
-    np.testing.assert_allclose(taus_used, wanted_taus)
+    out = allantoolkit.allantools.adev(d, rate=r, taus=wanted_taus)
+    np.testing.assert_allclose(out.taus, wanted_taus)
 
 
 def test_tau_generator_numpy1234():
     wanted_taus = np.array([1, 2, 3, 4])
-    (taus_used, _, _, _, _) = at.adev(d, rate=r, taus=wanted_taus)
-    np.testing.assert_allclose(taus_used, wanted_taus)
+    out = allantoolkit.allantools.adev(d, rate=r, taus=wanted_taus)
+    np.testing.assert_allclose(out.taus, wanted_taus)
 
 
 def test_zero_rate():
     with pytest.raises(ZeroDivisionError):
-        at.adev(d, rate=0.0)
+        allantoolkit.allantools.adev(d, rate=0.0)

@@ -116,7 +116,7 @@ def calc_o_avar(x: Array, m: int, rate: float, stride: int) -> VarResult:
 
     if N < d*m + 1:
         logger.warning("Not enough phase measurements to compute "
-                       "variance at averaging factor %i: %s", m, x)
+                       "variance at averaging factor %i (N=%i)", m, N)
         var = np.NaN
         return var, 0
 

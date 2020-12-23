@@ -122,7 +122,8 @@ def test_dev(data, data_type, func, taus):
 
     allantoolkit.testutils.test_Stable32_run(data=data, func=func, rate=RATE,
                                              data_type=data_type, taus=taus,
-                                             fn=fn, test_ci=False)
+                                             fn=fn, test_alpha=True,
+                                             test_ci=False)
 
 
 '''

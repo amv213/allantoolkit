@@ -268,7 +268,7 @@ def calc_edf_totdev(x: Array, m: int, alpha: int) -> float:
     for TOTDEV.
 
     References:
-        http://www.wriley.com/CI2.pdf
+        http://www.wriley.com/CI2.pdf (TOTVAR and TTOT EDF)
 
     Args:
         x:          phase data from which deviation was computed, in units of
@@ -285,6 +285,27 @@ def calc_edf_totdev(x: Array, m: int, alpha: int) -> float:
     edf = b*(x.size/m) - c
 
     return edf
+
+
+def calc_edf_ttotdev(x: Array, m: int, alpha: int) -> float:
+    """Calculate equivalent number of Chi-squared degrees of freedom (edf)
+    for TTOTDEV.
+
+    References:
+        http://www.wriley.com/CI2.pdf (TOTVAR and TTOT EDF)
+
+    Args:
+        x:          phase data from which deviation was computed, in units of
+                    seconds.
+        m:          averaging factor at which deviation was computed
+        alpha:      dominant power law frequency noise type
+
+    Returns:
+        equivalent number of Chi-squared degrees of freedom (edf)
+    """
+
+    return calc_edf_totdev(x=x, m=m, alpha=alpha)
+
 
 
 # Combined Greenhall EDF algorithm

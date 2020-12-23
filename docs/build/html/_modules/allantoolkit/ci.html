@@ -486,10 +486,8 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Noise type alpha = </span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2"> not supported for &quot;</span>
                        <span class="sa">f</span><span class="s2">&quot;(T)TOTDEV edf calculation. Falling back to CEDF.&quot;</span><span class="p">)</span>
 
-        <span class="c1"># TODO: check this fallback is correct. Old program was falling back</span>
-        <span class="c1">#  to old NIST SP 1065, Table 5 instead</span>
-        <span class="k">return</span> <span class="n">cedf</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">overlapping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">modified</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># TODO: check this fallback is correct</span>
+        <span class="k">return</span> <span class="n">edf_simple</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
 
     <span class="n">edf</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="o">/</span><span class="n">m</span><span class="p">)</span> <span class="o">-</span> <span class="n">c</span>
 
@@ -1002,77 +1000,73 @@
 
     <span class="k">return</span> <span class="n">basic_sum</span></div>
 
-<span class="c1"># -----------------------------------</span>
-
 
 <span class="c1"># TODO: check and see if should use this when other edf functions don&#39;t</span>
 <span class="c1">#  support the given noise type</span>
-<div class="viewcode-block" id="edf_simple"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.edf_simple">[docs]</a><span class="k">def</span> <span class="nf">edf_simple</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Equivalent degrees of freedom.</span>
-<span class="sd">    Simple approximate formulae.</span>
+<div class="viewcode-block" id="edf_simple"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.edf_simple">[docs]</a><span class="k">def</span> <span class="nf">edf_simple</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate equivalent number of Chi-squared degrees of freedom (edf)</span>
+<span class="sd">    using a simple approximate formula (before CEDF algorithm).</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    N : int</span>
-<span class="sd">        the number of phase samples</span>
-<span class="sd">    m : int</span>
-<span class="sd">        averaging factor, tau = m * tau0</span>
-<span class="sd">    alpha: int</span>
-<span class="sd">        exponent of f for the frequency PSD:</span>
-<span class="sd">        &#39;wp&#39; returns white phase noise.             alpha=+2</span>
-<span class="sd">        &#39;wf&#39; returns white frequency noise.         alpha= 0</span>
-<span class="sd">        &#39;fp&#39; returns flicker phase noise.           alpha=+1</span>
-<span class="sd">        &#39;ff&#39; returns flicker frequency noise.       alpha=-1</span>
-<span class="sd">        &#39;rf&#39; returns random walk frequency noise.   alpha=-2</span>
-<span class="sd">        If the input is not recognized, it defaults to idealized, uncorrelated</span>
-<span class="sd">        noise with (N-1) degrees of freedom.</span>
+<span class="sd">    If the input the dominant noise type is not supported by the algorithm,</span>
+<span class="sd">    it defaults to idealized, uncorrelated noise with (N-1) degrees of freedom.</span>
 
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">       S. Stein, Frequency and Time - Their Measurement and</span>
-<span class="sd">       Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.</span>
-<span class="sd">       http://tf.boulder.nist.gov/general/pdf/666.pdf</span>
+<span class="sd">    References:</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    edf : float</span>
-<span class="sd">        Equivalent degrees of freedom</span>
+<span class="sd">        S. Stein, Frequency and Time - Their Measurement and</span>
+<span class="sd">        Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.</span>
+<span class="sd">        http://tf.boulder.nist.gov/general/pdf/666.pdf</span>
 
+<span class="sd">        NIST SP 1065, Table 5</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x:          phase data from which deviation was computed, in units of</span>
+<span class="sd">                    seconds.</span>
+<span class="sd">        m:          averaging factor at which deviation was computed</span>
+<span class="sd">        alpha:      dominant power law frequency noise type</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        equivalent number of Chi-squared degrees of freedom (edf)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">edf</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># default value</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
 
-    <span class="n">N</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]:</span>
-        <span class="c1"># NIST SP 1065, Table 5</span>
-        <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="o">+</span><span class="mi">2</span><span class="p">:</span>
-            <span class="n">edf</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="n">m</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="o">+</span><span class="mi">2</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">edf</span> <span class="o">=</span> <span class="p">(((</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">))</span> <span class="o">*</span>
-                   <span class="p">((</span><span class="mi">4</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="p">((</span><span class="mi">4</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)))</span>
+        <span class="n">edf</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="n">m</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">)</span>
-            <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
-            <span class="n">edf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">b</span><span class="p">)))</span>
+    <span class="k">elif</span> <span class="n">alpha</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">edf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span><span class="p">(</span><span class="mf">2.3</span> <span class="o">*</span> <span class="n">N</span> <span class="o">-</span> <span class="mf">4.9</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">m</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">edf</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">N</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">)))</span>
+        <span class="n">edf</span> <span class="o">=</span> <span class="p">(((</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">))</span> <span class="o">*</span>
+               <span class="p">((</span><span class="mi">4</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="p">((</span><span class="mi">4</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)))</span>
 
-        <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
-            <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-            <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">m</span> <span class="o">**</span><span class="mi">2</span>
-            <span class="n">edf</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">c</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">alpha</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
+        <span class="n">edf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">b</span><span class="p">)))</span>
+
+    <span class="k">elif</span> <span class="n">alpha</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+            <span class="n">edf</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span><span class="p">(</span><span class="mf">2.3</span> <span class="o">*</span> <span class="n">N</span> <span class="o">-</span> <span class="mf">4.9</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">edf</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">N</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">m</span><span class="p">)))</span>
+
+    <span class="k">elif</span> <span class="n">alpha</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">m</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">edf</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">c</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Noise type not recognized. Defaulting to N - 1 degrees of freedom.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Noise type not recognized. Defaulting to N - 1 degrees &quot;</span>
+                    <span class="s2">&quot;of freedom.&quot;</span><span class="p">)</span>
+        <span class="n">edf</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">edf</span></div>
 </pre></div>

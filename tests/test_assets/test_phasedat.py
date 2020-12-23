@@ -4,49 +4,61 @@
 
   PHASE.DAT comes with Stable32 (version 1.53 was used in this case)
 
+  This test is for Confidence Intervals in particular
+  
 """
 
+import logging
 import pathlib
 import pytest
 import allantoolkit
-import allantoolkit.testutils as testutils
 
-# top level directory with asset files
-ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets'
+# Set testing logger to debug mode
+logging.basicConfig()
+logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 
-# input data files, and associated verbosity, tolerance, and acquisition rate
-assets = [
-    ('phasedat/PHASE.DAT', 1, 1e-4, 1.),
+# Directory with asset files
+ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/phasedat'
+
+# Raw data onto which to perform statistics and check it matches
+X = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'PHASE.DAT')
+
+# Data sampling rate
+RATE = 1.  # Hz
+
+# Function to check, test_alpha, test_ci
+# FIXME: test_alpha is set to false because it seems like reference file was
+#  using fixed alpha = 0, instead of using auto noise ID. Test_ci is set to
+#  False because CI implementation doesn't match yet Stable32 results.
+params = [
+    (allantoolkit.allantools.adev, False, False),
+    (allantoolkit.allantools.oadev, False, False),
+    (allantoolkit.allantools.mdev, False, False),
+    (allantoolkit.allantools.tdev, False, False),
+    (allantoolkit.allantools.hdev, False, False),
+    (allantoolkit.allantools.ohdev, False, False),
+    (allantoolkit.allantools.totdev, False, False),
+    pytest.param(allantoolkit.allantools.htotdev, False, False,
+                 marks=pytest.mark.slow),
+    pytest.param(allantoolkit.allantools.mtotdev, False, False,
+                 marks=pytest.mark.slow),
+    pytest.param(allantoolkit.allantools.ttotdev, False, False,
+                 marks=pytest.mark.slow),
+    (allantoolkit.allantools.theo1, False, False),
+    (allantoolkit.allantools.mtie, False, False),
+    (allantoolkit.allantools.tierms, False, False),
 ]
 
 
-# input result files and function which should replicate them
-results = [
-    ('phase_dat_adev.txt', allantoolkit.allantools.adev),
-    ('phase_dat_oadev.txt', allantoolkit.allantools.oadev),
-    ('phase_dat_mdev.txt', allantoolkit.allantools.mdev),
-    ('phase_dat_tdev.txt', allantoolkit.allantools.tdev),
-    ('phase_dat_hdev.txt', allantoolkit.allantools.hdev),
-    ('phase_dat_ohdev.txt', allantoolkit.allantools.ohdev),
-    ('phase_dat_totdev.txt', allantoolkit.allantools.totdev),
-    pytest.param('phase_dat_htotdev_octave_nobias.txt',
-                 allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
-    pytest.param('phase_dat_mtotdev_octave.txt',
-                 allantoolkit.allantools.mtotdev, marks=pytest.mark.slow),
-    pytest.param('phase_dat_ttotdev_octave.txt',
-                 allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
-    ('phase_dat_theo1_alpha0_decade.txt', allantoolkit.allantools.theo1),
-    ('phase_dat_mtie.txt', allantoolkit.allantools.mtie),
-    ('phase_dat_tierms.txt', allantoolkit.allantools.tierms),
-]
+@pytest.mark.parametrize('func, test_alpha, test_ci', params)
+def test_dev(func, test_alpha, test_ci):
+    """Test that Allantoolkit deviation results match the reference Stable32
+    results."""
 
+    fn = ASSETS_DIR / ('phase_dat_' + func.__name__ + '_octave.txt')
 
-@pytest.mark.parametrize('datafile, verbose, tolerance, rate', assets)
-@pytest.mark.parametrize('result, fct', results)
-def test_generic(datafile, result, fct, verbose, tolerance, rate):
-
-    datafile = ASSETS_DIR / datafile
-    result = datafile.parent / result
-
-    testutils.test_row_by_row(fct, datafile, rate, result,
-                              verbose=verbose, tolerance=tolerance)
+    allantoolkit.testutils.test_Stable32_run(data=X, func=func, rate=RATE,
+                                             data_type='phase',
+                                             taus='octave',
+                                             fn=fn, test_alpha=test_alpha,
+                                             test_ci=test_ci)

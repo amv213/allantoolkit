@@ -1243,35 +1243,27 @@ variance e.g. <cite>0.6827</cite> would set a 1-sigma confidence interval.</p></
 
 <dl class="py function">
 <dt id="allantoolkit.ci.edf_simple">
-<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">edf_simple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">m</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#edf_simple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.edf_simple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Equivalent degrees of freedom.
-Simple approximate formulae.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>N</strong> (<em>int</em>) – the number of phase samples</p></li>
-<li><p><strong>m</strong> (<em>int</em>) – averaging factor, tau = m * tau0</p></li>
-<li><p><strong>alpha</strong> (<em>int</em>) – exponent of f for the frequency PSD:
-‘wp’ returns white phase noise.             alpha=+2
-‘wf’ returns white frequency noise.         alpha= 0
-‘fp’ returns flicker phase noise.           alpha=+1
-‘ff’ returns flicker frequency noise.       alpha=-1
-‘rf’ returns random walk frequency noise.   alpha=-2
-If the input is not recognized, it defaults to idealized, uncorrelated
-noise with (N-1) degrees of freedom.</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
+<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">edf_simple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/allantoolkit/ci.html#edf_simple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.edf_simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate equivalent number of Chi-squared degrees of freedom (edf)
+using a simple approximate formula (before CEDF algorithm).</p>
+<p>If the input the dominant noise type is not supported by the algorithm,
+it defaults to idealized, uncorrelated noise with (N-1) degrees of freedom.</p>
+<p class="rubric">References</p>
 <p>S. Stein, Frequency and Time - Their Measurement and
 Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.
 <a class="reference external" href="http://tf.boulder.nist.gov/general/pdf/666.pdf">http://tf.boulder.nist.gov/general/pdf/666.pdf</a></p>
+<p>NIST SP 1065, Table 5</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>edf</strong> – Equivalent degrees of freedom</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – phase data from which deviation was computed, in units of
+seconds.</p></li>
+<li><p><strong>m</strong> – averaging factor at which deviation was computed</p></li>
+<li><p><strong>alpha</strong> – dominant power law frequency noise type</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>float</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>equivalent number of Chi-squared degrees of freedom (edf)</p>
 </dd>
 </dl>
 </dd></dl>

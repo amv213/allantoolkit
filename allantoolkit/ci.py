@@ -289,10 +289,8 @@ def calc_edf_totdev(x: Array, m: int, alpha: int) -> float:
         logger.warning(f"Noise type alpha = {alpha} not supported for "
                        f"(T)TOTDEV edf calculation. Falling back to CEDF.")
 
-        # TODO: check this fallback is correct. Old program was falling back
-        #  to old NIST SP 1065, Table 5 instead
-        return cedf(alpha=alpha, d=2, m=m, N=int(x.size), overlapping=True,
-                    modified=True)
+        # TODO: check this fallback is correct
+        return edf_simple(x=x, m=m, alpha=alpha)
 
     edf = b*(x.size/m) - c
 
@@ -805,76 +803,72 @@ def cedf_basic_sum(J: float, M: float, S: float, F: float, alpha: int, d: int):
 
     return basic_sum
 
-# -----------------------------------
-
 
 # TODO: check and see if should use this when other edf functions don't
 #  support the given noise type
-def edf_simple(N, m, alpha):
-    """Equivalent degrees of freedom.
-    Simple approximate formulae.
+def edf_simple(x: Array, m: int, alpha: int) -> float:
+    """Calculate equivalent number of Chi-squared degrees of freedom (edf)
+    using a simple approximate formula (before CEDF algorithm).
 
-    Parameters
-    ----------
-    N : int
-        the number of phase samples
-    m : int
-        averaging factor, tau = m * tau0
-    alpha: int
-        exponent of f for the frequency PSD:
-        'wp' returns white phase noise.             alpha=+2
-        'wf' returns white frequency noise.         alpha= 0
-        'fp' returns flicker phase noise.           alpha=+1
-        'ff' returns flicker frequency noise.       alpha=-1
-        'rf' returns random walk frequency noise.   alpha=-2
-        If the input is not recognized, it defaults to idealized, uncorrelated
-        noise with (N-1) degrees of freedom.
+    If the input the dominant noise type is not supported by the algorithm,
+    it defaults to idealized, uncorrelated noise with (N-1) degrees of freedom.
 
-    Notes
-    -----
-       S. Stein, Frequency and Time - Their Measurement and
-       Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.
-       http://tf.boulder.nist.gov/general/pdf/666.pdf
+    References:
 
-    Returns
-    -------
-    edf : float
-        Equivalent degrees of freedom
+        S. Stein, Frequency and Time - Their Measurement and
+        Characterization. Precision Frequency Control Vol 2, 1985, pp 191-416.
+        http://tf.boulder.nist.gov/general/pdf/666.pdf
 
+        NIST SP 1065, Table 5
+
+    Args:
+        x:          phase data from which deviation was computed, in units of
+                    seconds.
+        m:          averaging factor at which deviation was computed
+        alpha:      dominant power law frequency noise type
+
+    Returns:
+        equivalent number of Chi-squared degrees of freedom (edf)
     """
 
-    edf = (N - 1)  # default value
+    N = x.size
 
-    N = float(N)
-    m = float(m)
-    if alpha in [2, 1, 0, -1, -2]:
-        # NIST SP 1065, Table 5
-        if alpha == +2:
-            edf = (N + 1) * (N - 2*m) / (2 * (N - m))
+    if alpha == +2:
 
-        if alpha == 0:
-            edf = (((3 * (N - 1) / (2 * m)) - (2 * (N - 2) / N)) *
-                   ((4*pow(m, 2)) / ((4*pow(m, 2)) + 5)))
+        edf = (N + 1) * (N - 2*m) / (2 * (N - m))
 
-        if alpha == 1:
-            a = (N - 1)/(2 * m)
-            b = (2 * m + 1) * (N - 1) / 4
-            edf = np.exp(np.sqrt(np.log(a) * np.log(b)))
+    elif alpha == 0:
 
-        if alpha == -1:
-            if m == 1:
-                edf = 2 * (N - 2) /(2.3 * N - 4.9)
-            if m >= 2:
-                edf = 5 * N**2 / (4 * m * (N + (3 * m)))
+        edf = (((3 * (N - 1) / (2 * m)) - (2 * (N - 2) / N)) *
+               ((4*pow(m, 2)) / ((4*pow(m, 2)) + 5)))
 
-        if alpha == -2:
-            a = (N - 2) / (m * (N - 3)**2)
-            b = (N - 1)**2
-            c = 3 * m * (N - 1)
-            d = 4 * m **2
-            edf = a * (b - c + d)
+    elif alpha == 1:
+
+        a = (N - 1)/(2 * m)
+        b = (2 * m + 1) * (N - 1) / 4
+        edf = np.exp(np.sqrt(np.log(a) * np.log(b)))
+
+    elif alpha == -1:
+
+        if m == 1:
+
+            edf = 2 * (N - 2) /(2.3 * N - 4.9)
+
+        else:
+
+            edf = 5 * N**2 / (4 * m * (N + (3 * m)))
+
+    elif alpha == -2:
+
+        a = (N - 2) / (m * (N - 3)**2)
+        b = (N - 1)**2
+        c = 3 * m * (N - 1)
+        d = 4 * m**2
+        edf = a * (b - c + d)
 
     else:
-        print("Noise type not recognized. Defaulting to N - 1 degrees of freedom.")
+        logger.info("Noise type not recognized. Defaulting to N - 1 degrees "
+                    "of freedom.")
+        edf = (N - 1)
 
     return edf

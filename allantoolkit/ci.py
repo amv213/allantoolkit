@@ -307,6 +307,106 @@ def calc_edf_ttotdev(x: Array, m: int, alpha: int) -> float:
     return calc_edf_totdev(x=x, m=m, alpha=alpha)
 
 
+def calc_edf_mtotdev(x: Array, m: int, alpha: int) -> float:
+    """Calculate equivalent number of Chi-squared degrees of freedom (edf)
+    for MTOTDEV.
+
+    References:
+        http://www.wriley.com/CI2.pdf (MTOT EDF)
+
+    Args:
+        x:          phase data from which deviation was computed, in units of
+                    seconds.
+        m:          averaging factor at which deviation was computed
+        alpha:      dominant power law frequency noise type
+
+    Returns:
+        equivalent number of Chi-squared degrees of freedom (edf)
+    """
+
+    b, c = tables.MTOTVAR_EDF_COEFFICIENTS[alpha]
+
+    edf = b*(x.size/m) - c
+
+    return edf
+
+
+def calc_edf_htotdev(x: Array, m: int, alpha: int) -> float:
+    """Calculate equivalent number of Chi-squared degrees of freedom (edf)
+    for HTOTDEV.
+
+    References:
+        D.A. Howe, et. Al., “A Total Estimator of the Hadamard Function Used
+        for GPS Operations”, Proc. 32nd PTTI Meeting, pp. 255-268, November
+        2000
+
+        http://www.wriley.com/CI2.pdf (HTOT EDF)
+
+    Args:
+        x:          phase data from which deviation was computed, in units of
+                    seconds.
+        m:          averaging factor at which deviation was computed
+        alpha:      dominant power law frequency noise type
+
+    Returns:
+        equivalent number of Chi-squared degrees of freedom (edf)
+    """
+
+    b0, b1 = tables.HTOTVAR_EDF_COEFFICIENTS[alpha]
+
+    edf = (x.size/m) / (b0 + b1*m/x.size)
+
+    return edf
+
+
+def calc_edf_theo1(x: Array, m: int, alpha: int) -> float:
+    """Calculate equivalent number of Chi-squared degrees of freedom (edf)
+    for THEO1.
+
+    References:
+
+        http://www.wriley.com/CI2.pdf (THEO1 EDF)
+
+    Args:
+        x:          phase data from which deviation was computed, in units of
+                    seconds.
+        m:          averaging factor at which deviation was computed
+        alpha:      dominant power law frequency noise type
+
+    Returns:
+        equivalent number of Chi-squared degrees of freedom (edf)
+    """
+
+    N = x.size
+    t = 0.75*m  # effective theo1 averaging factor
+
+    if alpha == 2:
+
+        edf = ((0.86 * (N+1) * (N - 4*t/3)) / (N - t)) * (t / (t + 1.14))
+
+    elif alpha == 1:
+
+        edf = ((4.798*N**2 - 6.374*N*t + 12.387*t) / (np.sqrt(t+36.6) * (
+                N-t))) * (t / (t + 0.3))
+
+    elif alpha == 0:
+
+        edf = ((4.1*N+0.8)/t - (3.1*N+6.5)/N) * (t**1.5 / (t**1.5 + 5.2))
+
+    elif alpha == -1:
+
+        edf = ((2*N**2 - 1.3*N*t - 3.5*t) / (N*t)) * (t**3 / (t**3 + 2.3))
+
+    elif alpha == -2:
+
+        edf = ((4.4*N-2) / (2.9*t)) * (
+                ((4.4*N-1)**2 - 8.6*t*(4.4*N-1) + 11.4*t**2) / (4.4*N-3)**2)
+
+    else:
+        raise ValueError(f"Noise type alpha = {alpha} not supported for "
+                         f"Theo1 edf calculation.")
+
+    return edf
 
 # Combined Greenhall EDF algorithm
 

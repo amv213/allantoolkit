@@ -504,6 +504,106 @@
     <span class="k">return</span> <span class="n">calc_edf_totdev</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="calc_edf_mtotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.calc_edf_mtotdev">[docs]</a><span class="k">def</span> <span class="nf">calc_edf_mtotdev</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate equivalent number of Chi-squared degrees of freedom (edf)</span>
+<span class="sd">    for MTOTDEV.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        http://www.wriley.com/CI2.pdf (MTOT EDF)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x:          phase data from which deviation was computed, in units of</span>
+<span class="sd">                    seconds.</span>
+<span class="sd">        m:          averaging factor at which deviation was computed</span>
+<span class="sd">        alpha:      dominant power law frequency noise type</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        equivalent number of Chi-squared degrees of freedom (edf)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">tables</span><span class="o">.</span><span class="n">MTOTVAR_EDF_COEFFICIENTS</span><span class="p">[</span><span class="n">alpha</span><span class="p">]</span>
+
+    <span class="n">edf</span> <span class="o">=</span> <span class="n">b</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="o">/</span><span class="n">m</span><span class="p">)</span> <span class="o">-</span> <span class="n">c</span>
+
+    <span class="k">return</span> <span class="n">edf</span></div>
+
+
+<div class="viewcode-block" id="calc_edf_htotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.calc_edf_htotdev">[docs]</a><span class="k">def</span> <span class="nf">calc_edf_htotdev</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate equivalent number of Chi-squared degrees of freedom (edf)</span>
+<span class="sd">    for HTOTDEV.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        D.A. Howe, et. Al., “A Total Estimator of the Hadamard Function Used</span>
+<span class="sd">        for GPS Operations”, Proc. 32nd PTTI Meeting, pp. 255-268, November</span>
+<span class="sd">        2000</span>
+
+<span class="sd">        http://www.wriley.com/CI2.pdf (HTOT EDF)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x:          phase data from which deviation was computed, in units of</span>
+<span class="sd">                    seconds.</span>
+<span class="sd">        m:          averaging factor at which deviation was computed</span>
+<span class="sd">        alpha:      dominant power law frequency noise type</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        equivalent number of Chi-squared degrees of freedom (edf)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">b0</span><span class="p">,</span> <span class="n">b1</span> <span class="o">=</span> <span class="n">tables</span><span class="o">.</span><span class="n">HTOTVAR_EDF_COEFFICIENTS</span><span class="p">[</span><span class="n">alpha</span><span class="p">]</span>
+
+    <span class="n">edf</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="o">/</span><span class="n">m</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">b0</span> <span class="o">+</span> <span class="n">b1</span><span class="o">*</span><span class="n">m</span><span class="o">/</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">edf</span></div>
+
+
+<div class="viewcode-block" id="calc_edf_theo1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.calc_edf_theo1">[docs]</a><span class="k">def</span> <span class="nf">calc_edf_theo1</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate equivalent number of Chi-squared degrees of freedom (edf)</span>
+<span class="sd">    for THEO1.</span>
+
+<span class="sd">    References:</span>
+
+<span class="sd">        http://www.wriley.com/CI2.pdf (THEO1 EDF)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x:          phase data from which deviation was computed, in units of</span>
+<span class="sd">                    seconds.</span>
+<span class="sd">        m:          averaging factor at which deviation was computed</span>
+<span class="sd">        alpha:      dominant power law frequency noise type</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        equivalent number of Chi-squared degrees of freedom (edf)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="mf">0.75</span><span class="o">*</span><span class="n">m</span>  <span class="c1"># effective theo1 averaging factor</span>
+
+    <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+
+        <span class="n">edf</span> <span class="o">=</span> <span class="p">((</span><span class="mf">0.86</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">4</span><span class="o">*</span><span class="n">t</span><span class="o">/</span><span class="mi">3</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="n">t</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mf">1.14</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">alpha</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+        <span class="n">edf</span> <span class="o">=</span> <span class="p">((</span><span class="mf">4.798</span><span class="o">*</span><span class="n">N</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mf">6.374</span><span class="o">*</span><span class="n">N</span><span class="o">*</span><span class="n">t</span> <span class="o">+</span> <span class="mf">12.387</span><span class="o">*</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="mf">36.6</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">N</span><span class="o">-</span><span class="n">t</span><span class="p">)))</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mf">0.3</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">alpha</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+        <span class="n">edf</span> <span class="o">=</span> <span class="p">((</span><span class="mf">4.1</span><span class="o">*</span><span class="n">N</span><span class="o">+</span><span class="mf">0.8</span><span class="p">)</span><span class="o">/</span><span class="n">t</span> <span class="o">-</span> <span class="p">(</span><span class="mf">3.1</span><span class="o">*</span><span class="n">N</span><span class="o">+</span><span class="mf">6.5</span><span class="p">)</span><span class="o">/</span><span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span><span class="o">**</span><span class="mf">1.5</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span><span class="o">**</span><span class="mf">1.5</span> <span class="o">+</span> <span class="mf">5.2</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">alpha</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+
+        <span class="n">edf</span> <span class="o">=</span> <span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">N</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mf">1.3</span><span class="o">*</span><span class="n">N</span><span class="o">*</span><span class="n">t</span> <span class="o">-</span> <span class="mf">3.5</span><span class="o">*</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="n">t</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="mf">2.3</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">alpha</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+
+        <span class="n">edf</span> <span class="o">=</span> <span class="p">((</span><span class="mf">4.4</span><span class="o">*</span><span class="n">N</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.9</span><span class="o">*</span><span class="n">t</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="p">((</span><span class="mf">4.4</span><span class="o">*</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mf">8.6</span><span class="o">*</span><span class="n">t</span><span class="o">*</span><span class="p">(</span><span class="mf">4.4</span><span class="o">*</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">11.4</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.4</span><span class="o">*</span><span class="n">N</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Noise type alpha = </span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2"> not supported for &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;Theo1 edf calculation.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">edf</span></div>
 
 <span class="c1"># Combined Greenhall EDF algorithm</span>
 

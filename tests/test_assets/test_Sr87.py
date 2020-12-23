@@ -100,9 +100,9 @@ fcts = [
     #allantoolkit.allantools.ohdev,
     #allantoolkit.allantools.totdev,
     #pytest.param(allantoolkit.allantools.mtotdev,  marks=pytest.mark.slow),
-    pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
+    #pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
     #pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
-    #allantoolkit.allantools.theo1
+    allantoolkit.allantools.theo1
 ]
 
 

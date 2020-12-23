@@ -275,3 +275,33 @@ totvar_edf_coefficients:
   0:  [1.50,  0]
   -1: [1.17,  0.22]
   -2: [0.93,  0.36]
+
+
+mtotvar_edf_coefficients:
+  # Coefficients to calculate equivalent degrees of freedom for MTOTVAR
+  #
+  # http://www.wriley.com/CI2.pdf (MTOT EDF table)
+
+  # alpha: b, c
+  2:  [1.90,  2.10]
+  1:  [1.20,  1.40]
+  0:  [1.10,  1.20]
+  -1: [0.85,  0.50]
+  -2: [0.75,  0.31]
+
+
+htotvar_edf_coefficients:
+  # Coefficients to calculate equivalent degrees of freedom for HTOTVAR
+  #
+  # D.A. Howe, et. Al., “A Total Estimator of the Hadamard Function Used
+  # for GPS Operations”, Proc. 32nd PTTI Meeting, pp. 255-268, November 2000
+  # (Table 1)
+  #
+  # http://www.wriley.com/CI2.pdf (HTOT EDF table)
+
+  # alpha: b0, b1
+  2:  [0.559,  1.004]
+  1:  [0.868,  1.140]
+  0:  [0.938,  1.696]
+  -1: [2.554,  0.974]
+  -2: [3.149,  1.276]

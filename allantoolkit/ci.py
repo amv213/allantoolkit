@@ -19,8 +19,7 @@ from typing import Tuple
 logger = logging.getLogger(__name__)
 
 # Confidence Intervals
-ONE_SIGMA_CI = scipy.special.erf(1/np.sqrt(2))
-ONE_SIGMA_CI = 0.6808213729984988
+ONE_SIGMA_CI = 0.683  # scipy.special.erf(1/np.sqrt(2))
 
 # shorten type hint to save some space
 Array = np.ndarray
@@ -74,7 +73,39 @@ def get_error_bars(x: Array, m: int, var: float, n: int, alpha: int,
     return lo, hi
 
 
+def confidence_interval(var: float, edf: float, ci: float) -> \
+        Tuple[float, float]:
+    """Returns double-sided statistical limits on the true variance at
+    requested confidence factor.
+
+    Calculation based on Chi-square statistics of observed sample variance
+    and corresponding equivalent degrees of freedom.
+
+    References:
+        http://www.wriley.com/CI2.pdf
+        https://faculty.elgin.edu/dkernler/statistics/ch09/9-3.html
+
+
+    Args:
+        var:    sample variance from which to calculate confidence intervals
+        edf:    equivalent degrees of freedom
+        ci:     confidence factor for which to set confidence limits on the
+                variance e.g. `0.6827` would set a 1-sigma confidence interval.
+
+    Returns:
+        lower and upper bounds for variance.
+    """
+
+    chi2_r, chi2_l = scipy.stats.chi2.interval(ci, edf)
+    print(f"DF: {edf} \t| X2 = {round(chi2_l, 3), round(chi2_r, 3)}")
+
+    var_lo = edf * var / chi2_l
+    var_hi = edf * var / chi2_r
+
+    return var_lo, var_hi
+
 # Dispatchers
+
 
 def calc_edf_adev(x: Array, m: int, alpha: int) -> float:
     """Calculate equivalent number of Chi-squared degrees of freedom (edf)
@@ -230,6 +261,31 @@ def calc_edf_ohdev(x: Array, m: int, alpha: int) -> float:
 
     return cedf(alpha=alpha, d=3, m=m, N=int(x.size), overlapping=True,
                 modified=False)
+
+
+def calc_edf_totdev(x: Array, m: int, alpha: int) -> float:
+    """Calculate equivalent number of Chi-squared degrees of freedom (edf)
+    for TOTDEV.
+
+    References:
+        http://www.wriley.com/CI2.pdf
+
+    Args:
+        x:          phase data from which deviation was computed, in units of
+                    seconds.
+        m:          averaging factor at which deviation was computed
+        alpha:      dominant power law frequency noise type
+
+    Returns:
+        equivalent number of Chi-squared degrees of freedom (edf)
+    """
+
+    b, c = tables.TOTVAR_EDF_COEFFICIENTS[alpha]
+
+    edf = b*(x.size/m) - c
+
+    return edf
+
 
 # Combined Greenhall EDF algorithm
 
@@ -595,40 +651,6 @@ def cedf_basic_sum(J: float, M: float, S: float, F: float, alpha: int, d: int):
     return basic_sum
 
 # -----------------------------------
-
-
-def confidence_interval(var: float, edf: float, ci: float) -> \
-        Tuple[float, float]:
-    """Returns double-sided statistical limits on the true variance at
-    requested confidence factor.
-
-    Calculation based on Chi-square statistics of observed sample variance
-    and corresponding equivalent degrees of freedom.
-
-    References:
-        http://www.wriley.com/CI2.pdf
-        https://faculty.elgin.edu/dkernler/statistics/ch09/9-3.html
-
-
-    Args:
-        var:    sample variance from which to calculate confidence intervals
-        edf:    equivalent degrees of freedom
-        ci:     confidence factor for which to set confidence limits on the
-                variance e.g. `0.6827` would set a 1-sigma confidence interval.
-
-    Returns:
-        lower and upper bounds for variance.
-    """
-
-
-    chi2_r, chi2_l = scipy.stats.chi2.interval(ci, edf)
-    print(f"DF: {edf} \t| X2 = {round(chi2_l, 3), round(chi2_r, 3)}")
-
-    var_lo = edf * var / chi2_l
-    var_hi = edf * var / chi2_r
-
-    return var_lo, var_hi
-
 
 def edf_totdev(N, m, alpha):
     """ Equivalent degrees of freedom for Total Deviation

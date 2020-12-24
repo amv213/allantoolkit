@@ -1,0 +1,12 @@
+# http://www.wriley.com/paper1ht.htm#Table_I
+# Fractional frequency
+
+103.11111
+20.11111
+34.11111
+9.11111
+-117.88889
+-144.88889
+94.11111
+114.11111
+-111.88889

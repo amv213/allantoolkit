@@ -9,7 +9,7 @@ logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 
 N = 500
 RATE = 1.
-X = allantoolkit.noise.white(N)
+Y = allantoolkit.noise.white(N)
 # this test asks for results at unreasonable tau-values
 # either zero, not an integer multiple of the data-interval
 # or too large, given the length of the dataset
@@ -31,7 +31,7 @@ funcs = [
 @pytest.mark.parametrize('func', funcs)
 def test_output_shapes(func):
 
-    out = func(data=X, rate=RATE, taus=TAUS, data_type='phase')
+    out = func(data=Y, rate=RATE, taus=TAUS, data_type='freq')
 
     taus2 = out.taus
     assert(len(taus2) == len(out.devs))

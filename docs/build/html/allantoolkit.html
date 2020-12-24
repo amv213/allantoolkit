@@ -2666,7 +2666,7 @@ the  averaging  time  as  the  integration  interval
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>y</strong> – data array of fractional frequency measurements</p></li>
 <li><p><strong>rate</strong> – sampling rate of the input data, in Hz</p></li>
-<li><p><strong>normalize</strong> (<em>optional</em>) – remove average frequency before conversion</p></li>
+<li><p><strong>normalize</strong> – remove average frequency before conversion</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2679,7 +2679,7 @@ in units of seconds. For phase in units of radians, see
 
 <dl class="py function">
 <dt id="allantoolkit.utils.input_to_phase">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">input_to_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#input_to_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.input_to_phase" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">input_to_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#input_to_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.input_to_phase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes either phase or fractional frequency data as input and returns
 phase.</p>
 <dl class="field-list simple">
@@ -2688,6 +2688,7 @@ phase.</p>
 <li><p><strong>data</strong> – data array of input measurements.</p></li>
 <li><p><strong>rate</strong> – sampling rate of the input data, in Hz</p></li>
 <li><p><strong>data_type</strong> – input data type. Either <cite>phase</cite> or <cite>freq</cite>.</p></li>
+<li><p><strong>normalize</strong> – remove average frequency before conversion</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

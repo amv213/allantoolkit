@@ -23,8 +23,8 @@ logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/ocxo'
 
 # Raw data onto which to perform statistics and check it matches
-Y = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'ocxo_frequency.txt')
-Y = allantoolkit.utils.frequency2fractional(f=Y, v0=1.0e7)
+# (this is the scaled and normalised version of ocxo_frequency)
+Y = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'ocxo_frequency0.txt')
 
 # Data sampling rate
 RATE = 1.  # Hz
@@ -48,7 +48,7 @@ def test_dev(func, test_alpha, test_ci):
     """Test that Allantoolkit deviation results match the reference Stable32
     results."""
 
-    fn = ASSETS_DIR / (func.__name__ + '_octave.txt')
+    fn = ASSETS_DIR / (func.__name__ + '_octave_0.txt')
 
     allantoolkit.testutils.test_Stable32_run(data=Y, func=func, rate=RATE,
                                              data_type='freq',

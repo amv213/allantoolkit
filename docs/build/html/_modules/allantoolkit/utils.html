@@ -400,9 +400,9 @@
 <span class="sd">    Any gaps in the frequency data are filled to obtain phase continuity.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        y:                      data array of fractional frequency measurements</span>
-<span class="sd">        rate:                   sampling rate of the input data, in Hz</span>
-<span class="sd">        normalize (optional):   remove average frequency before conversion</span>
+<span class="sd">        y:          data array of fractional frequency measurements</span>
+<span class="sd">        rate:       sampling rate of the input data, in Hz</span>
+<span class="sd">        normalize:  remove average frequency before conversion</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        time integral of fractional frequency data, i.e. phase (time) data</span>
@@ -410,8 +410,8 @@
 <span class="sd">        `phase2radians()`. Size: y.size + 1 - leading_and_trailing_gaps.size</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># if meaningful data to convert (not empty)...</span>
-    <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># if meaningful data to convert (not empty or all gaps)...</span>
+    <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
             <span class="n">y</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
@@ -424,7 +424,7 @@
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
 
     <span class="k">return</span> <span class="n">x</span></div>
 
@@ -469,7 +469,8 @@
     <span class="k">return</span> <span class="n">phase_data</span></div>
 
 
-<div class="viewcode-block" id="input_to_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.input_to_phase">[docs]</a><span class="k">def</span> <span class="nf">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+<div class="viewcode-block" id="input_to_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.input_to_phase">[docs]</a><span class="k">def</span> <span class="nf">input_to_phase</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                   <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Takes either phase or fractional frequency data as input and returns</span>
 <span class="sd">    phase.</span>
 
@@ -477,6 +478,7 @@
 <span class="sd">        data:       data array of input measurements.</span>
 <span class="sd">        rate:       sampling rate of the input data, in Hz</span>
 <span class="sd">        data_type:  input data type. Either `phase` or `freq`.</span>
+<span class="sd">        normalize:  remove average frequency before conversion</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        array of phase data.</span>
@@ -486,7 +488,7 @@
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">elif</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;freq&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">frequency2phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">frequency2phase</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid data_type value: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">. Should be &quot;</span>
@@ -583,6 +585,7 @@
             <span class="c1"># 1, 2, 3, 4, ... 71, 73, 75, 77, ..., 141, 143, 146, 149, 152, ...</span>
 
             <span class="c1"># FIXME: add effect of the many-tau `size` (=500) parameter</span>
+            <span class="c1"># for example if N &gt;= 10000, density seems to be 52...</span>
 
             <span class="n">density</span> <span class="o">=</span> <span class="mi">72</span>  <span class="c1"># afs per epoch</span>
 
@@ -631,12 +634,12 @@
 
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">]</span>  <span class="c1"># make sure averaging time smaller than size of dataset</span>
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># make sure minimum averaging time is at least 1</span>
-    <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&lt;=</span> <span class="n">maximum_m</span><span class="p">]</span>  <span class="c1"># make sure afs within maximum allowed</span>
     <span class="c1"># Technically theo1 should have afs &gt; 10. So fo example if `octave`: 16,</span>
     <span class="c1"># 32... Stable 32 decides instead to multiply by 10 the whole sequence</span>
     <span class="c1"># so we get 10, 20, 40, ...</span>
-    <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="o">*</span><span class="mi">10</span> <span class="k">if</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s1">&#39;theo1&#39;</span> <span class="k">else</span> <span class="n">afs</span>
+    <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="o">*</span><span class="mi">10</span> <span class="k">if</span> <span class="p">(</span><span class="n">dev_type</span> <span class="o">==</span> <span class="s1">&#39;theo1&#39;</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span> <span class="k">else</span> <span class="n">afs</span>
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s1">&#39;theo1&#39;</span> <span class="k">else</span> <span class="n">afs</span>
+    <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&lt;=</span> <span class="n">maximum_m</span><span class="p">]</span>  <span class="c1"># make sure afs within maximum allowed</span>
 
     <span class="c1"># Apply a Stable32 `stop-ratio`. Only applies to &#39;octave&#39; and &#39;decade&#39;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;octave&#39;</span> <span class="ow">or</span> <span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;decade&#39;</span><span class="p">):</span>
@@ -795,28 +798,28 @@
 <span class="sd">        estimated errors, number of samples used to calculate each deviaiton.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">tau_ab</span><span class="p">,</span> <span class="n">dev_ab</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">ns_ab</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
+    <span class="n">out_ab</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
         <span class="n">data</span><span class="o">=</span><span class="n">x_ab</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
 
-    <span class="n">_</span><span class="p">,</span> <span class="n">dev_bc</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
+    <span class="n">out_bc</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
         <span class="n">data</span><span class="o">=</span><span class="n">x_bc</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
 
-    <span class="n">_</span><span class="p">,</span> <span class="n">dev_ca</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
+    <span class="n">out_ca</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
         <span class="n">data</span><span class="o">=</span><span class="n">x_ca</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
 
-    <span class="n">var_ab</span> <span class="o">=</span> <span class="n">dev_ab</span> <span class="o">*</span> <span class="n">dev_ab</span>
-    <span class="n">var_bc</span> <span class="o">=</span> <span class="n">dev_bc</span> <span class="o">*</span> <span class="n">dev_bc</span>
-    <span class="n">var_ca</span> <span class="o">=</span> <span class="n">dev_ca</span> <span class="o">*</span> <span class="n">dev_ca</span>
+    <span class="n">var_ab</span> <span class="o">=</span> <span class="n">out_ab</span><span class="o">.</span><span class="n">devs</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">var_bc</span> <span class="o">=</span> <span class="n">out_bc</span><span class="o">.</span><span class="n">devs</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">var_ca</span> <span class="o">=</span> <span class="n">out_ca</span><span class="o">.</span><span class="n">devs</span><span class="o">**</span><span class="mi">2</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_ab</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_bc</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_ca</span><span class="p">)</span>
 
     <span class="n">var_a</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">var_ab</span> <span class="o">+</span> <span class="n">var_ca</span> <span class="o">-</span> <span class="n">var_bc</span><span class="p">)</span>
     <span class="n">var_a</span><span class="p">[</span><span class="n">var_a</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># don&#39;t return imaginary deviations (?)</span>
 
     <span class="n">dev_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_a</span><span class="p">)</span>
-    <span class="n">err_a_lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">nn</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dev_a</span><span class="p">,</span> <span class="n">ns_ab</span><span class="p">)])</span>
+    <span class="n">err_a_lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">nn</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dev_a</span><span class="p">,</span> <span class="n">out_ab</span><span class="o">.</span><span class="n">ns</span><span class="p">)])</span>
     <span class="n">err_a_hi</span> <span class="o">=</span> <span class="n">err_a_lo</span>
 
-    <span class="k">return</span> <span class="n">tau_ab</span><span class="p">,</span> <span class="n">dev_a</span><span class="p">,</span> <span class="n">err_a_lo</span><span class="p">,</span> <span class="n">err_a_hi</span><span class="p">,</span> <span class="n">ns_ab</span></div>
+    <span class="k">return</span> <span class="n">out_ab</span><span class="o">.</span><span class="n">taus</span><span class="p">,</span> <span class="n">dev_a</span><span class="p">,</span> <span class="n">err_a_lo</span><span class="p">,</span> <span class="n">err_a_hi</span><span class="p">,</span> <span class="n">out_ab</span><span class="o">.</span><span class="n">ns</span></div>
 
 
 <div class="viewcode-block" id="rolling_grad"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.rolling_grad">[docs]</a><span class="k">def</span> <span class="nf">rolling_grad</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>

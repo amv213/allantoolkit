@@ -1,13 +1,12 @@
-import pytest
 import allantoolkit
 import numpy as np
 
 minimum_ns = 1
 
 taus = np.arange(1, 499)
-devs = np.random.rand(len(taus))
-deverrs_l = np.random.rand(len(taus))
-deverrs_h = np.random.rand(len(taus))
+afs = taus.copy()
+vars = np.random.rand(len(taus))
+
 ns = np.zeros(len(taus))
 ns[0] = len(ns)
 last_i = 0
@@ -17,25 +16,11 @@ for i in range(1, len(ns)):
         last_i = i + 1
 
 
-# 4 params option is not implemented anymore
-@pytest.mark.skip
 def test_4params():
-    (o_taus, o_devs, o_deverrs, o_ns) = allantoolkit.utils.remove_small_ns(
-        taus, devs, deverrs_l, ns)
-    np.testing.assert_array_equal(o_taus, taus[:last_i])
-    np.testing.assert_array_equal(o_devs, devs[:last_i])
-    np.testing.assert_array_equal(o_deverrs, deverrs_l[:last_i])
-    np.testing.assert_array_equal(o_ns, ns[:last_i])
+    afs2, taus2, ns2, vars2 = allantoolkit.utils.remove_small_ns(
+        afs=afs, taus=taus, ns=ns, vars=vars)
 
-
-def test_5params():
-    (o_taus, o_devs, o_deverrs_l, o_deverrs_h, o_ns) = \
-        allantoolkit.utils.remove_small_ns(
-        taus, devs, deverrs_l, deverrs_h, ns)
-
-    np.testing.assert_array_equal(o_taus, taus[:last_i])
-    np.testing.assert_array_equal(o_devs, devs[:last_i])
-    np.testing.assert_array_equal(o_deverrs_l, deverrs_l[:last_i])
-    np.testing.assert_array_equal(o_deverrs_h, deverrs_h[:last_i])
-    np.testing.assert_array_equal(o_ns, ns[:last_i])
-
+    assert np.array_equal(afs2, taus[:last_i])
+    assert np.array_equal(taus2, taus[:last_i])
+    assert np.array_equal(ns2, ns[:last_i])
+    assert np.array_equal(vars2, vars[:last_i])

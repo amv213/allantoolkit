@@ -213,8 +213,8 @@ def frequency2phase(y: Array, rate: float, normalize: bool = False) -> Array:
         `phase2radians()`. Size: y.size + 1 - leading_and_trailing_gaps.size
     """
 
-    # if meaningful data to convert (not empty)...
-    if y.size > 0:
+    # if meaningful data to convert (not empty or all gaps)...
+    if y.size > 0 and y[~np.isnan(y)].size > 0:
 
         if normalize:
             y -= np.nanmean(y)
@@ -227,7 +227,7 @@ def frequency2phase(y: Array, rate: float, normalize: bool = False) -> Array:
         x = np.insert(x, 0, 0.)
 
     else:
-        x = y
+        x = np.array([])
 
     return x
 

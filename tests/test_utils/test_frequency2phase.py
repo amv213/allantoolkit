@@ -46,7 +46,7 @@ def test_all_gaps(data_with_only_gaps):
     """"Test we get same array if data is full of gaps"""
 
     output = allantoolkit.utils.frequency2phase(data_with_only_gaps, rate=RATE)
-
+    print(output)
     assert np.array_equal(output, np.array([]))
 
 

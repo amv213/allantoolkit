@@ -393,16 +393,14 @@ def tau_generator(data: Array, rate: float, dev_type: str,
             density = 72  # afs per epoch
 
             afs = np.linspace(1, density, density)
-            maxn = max(afs)
 
             i = 0
-            while maxn < N:
+            while i < N // density:  # number of epochs to generate
 
                 new = np.linspace((i + 1) * density + 1, (i + 2) * density,
                                   density)[i::i + 2]
                 afs = np.concatenate([afs, new])
 
-                maxn = max(afs)
                 i += 1
 
             afs = afs.astype(int)

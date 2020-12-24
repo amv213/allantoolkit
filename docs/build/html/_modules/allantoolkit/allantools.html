@@ -213,15 +213,65 @@
 <span class="c1"># group allowed taus types to save some space</span>
 <span class="n">Taus</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span>
 
+
 <span class="c1"># define named tuple to hold dev results</span>
-<span class="n">DevResult</span> <span class="o">=</span> <span class="n">NamedTuple</span><span class="p">(</span><span class="s1">&#39;DevResult&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;afs&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
-                                     <span class="p">(</span><span class="s1">&#39;taus&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
-                                     <span class="p">(</span><span class="s1">&#39;ns&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
-                                     <span class="p">(</span><span class="s1">&#39;alphas&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
-                                     <span class="p">(</span><span class="s1">&#39;devs_lo&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
-                                     <span class="p">(</span><span class="s1">&#39;devs&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
-                                     <span class="p">(</span><span class="s1">&#39;devs_hi&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
-                                     <span class="p">])</span>
+<div class="viewcode-block" id="DevResult"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.allantools.DevResult">[docs]</a><span class="k">class</span> <span class="nc">DevResult</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a statistical stability analysis result.</span>
+
+<span class="sd">    Fields:</span>
+<span class="sd">        afs:        array of averaging factors for which deviations were</span>
+<span class="sd">                    computed</span>
+<span class="sd">        taus:       array of corresponding averaging times, in seconds</span>
+<span class="sd">        ns:         array with number of analysis points used to compute each</span>
+<span class="sd">                    deviation.</span>
+<span class="sd">        alphas:     array of estimated dominant noise type at each deviation</span>
+<span class="sd">        devs_lo:    array of estimated statistical lower bounds for each</span>
+<span class="sd">                    deviation</span>
+<span class="sd">        devs:       array with deviations computed at each averaging time</span>
+<span class="sd">        devs_hi:    array of estimated statistical higher bounds for each</span>
+<span class="sd">                    deviation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">afs</span><span class="p">:</span> <span class="n">Array</span>
+    <span class="n">taus</span><span class="p">:</span> <span class="n">Array</span>
+    <span class="n">ns</span><span class="p">:</span> <span class="n">Array</span>
+    <span class="n">alphas</span><span class="p">:</span> <span class="n">Array</span>
+    <span class="n">devs_lo</span><span class="p">:</span> <span class="n">Array</span>
+    <span class="n">devs</span><span class="p">:</span> <span class="n">Array</span>
+    <span class="n">devs_hi</span><span class="p">:</span> <span class="n">Array</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A human-friendly pretty-print representation of the object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pretty-print of the DevResult object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># A bit of formatting to get all rows aligning nicely...</span>
+        <span class="n">afs</span> <span class="o">=</span> <span class="s1">&#39;[ &#39;</span> <span class="o">+</span> <span class="s1">&#39;   &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; ]&#39;</span>
+        <span class="n">taus</span> <span class="o">=</span> <span class="s1">&#39;[ &#39;</span> <span class="o">+</span> <span class="s1">&#39;   &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">taus</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; ]&#39;</span>
+        <span class="n">ns</span> <span class="o">=</span> <span class="s1">&#39;[ &#39;</span> <span class="o">+</span> <span class="s1">&#39;   &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; ]&#39;</span>
+        <span class="n">alphas</span> <span class="o">=</span> <span class="s1">&#39;[ &#39;</span> <span class="o">+</span> <span class="s1">&#39;   &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphas</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; ]&#39;</span>
+        <span class="n">devs_lo</span> <span class="o">=</span> <span class="s1">&#39;[ &#39;</span> <span class="o">+</span> \
+                  <span class="s1">&#39;   &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">format_float_scientific</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devs_lo</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; ]&#39;</span>
+        <span class="n">devs</span> <span class="o">=</span> <span class="s1">&#39;[ &#39;</span> <span class="o">+</span> \
+               <span class="s1">&#39;   &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">format_float_scientific</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                          <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devs</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; ]&#39;</span>
+        <span class="n">devs_hi</span> <span class="o">=</span> <span class="s1">&#39;[ &#39;</span> <span class="o">+</span> \
+                  <span class="s1">&#39;   &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">format_float_scientific</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">devs_hi</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; ]&#39;</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">STABILITY ANALYSIS RESULTS:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;AFS:     </span><span class="se">\t</span><span class="si">{afs}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;TAUS (s):</span><span class="se">\t</span><span class="si">{taus}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;#:       </span><span class="se">\t</span><span class="si">{ns}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;ALPHAS:  </span><span class="se">\t</span><span class="si">{alphas}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;DEVS_LO: </span><span class="se">\t</span><span class="si">{devs_lo}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;DEVS:    </span><span class="se">\t</span><span class="si">{devs}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;DEVS_HI: </span><span class="se">\t</span><span class="si">{devs_hi}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="o">=</span><span class="n">ns</span><span class="p">,</span> <span class="n">alphas</span><span class="o">=</span><span class="n">alphas</span><span class="p">,</span>
+            <span class="n">devs_lo</span><span class="o">=</span><span class="n">devs_lo</span><span class="p">,</span> <span class="n">devs</span><span class="o">=</span><span class="n">devs</span><span class="p">,</span> <span class="n">devs_hi</span><span class="o">=</span><span class="n">devs_hi</span><span class="p">)</span></div>
 
 
 <span class="c1"># TODO: Add data preprocessing before feeding to dev:</span>
@@ -246,19 +296,7 @@
 <span class="sd">                    Defaults to length of dataset.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (afs, taus, ns, alphas, devs_lo, devs, devs_hi) NamedTuple of results:</span>
-
-<span class="sd">        .afs:       array of averaging factors for which deviations were</span>
-<span class="sd">                    computed</span>
-<span class="sd">        .taus:      array of corresponding averaging times, in seconds</span>
-<span class="sd">        .ns:        array with number of analysis points used to compute each</span>
-<span class="sd">                    deviation.</span>
-<span class="sd">        .alphas     array of estimated dominant noise type at each deviation</span>
-<span class="sd">        .devs_lo:   array of estimated statistical lower bounds for each</span>
-<span class="sd">                    deviation</span>
-<span class="sd">        .devs:      array with deviations computed at each averaging time.</span>
-<span class="sd">        .devs_hi:   array of estimated statistical higher bounds for each</span>
-<span class="sd">                    deviation</span>
+<span class="sd">        (afs, taus, ns, alphas, devs_lo, devs, devs_hi) DevResult named tuple</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Work with phase data, in units of seconds</span>

@@ -16,15 +16,65 @@ Array = np.ndarray
 # group allowed taus types to save some space
 Taus = Union[str, float, List, Array]
 
+
 # define named tuple to hold dev results
-DevResult = NamedTuple('DevResult', [('afs', Array),
-                                     ('taus', Array),
-                                     ('ns', Array),
-                                     ('alphas', Array),
-                                     ('devs_lo', Array),
-                                     ('devs', Array),
-                                     ('devs_hi', Array),
-                                     ])
+class DevResult(NamedTuple):
+    """Represents a statistical stability analysis result.
+
+    Fields:
+        afs:        array of averaging factors for which deviations were
+                    computed
+        taus:       array of corresponding averaging times, in seconds
+        ns:         array with number of analysis points used to compute each
+                    deviation.
+        alphas:     array of estimated dominant noise type at each deviation
+        devs_lo:    array of estimated statistical lower bounds for each
+                    deviation
+        devs:       array with deviations computed at each averaging time
+        devs_hi:    array of estimated statistical higher bounds for each
+                    deviation
+    """
+
+    afs: Array
+    taus: Array
+    ns: Array
+    alphas: Array
+    devs_lo: Array
+    devs: Array
+    devs_hi: Array
+
+    def __str__(self) -> str:
+        """A human-friendly pretty-print representation of the object.
+
+        Returns:
+            pretty-print of the DevResult object.
+        """
+
+        # A bit of formatting to get all rows aligning nicely...
+        afs = '[ ' + '   '.join(f"{x:<10}" for x in self.afs) + ' ]'
+        taus = '[ ' + '   '.join(f"{x:<10}" for x in self.taus) + ' ]'
+        ns = '[ ' + '   '.join(f"{x:<10}" for x in self.ns) + ' ]'
+        alphas = '[ ' + '   '.join(f"{x:<10}" for x in self.alphas) + ' ]'
+        devs_lo = '[ ' + \
+                  '   '.join(f"{np.format_float_scientific(x, 4, trim='k')}"
+                             for x in self.devs_lo) + ' ]'
+        devs = '[ ' + \
+               '   '.join(f"{np.format_float_scientific(x, 4, trim='k')}"
+                          for x in self.devs) + ' ]'
+        devs_hi = '[ ' + \
+                  '   '.join(f"{np.format_float_scientific(x, 4, trim='k')}"
+                             for x in self.devs_hi) + ' ]'
+
+        return ("\nSTABILITY ANALYSIS RESULTS:\n"
+                "AFS:     \t{afs}\n"
+                "TAUS (s):\t{taus}\n"
+                "#:       \t{ns}\n"
+                "ALPHAS:  \t{alphas}\n"
+                "DEVS_LO: \t{devs_lo}\n"
+                "DEVS:    \t{devs}\n"
+                "DEVS_HI: \t{devs_hi}\n").format(
+            afs=afs, taus=taus, ns=ns, alphas=alphas,
+            devs_lo=devs_lo, devs=devs, devs_hi=devs_hi)
 
 
 # TODO: Add data preprocessing before feeding to dev:
@@ -49,19 +99,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
                     Defaults to length of dataset.
 
     Returns:
-        (afs, taus, ns, alphas, devs_lo, devs, devs_hi) NamedTuple of results:
-
-        .afs:       array of averaging factors for which deviations were
-                    computed
-        .taus:      array of corresponding averaging times, in seconds
-        .ns:        array with number of analysis points used to compute each
-                    deviation.
-        .alphas     array of estimated dominant noise type at each deviation
-        .devs_lo:   array of estimated statistical lower bounds for each
-                    deviation
-        .devs:      array with deviations computed at each averaging time.
-        .devs_hi:   array of estimated statistical higher bounds for each
-                    deviation
+        (afs, taus, ns, alphas, devs_lo, devs, devs_hi) DevResult named tuple
     """
 
     # Work with phase data, in units of seconds

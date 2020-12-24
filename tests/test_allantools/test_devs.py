@@ -15,7 +15,7 @@ expected_reduced_10 = [1., 2., 3., 4., 5., 7., 8., 11., 14., 17.,
                        22., 28., 35.]
 expected_reduced_2 = [1., 5., 17.]
 
-
+# FIXME: very occasionally this test is buggy due to random init
 def test_tau_generator_empty():
     out = allantoolkit.allantools.adev(d)
     np.testing.assert_allclose(out.taus, expected_octave)

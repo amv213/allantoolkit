@@ -203,9 +203,9 @@ def frequency2phase(y: Array, rate: float, normalize: bool = False) -> Array:
     Any gaps in the frequency data are filled to obtain phase continuity.
 
     Args:
-        y:                      data array of fractional frequency measurements
-        rate:                   sampling rate of the input data, in Hz
-        normalize (optional):   remove average frequency before conversion
+        y:          data array of fractional frequency measurements
+        rate:       sampling rate of the input data, in Hz
+        normalize:  remove average frequency before conversion
 
     Returns:
         time integral of fractional frequency data, i.e. phase (time) data
@@ -272,7 +272,8 @@ def phase2radians(x: Array, v0: float) -> Array:
     return phase_data
 
 
-def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
+def input_to_phase(data: Array, rate: float, data_type: str,
+                   normalize: bool = False) -> Array:
     """Takes either phase or fractional frequency data as input and returns
     phase.
 
@@ -280,6 +281,7 @@ def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
         data:       data array of input measurements.
         rate:       sampling rate of the input data, in Hz
         data_type:  input data type. Either `phase` or `freq`.
+        normalize:  remove average frequency before conversion
 
     Returns:
         array of phase data.
@@ -289,7 +291,7 @@ def input_to_phase(data: Array, rate: float, data_type: str) -> Array:
         return data
 
     elif data_type == "freq":
-        return frequency2phase(data, rate)
+        return frequency2phase(data, rate, normalize=normalize)
 
     else:
         raise ValueError(f"Invalid data_type value: {data_type}. Should be "

@@ -102,7 +102,8 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     """
 
     # Work with phase data, in units of seconds
-    x = utils.input_to_phase(data=data, rate=rate, data_type=data_type)
+    x = utils.input_to_phase(data=data, rate=rate, data_type=data_type,
+                             normalize=True)
 
     # ---------------------
     # SET AVERAGING TIMES

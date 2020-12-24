@@ -1,43 +1,50 @@
-import allantoolkit.allantools as allan
-from allantoolkit import noise
+import logging
+import pytest
+import allantoolkit
 import numpy
 
+# Set testing logger to debug mode
+logging.basicConfig()
+logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 
-def _test(function, data, rate, taus):
+N = 500
+RATE = 1.
+X = allantoolkit.noise.white(N)
+# this test asks for results at unreasonable tau-values
+# either zero, not an integer multiple of the data-interval
+# or too large, given the length of the dataset
+TAUS = [x for x in numpy.logspace(0, 4, 4000)]
 
-    (taus2, devs2, errs_lo2, errs_hi2, ns2) = function(data, rate=rate,
-                                                       taus=taus)
-    assert(len(taus2) == len(devs2))
-    assert(len(taus2) == len(errs_lo2))
-    assert(len(taus2) == len(errs_hi2))
-    assert(len(taus2) == len(ns2))
+funcs = [
+    allantoolkit.allantools.adev,
+    allantoolkit.allantools.oadev,
+    allantoolkit.allantools.mdev,
+    allantoolkit.allantools.tdev,
+    allantoolkit.allantools.hdev,
+    allantoolkit.allantools.ohdev,
+    allantoolkit.allantools.totdev,
+    allantoolkit.allantools.mtie,
+    allantoolkit.allantools.tierms,
+]
 
-    for n in ns2:
+
+@pytest.mark.parametrize('func', funcs)
+def test_output_shapes(func):
+
+    out = func(data=X, rate=RATE, taus=TAUS, data_type='phase')
+
+    taus2 = out.taus
+    assert(len(taus2) == len(out.devs))
+    assert(len(taus2) == len(out.devs_lo))
+    assert(len(taus2) == len(out.devs_hi))
+    assert(len(taus2) == len(out.ns))
+
+    for n in out.ns:
 
         if n <= 1:
-            print("test of ", function, " failed: ", n)
+            print("test of ", func.__name__, " failed: ", n)
 
         assert(n > 1)  # n should be 2 or more for each tau
 
-    print("test_ns of function ", function, " OK.")
-
-
-def test_ns():
-    
-    # this test asks for results at unreasonable tau-values
-    # either zero, not an integer multiple of the data-interval
-    # or too large, given the length of the dataset
-    N = 500
-    rate = 1.0
-    phase_white = noise.white(N)
-    taus_try = [x for x in numpy.logspace(0, 4, 4000)]  # try insane tau values
-    _test(allan.adev, phase_white, rate, taus_try)
-    _test(allan.oadev, phase_white, rate, taus_try)
-    _test(allan.mdev, phase_white, rate, taus_try)
-    _test(allan.tdev, phase_white, rate, taus_try)
-    _test(allan.hdev, phase_white, rate, taus_try)
-    _test(allan.ohdev, phase_white, rate, taus_try)
-    _test(allan.totdev, phase_white, rate, taus_try)
-    _test(allan.mtie, phase_white, rate, taus_try)
-    _test(allan.tierms, phase_white, rate, taus_try)
+    print("test_ns of function ", func.__name__, " OK.")
 

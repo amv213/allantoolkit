@@ -106,8 +106,10 @@ class TestNBS14_1000Point:
         self.nbs14_tester( allan.ttotdev, pdata,None, nbs14_1000_devs[10], soft=False )
         
     def test_theo1(self):
-        self.nbs14_tester( allan.theo1, None,fdata, nbs14_1000_devs[11], taus =[10, 100,1000] )
-        self.nbs14_tester( allan.theo1, pdata, None,nbs14_1000_devs[11], taus =[10, 100,1000] )
+        self.nbs14_tester( allan.theo1, None,fdata, nbs14_1000_devs[11],
+                           taus =[10, 100,1000] )
+        self.nbs14_tester( allan.theo1, pdata, None,nbs14_1000_devs[11],
+                           taus =[10, 100, 1000] )
         
     def nbs14_tester(self, function, pdata, fdata, correct_devs, taus =[1, 10, 100], soft=False ):
 

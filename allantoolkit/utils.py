@@ -438,7 +438,7 @@ def tau_generator(data: Array, rate: float, dev_type: str,
     # Technically theo1 should have afs > 10. So fo example if `octave`: 16,
     # 32... Stable 32 decides instead to multiply by 10 the whole sequence
     # so we get 10, 20, 40, ...
-    afs = afs*10 if dev_type == 'theo1' else afs
+    afs = afs*10 if (dev_type == 'theo1' and isinstance(taus, str)) else afs
     afs = afs[afs % 2 == 0] if dev_type == 'theo1' else afs
 
     # Apply a Stable32 `stop-ratio`. Only applies to 'octave' and 'decade'

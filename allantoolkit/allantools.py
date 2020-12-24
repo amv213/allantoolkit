@@ -79,7 +79,6 @@ class DevResult(NamedTuple):
 
 # TODO: Add data preprocessing before feeding to dev:
 # [RileyStable32]_ (10, pg.103)
-# might fix noise type estimation
 
 
 def dev(dev_type: str, data: Array, rate: float, data_type: str,

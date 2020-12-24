@@ -16,6 +16,7 @@ def test_blacklisted_function(dataset):
         dataset.compute("calc_mtotdev")
 
 
+# FIXME: Need to update Dataset class to work with all new features
 def test_compute_functions(dataset):
     types = ["adev", "oadev", "mdev", "hdev", "ohdev", "tdev", "totdev",
              "mtotdev", "ttotdev", "htotdev", "theo1", "mtie", "tierms"]

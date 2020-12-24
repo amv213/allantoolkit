@@ -600,28 +600,28 @@ def three_cornered_hat_phase(x_ab: Array, x_bc: Array, x_ca: Array,
         estimated errors, number of samples used to calculate each deviaiton.
     """
 
-    tau_ab, dev_ab, _, _, ns_ab = getattr(allantools, dev_type)(
+    out_ab = getattr(allantools, dev_type)(
         data=x_ab, data_type='phase', rate=rate, taus=taus)
 
-    _, dev_bc, _, _, _ = getattr(allantools, dev_type)(
+    out_bc = getattr(allantools, dev_type)(
         data=x_bc, data_type='phase', rate=rate, taus=taus)
 
-    _, dev_ca, _, _, _ = getattr(allantools, dev_type)(
+    out_ca = getattr(allantools, dev_type)(
         data=x_ca, data_type='phase', rate=rate, taus=taus)
 
-    var_ab = dev_ab * dev_ab
-    var_bc = dev_bc * dev_bc
-    var_ca = dev_ca * dev_ca
+    var_ab = out_ab.devs**2
+    var_bc = out_bc.devs**2
+    var_ca = out_ca.devs**2
     assert len(var_ab) == len(var_bc) == len(var_ca)
 
     var_a = 0.5 * (var_ab + var_ca - var_bc)
     var_a[var_a < 0] = 0  # don't return imaginary deviations (?)
 
     dev_a = np.sqrt(var_a)
-    err_a_lo = np.array([d/np.sqrt(nn) for (d, nn) in zip(dev_a, ns_ab)])
+    err_a_lo = np.array([d/np.sqrt(nn) for (d, nn) in zip(dev_a, out_ab.ns)])
     err_a_hi = err_a_lo
 
-    return tau_ab, dev_a, err_a_lo, err_a_hi, ns_ab
+    return out_ab.taus, dev_a, err_a_lo, err_a_hi, out_ab.ns
 
 
 def rolling_grad(x: Array, n: int):

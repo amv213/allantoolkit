@@ -172,6 +172,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
                 alpha = noiseid.noise_id(data=x, m=m, rate=rate,
                                          data_type='phase',
                                          dev_type=dev_type, n=n)
+
             else:
                 # Use previous estimate at longest averaging time
                 alpha = alphas[i-1]

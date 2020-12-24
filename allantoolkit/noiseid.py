@@ -141,6 +141,7 @@ def acf_noise_id(data: Array, data_type: str, m: int, dev_type: str) -> int:
     # respectively, and may be rounded to an integer (although the fractional
     # part is useful for estimated mixed noises).
     alpha = p+2 if data_type == 'phase' else p
+    assert alpha <= 2
 
     return alpha
 

@@ -11,8 +11,11 @@ expected_octave = [1.,   2.,   4.,   8.,  16.,  32.]
 expected_decade = [1., 2., 4., 10., 20.]
 
 ab = allantoolkit.noise.white(N)
+ab = allantoolkit.utils.frequency2phase(y=ab, rate=r)
 bc = allantoolkit.noise.white(N)
+bc = allantoolkit.utils.frequency2phase(y=bc, rate=r)
 ca = allantoolkit.noise.white(N)
+ca = allantoolkit.utils.frequency2phase(y=ca, rate=r)
 
 
 def test_3ch_1():

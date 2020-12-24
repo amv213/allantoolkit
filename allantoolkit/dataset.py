@@ -121,10 +121,13 @@ class Dataset:
             # this should probably raise a custom exception type so
             # it's easier to distinguish from other bad things
             raise RuntimeError("function must be one of the 'dev' functions")
+
         result = func(self.inp["data"], rate=self.inp["rate"],
                       data_type=self.inp["data_type"], taus=self.inp["taus"])
+
         keys = ["taus", "stat", "stat_err", "stat_n"]
         result = {key: result[i] for i, key in enumerate(keys)}
+
         self.out = result.copy()
         self.out["stat_id"] = function
         return result

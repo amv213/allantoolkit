@@ -388,6 +388,7 @@ def tau_generator(data: Array, rate: float, dev_type: str,
             # 1, 2, 3, 4, ... 71, 73, 75, 77, ..., 141, 143, 146, 149, 152, ...
 
             # FIXME: add effect of the many-tau `size` (=500) parameter
+            # for example if N >= 10000, density seems to be 52...
 
             density = 72  # afs per epoch
 

@@ -231,6 +231,7 @@ def test_Stable32_run(data: Array, func: Callable, rate: float, data_type: str,
 
     # Unpack and format to same number of significant digits as Stable32
     afs2, taus2, ns2, alphas2, devs_lo2, devs2, devs_hi2 = actual_results
+    taus2 = [float(np.format_float_scientific(t, 4)) for t in taus2]
     devs_lo2 = [float(np.format_float_scientific(lo, 4)) for lo in devs_lo2]
     devs2 = [float(np.format_float_scientific(dev, 4)) for dev in devs2]
     devs_hi2 = [float(np.format_float_scientific(hi, 4)) for hi in devs_hi2]

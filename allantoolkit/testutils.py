@@ -209,6 +209,10 @@ def test_Stable32_run(data: Array, func: Callable, rate: float, data_type: str,
                     intervals
     """
 
+    # Check if testing against deviations not available to frequency data
+    if func.__name__ in ['theo1', 'tierms', 'mtie'] and data_type == 'freq':
+        return 1
+
     # Check if we are reading a file for a TIE-lik deviation from Stable32 (
     # they have a different number of columns from standard)
     file_type = 'tie' if 'tie' in func.__name__ else None

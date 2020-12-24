@@ -2,7 +2,7 @@
   PHASE.DAT test for allantoolkit (https://github.com/aewallin/allantools)
   Stable32 was used to calculate the deviations we compare against.
 
-  PHASE.DAT comes with Stable32 (version 1.53 was used in this case)
+  PHASE.DAT comes with Stable32 (version 1.61 was used in this case)
 
   This test is for Confidence Intervals in particular
   

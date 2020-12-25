@@ -18,7 +18,7 @@ logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/Keysight53230A_ti_noise_floor'
 
 # Raw data onto which to perform statistics and check it matches
-X = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'tic_phase.txt')
+X = allantoolkit.utils.read_datafile(ASSETS_DIR / 'tic_phase.txt')
 
 # Data sampling rate
 RATE = 1.  # Hz

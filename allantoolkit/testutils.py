@@ -4,56 +4,18 @@
 """
 
 import time
-import gzip
 import numpy
 import logging
 import numpy as np
 from pathlib import Path
-from typing import Union, Dict, Callable
+from typing import Union, Callable
+from . import utils
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
 
 # shorten type hint to save some space
 Array = np.ndarray
-
-
-def read_datafile(fn: Union[str, Path]) -> Array:
-    """Extract phase or frequency data from an input .txt file (optionally
-    compressed to .gz) or .DAT file.
-
-    If present, a first column with associated timestamps will be omitted.
-    Lines to omit should be commented out with `#`.
-
-    Args:
-        fn:   path of the datafile from which to extract data
-
-    Returns:
-        array of input data.
-    """
-
-    if fn.suffix == '.gz':
-
-        x = []
-        with gzip.open(fn, mode='rt') as f:
-            for line in f:
-
-                if not line.startswith("#"):  # skip comments
-
-                    data = line.split(" ")
-                    val = data[0] if len(data) == 1 else data[1]
-                    x.append(float(val))
-
-    elif fn.suffix == '.txt' or fn.suffix == '.DAT':
-        data = numpy.genfromtxt(fn, comments='#')
-        x = data if data.ndim == 1 else data[:, 1]
-
-    else:
-        raise ValueError("Input data should be a `.txt`, `.DAT` or `.txt.gz` "
-                         "file.")
-
-    return numpy.array(x)
-
 
 # read a result-file, produced by copy/paste from Stable32
 # note: header-lines need to be manually commented-out with "#"
@@ -104,7 +66,7 @@ def test_row_by_row(function: Callable,
 
     # if Stable32 results were given with more digits we could decrease tolerance
 
-    input = read_datafile(datafile)
+    input = utils.read_datafile(datafile)
 
     logger.info("Read %i entries from %s", len(input), datafile)
 

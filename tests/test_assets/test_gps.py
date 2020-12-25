@@ -19,7 +19,7 @@ logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/gps'
 
 # Raw data onto which to perform statistics and check it matches
-X = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'gps_1pps_phase_data.txt.gz')
+X = allantoolkit.utils.read_datafile(ASSETS_DIR / 'gps_1pps_phase_data.txt.gz')
 
 # Data sampling rate
 RATE = 1.  # Hz

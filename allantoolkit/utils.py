@@ -1,11 +1,12 @@
 import math
+import gzip
 import logging
 import warnings
 import numpy as np
-from typing import List, Tuple, NamedTuple, Union, Callable
 from . import tables
 from . import allantools
-
+from pathlib import Path
+from typing import List, Tuple, NamedTuple, Union, Callable
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -683,3 +684,40 @@ def detrend(data: Array, data_type: str):
     detrended = data - np.polyval(p, t)
 
     return detrended
+
+
+def read_datafile(fn: Union[str, Path]) -> Array:
+    """Extract phase or frequency data from an input .txt file (optionally
+    compressed to .gz) or .DAT file.
+
+    If present, a first column with associated timestamps will be omitted.
+    Lines to omit should be commented out with `#`.
+
+    Args:
+        fn:   path of the datafile from which to extract data
+
+    Returns:
+        array of input data.
+    """
+
+    if fn.suffix == '.gz':
+
+        x = []
+        with gzip.open(fn, mode='rt') as f:
+            for line in f:
+
+                if not line.startswith("#"):  # skip comments
+
+                    data = line.split(" ")
+                    val = data[0] if len(data) == 1 else data[1]
+                    x.append(float(val))
+
+    elif fn.suffix == '.txt' or fn.suffix == '.DAT':
+        data = np.genfromtxt(fn, comments='#')
+        x = data if data.ndim == 1 else data[:, 1]
+
+    else:
+        raise ValueError("Input data should be a `.txt`, `.DAT` or `.txt.gz` "
+                         "file.")
+
+    return np.array(x)

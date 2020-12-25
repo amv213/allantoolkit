@@ -24,7 +24,7 @@ ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/ocxo'
 
 # Raw data onto which to perform statistics and check it matches
 # (this is the scaled and normalised version of ocxo_frequency)
-Y = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'ocxo_frequency0.txt')
+Y = allantoolkit.utils.read_datafile(ASSETS_DIR / 'ocxo_frequency0.txt')
 
 # Data sampling rate
 RATE = 1.  # Hz

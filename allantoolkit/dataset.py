@@ -21,46 +21,17 @@ logger = logging.getLogger(__name__)
 
 
 class Dataset:
-    """ Dataset class for Allantools
+    """ Dataset class for `allantoolkit`"""
 
-    :Example:
-        ::
-
-            import numpy as np
-            # Load random data
-            a = allantoolkit.Dataset(data=np.random.rand(1000))
-            # compute mdev
-            a.compute("mdev")
-            print(a.out["stat"])
-
-    compute() returns the result of the computation and also stores it in the
-    object's ``out`` member.
-
-    """
-
-    def __init__(self, data: Array, rate: float, data_type: str = "phase",
-                 taus: Taus = None) -> None:
+    def __init__(self, data: Union[Array, str, Path], rate: float,
+                 data_type: str = "phase") -> None:
         """ Initialize object with input data
 
-        Parameters
-        ----------
-        data: np.array
-            Input data. Provide either phase or frequency (fractional,
-            adimensional)
-        rate: float
-            The sampling rate for data, in Hz. Defaults to 1.0
-        data_type: {'phase', 'freq'}
-            Data type, i.e. phase or frequency. Defaults to "phase".
-        taus: np.array
-            Array of tau values, in seconds, for which to compute statistic.
-            Optionally set taus=["all"|"octave"|"decade"] for automatic
-            calculation of taus list
-
-        Returns
-        -------
-        Dataset()
-            A Dataset() instance
-
+        Args:
+            data:       path to / array of phase data (in units of seconds) or
+                        fractional frequency data.
+            rate:       sampling rate of the input data, in Hz.
+            data_type:  input data type. Either `phase` or `freq`.
         """
 
         if data_type not in ['phase', 'freq']:
@@ -70,7 +41,10 @@ class Dataset:
         self.rate = rate
         self.tau_0 = 1 / rate
         self.data_type = data_type
-        self.taus = taus
+
+        # Read data from file if a filename is provided
+        if isinstance(data, str) or isinstance(data, Path):
+            data = utils.read_datafile(fn=data)
 
         self.x = data if data_type == 'phase' else None
         self.y = data if data_type == 'freq' else None
@@ -84,7 +58,9 @@ class Dataset:
         self.dev_data_type = None
         self.dataset = None
         self.N = None
+
         self.afs = None
+        self.taus = None
         self.ns = None
         self.alphas = None
         self.devs_lo = None
@@ -138,7 +114,8 @@ class Dataset:
             raise ValueError(f"{data_type} data not available. Try converting "
                              f"your data to the desired type first.")
 
-    def calc(self, dev_type: str, data_type: str = 'phase') -> None:
+    def calc(self, dev_type: str, data_type: str = 'phase',
+             taus: Taus = 'octave') -> None:
         """Evaluate the passed function with the supplied data.
 
         Stores result in self.out.
@@ -174,7 +151,7 @@ class Dataset:
                              f"first.")
 
         out = func(data=data, rate=self.rate, data_type=data_type,
-                   taus=self.taus)
+                   taus=taus)
 
         # Metadata
         self.dev_type = dev_type

@@ -24,11 +24,11 @@ logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/Sr87'
 
 # Raw frequency data collected from experiment
-Y = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'freq/freq_data.txt')
+Y = allantoolkit.utils.read_datafile(ASSETS_DIR / 'freq/freq_data.txt')
 
 # Phase and normalised phase data, obtained by Stable32 conversion of freq
-X = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'phase/phase_data.txt')
-X0 = allantoolkit.testutils.read_datafile(ASSETS_DIR /
+X = allantoolkit.utils.read_datafile(ASSETS_DIR / 'phase/phase_data.txt')
+X0 = allantoolkit.utils.read_datafile(ASSETS_DIR /
                                           'phase0/phase0_data.txt')
 
 # Data sampling rate

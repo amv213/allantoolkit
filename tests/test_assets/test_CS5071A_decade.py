@@ -28,7 +28,7 @@ logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/Cs5071A'
 
 # Raw data onto which to perform statistics and check it matches
-X = allantoolkit.testutils.read_datafile(ASSETS_DIR / '5071A_phase.txt.gz')
+X = allantoolkit.utils.read_datafile(ASSETS_DIR / '5071A_phase.txt.gz')
 
 # Data sampling rate
 RATE = 1.  # Hz

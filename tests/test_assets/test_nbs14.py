@@ -29,8 +29,8 @@ logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/nbs14'
 
 # Raw frequency test frequency data
-Y10 = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'nbs_10.txt')
-Y1000 = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'nbs_1000.txt')
+Y10 = allantoolkit.utils.read_datafile(ASSETS_DIR / 'nbs_10.txt')
+Y1000 = allantoolkit.utils.read_datafile(ASSETS_DIR / 'nbs_1000.txt')
 
 # Data sampling rate
 RATE = 1.  # Hz

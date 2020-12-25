@@ -286,7 +286,6 @@ def rn_expected(m: int, alpha: int) -> float:
         raise ValueError('Use B1 ratio instead for other noise types')
 
 
-
 def rn_noise_id(measured: float, m: int) -> int:
     """ Identify fractional frequency noise power-law exponent type `alpha`
     from measured R(n) ratio.

@@ -21,7 +21,7 @@ logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/phasedat/'
 
 # Raw data onto which to perform statistics and check it matches
-X = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'PHASE.DAT')
+X = allantoolkit.utils.read_datafile(ASSETS_DIR / 'PHASE.DAT')
 
 # Data sampling rate
 RATE = 1.  # Hz

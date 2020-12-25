@@ -19,7 +19,7 @@ logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 ASSETS_DIR = pathlib.Path(__file__).parent.parent / 'assets/pink_frequency'
 
 # Raw data onto which to perform statistics and check it matches
-Y = allantoolkit.testutils.read_datafile(ASSETS_DIR / 'pink_frequency.txt')
+Y = allantoolkit.utils.read_datafile(ASSETS_DIR / 'pink_frequency.txt')
 
 # Data sampling rate
 RATE = 1./42  # Hz

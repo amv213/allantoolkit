@@ -88,19 +88,23 @@ class Plot:
             Plot grid. Defaults to False
 
         """
+
+        err_m = atDataset.devs - atDataset.devs_lo
+        err_p = atDataset.devs_hi - atDataset.devs
+
         if errorbars:
-            self.ax.errorbar(atDataset.out["taus"],
-                             atDataset.out["stat"],
-                             yerr=atDataset.out["stat_err"],
+            self.ax.errorbar(atDataset.taus,
+                             atDataset.devs,
+                             yerr=[err_m, err_p],
                              **kwargs
                              )
         else:
-            self.ax.plot(atDataset.out["taus"],
-                         atDataset.out["stat"],
+            self.ax.plot(atDataset.taus,
+                         atDataset.devs,
                          **kwargs
                          )
         self.ax.set_xlabel("Tau")
-        self.ax.set_ylabel(atDataset.out["stat_id"])
+        self.ax.set_ylabel(atDataset.dev_type)
         self.ax.grid(grid, which="minor", ls="-", color='0.65')
         self.ax.grid(grid, which="major", ls="-", color='0.25')
 

@@ -2,6 +2,22 @@ import allantoolkit
 import tempfile
 import pytest
 
+fcts = [
+    allantoolkit.allantools.adev,
+    allantoolkit.allantools.oadev,
+    allantoolkit.allantools.mdev,
+    allantoolkit.allantools.tdev,
+    allantoolkit.allantools.hdev,
+    allantoolkit.allantools.ohdev,
+    allantoolkit.allantools.totdev,
+    allantoolkit.allantools.mtotdev,
+    allantoolkit.allantools.ttotdev,
+    allantoolkit.allantools.htotdev,
+    allantoolkit.allantools.theo1,
+    allantoolkit.allantools.tierms,
+    allantoolkit.allantools.mtie,
+]
+
 
 def test_no_function_in_allantools(dataset):
     with pytest.raises(AttributeError):
@@ -16,25 +32,13 @@ def test_blacklisted_function(dataset):
         dataset.compute("calc_mtotdev")
 
 
-# FIXME: Need to update Dataset class to work with all new features
-def test_compute_functions(dataset):
-    types = ["adev", "oadev", "mdev", "hdev", "ohdev", "tdev", "totdev",
-             "mtotdev", "ttotdev", "htotdev", "theo1", "mtie", "tierms"]
-    for calc in types:
-        result = dataset.compute(calc)
-        assert isinstance(result, dict)
-        # Also test output for all types
-        tmpfile = tempfile.NamedTemporaryFile(mode="w")
-        dataset.write_results(tmpfile.name)
-        dataset.write_results(tmpfile.name,
-                              digits=10,
-                              header_params={"test": 1, "test2": "foo"}
-                              )
+@pytest.mark.parametrize("func", fcts)
+def test_compute_functions(dataset, func):
 
+    dev_type = func.__name__
 
-def test_dataset_parameters():
-    ds = allantoolkit.dataset.Dataset()
-    ds.set_input(allantoolkit.noise.white(10),
-                 rate=1.234,
-                 data_type="frequency",
-                 taus=[1, 3, 4])
+    # calculate deviation X on freq data
+    dataset.calc(dev_type=dev_type, data_type='freq')
+
+    assert dataset.devs is not None
+

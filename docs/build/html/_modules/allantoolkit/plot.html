@@ -285,19 +285,23 @@
 <span class="sd">            Plot grid. Defaults to False</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">err_m</span> <span class="o">=</span> <span class="n">atDataset</span><span class="o">.</span><span class="n">devs</span> <span class="o">-</span> <span class="n">atDataset</span><span class="o">.</span><span class="n">devs_lo</span>
+        <span class="n">err_p</span> <span class="o">=</span> <span class="n">atDataset</span><span class="o">.</span><span class="n">devs_hi</span> <span class="o">-</span> <span class="n">atDataset</span><span class="o">.</span><span class="n">devs</span>
+
         <span class="k">if</span> <span class="n">errorbars</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">atDataset</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">],</span>
-                             <span class="n">atDataset</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat&quot;</span><span class="p">],</span>
-                             <span class="n">yerr</span><span class="o">=</span><span class="n">atDataset</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat_err&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">atDataset</span><span class="o">.</span><span class="n">taus</span><span class="p">,</span>
+                             <span class="n">atDataset</span><span class="o">.</span><span class="n">devs</span><span class="p">,</span>
+                             <span class="n">yerr</span><span class="o">=</span><span class="p">[</span><span class="n">err_m</span><span class="p">,</span> <span class="n">err_p</span><span class="p">],</span>
                              <span class="o">**</span><span class="n">kwargs</span>
                              <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">atDataset</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">],</span>
-                         <span class="n">atDataset</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">atDataset</span><span class="o">.</span><span class="n">taus</span><span class="p">,</span>
+                         <span class="n">atDataset</span><span class="o">.</span><span class="n">devs</span><span class="p">,</span>
                          <span class="o">**</span><span class="n">kwargs</span>
                          <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Tau&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">atDataset</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat_id&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">atDataset</span><span class="o">.</span><span class="n">dev_type</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;minor&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;0.65&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;major&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;0.25&#39;</span><span class="p">)</span></div>
 

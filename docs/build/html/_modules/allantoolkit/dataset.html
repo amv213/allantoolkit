@@ -203,8 +203,15 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">allantools</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
+<span class="c1"># shorten type hint to save some space</span>
+<span class="n">Array</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">Array</span>
+<span class="n">Taus</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">Taus</span>
 
 <span class="c1"># Spawn module-level logger</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -228,7 +235,8 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
+                 <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Initialize object with input data</span>
 
 <span class="sd">        Parameters</span>
@@ -251,54 +259,90 @@
 <span class="sd">            A Dataset() instance</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1">#: input data Dict,</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inp</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;rate&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;taus&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
 
-        <span class="c1">#: output data Dict, to be populated by compute()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;taus&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;stat&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;stat_err&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;stat_n&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;stat_unc&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;stat_id&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rate</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">taus</span>
+        <span class="k">if</span> <span class="n">data_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid data_type value: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">. &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;Should be `phase` or `freq`.&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Dataset.set_input"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.set_input">[docs]</a>    <span class="k">def</span> <span class="nf">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span>
-                  <span class="n">rate</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Optionnal method if you chose not to set inputs on init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_0</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">taus</span> <span class="o">=</span> <span class="n">taus</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        data: np.array</span>
-<span class="sd">            Input data. Provide either phase or frequency (fractional,</span>
-<span class="sd">            adimensional)</span>
-<span class="sd">        rate: float</span>
-<span class="sd">            The sampling rate for data, in Hz. Defaults to 1.0</span>
-<span class="sd">        data_type: {&#39;phase&#39;, &#39;freq&#39;}</span>
-<span class="sd">            Data type, i.e. phase or frequency. Defaults to &quot;phase&quot;.</span>
-<span class="sd">        taus: np.array</span>
-<span class="sd">            Array of tau values, in seconds, for which to compute statistic.</span>
-<span class="sd">            Optionally set taus=[&quot;all&quot;|&quot;octave&quot;|&quot;decade&quot;] for automatic</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rate</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">taus</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;phase&#39;</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span> <span class="k">else</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="Dataset.compute"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+        <span class="c1"># Data scaling factors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_scale</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_scale</span> <span class="o">=</span> <span class="mf">1.</span>
+
+        <span class="c1"># Initialise attributes for stat results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev_data_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">afs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphas</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">devs_lo</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">devs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">devs_hi</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Dataset.convert"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.convert">[docs]</a>    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">adjust_zero_freq</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">to</span> <span class="o">==</span> <span class="s1">&#39;phase&#39;</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">frequency2phase</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>
+                                           <span class="n">normalize</span><span class="o">=</span><span class="n">adjust_zero_freq</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">to</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">phase2frequency</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Conversion should be to `phase` or `freq`. &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;Not to </span><span class="si">{</span><span class="n">to</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset.scale"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fractional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;phase&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">*=</span> <span class="n">factor</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_scale</span> <span class="o">=</span> <span class="n">factor</span>
+
+        <span class="k">elif</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">frequency2fractional</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">v0</span><span class="o">=</span><span class="n">factor</span><span class="p">)</span> <span class="k">if</span> \
+                <span class="n">fractional</span> <span class="k">else</span> <span class="n">factor</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_scale</span> <span class="o">=</span> <span class="n">factor</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2"> data not available. Try converting &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;your data to the desired type first.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset.normalize"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.normalize">[docs]</a>    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;phase&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2"> data not available. Try converting &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;your data to the desired type first.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset.calc"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.calc">[docs]</a>    <span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;phase&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Evaluate the passed function with the supplied data.</span>
 
 <span class="sd">        Stores result in self.out.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        function: str</span>
+<span class="sd">        dev_type: str</span>
 <span class="sd">            Name of the :mod:`allantoolkit` function to evaluate</span>
 
 <span class="sd">        Returns</span>
@@ -307,30 +351,47 @@
 <span class="sd">            The results of the calculation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">data_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid data_type value: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">. &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;Should be `phase` or `freq`.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Dispatch to correct deviation calculator</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">function</span><span class="p">)</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)</span>
+
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;function must be defined in allantools&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dev_type</span><span class="si">}</span><span class="s2"> is not implemented in Allantoolkit.&quot;</span><span class="p">)</span>
 
-        <span class="n">whitelisted</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;theo1&quot;</span><span class="p">,</span> <span class="s2">&quot;mtie&quot;</span><span class="p">,</span> <span class="s2">&quot;tierms&quot;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;phase&#39;</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
 
-        <span class="k">if</span> <span class="n">function</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">!=</span> <span class="s2">&quot;dev&quot;</span> <span class="ow">and</span> <span class="n">function</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">whitelisted</span><span class="p">:</span>
-            <span class="c1"># this should probably raise a custom exception type so</span>
-            <span class="c1"># it&#39;s easier to distinguish from other bad things</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;function must be one of the &#39;dev&#39; functions&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2"> data not available. Try &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;converting your data to the desired type &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;first.&quot;</span><span class="p">)</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">],</span>
-                      <span class="n">data_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">],</span> <span class="n">taus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">])</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+                   <span class="n">taus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">taus</span><span class="p">)</span>
 
-        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">,</span> <span class="s2">&quot;stat&quot;</span><span class="p">,</span> <span class="s2">&quot;stat_err&quot;</span><span class="p">,</span> <span class="s2">&quot;stat_n&quot;</span><span class="p">]</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">keys</span><span class="p">)}</span>
+        <span class="c1"># Metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev_type</span> <span class="o">=</span> <span class="n">dev_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev_data_type</span> <span class="o">=</span> <span class="n">data_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">data</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span>
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="c1"># Dev Results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">afs</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">afs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">taus</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">taus</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">ns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphas</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">alphas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">devs_lo</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">devs_lo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">devs</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">devs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">devs_hi</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">devs_hi</span>
 
-<div class="viewcode-block" id="Dataset.write_results"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.write_results">[docs]</a>    <span class="k">def</span> <span class="nf">write_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">header_params</span><span class="o">=</span><span class="p">{}):</span>
-        <span class="sd">&quot;&quot;&quot; Output result to text</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset.save"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Saves results to text</span>
 
 <span class="sd">        Save calculation results to disk. Will overwrite any existing file.</span>
 
@@ -338,55 +399,40 @@
 <span class="sd">        ----------</span>
 <span class="sd">        filename: str</span>
 <span class="sd">            Path to the output file</span>
-<span class="sd">        digits: int</span>
-<span class="sd">            Number of significant digits in output</span>
-<span class="sd">        header_params: dict</span>
-<span class="sd">            Arbitrary dict of params to be included in header</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-            <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# Generated by Allantoolkit</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# Input data type: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]))</span>
-            <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# Input data rate: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inp</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]))</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">header_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
-            <span class="c1"># Fields</span>
-            <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s2">&quot;</span><span class="si">{af:&gt;5s}</span><span class="s2"> {tau:&gt;</span><span class="si">{width}</span><span class="s2">s} </span><span class="si">{n:&gt;10s}</span><span class="s2"> </span><span class="si">{alpha:&gt;5s}</span><span class="s2"> &quot;</span>
-                      <span class="s2">&quot;{minsigma:&gt;</span><span class="si">{width}</span><span class="s2">} &quot;</span>
-                      <span class="s2">&quot;{sigma:&gt;</span><span class="si">{width}</span><span class="s2">} &quot;</span>
-                      <span class="s2">&quot;{maxsigma:&gt;</span><span class="si">{width}</span><span class="s2">} &quot;</span>
-                      <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                          <span class="n">af</span><span class="o">=</span><span class="s2">&quot;AF&quot;</span><span class="p">,</span>
-                          <span class="n">tau</span><span class="o">=</span><span class="s2">&quot;Tau&quot;</span><span class="p">,</span>
-                          <span class="n">n</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">,</span>
-                          <span class="n">alpha</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span>
-                          <span class="n">minsigma</span><span class="o">=</span><span class="s2">&quot;min_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat_id&quot;</span><span class="p">],</span>
-                          <span class="n">sigma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat_id&quot;</span><span class="p">],</span>
-                          <span class="n">maxsigma</span><span class="o">=</span><span class="s2">&quot;max_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat_id&quot;</span><span class="p">],</span>
-                          <span class="n">width</span><span class="o">=</span><span class="n">digits</span> <span class="o">+</span> <span class="mi">5</span>
-                      <span class="p">)</span>
-                     <span class="p">)</span>
-            <span class="n">out_fmt</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">{af:5d}</span><span class="s2"> {tau:.</span><span class="si">{prec}</span><span class="s2">e} </span><span class="si">{n:10d}</span><span class="s2"> </span><span class="si">{alpha:5s}</span><span class="s2"> &quot;</span>
-                       <span class="s2">&quot;{minsigma:.</span><span class="si">{prec}</span><span class="s2">e} &quot;</span>
-                       <span class="s2">&quot;{sigma:.</span><span class="si">{prec}</span><span class="s2">e} &quot;</span>
-                       <span class="s2">&quot;{maxsigma:.</span><span class="si">{prec}</span><span class="s2">e} &quot;</span>
-                       <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">])):</span>
-                <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">af</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span>
-                    <span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;taus&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
-                    <span class="n">n</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat_n&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]),</span>
-                    <span class="n">alpha</span><span class="o">=</span><span class="s2">&quot;NaN&quot;</span><span class="p">,</span>  <span class="c1"># Not implemented yet</span>
-                    <span class="n">minsigma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat_err&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>
-                    <span class="n">sigma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
-                    <span class="n">maxsigma</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span>
-                              <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;stat_err&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>
-                    <span class="n">prec</span><span class="o">=</span><span class="n">digits</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                <span class="p">))</span></div></div>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dev_type</span> <span class="o">+</span> <span class="s1">&#39;_results.txt&#39;</span><span class="p">)</span> \
+            <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">filename</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">taus</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphas</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">devs_lo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">devs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">devs_hi</span><span class="p">))</span>
+
+        <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;</span> \
+                 <span class="sa">f</span><span class="s2">&quot;ALLANTOOLKIT STABILITY ANALYSIS RESULTS:</span><span class="se">\n</span><span class="s2">&quot;</span> \
+                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dev_data_type</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s2"> Data Points 1 through &quot;</span> \
+                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> \
+                 <span class="sa">f</span><span class="s2">&quot;Maximum =           </span><span class="se">\t</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> \
+                 <span class="sa">f</span><span class="s2">&quot;Minimum =           </span><span class="se">\t</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> \
+                 <span class="sa">f</span><span class="s2">&quot;Average =           </span><span class="se">\t</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> \
+                 <span class="sa">f</span><span class="s2">&quot;Sigma Type =        </span><span class="se">\t</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dev_type</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> \
+                 <span class="sa">f</span><span class="s2">&quot;Confidence Factor = </span><span class="se">\t</span><span class="s2">0.683</span><span class="se">\n</span><span class="s2">&quot;</span> \
+                 <span class="sa">f</span><span class="s2">&quot;Deadtime T/tau =    </span><span class="se">\t</span><span class="s2">1.000000</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+        <span class="n">column_labels</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:6s}</span><span class="se">\t</span><span class="si">{:12s}</span><span class="se">\t</span><span class="si">{:6s}</span><span class="se">\t</span><span class="si">{:6s}</span><span class="se">\t</span><span class="si">{:12s}</span><span class="se">\t</span><span class="si">{:12s}</span><span class="se">\t</span><span class="si">{:12s}</span><span class="s2">&quot;</span> \
+                        <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;AF&#39;</span><span class="p">,</span> <span class="s1">&#39;TAU&#39;</span><span class="p">,</span> <span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="s1">&#39;ALPHA&#39;</span><span class="p">,</span> <span class="s1">&#39;MIN SIGMA&#39;</span><span class="p">,</span>
+                                  <span class="s1">&#39;SIGMA&#39;</span><span class="p">,</span> <span class="s1">&#39;MAX SIGMA&#39;</span><span class="p">)</span>
+
+        <span class="n">header</span> <span class="o">+=</span> <span class="n">column_labels</span>
+
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+                   <span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">%6i</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%12.4e</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%6i</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%6i</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%12.4e</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%12.4e</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;</span><span class="si">%12.4e</span><span class="s1">&#39;</span><span class="p">])</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stability analysis results saved in </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div></div>
 </pre></div>
 
               </div>

@@ -1308,7 +1308,7 @@ Defaults to 1-sigma confidence intervals.</p></li>
 </dl>
 <dl class="py class">
 <dt id="allantoolkit.dataset.Dataset">
-<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.dataset.</code><code class="sig-name descname">Dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.dataset.</code><code class="sig-name descname">Dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>float<span class="p">, </span>List<span class="p">, </span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Dataset class for Allantools</p>
 <dl class="field-list">
@@ -1326,13 +1326,13 @@ Defaults to 1-sigma confidence intervals.</p></li>
 <p>compute() returns the result of the computation and also stores it in the
 object’s <code class="docutils literal notranslate"><span class="pre">out</span></code> member.</p>
 <dl class="py method">
-<dt id="allantoolkit.dataset.Dataset.compute">
-<code class="sig-name descname">compute</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">function</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset.compute" title="Permalink to this definition">¶</a></dt>
+<dt id="allantoolkit.dataset.Dataset.calc">
+<code class="sig-name descname">calc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset.calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset.calc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the passed function with the supplied data.</p>
 <p>Stores result in self.out.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>function</strong> (<em>str</em>) – Name of the <a class="reference internal" href="#module-allantoolkit" title="allantoolkit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">allantoolkit</span></code></a> function to evaluate</p>
+<dd class="field-odd"><p><strong>dev_type</strong> (<em>str</em>) – Name of the <a class="reference internal" href="#module-allantoolkit" title="allantoolkit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">allantoolkit</span></code></a> function to evaluate</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>result</strong> – The results of the calculation.</p>
@@ -1343,48 +1343,24 @@ object’s <code class="docutils literal notranslate"><span class="pre">out</spa
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt id="allantoolkit.dataset.Dataset.inp">
-<code class="sig-name descname">inp</code><a class="headerlink" href="#allantoolkit.dataset.Dataset.inp" title="Permalink to this definition">¶</a></dt>
-<dd><p>input data Dict,</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="allantoolkit.dataset.Dataset.out">
-<code class="sig-name descname">out</code><a class="headerlink" href="#allantoolkit.dataset.Dataset.out" title="Permalink to this definition">¶</a></dt>
-<dd><p>output data Dict, to be populated by compute()</p>
-</dd></dl>
+<dl class="py method">
+<dt id="allantoolkit.dataset.Dataset.convert">
+<code class="sig-name descname">convert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">to</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">adjust_zero_freq</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset.convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset.convert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
-<dt id="allantoolkit.dataset.Dataset.set_input">
-<code class="sig-name descname">set_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset.set_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset.set_input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Optionnal method if you chose not to set inputs on init</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>np.array</em>) – Input data. Provide either phase or frequency (fractional,
-adimensional)</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for data, in Hz. Defaults to 1.0</p></li>
-<li><p><strong>data_type</strong> (<em>{'phase'</em><em>, </em><em>'freq'}</em>) – Data type, i.e. phase or frequency. Defaults to “phase”.</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – Array of tau values, in seconds, for which to compute statistic.
-Optionally set taus=[“all”|”octave”|”decade”] for automatic</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
+<dt id="allantoolkit.dataset.Dataset.normalize">
+<code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset.normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset.normalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
-<dt id="allantoolkit.dataset.Dataset.write_results">
-<code class="sig-name descname">write_results</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">digits</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">header_params</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset.write_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset.write_results" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output result to text</p>
+<dt id="allantoolkit.dataset.Dataset.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves results to text</p>
 <p>Save calculation results to disk. Will overwrite any existing file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<em>str</em>) – Path to the output file</p></li>
-<li><p><strong>digits</strong> (<em>int</em>) – Number of significant digits in output</p></li>
-<li><p><strong>header_params</strong> (<em>dict</em>) – Arbitrary dict of params to be included in header</p></li>
-</ul>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Path to the output file</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p></p>
@@ -1394,6 +1370,11 @@ Optionally set taus=[“all”|”octave”|”decade”] for automatic</p></li>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt id="allantoolkit.dataset.Dataset.scale">
+<code class="sig-name descname">scale</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">factor</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">fractional</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset.scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset.scale" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

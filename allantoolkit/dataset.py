@@ -6,8 +6,13 @@ Allantools dataset object
 """
 
 import logging
+import numpy as np
+from . import utils
 from . import allantools
 
+# shorten type hint to save some space
+Array = allantools.Array
+Taus = allantools.Taus
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -31,7 +36,8 @@ class Dataset:
 
     """
 
-    def __init__(self, data=None, rate=1.0, data_type="phase", taus=None):
+    def __init__(self, data: Array, rate: float, data_type: str = "phase",
+                 taus: Taus = None) -> None:
         """ Initialize object with input data
 
         Parameters
@@ -54,54 +60,87 @@ class Dataset:
             A Dataset() instance
 
         """
-        #: input data Dict,
-        self.inp = {"data": None,
-                    "rate": None,
-                    "data_type": None,
-                    "taus": None}
 
-        #: output data Dict, to be populated by compute()
-        self.out = {"taus": None,
-                    "stat": None,
-                    "stat_err": None,
-                    "stat_n": None,
-                    "stat_unc": None,
-                    "stat_id": None}
-        self.inp["data"] = data
-        self.inp["rate"] = rate
-        self.inp["data_type"] = data_type
-        self.inp["taus"] = taus
+        if data_type not in ['phase', 'freq']:
+            raise ValueError(f"Invalid data_type value: {data_type}. "
+                             f"Should be `phase` or `freq`.")
 
-    def set_input(self, data,
-                  rate=1.0, data_type="phase", taus=None):
-        """ Optionnal method if you chose not to set inputs on init
+        self.rate = rate
+        self.tau_0 = 1 / rate
+        self.data_type = data_type
+        self.taus = taus
 
-        Parameters
-        ----------
-        data: np.array
-            Input data. Provide either phase or frequency (fractional,
-            adimensional)
-        rate: float
-            The sampling rate for data, in Hz. Defaults to 1.0
-        data_type: {'phase', 'freq'}
-            Data type, i.e. phase or frequency. Defaults to "phase".
-        taus: np.array
-            Array of tau values, in seconds, for which to compute statistic.
-            Optionally set taus=["all"|"octave"|"decade"] for automatic
-        """
-        self.inp["data"] = data
-        self.inp["rate"] = rate
-        self.inp["data_type"] = data_type
-        self.inp["taus"] = taus
+        self.x = data if data_type == 'phase' else None
+        self.y = data if data_type == 'freq' else None
 
-    def compute(self, function):
+        # Data scaling factors
+        self.x_scale = 1.
+        self.y_scale = 1.
+
+        # Initialise attributes for stat results
+        self.dev_type = None
+        self.afs = None
+        self.ns = None
+        self.alphas = None
+        self.devs_lo = None
+        self.devs = None
+        self.devs_hi = None
+
+    def convert(self, to: str, adjust_zero_freq: bool = True) -> None:
+
+        if to == 'phase':
+
+            self.x = utils.frequency2phase(y=self.y, rate=self.rate,
+                                           normalize=adjust_zero_freq)
+
+        elif to == 'freq':
+
+            self.y = utils.phase2frequency(x=self.x, rate=self.rate)
+
+        else:
+            raise ValueError(f"Conversion should be to `phase` or `freq`. "
+                             f"Not to {to}.")
+
+    def scale(self, data_type: str, factor: float, fractional: bool = False) \
+            -> None:
+
+        if data_type == 'phase' and self.x is not None:
+
+            self.x *= factor
+            self.x_scale = factor
+
+        elif data_type == 'freq' and self.y is not None:
+
+            self.y = utils.frequency2fractional(f=self.y, v0=factor) if \
+                fractional else factor*self.y
+            self.y_scale = factor
+
+        else:
+            raise ValueError(f"{data_type} data not available. Try converting "
+                             f"your data to the desired type first.")
+
+    def normalize(self, data_type: str) -> None:
+
+        if data_type == 'phase' and self.x is not None:
+
+            self.x -= np.nanmean(self.x)
+
+        elif data_type == 'freq' and self.y is not None:
+
+            self.y -= np.nanmean(self.y)
+
+        else:
+            raise ValueError(f"{data_type} data not available. Try converting "
+                             f"your data to the desired type first.")
+
+    def calc(self, dev_type: str, data_type: str = 'phase') -> None:
         """Evaluate the passed function with the supplied data.
 
         Stores result in self.out.
 
         Parameters
         ----------
-        function: str
+        dev_type: str
             Name of the :mod:`allantoolkit` function to evaluate
 
         Returns
@@ -110,27 +149,37 @@ class Dataset:
             The results of the calculation.
 
         """
+
+        if data_type not in ['phase', 'freq']:
+            raise ValueError(f"Invalid data_type value: {data_type}. "
+                             f"Should be `phase` or `freq`.")
+
+        # Dispatch to correct deviation calculator
         try:
-            func = getattr(allantools, function)
+            func = getattr(allantools, dev_type)
+
         except AttributeError:
-            raise AttributeError("function must be defined in allantools")
+            raise ValueError(f"{dev_type} is not implemented in Allantoolkit.")
 
-        whitelisted = ["theo1", "mtie", "tierms"]
+        data = self.x if data_type == 'phase' else self.y
 
-        if function[-3:] != "dev" and function not in whitelisted:
-            # this should probably raise a custom exception type so
-            # it's easier to distinguish from other bad things
-            raise RuntimeError("function must be one of the 'dev' functions")
+        if data is None:
+            raise ValueError(f"{data_type} data not available. Try "
+                             f"converting your data to the desired type "
+                             f"first.")
 
-        result = func(self.inp["data"], rate=self.inp["rate"],
-                      data_type=self.inp["data_type"], taus=self.inp["taus"])
+        out = func(data=data, rate=self.rate, data_type=data_type,
+                   taus=self.taus)
 
-        keys = ["taus", "stat", "stat_err", "stat_n"]
-        result = {key: result[i] for i, key in enumerate(keys)}
+        self.dev_type = dev_type
+        self.afs = out.afs
+        self.ns = out.ns
+        self.alphas = out.alphas
+        self.devs_lo = out.devs_lo
+        self.devs = out.devs
+        self.devs_hi = out.devs_hi
 
-        self.out = result.copy()
-        self.out["stat_id"] = function
-        return result
+        print(out)
 
     def write_results(self, filename, digits=5, header_params={}):
         """ Output result to text

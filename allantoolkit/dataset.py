@@ -41,22 +41,21 @@ class Dataset:
         self.rate = rate
         self.tau_0 = 1 / rate
         self.data_type = data_type
+        self.filename = None
 
         # Read data from file if a filename is provided
         if isinstance(data, str) or isinstance(data, Path):
+            self.filename = data
             data = utils.read_datafile(fn=data)
 
-        self.x = data if data_type == 'phase' else None
-        self.y = data if data_type == 'freq' else None
+        # 'live' phase or frequency dataset to manipulate
+        self.data = data
 
-        # Data scaling factors
-        self.x_scale = 1.
-        self.y_scale = 1.
+        # This will not get updated if operations are done on x/y datasets
+        self.data_ori = data
 
         # Initialise attributes for stat results
         self.dev_type = None
-        self.dev_data_type = None
-        self.dataset = None
         self.N = None
 
         self.afs = None
@@ -67,74 +66,217 @@ class Dataset:
         self.devs = None
         self.devs_hi = None
 
-    def convert(self, to: str, adjust_zero_freq: bool = True) -> None:
+    def convert(self, to: str, normalize: bool = True) -> 'Dataset':
+        """Generates a new Dataset with data converted between phase and
+        frequency data.
+
+        Gaps in frequency data are filled in the converted phase data with
+        values based on the interpolated frequency.
+
+        References:
+            [RileyStable32Manual]_ (Convert Function, pg.173-174)
+
+        Args:
+            to:         the data_type to which to convert. Should be
+                        'phase' or 'freq'.
+            normalize:  if `True`, removes average frequency before f -> p
+                        conversion
+        """
 
         if to == 'phase':
 
-            self.x = utils.frequency2phase(y=self.y, rate=self.rate,
-                                           normalize=adjust_zero_freq)
+            new_data = utils.frequency2phase(y=self.y, rate=self.rate,
+                                             normalize=normalize)
 
         elif to == 'freq':
 
-            self.y = utils.phase2frequency(x=self.x, rate=self.rate)
+            new_data = utils.phase2frequency(x=self.x, rate=self.rate)
 
         else:
             raise ValueError(f"Conversion should be to `phase` or `freq`. "
                              f"Not to {to}.")
 
-    def scale(self, data_type: str, factor: float, fractional: bool = False) \
-            -> None:
+        new_dataset = Dataset(data=new_data, rate=self.rate, data_type=to)
+        new_dataset.filename = self.filename  # tag along orig filename if any
 
-        if data_type == 'phase' and self.x is not None:
+        return new_dataset
 
-            self.x *= factor
-            self.x_scale = factor
+    def normalize(self) -> None:
+        """Removes the average value from phase or frequency data. This
+        normalizes the data to have a mean value of zero.
 
-        elif data_type == 'freq' and self.y is not None:
-
-            self.y = utils.frequency2fractional(f=self.y, v0=factor) if \
-                fractional else factor*self.y
-            self.y_scale = factor
-
-        else:
-            raise ValueError(f"{data_type} data not available. Try converting "
-                             f"your data to the desired type first.")
-
-    def normalize(self, data_type: str) -> None:
-
-        if data_type == 'phase' and self.x is not None:
-
-            self.x -= np.nanmean(self.x)
-
-        elif data_type == 'freq' and self.y is not None:
-
-            self.y -= np.nanmean(self.y)
-
-        else:
-            raise ValueError(f"{data_type} data not available. Try converting "
-                             f"your data to the desired type first.")
-
-    def calc(self, dev_type: str, data_type: str = 'phase',
-             taus: Taus = 'octave') -> None:
-        """Evaluate the passed function with the supplied data.
-
-        Stores result in self.out.
-
-        Parameters
-        ----------
-        dev_type: str
-            Name of the :mod:`allantoolkit` function to evaluate
-
-        Returns
-        -------
-        result: dict
-            The results of the calculation.
-
+        References:
+            [RileyStable32Manual]_ (Normalize Function, pg.175)
         """
 
-        if data_type not in ['phase', 'freq']:
-            raise ValueError(f"Invalid data_type value: {data_type}. "
-                             f"Should be `phase` or `freq`.")
+        self.data -= np.nanmean(self.data)
+
+    def average(self, m: int) -> None:
+        """Combine groups of phase or frequency data into values
+        corresponding to longer averaging time, tau = m*tau_0.
+
+        Phase data averaging (decimation) is done by simply eliminating the
+        intermediate data points to form data at longer tau. Frequency
+        averaging is done by finding the mean value of the data points being
+        averaged.
+
+        Gaps (NaN) are ignored, and the average will be a gap if all points
+        in the group being averaged are gaps.
+
+        References:
+            [RileyStable32Manual]_ (Average Function, pg.177)
+
+        Args:
+            m:          averaging factor at which to average
+        """
+
+        self.data = utils.decimate(data=self.data, m=m,
+                                   data_type=self.data_type)
+
+        # Rescale for consistency
+        self.tau_0 *= m
+        self.rate = 1./self.tau_0
+
+    def fill(self):
+        """Fills gaps (NaNs) in phase or frequency data with interpolated
+        values. Leading and trailing gaps are removed.
+
+        Caution:
+            The data inserted are simply interpolated values using the
+            closest non-gap data points at either side of each gap. No
+            attempt is made to simulate noise, and the resulting statistics
+            are not necessarily valid. It is generally better practice to
+            leave gaps unfilled.
+
+        References:
+            [RileyStable32Manual]_ (Fill Function, pg.179)
+        """
+
+        n_gaps = self.data[~np.isnan(self.data)].size
+        self.data = utils.fill_gaps(data=self.data)
+
+        logger.info("Filled # %i %s gaps in the dataset.", n_gaps,
+                    self.data_type)
+
+    def scale(self, addend: float = 0., multiplier: float = 1.,
+              slope: float = 0., reverse: bool = False) -> None:
+        """Modifies the selected phase or frequency data by an additive or
+        multiplicative factor, by adding a linear slope, or by reversing the
+        data.
+
+        Data reversal is particularly useful in conjunction with frequency jump
+        detection and analysis, where it can provide a better average location
+        estimate for a frequency jump. Repeating the reversal will restore the
+        original data.
+
+        References:
+            [RileyStable32Manual]_ (Scale Function, pg.181-2)
+
+        Args:
+            addend:     additive factor to be added to the data.
+            multiplier: multiplicative factor by which to scale the data.
+            slope:      linear slope by which to scale the data.
+            reverse:    if `True` reverses the data, after scaling it.
+        """
+
+        self.data = utils.scale(data=self.data, addend=addend,
+                                multiplier=multiplier, slope=slope,
+                                reverse=reverse)
+
+    def part(self, start: int = 0, end: int = None) -> None:
+        """Clears all except the selected portion of phase or
+        frequency data. The part function changes the data in memory.
+
+        References:
+            [RileyStable32Manual]_ (Part Function, pg.183)
+
+        Args:
+            start:      index of first point to include. Defaults to start
+                        of dataset
+            end:        index of last point to include, Defaults to end of
+                        dataset
+        """
+
+        if end is None or end + 1 >= self.data.size:
+            self.data = self.data[start:]
+
+        else:
+            self.data = self.data[start:end]
+
+        logger.info("Dataset parted to size %i", self.data.size)
+
+    # TODO: Implement
+    def filter(self) -> None:
+        """Filters the current phase or frequency data.
+
+        References:
+            [RileyStable32Manual]_ (Filter Function, pg.185-6)
+
+        Args:
+
+        """
+        raise NotImplementedError("Filter Function yet to be implemented!")
+
+    # TODO: Implement
+    def show_stats(self) -> None:
+        """Displays basic statistics for, and a simple plot of, phase or
+        frequency data.
+
+        References:
+            [RileyStable32Manual]_ (Statistics Function, pg.187-8)
+
+        Args:
+
+        """
+        raise NotImplementedError("Statistics Function yet to be implemented!")
+
+    # TODO: Implement
+    def check(self) -> None:
+        """Check for and remove outliers from frequency data.
+
+        References:
+            [RileyStable32Manual]_ (Check Function, pg.189-90)
+
+        Args:
+
+        """
+        raise NotImplementedError("Statistics Function yet to be implemented!")
+
+    # TODO: Implement
+    def drift(self) -> None:
+        """Analyze phase or frequency data for frequency drift, or find
+        frequency offset in phase data.
+
+        It is common to remove the deterministic frequency drift from phase
+        or frequency data before analyzing the noise with Allan variance
+        statistics. It is sometimes useful to remove only the frequency
+        offset from phase data.
+
+        References:
+            [RileyStable32Manual]_ (Drift Function, pg.191-4)
+
+        Args:
+
+        """
+        raise NotImplementedError("Statistics Function yet to be implemented!")
+
+    def calc(self, dev_type: str, taus: Taus = 'octave') -> None:
+        """Calculate the selected frequency stability statistic on phase or
+        fractional frequency data over a range of averaging times. The
+        averaging times may be selected in octave or sub-decade increments,
+        or at every (or almost) possible tau out to a reasonable fraction of
+        the record length.
+
+        References:
+            [RileyStable32Manual]_ (Run Function, pg.237-242)
+
+        Args:
+            dev_type:   name of the :mod:`allantoolkit` function to evaluate
+                        e.g. 'oadev'
+            taus:       array of averaging times for which to compute
+                        deviation. Can also be one of the keywords: `all`,
+                        `many`, `octave`, `decade`.
+        """
 
         # Dispatch to correct deviation calculator
         try:
@@ -143,21 +285,13 @@ class Dataset:
         except AttributeError:
             raise ValueError(f"{dev_type} is not implemented in Allantoolkit.")
 
-        data = self.x if data_type == 'phase' else self.y
-
-        if data is None:
-            raise ValueError(f"{data_type} data not available. Try "
-                             f"converting your data to the desired type "
-                             f"first.")
-
-        out = func(data=data, rate=self.rate, data_type=data_type,
+        # Calculate statistics
+        out = func(data=self.data, rate=self.rate, data_type=self.data_type,
                    taus=taus)
 
         # Metadata
         self.dev_type = dev_type
-        self.dev_data_type = data_type
-        self.N = data.size
-        self.dataset = data
+        self.N = self.data.size
 
         # Dev Results
         self.afs = out.afs
@@ -193,11 +327,11 @@ class Dataset:
 
         header = f"" \
                  f"ALLANTOOLKIT STABILITY ANALYSIS RESULTS:\n" \
-                 f"{self.dev_data_type.title()} Data Points 1 through " \
+                 f"{self.data_type.title()} Data Points 1 through " \
                  f"{self.N} of {self.N}\n" \
-                 f"Maximum =           \t{np.nanmax(self.dataset)}\n" \
-                 f"Minimum =           \t{np.nanmin(self.dataset)}\n" \
-                 f"Average =           \t{np.nanmean(self.dataset)}\n" \
+                 f"Maximum =           \t{np.nanmax(self.data)}\n" \
+                 f"Minimum =           \t{np.nanmin(self.data)}\n" \
+                 f"Average =           \t{np.nanmean(self.data)}\n" \
                  f"Sigma Type =        \t{self.dev_type}\n" \
                  f"Confidence Factor = \t0.683\n" \
                  f"Deadtime T/tau =    \t1.000000\n\n"

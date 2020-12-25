@@ -196,13 +196,14 @@
                 
   <h1>Source code for allantoolkit.utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tables</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">allantools</span>
-
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
 
 <span class="c1"># Spawn module-level logger</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -632,7 +633,7 @@
 
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">]</span>  <span class="c1"># make sure averaging time smaller than size of dataset</span>
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="p">[</span><span class="n">afs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># make sure minimum averaging time is at least 1</span>
-    <span class="c1"># Technically theo1 should have afs &gt; 10. So fo example if `octave`: 16,</span>
+    <span class="c1"># Technically theo1 should have afs &gt; 10. So for example if `octave`: 16,</span>
     <span class="c1"># 32... Stable 32 decides instead to multiply by 10 the whole sequence</span>
     <span class="c1"># so we get 10, 20, 40, ...</span>
     <span class="n">afs</span> <span class="o">=</span> <span class="n">afs</span><span class="o">*</span><span class="mi">10</span> <span class="k">if</span> <span class="p">(</span><span class="n">dev_type</span> <span class="o">==</span> <span class="s1">&#39;theo1&#39;</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span> <span class="k">else</span> <span class="n">afs</span>
@@ -746,6 +747,31 @@
     <span class="n">ns</span> <span class="o">=</span> <span class="n">ns</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="nb">vars</span></div>
+
+
+<div class="viewcode-block" id="scale"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.scale">[docs]</a><span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">addend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
+              <span class="n">slope</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Scales the selected data by an additive or multiplicative factor,</span>
+<span class="sd">    by adding a linear slope, or by reversing the data.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32Manual]_ (Fill Function, pg.181-2)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:       data array of phase or frequency measurements.</span>
+<span class="sd">        addend:     additive factor to be added to the data.</span>
+<span class="sd">        multiplier: multiplicative factor by which to scale the data.</span>
+<span class="sd">        slope:      linear slope by which to scale the data.</span>
+<span class="sd">        reverse:    if `True` reverses the data, after scaling it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Scale</span>
+    <span class="n">scaled_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">*</span><span class="n">multiplier</span><span class="p">)</span> <span class="o">+</span> <span class="n">addend</span> <span class="o">+</span> <span class="n">slope</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="c1"># Reverse</span>
+    <span class="n">scaled_data</span> <span class="o">=</span> <span class="n">scaled_data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">reverse</span> <span class="k">else</span> <span class="n">scaled_data</span>
+
+    <span class="k">return</span> <span class="n">scaled_data</span></div>
 
 
 <div class="viewcode-block" id="three_cornered_hat_phase"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.three_cornered_hat_phase">[docs]</a><span class="k">def</span> <span class="nf">three_cornered_hat_phase</span><span class="p">(</span><span class="n">x_ab</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">x_bc</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">x_ca</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span>
@@ -880,6 +906,43 @@
     <span class="n">detrended</span> <span class="o">=</span> <span class="n">data</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">detrended</span></div>
+
+
+<div class="viewcode-block" id="read_datafile"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.read_datafile">[docs]</a><span class="k">def</span> <span class="nf">read_datafile</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Extract phase or frequency data from an input .txt file (optionally</span>
+<span class="sd">    compressed to .gz) or .DAT file.</span>
+
+<span class="sd">    If present, a first column with associated timestamps will be omitted.</span>
+<span class="sd">    Lines to omit should be commented out with `#`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fn:   path of the datafile from which to extract data</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        array of input data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">fn</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s1">&#39;.gz&#39;</span><span class="p">:</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>  <span class="c1"># skip comments</span>
+
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">fn</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s1">&#39;.txt&#39;</span> <span class="ow">or</span> <span class="n">fn</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s1">&#39;.DAT&#39;</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input data should be a `.txt`, `.DAT` or `.txt.gz` &quot;</span>
+                         <span class="s2">&quot;file.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 </pre></div>
 
               </div>

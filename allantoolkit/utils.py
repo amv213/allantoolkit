@@ -436,7 +436,7 @@ def tau_generator(data: Array, rate: float, dev_type: str,
 
     afs = afs[afs < N]  # make sure averaging time smaller than size of dataset
     afs = afs[afs > 0]  # make sure minimum averaging time is at least 1
-    # Technically theo1 should have afs > 10. So fo example if `octave`: 16,
+    # Technically theo1 should have afs > 10. So for example if `octave`: 16,
     # 32... Stable 32 decides instead to multiply by 10 the whole sequence
     # so we get 10, 20, 40, ...
     afs = afs*10 if (dev_type == 'theo1' and isinstance(taus, str)) else afs
@@ -550,6 +550,31 @@ def remove_small_ns(afs: Array, taus: Array, ns: Array, vars: Array) \
     ns = ns[mask]
 
     return afs, taus, ns, vars
+
+
+def scale(data: Array, addend: float = 0., multiplier: float = 1.,
+              slope: float = 0., reverse: bool = False) -> Array:
+    """Scales the selected data by an additive or multiplicative factor,
+    by adding a linear slope, or by reversing the data.
+
+    References:
+        [RileyStable32Manual]_ (Fill Function, pg.181-2)
+
+    Args:
+        data:       data array of phase or frequency measurements.
+        addend:     additive factor to be added to the data.
+        multiplier: multiplicative factor by which to scale the data.
+        slope:      linear slope by which to scale the data.
+        reverse:    if `True` reverses the data, after scaling it.
+    """
+
+    # Scale
+    scaled_data = (data*multiplier) + addend + slope*np.arange(data.size)
+
+    # Reverse
+    scaled_data = scaled_data[::-1] if reverse else scaled_data
+
+    return scaled_data
 
 
 def three_cornered_hat_phase(x_ab: Array, x_bc: Array, x_ca: Array,

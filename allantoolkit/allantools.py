@@ -93,7 +93,8 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         rate:       sampling rate of the input data, in Hz.
         data_type:  input data type. Either `phase` or `freq`.
         taus:       array of averaging times for which to compute deviation.
-                    Can also be one of the keywords: `all`, `octave`, `decade`.
+                    Can also be one of the keywords: `all`, `many`, `octave`,
+                    `decade`.
         max_af:     maximum averaging factor for which to compute deviation.
                     Defaults to length of dataset.
 

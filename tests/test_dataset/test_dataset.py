@@ -37,8 +37,8 @@ def test_compute_functions(dataset, func):
 
     dev_type = func.__name__
 
-    # calculate deviation X on freq data
-    dataset.calc(dev_type=dev_type, data_type='freq')
+    # calculate deviation X on dataset fixture
+    dataset.calc(dev_type=dev_type)
 
     assert dataset.devs is not None
 

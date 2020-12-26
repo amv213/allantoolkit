@@ -9,6 +9,7 @@ import logging
 import numpy as np
 from . import utils
 from . import allantools
+from . import noiseid
 from pathlib import Path
 from typing import Union
 
@@ -243,7 +244,8 @@ class Dataset:
         raise NotImplementedError("Statistics Function yet to be implemented!")
 
     # TODO: Implement
-    def drift(self, type: str, remove: bool = False) -> None:
+    def drift(self, type: str = None, m: int = 1, remove: bool = False) -> \
+            None:
         """Analyze phase or frequency data for frequency drift, or find
         frequency offset in phase data.
 
@@ -259,11 +261,18 @@ class Dataset:
 
         Args:
             type:   drift analysis type
+            m:      averaging factor for the log, diffusion or autoregression
+                    noise identification models
             remove: if `True` remove the drift from the data
         """
 
+        # Assign default drift analysis method for phase and frequency data
+        if type is None:
+            type = 'quadratic' if self.data_type == 'phase' else 'linear'
+
+        # Four frequency drift methods and three frequency offset methods are
+        # available for phase data
         if self.data_type == 'phase':
-            # Four frequency drift methods are available for phase data
 
             if type == 'quadratic':
 
@@ -351,9 +360,63 @@ class Dataset:
                 raise ValueError(f"`{type}` drift analysis method is not "
                                  f"available for phase data")
 
+        # Five drift methods and one autoregression frequency drift method
+        # are available for frequency data
         else:
-            raise NotImplementedError(
-                "Statistics Function yet to be implemented!")
+
+            if type == 'linear':
+
+                t = range(1, self.data.size+1)
+                coeffs = np.polyfit(t, self.data, deg=1)
+                a, b = coeffs[::-1]
+                slope = b
+
+                logger.warning("\nLinear")
+                logger.warning("a=%.7g\nb=%.7g", a, b)
+                logger.warning("%.7g", slope)
+
+            elif type == 'bisection':
+
+                # calc mean of halves
+                w = self.data.size // 2  # width of a `half`
+
+                # mean of `halves`
+                mu1, mu2 = np.nanmean(self.data[:w]), np.nanmean(self.data[-w:])
+
+                # calc slope (extra sep if odd n samples)
+                slope = (mu2 - mu1) / (w + (self.data.size % 2))
+
+                logger.warning("\nBisection")
+                logger.warning("%.7g", slope)
+
+            # TODO: implement
+            elif type == 'log':
+
+                raise NotImplementedError
+
+            # TODO: implement
+            elif type == 'diffusion':
+
+                raise NotImplementedError
+
+            # TODO: finish implementing
+            elif type == 'autoregression':
+
+                z = utils.decimate(data=self.data, data_type=self.data_type,
+                                   m=m)
+
+                # FIXME: this doesnt give exactly the same results as Stable32
+                r1 = noiseid.acf(z=z, k=1)
+
+                logger.warning("\nAutoregression")
+                logger.warning("%.3f", r1)
+
+            else:
+
+                raise ValueError(f"`{type}` drift analysis method is not "
+                                 f"available for frequency data")
+
+        # TODO: implement drift removal based on boolean
 
     def calc(self, dev_type: str, taus: Taus = 'octave') -> None:
         """Calculate the selected frequency stability statistic on phase or

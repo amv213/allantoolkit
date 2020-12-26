@@ -28,6 +28,9 @@ def acf(z: Array, k: int) -> float:
     the degree by which its value at one time is similar to its value at a
     certain later time.
 
+    # TODO: check this gives exactly Stable32 results and maybe switch to
+    Fourier method?
+
     References:
          [RileyStable32]_ (5.5.3, pg.53-54)
 

@@ -12,6 +12,7 @@ from . import allantools
 from . import noiseid
 from pathlib import Path
 from typing import Union
+from scipy.optimize import curve_fit
 
 # shorten type hint to save some space
 Array = allantools.Array
@@ -243,7 +244,7 @@ class Dataset:
         """
         raise NotImplementedError("Statistics Function yet to be implemented!")
 
-    # TODO: Implement
+    # TODO: Finish implementing
     def drift(self, type: str = None, m: int = 1, remove: bool = False) -> \
             None:
         """Analyze phase or frequency data for frequency drift, or find
@@ -253,6 +254,11 @@ class Dataset:
         or frequency data before analyzing the noise with Allan variance
         statistics. It is sometimes useful to remove only the frequency
         offset from phase data.
+
+        FIXME: In several of these drift calculations we are hitting the
+        limit of float numerical precision, mainly when calculating mean of
+        large datasets of small values. This generates wrong results at the
+        e-32 level
 
         References:
             [RileyStable32Manual]_ (Drift Function, pg.191-4)
@@ -270,13 +276,15 @@ class Dataset:
         if type is None:
             type = 'quadratic' if self.data_type == 'phase' else 'linear'
 
+        # 'x' support vector onto which to fit drifts
+        t = np.arange(1, self.data.size+1)
+
         # Four frequency drift methods and three frequency offset methods are
         # available for phase data
         if self.data_type == 'phase':
 
             if type == 'quadratic':
 
-                t = range(1, self.data.size+1)
                 coeffs = np.polyfit(t, self.data, deg=2)
                 a, b, c = coeffs[::-1]
                 slope = 2*c / self.tau_0
@@ -285,10 +293,12 @@ class Dataset:
                 logger.warning("a=%.7g\nb=%.7g\nc=%.7g", a, b, c)
                 logger.warning("%.7g", slope)
 
+                if remove:
+                    self.data -= np.polyval(coeffs, t)
+
             elif type == 'avg 2diff':
 
                 slope = self.data[2:] - 2*self.data[1:-1] + self.data[:-2]
-
                 slope = np.mean(slope)
 
                 logger.warning("\nAvg of 2nd Diff")
@@ -324,28 +334,35 @@ class Dataset:
                 logger.warning("\nGreenhall")
                 logger.warning("%.7g", slope)
 
+            # FREQUENCY OFFSETS
+
             elif type == 'linear':
 
-                t = range(self.data.size)
                 coeffs = np.polyfit(t, self.data, deg=1)
                 a, b = coeffs[::-1]
                 slope = b
+                f_offset = slope * self.rate
 
                 logger.warning("\nLinear")
                 logger.warning("a=%.7g\nb=%.7g", a, b)
                 logger.warning("slope=%.7g", slope)
-                logger.warning("f_offset=%.7g", slope*self.rate)
+                logger.warning("f_offset=%.7g", f_offset)
+
+                if remove:  # removing frequency offset
+                    self.data -= slope*t
 
             elif type == 'avg 1diff':
 
                 slope = np.diff(self.data)
 
-                #FIXME: floating point precision error when accumulating
                 slope = np.mean(slope)
 
                 logger.warning("\nAvg of 1st Diff")
                 logger.warning("slope=%.7g", slope)
                 logger.warning("f_offset=%.7g", slope*self.rate)
+
+                if remove:  # removing frequency offset
+                    self.data -= slope*t
 
             elif type == 'endpoints':
 
@@ -354,6 +371,9 @@ class Dataset:
                 logger.warning("\nEndpoints")
                 logger.warning("slope=%.7g", slope)
                 logger.warning("f_offset=%.7g", slope*self.rate)
+
+                if remove:  # removing frequency offset
+                    self.data -= slope*t
 
             else:
 
@@ -375,6 +395,9 @@ class Dataset:
                 logger.warning("a=%.7g\nb=%.7g", a, b)
                 logger.warning("%.7g", slope)
 
+                if remove:
+                    self.data -= np.polyval(coeffs, t)
+
             elif type == 'bisection':
 
                 # calc mean of halves
@@ -389,34 +412,72 @@ class Dataset:
                 logger.warning("\nBisection")
                 logger.warning("%.7g", slope)
 
-            # TODO: implement
+            # FIXME: this doesn't work yet. Probably need better param
+            #  guessing to give matching results
             elif type == 'log':
 
-                raise NotImplementedError
+                raise NotImplementedError("Log drift analysis still "
+                                          "needs improvements...")
 
-            # TODO: implement
+                # Fitting function
+                def func(t, a, b, c):
+                    return a*np.log(b*t + 1) + c
+
+                z = utils.decimate(data=self.data, data_type=self.data_type,
+                                   m=m)
+
+                t = np.arange(1, z.size + 1)
+
+                popt, pcov = curve_fit(func, xdata=t, ydata=z)
+
+                logger.warning("\nLog")
+                logger.warning("a=%.7g\nb=%.7g\nc=%.7g", *popt)
+
+                # TODO: remove drift from data
+
+            # FIXME: this doesn't work yet. Probably need better param
+            #  guessing to give matching results
             elif type == 'diffusion':
 
-                raise NotImplementedError
+                raise NotImplementedError("Diffusion drift analysis still "
+                                          "needs improvements...")
 
-            # TODO: finish implementing
+                # Fitting function
+                def func(t, a, b, c):
+                    return a + b*np.sqrt(t+c)
+
+                z = utils.decimate(data=self.data, data_type=self.data_type,
+                                   m=m)
+
+                t = np.arange(1, z.size + 1)
+
+                popt, pcov = curve_fit(func, xdata=t, ydata=z)
+
+                logger.warning("\nDiffusion")
+                logger.warning("a=%.7g\nb=%.7g\nc=%.7g", *popt)
+
+                # TODO: remove drift from data
+
+            # FIXME: this doesn't give exactly the same results as Stable32 (
+            #  but it's quite close)
             elif type == 'autoregression':
 
                 z = utils.decimate(data=self.data, data_type=self.data_type,
                                    m=m)
 
-                # FIXME: this doesnt give exactly the same results as Stable32
                 r1 = noiseid.acf(z=z, k=1)
 
                 logger.warning("\nAutoregression")
                 logger.warning("%.3f", r1)
+
+                if remove:
+                    self.data = self.data[1:] - r1*self.data[:-1]
 
             else:
 
                 raise ValueError(f"`{type}` drift analysis method is not "
                                  f"available for frequency data")
 
-        # TODO: implement drift removal based on boolean
 
     def calc(self, dev_type: str, taus: Taus = 'octave') -> None:
         """Calculate the selected frequency stability statistic on phase or

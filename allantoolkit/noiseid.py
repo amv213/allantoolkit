@@ -46,6 +46,11 @@ def acf(z: Array, k: int) -> float:
     # Calculate autocorrelation factor
     r = np.nansum(z0[:-k]*z0[k:])/np.nansum(z0**2)
 
+    # Scale by (N-1)/N, this was suggested in one of the Stable32 manuals
+    # but cannot find the reference anymore. Turns out Stable32 does indeed
+    # do this.
+    r *= (z.size - 1)/z.size
+
     return r
 
 

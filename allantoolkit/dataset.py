@@ -243,7 +243,7 @@ class Dataset:
         raise NotImplementedError("Statistics Function yet to be implemented!")
 
     # TODO: Implement
-    def drift(self) -> None:
+    def drift(self, type: str, remove: bool = False) -> None:
         """Analyze phase or frequency data for frequency drift, or find
         frequency offset in phase data.
 
@@ -255,10 +255,105 @@ class Dataset:
         References:
             [RileyStable32Manual]_ (Drift Function, pg.191-4)
 
-        Args:
+            http://www.wriley.com/Frequency%20Drift%20Characterization%20in%20Stable32.pdf
 
+        Args:
+            type:   drift analysis type
+            remove: if `True` remove the drift from the data
         """
-        raise NotImplementedError("Statistics Function yet to be implemented!")
+
+        if self.data_type == 'phase':
+            # Four frequency drift methods are available for phase data
+
+            if type == 'quadratic':
+
+                t = range(1, self.data.size+1)
+                coeffs = np.polyfit(t, self.data, deg=2)
+                a, b, c = coeffs[::-1]
+                slope = 2*c / self.tau_0
+
+                logger.warning("\nQuadratic")
+                logger.warning("a=%.7g\nb=%.7g\nc=%.7g", a, b, c)
+                logger.warning("%.7g", slope)
+
+            elif type == 'avg 2diff':
+
+                slope = self.data[2:] - 2*self.data[1:-1] + self.data[:-2]
+
+                slope = np.mean(slope)
+
+                logger.warning("\nAvg of 2nd Diff")
+                logger.warning("%.7g", slope)
+
+            elif type == '3-point':
+
+                M = self.data.size
+                slope = 4*(self.data[-1] - 2*self.data[M//2] + self.data[0])
+                slope /= (M-1) ** 2
+
+                logger.warning("\n3-point")
+                logger.warning("%.7g", slope)
+
+            elif type == 'greenhall':
+                # C. A. Greenhall, "A frequency-drift estimator and its removal
+                # from modified Allan variance," Proceedings of International
+                # Frequency Control Symposium, Orlando, FL, USA, 1997,
+                # pp. 428-432, doi: 10.1109/FREQ.1997.638639.
+
+                def w(n, w0=0):
+
+                    return w0 + np.sum(self.data[:n])
+
+                N = self.data.size
+                w_N = np.sum(self.data)
+                n1 = int(N / 10)
+                r1 = n1 / N
+
+                slope = 6. / (N**3 * self.tau_0**2 * r1 * (1 - r1)) * (
+                    w_N - (w(N-n1) - w(n1)) / (1 - 2*r1))
+
+                logger.warning("\nGreenhall")
+                logger.warning("%.7g", slope)
+
+            elif type == 'linear':
+
+                t = range(self.data.size)
+                coeffs = np.polyfit(t, self.data, deg=1)
+                a, b = coeffs[::-1]
+                slope = b
+
+                logger.warning("\nLinear")
+                logger.warning("a=%.7g\nb=%.7g", a, b)
+                logger.warning("slope=%.7g", slope)
+                logger.warning("f_offset=%.7g", slope*self.rate)
+
+            elif type == 'avg 1diff':
+
+                slope = np.diff(self.data)
+
+                #FIXME: floating point precision error when accumulating
+                slope = np.mean(slope)
+
+                logger.warning("\nAvg of 1st Diff")
+                logger.warning("slope=%.7g", slope)
+                logger.warning("f_offset=%.7g", slope*self.rate)
+
+            elif type == 'endpoints':
+
+                slope = (self.data[-1] - self.data[0]) / (self.data.size - 1)
+
+                logger.warning("\nEndpoints")
+                logger.warning("slope=%.7g", slope)
+                logger.warning("f_offset=%.7g", slope*self.rate)
+
+            else:
+
+                raise ValueError(f"`{type}` drift analysis method is not "
+                                 f"available for phase data")
+
+        else:
+            raise NotImplementedError(
+                "Statistics Function yet to be implemented!")
 
     def calc(self, dev_type: str, taus: Taus = 'octave') -> None:
         """Calculate the selected frequency stability statistic on phase or

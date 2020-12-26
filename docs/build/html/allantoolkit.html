@@ -1375,7 +1375,7 @@ conversion</p></li>
 
 <dl class="py method">
 <dt id="allantoolkit.dataset.Dataset.drift">
-<code class="sig-name descname">drift</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset.drift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset.drift" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">drift</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">remove</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset.drift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset.drift" title="Permalink to this definition">¶</a></dt>
 <dd><p>Analyze phase or frequency data for frequency drift, or find
 frequency offset in phase data.</p>
 <p>It is common to remove the deterministic frequency drift from phase
@@ -1384,7 +1384,15 @@ statistics. It is sometimes useful to remove only the frequency
 offset from phase data.</p>
 <p class="rubric">References</p>
 <p><a class="reference internal" href="references.html#rileystable32manual" id="id17"><span>[RileyStable32Manual]</span></a> (Drift Function, pg.191-4)</p>
-<p>Args:</p>
+<p><a class="reference external" href="http://www.wriley.com/Frequency%20Drift%20Characterization%20in%20Stable32.pdf">http://www.wriley.com/Frequency%20Drift%20Characterization%20in%20Stable32.pdf</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>type</strong> – drift analysis type</p></li>
+<li><p><strong>remove</strong> – if <cite>True</cite> remove the drift from the data</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

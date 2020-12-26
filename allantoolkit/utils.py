@@ -686,6 +686,76 @@ def rolling_grad(x: Array, n: int):
     return np.array(list((each_value())))
 
 
+def replace_outliers(data: Array, sigmas: float = 3.5,
+                     replace: str = None) -> Array:
+    """Check for and remove outliers from frequency data. Outliers are
+    replaced by gaps (NaNs).
+
+    Outliers are detected using the median absolute deviation (MAD). The
+    MAD is a robust statistic based on the median of the data. It is the
+    median of the scaled absolute deviation of the data points from their
+    median value.
+
+    References:
+
+        [RileyStable32Manual]_ (Check Function, pg.189-90)
+
+        [RileyStable32]_ (10.11, pg.108-9)
+
+        https://stackoverflow.com/questions/11686720/is-there-a-numpy-builtin-to-reject-outliers-from-a-list
+
+        https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm
+
+    Args:
+        data:       data array of phase or frequency measurements.
+        sigmas:     desired number of deviations for which a point is to be
+                    classified as outlier. Defaults to 3.5
+        replace:    whether to replace the detected outliers, and how.
+                    If set to `all`, all outliers are replaced. If set to
+                    `largest`, only the largest outlier is removed. If
+                    not set, outliers are not removed but only logged.
+
+    Returns:
+        input data with (optionally) outliers replaced with NaNs.
+    """
+
+    # Absolute deviation of the data points from their median
+    d = np.abs(data - np.median(data))
+
+    # 1-sigma MAD
+    mad = np.median(d / 0.6745)
+
+    # Flag outliers
+    outliers_idxs = np.flatnonzero(d > sigmas*mad)
+
+    logger.info("Detected %i outliers (#%s)", np.sum(outliers_idxs.size),
+                outliers_idxs+1)
+
+    # Replace outliers with gaps
+    if replace is not None:
+
+        if replace == 'all':
+
+            data[outliers_idxs] = np.NaN
+
+            logger.info("\tRemoved all outliers")
+
+        elif replace == 'largest':
+
+            idx_max_outlier = outliers_idxs[np.argmax(d[outliers_idxs])]
+
+            data[idx_max_outlier] = np.NaN
+
+            logger.info("\tRemoved largest outliers (#%i)",
+                        idx_max_outlier+1)
+
+        else:
+            raise ValueError(f"Gap replacement method `{replace}` not "
+                             f"recognised.")
+
+    return data
+
+
 # TODO: Finish implementing
 def drift(data: Array, rate: float, data_type: str, type: str = None,
           m: int = 1, remove: bool = False) -> Array:
@@ -748,6 +818,9 @@ def drift(data: Array, rate: float, data_type: str, type: str = None,
                     autoregression drift analysis models
         remove:     if `True` remove the drift from the data. If `False`
                     only logs drift analysis results
+
+    Returns:
+        input data with (optionally) drift removed.
     """
 
     logger.warning("`Drift` function might be affected by numerical precision "

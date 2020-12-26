@@ -232,19 +232,37 @@ class Dataset:
         """
         raise NotImplementedError("Statistics Function yet to be implemented!")
 
-    # TODO: Implement
-    def check(self) -> None:
-        """Check for and remove outliers from frequency data.
+    def check(self, sigmas: float = 3.5, replace: str = None) -> None:
+        """Check for and remove outliers from frequency data. Outliers are
+        replaced by gaps (NaNs).
+
+        Outliers are detected using the median absolute deviation (MAD). The
+        MAD is a robust statistic based on the median of the data. It is the
+        median of the scaled absolute deviation of the data points from their
+        median value.
 
         References:
+
             [RileyStable32Manual]_ (Check Function, pg.189-90)
 
+            [RileyStable32]_ (10.11, pg.108-9)
+
+            https://stackoverflow.com/questions/11686720/is-there-a-numpy-builtin-to-reject-outliers-from-a-list
+
+            https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm
+
         Args:
-
+            sigmas:     desired number of deviations for which a point is to be
+                        classified as outlier. Defaults to 3.5
+            replace:    whether to replace the detected outliers, and how.
+                        If set to `all`, all outliers are replaced. If set to
+                        `largest`, only the largest outlier is removed. If
+                        not set, outliers are not removed but only logged.
         """
-        raise NotImplementedError("Statistics Function yet to be implemented!")
 
-    # TODO: Finish implementing
+        self.data = utils.replace_outliers(data=self.data, sigmas=sigmas,
+                                           replace=replace)
+
     def drift(self, type: str = None, m: int = 1, remove: bool = False) -> \
             None:
         """Analyze phase or frequency data for frequency drift, or find

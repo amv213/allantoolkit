@@ -7,9 +7,12 @@ Allantools dataset object
 
 import logging
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
 from . import utils
 from . import allantools
 from . import noiseid
+from . import tables
 from pathlib import Path
 from typing import Union
 from scipy.optimize import curve_fit
@@ -58,7 +61,6 @@ class Dataset:
 
         # Initialise attributes for stat results
         self.dev_type = None
-        self.N = None
 
         self.afs = None
         self.taus = None
@@ -219,18 +221,66 @@ class Dataset:
         """
         raise NotImplementedError("Filter Function yet to be implemented!")
 
-    # TODO: Implement
-    def show_stats(self) -> None:
+    def show_stats(self) -> plt.Axes:
         """Displays basic statistics for, and a simple plot of, phase or
         frequency data.
 
+        # TODO: find out which custom algorithm Stable32 uses to calculate
+        median, sigma, and std
+
         References:
             [RileyStable32Manual]_ (Statistics Function, pg.187-8)
-
-        Args:
-
+            [RileyStable32]_ (10.12, pg.109)
         """
-        raise NotImplementedError("Statistics Function yet to be implemented!")
+
+        # Log Statistics:
+
+        N = self.data.size
+        n_gaps = np.count_nonzero(np.isnan(self.data))
+        maximum = np.max(self.data)
+        minimum = np.min(self.data)
+        average = np.nanmean(self.data)
+        median = np.nanmedian(self.data)
+        std = np.nanstd(self.data)
+        var = np.nanvar(self.data)
+        p = noiseid.acf_noise_id_core(z=self.data, dmax=2)
+        alpha = p + 2 if self.data_type == 'phase' else p
+        noise = tables.ALPHA_TO_NAMES.get(alpha)
+
+        logger.info("\n\nSTATISTICS:\n"
+                    "\tFile:      \t%s\n"
+                    "\tData Type: \t%s\n"
+                    "\t# Points:  \t%i\n"
+                    "\t# Gaps:    \t%i\n"
+                    "\tMaximum:   \t%.7g\n"
+                    "\tMinimum:   \t%.7g\n"
+                    "\tAverage:   \t%.7g\n"
+                    "\tMedian:    \t%.7g\n"
+                    "\tStd Dev:   \t%.7g\n"
+                    "\tSigma:     \t%.7g\n"
+                    "\tNoise:     \t%s (%i)\n", self.filename, self.data_type,
+                    N, n_gaps, maximum, minimum, average, median, std, var,
+                    noise, alpha)
+
+        # Plot:
+
+        fig = plt.figure(figsize=(8, 5))
+        ax = plt.gca()
+
+        # plot frequency as steps to highlight averaging time associated
+        # with measurement
+        drawstyle = 'steps-post' if self.data_type == 'freq' else 'default'
+
+        ax.plot(self.data, drawstyle=drawstyle)
+        ax.axhline(average, ls='--', c='DarkGray')
+
+        ax.set_ylim(average - 6*std, average + 6*std)
+        ax.set_xlim(0, N)
+
+        ax.set_ylabel("Measured Value")
+        ax.set_xlabel("Point #")
+
+        return ax
 
     def check(self, sigmas: float = 3.5, replace: str = None) -> None:
         """Check for and remove outliers from frequency data. Outliers are
@@ -333,19 +383,13 @@ class Dataset:
 
         print(out)
 
-    def save(self, filename: Union[str, Path] = None):
-        """ Saves results to text
+    def save(self, filename: Union[str, Path] = None) -> None:
+        """ Saves statistical analysis results to a .TXT file.
 
-        Save calculation results to disk. Will overwrite any existing file.
+        Will overwrite any existing file.
 
-        Parameters
-        ----------
-        filename: str
-            Path to the output file
-
-        Returns
-        -------
-        None
+        Args:
+        filename:   path to output .TXT file
         """
 
         filename = Path.cwd() / (self.dev_type + '_results.txt') \

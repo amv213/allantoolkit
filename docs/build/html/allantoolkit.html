@@ -1375,7 +1375,7 @@ conversion</p></li>
 
 <dl class="py method">
 <dt id="allantoolkit.dataset.Dataset.drift">
-<code class="sig-name descname">drift</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">remove</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset.drift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset.drift" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">drift</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">remove</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/allantoolkit/dataset.html#Dataset.drift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.dataset.Dataset.drift" title="Permalink to this definition">¶</a></dt>
 <dd><p>Analyze phase or frequency data for frequency drift, or find
 frequency offset in phase data.</p>
 <p>It is common to remove the deterministic frequency drift from phase
@@ -1389,6 +1389,8 @@ offset from phase data.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>type</strong> – drift analysis type</p></li>
+<li><p><strong>m</strong> – averaging factor for the log, diffusion or autoregression
+noise identification models</p></li>
 <li><p><strong>remove</strong> – if <cite>True</cite> remove the drift from the data</p></li>
 </ul>
 </dd>
@@ -2665,18 +2667,73 @@ intervals</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="allantoolkit.utils.detrend">
-<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">detrend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/utils.html#detrend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.detrend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Detrend phase or factional frequency data.</p>
+<dt id="allantoolkit.utils.drift">
+<code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">drift</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">remove</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#drift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.drift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyzes phase or frequency data for frequency drifts, or finds
+frequency offsets in phase data.</p>
+<p>Four frequency drift methods and three frequency offset methods are
+available for phase data:</p>
+<ul class="simple">
+<li><p><cite>quadratic</cite>:  least-squares quadratic fit. Optimal for WHPM noise.</p></li>
+<li><p><cite>avg 2diff</cite>:  average of 2nd differences. Optimal for RWFM noise.</p></li>
+<li><dl class="simple">
+<dt><cite>3-point</cite>:    three-points average. Equivalent of the bisection model</dt><dd><p>for frequency data. Good for WHFM and RWFM noise.</p>
+</dd>
+</dl>
+</li>
+<li><p><cite>greenhall</cite>:  Greenhall 4-points average. Applicable to all noise types.</p></li>
+<li><p><cite>linear</cite>:     least-squares linear fit. Optimal for WHPM noise.</p></li>
+<li><p><cite>avg 1diff</cite>:  average of 1st differences. Optimal for WHFM noise.</p></li>
+<li><dl class="simple">
+<dt><cite>endpoints</cite>:  difference between the first and last points of the</dt><dd><p>data. This method is intended mainly to match the two
+endpoints to condition data for a TOTVAR analysis.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Five drift methods and one autoregression frequency drift method
+are available for frequency data:</p>
+<ul class="simple">
+<li><p><cite>linear</cite>:         least-squares linear fit. Optimal for WHFM noise.</p></li>
+<li><dl class="simple">
+<dt><cite>bisection</cite>:      drift computation from the frequency averages over</dt><dd><p>the first and last halves of the data. Optimal for
+WHFM and RWFM noise.</p>
+</dd>
+</dl>
+</li>
+<li><p><cite>log</cite>:            log model fit.</p></li>
+<li><p><cite>diffusion</cite>:      diffusion model.</p></li>
+<li><dl class="simple">
+<dt><cite>autoregressive</cite>: fit and remove AR(1) autoregressive noise from the</dt><dd><p>data. Useful for prewhitening data before a jump
+analysis.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>FIXME: Need to make this robust to floating point numerical precision
+errors. This happens in particular when calculating the mean of small
+values - resulting in erroneous results at the e-32 level</p>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id50"><span>[RileyStable32Manual]</span></a> (Drift Function, pg.191-4)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id51"><span>[RileyStable32]</span></a> (5.18-21, pg.67-70)</p>
+<p><a class="reference external" href="http://www.wriley.com/Frequency%20Drift%20Characterization%20in%20Stable32.pdf">http://www.wriley.com/Frequency%20Drift%20Characterization%20in%20Stable32.pdf</a></p>
+<p>C. A. Greenhall, “A frequency-drift estimator and its removal
+from modified Allan variance,” Proceedings of International
+Frequency Control Symposium, Orlando, FL, USA, 1997,
+pp. 428-432, doi: 10.1109/FREQ.1997.638639.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> – data array of input measurements.</p></li>
+<li><p><strong>data</strong> – data array of phase or frequency measurements.</p></li>
+<li><p><strong>rate</strong> – sampling rate of the input data, in Hz</p></li>
 <li><p><strong>data_type</strong> – input data type. Either <cite>phase</cite> or <cite>freq</cite>.</p></li>
+<li><p><strong>type</strong> – drift analysis type. Defaults to <cite>quadratic</cite> for phase
+data, and <cite>linear</cite> for frequency data.</p></li>
+<li><p><strong>m</strong> – averaging factor to be used for the log, diffusion or
+autoregression drift analysis models</p></li>
+<li><p><strong>remove</strong> – if <cite>True</cite> remove the drift from the data. If <cite>False</cite>
+only logs drift analysis results</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>detrended data.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2689,7 +2746,7 @@ intervals</p></li>
 interpolated values, by first removing any leading and trailing gaps,
 and then using the two values immediately before and after any interior
 gaps to determine linearly interpolated values within the gap
-<a class="reference internal" href="references.html#rileystable32" id="id50"><span>[RileyStable32]</span></a> (pg. 107).</p>
+<a class="reference internal" href="references.html#rileystable32" id="id52"><span>[RileyStable32]</span></a> (pg. 107).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> – data array of frequency or phase measurements, with gaps
@@ -2704,7 +2761,7 @@ represented as NaNs</p>
 <dl class="py function">
 <dt id="allantoolkit.utils.frequency2fractional">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2fractional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">v0</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2fractional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2fractional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert frequency in Hz to fractional frequency <a class="reference internal" href="references.html#wikipedia" id="id51"><span>[Wikipedia]</span></a>.</p>
+<dd><p>Convert frequency in Hz to fractional frequency <a class="reference internal" href="references.html#wikipedia" id="id53"><span>[Wikipedia]</span></a>.</p>
 <div class="math notranslate nohighlight">
 \[y(t) =  ( \nu(t) - \nu_0 )  \over \nu_0\]</div>
 <dl class="field-list simple">
@@ -2728,7 +2785,7 @@ frequency of dataset.</p></li>
 arbitrary initial value), in units of second.</p>
 <p>Frequency to phase conversion is done by piecewise  integration  using
 the  averaging  time  as  the  integration  interval
-<a class="reference internal" href="references.html#rileystable32manual" id="id52"><span>[RileyStable32Manual]</span></a> (pg. 173-174):</p>
+<a class="reference internal" href="references.html#rileystable32manual" id="id54"><span>[RileyStable32Manual]</span></a> (pg. 173-174):</p>
 <div class="math notranslate nohighlight">
 \[x_{i+1} = x_i + y_i \tau\]</div>
 <p>Any gaps in the frequency data are filled to obtain phase continuity.</p>
@@ -2798,13 +2855,13 @@ indices</p>
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2frequency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#phase2frequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert phase data in units of seconds to fractional frequency data.</p>
 <p>Phase to frequency conversion is done by dividing the first differences
-of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id53"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
+of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id55"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
 <div class="math notranslate nohighlight">
 \[y_i = ( x_{i+1} - x_i ) \over \tau\]</div>
 <p>Phase to frequency conversion is straightforward for data having
 gaps. Because two phase points  are  needed  to  determine  each
 frequency  point a single phase gap will cause two frequency gaps, and a
-gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id54"><span>[RileyStable32]</span></a> (pg. 108).</p>
+gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id56"><span>[RileyStable32]</span></a> (pg. 108).</p>
 <dl class="simple">
 <dt>Params:</dt><dd><p>x:      data array of phase measurements, in seconds
 rate:   sampling rate of the input data, in Hz</p>
@@ -2888,7 +2945,7 @@ low ns have been removed.</p>
 <dd><p>Scales the selected data by an additive or multiplicative factor,
 by adding a linear slope, or by reversing the data.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id55"><span>[RileyStable32Manual]</span></a> (Fill Function, pg.181-2)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id57"><span>[RileyStable32Manual]</span></a> (Fill Function, pg.181-2)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2911,13 +2968,13 @@ which to compute statistics.</p>
 Generates a tau-list based on keywords ‘all’, ‘decade’, ‘octave’.
 Uses ‘octave’ by default if no taus= argument is given.</p>
 <p>Averaging times may be integer multiples of the data sampling interval
-<a class="reference internal" href="references.html#rileystable32" id="id56"><span>[RileyStable32]</span></a> (Pg.3):</p>
+<a class="reference internal" href="references.html#rileystable32" id="id58"><span>[RileyStable32]</span></a> (Pg.3):</p>
 <div class="math notranslate nohighlight">
 \[\tau =  m \tau_0\]</div>
 <p>where <cite>m</cite> is the averaging factor.</p>
 <p>This function implements a Stable32 stop-ratio for <cite>octave</cite> and <cite>decade</cite>
 stability runs, which automatically calculates the maximum averaging
-factor to use for the given deviation <a class="reference internal" href="references.html#rileyevolution" id="id57"><span>[RileyEvolution]</span></a> (pg.9 Table III).</p>
+factor to use for the given deviation <a class="reference internal" href="references.html#rileyevolution" id="id59"><span>[RileyEvolution]</span></a> (pg.9 Table III).</p>
 <p>If requesting averaging times for a <cite>theo1</cite> statistic, the resulting
 averaging times will be <cite>effective</cite> times tau = 0.75*tau</p>
 <p class="rubric">Notes</p>
@@ -2982,7 +3039,7 @@ factors.</p>
 <dl class="py function">
 <dt id="allantoolkit.utils.three_cornered_hat_phase">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_ab</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_bc</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_ca</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#three_cornered_hat_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Three Cornered Hat Method <a class="reference internal" href="references.html#riley3chat" id="id58"><span>[Riley3CHat]</span></a></p>
+<dd><p>Three Cornered Hat Method <a class="reference internal" href="references.html#riley3chat" id="id60"><span>[Riley3CHat]</span></a></p>
 <p>Given three clocks A, B, C, we seek to find their variances</p>
 <p><span class="math notranslate nohighlight">\(\sigma^2_A\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_B\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_C\)</span></p>
 <p>We measure three phase differences, assuming no correlation between

@@ -202,6 +202,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tables</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">allantools</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">noiseid</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
 
@@ -882,30 +883,274 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">((</span><span class="n">each_value</span><span class="p">())))</span></div>
 
 
-<div class="viewcode-block" id="detrend"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.detrend">[docs]</a><span class="k">def</span> <span class="nf">detrend</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Detrend phase or factional frequency data.</span>
+<span class="c1"># TODO: Finish implementing</span>
+<div class="viewcode-block" id="drift"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.drift">[docs]</a><span class="k">def</span> <span class="nf">drift</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+          <span class="n">m</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">remove</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Analyzes phase or frequency data for frequency drifts, or finds</span>
+<span class="sd">    frequency offsets in phase data.</span>
+
+<span class="sd">    Four frequency drift methods and three frequency offset methods are</span>
+<span class="sd">    available for phase data:</span>
+
+<span class="sd">    - `quadratic`:  least-squares quadratic fit. Optimal for WHPM noise.</span>
+<span class="sd">    - `avg 2diff`:  average of 2nd differences. Optimal for RWFM noise.</span>
+<span class="sd">    - `3-point`:    three-points average. Equivalent of the bisection model</span>
+<span class="sd">                    for frequency data. Good for WHFM and RWFM noise.</span>
+<span class="sd">    - `greenhall`:  Greenhall 4-points average. Applicable to all noise types.</span>
+
+
+<span class="sd">    - `linear`:     least-squares linear fit. Optimal for WHPM noise.</span>
+<span class="sd">    - `avg 1diff`:  average of 1st differences. Optimal for WHFM noise.</span>
+<span class="sd">    - `endpoints`:  difference between the first and last points of the</span>
+<span class="sd">                    data. This method is intended mainly to match the two</span>
+<span class="sd">                    endpoints to condition data for a TOTVAR analysis.</span>
+
+<span class="sd">    Five drift methods and one autoregression frequency drift method</span>
+<span class="sd">    are available for frequency data:</span>
+
+<span class="sd">    - `linear`:         least-squares linear fit. Optimal for WHFM noise.</span>
+<span class="sd">    - `bisection`:      drift computation from the frequency averages over</span>
+<span class="sd">                        the first and last halves of the data. Optimal for</span>
+<span class="sd">                        WHFM and RWFM noise.</span>
+<span class="sd">    - `log`:            log model fit.</span>
+<span class="sd">    - `diffusion`:      diffusion model.</span>
+
+<span class="sd">    - `autoregressive`: fit and remove AR(1) autoregressive noise from the</span>
+<span class="sd">                        data. Useful for prewhitening data before a jump</span>
+<span class="sd">                        analysis.</span>
+
+<span class="sd">    FIXME: Need to make this robust to floating point numerical precision</span>
+<span class="sd">    errors. This happens in particular when calculating the mean of small</span>
+<span class="sd">    values - resulting in erroneous results at the e-32 level</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32Manual]_ (Drift Function, pg.191-4)</span>
+
+<span class="sd">        [RileyStable32]_ (5.18-21, pg.67-70)</span>
+
+<span class="sd">        http://www.wriley.com/Frequency%20Drift%20Characterization%20in%20Stable32.pdf</span>
+
+<span class="sd">        C. A. Greenhall, &quot;A frequency-drift estimator and its removal</span>
+<span class="sd">        from modified Allan variance,&quot; Proceedings of International</span>
+<span class="sd">        Frequency Control Symposium, Orlando, FL, USA, 1997,</span>
+<span class="sd">        pp. 428-432, doi: 10.1109/FREQ.1997.638639.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        data:       data array of input measurements.</span>
+<span class="sd">        data:       data array of phase or frequency measurements.</span>
+<span class="sd">        rate:       sampling rate of the input data, in Hz</span>
 <span class="sd">        data_type:  input data type. Either `phase` or `freq`.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        detrended data.</span>
+<span class="sd">        type:       drift analysis type. Defaults to `quadratic` for phase</span>
+<span class="sd">                    data, and `linear` for frequency data.</span>
+<span class="sd">        m:          averaging factor to be used for the log, diffusion or</span>
+<span class="sd">                    autoregression drift analysis models</span>
+<span class="sd">        remove:     if `True` remove the drift from the data. If `False`</span>
+<span class="sd">                    only logs drift analysis results</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span><span class="p">:</span>
-        <span class="n">deg</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># remove frequency drift</span>
-    <span class="k">elif</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;phase&#39;</span><span class="p">:</span>
-        <span class="n">deg</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># remove frequency offset and drift)</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;`Drift` function might be affected by numerical precision &quot;</span>
+                   <span class="s2">&quot;limits. Apologies if that is the case.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">data_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid data_type value: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">. Should be &quot;</span>
                          <span class="sa">f</span><span class="s2">&quot;`phase` or `freq`.&quot;</span><span class="p">)</span>
 
-    <span class="n">t</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">deg</span><span class="p">)</span>
-    <span class="n">detrended</span> <span class="o">=</span> <span class="n">data</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+    <span class="c1"># Assign default drift analysis method for phase and frequency data</span>
+    <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">type</span> <span class="o">=</span> <span class="s1">&#39;quadratic&#39;</span> <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;phase&#39;</span> <span class="k">else</span> <span class="s1">&#39;linear&#39;</span>
 
-    <span class="k">return</span> <span class="n">detrended</span></div>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="c1"># &#39;x&#39; support vector onto which to fit drifts</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># PHASE DATA DRIFT ANALYSIS</span>
+    <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;phase&#39;</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">:</span>
+
+            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">coeffs</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="n">rate</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Quadratic&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;a=</span><span class="si">%.7g</span><span class="se">\n</span><span class="s2">b=</span><span class="si">%.7g</span><span class="se">\n</span><span class="s2">c=</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">remove</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;avg 2diff&#39;</span><span class="p">:</span>
+
+            <span class="n">slope</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Avg of 2nd Diff&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;3-point&#39;</span><span class="p">:</span>
+
+            <span class="n">M</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">M</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">slope</span> <span class="o">/=</span> <span class="p">(</span><span class="n">M</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">3-point&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;greenhall&#39;</span><span class="p">:</span>  <span class="c1"># see reference for details</span>
+
+            <span class="k">def</span> <span class="nf">w</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">w0</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">w0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
+
+            <span class="n">w_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">n1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
+            <span class="n">r1</span> <span class="o">=</span> <span class="n">n1</span> <span class="o">/</span> <span class="n">N</span>
+
+            <span class="n">slope</span> <span class="o">=</span> <span class="mf">6.</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">r1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">r1</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span>
+                    <span class="n">w_N</span> <span class="o">-</span> <span class="p">(</span><span class="n">w</span><span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="n">n1</span><span class="p">)</span> <span class="o">-</span> <span class="n">w</span><span class="p">(</span><span class="n">n1</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">r1</span><span class="p">))</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Greenhall&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
+
+        <span class="c1"># FREQUENCY OFFSETS</span>
+
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+
+            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">coeffs</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="n">b</span>
+            <span class="n">f_offset</span> <span class="o">=</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">rate</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Linear&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;a=</span><span class="si">%.7g</span><span class="se">\n</span><span class="s2">b=</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;slope=</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;f_offset=</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">f_offset</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">remove</span><span class="p">:</span>  <span class="c1"># removing frequency offset</span>
+                <span class="n">data</span> <span class="o">-=</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">t</span>
+
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;avg 1diff&#39;</span><span class="p">:</span>
+
+            <span class="n">slope</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="n">slope</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Avg of 1st Diff&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;slope=</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;f_offset=</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">rate</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">remove</span><span class="p">:</span>  <span class="c1"># removing frequency offset</span>
+                <span class="n">data</span> <span class="o">-=</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">t</span>
+
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;endpoints&#39;</span><span class="p">:</span>
+
+            <span class="n">slope</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Endpoints&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;slope=</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;f_offset=</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">rate</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">remove</span><span class="p">:</span>  <span class="c1"># removing frequency offset</span>
+                <span class="n">data</span> <span class="o">-=</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">t</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="nb">type</span><span class="si">}</span><span class="s2">` drift analysis method is not &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;available for phase data&quot;</span><span class="p">)</span>
+
+    <span class="c1"># FREQUENCY DATA DRIFT ANALYSIS</span>
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+
+            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">coeffs</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="n">b</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Linear&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;a=</span><span class="si">%.7g</span><span class="se">\n</span><span class="s2">b=</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">remove</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;bisection&#39;</span><span class="p">:</span>
+
+            <span class="c1"># calc mean of halves</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">N</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># width of a `half`</span>
+
+            <span class="c1"># mean of `halves`</span>
+            <span class="n">mu1</span><span class="p">,</span> <span class="n">mu2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="n">w</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="n">w</span><span class="p">:])</span>
+
+            <span class="c1"># calc slope (extra sep if odd n samples)</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="p">(</span><span class="n">mu2</span> <span class="o">-</span> <span class="n">mu1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">w</span> <span class="o">+</span> <span class="p">(</span><span class="n">N</span> <span class="o">%</span> <span class="mi">2</span><span class="p">))</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bisection&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
+
+        <span class="c1"># FIXME: this doesn&#39;t work yet. Probably need better param</span>
+        <span class="c1">#  guessing to give matching results</span>
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Log drift analysis still &quot;</span>
+                                      <span class="s2">&quot;needs improvements...&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Fitting function</span>
+            <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span>
+
+            <span class="n">z</span> <span class="o">=</span> <span class="n">decimate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">xdata</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">ydata</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Log&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;a=</span><span class="si">%.7g</span><span class="se">\n</span><span class="s2">b=</span><span class="si">%.7g</span><span class="se">\n</span><span class="s2">c=</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">popt</span><span class="p">)</span>
+
+            <span class="c1"># TODO: remove drift from data</span>
+
+        <span class="c1"># FIXME: this doesn&#39;t work yet. Probably need better param</span>
+        <span class="c1">#  guessing to give matching results</span>
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;diffusion&#39;</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Diffusion drift analysis still &quot;</span>
+                                      <span class="s2">&quot;needs improvements...&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Fitting function</span>
+            <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span>
+
+            <span class="n">z</span> <span class="o">=</span> <span class="n">decimate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">xdata</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">ydata</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Diffusion&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;a=</span><span class="si">%.7g</span><span class="se">\n</span><span class="s2">b=</span><span class="si">%.7g</span><span class="se">\n</span><span class="s2">c=</span><span class="si">%.7g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">popt</span><span class="p">)</span>
+
+            <span class="c1"># TODO: remove drift from data</span>
+
+        <span class="c1"># FIXME: this doesn&#39;t give exactly the same results as Stable32 (</span>
+        <span class="c1">#  but it&#39;s quite close)</span>
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;autoregression&#39;</span><span class="p">:</span>
+
+            <span class="n">z</span> <span class="o">=</span> <span class="n">decimate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+
+            <span class="n">r1</span> <span class="o">=</span> <span class="n">noiseid</span><span class="o">.</span><span class="n">acf</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Autoregression&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">r1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">remove</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">r1</span> <span class="o">*</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="nb">type</span><span class="si">}</span><span class="s2">` drift analysis method is not &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;available for frequency data&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
 
 
 <div class="viewcode-block" id="read_datafile"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.read_datafile">[docs]</a><span class="k">def</span> <span class="nf">read_datafile</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>

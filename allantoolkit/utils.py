@@ -5,6 +5,7 @@ import warnings
 import numpy as np
 from . import tables
 from . import allantools
+from . import noiseid
 from pathlib import Path
 from typing import List, Tuple, NamedTuple, Union, Callable
 
@@ -685,30 +686,274 @@ def rolling_grad(x: Array, n: int):
     return np.array(list((each_value())))
 
 
-def detrend(data: Array, data_type: str):
-    """Detrend phase or factional frequency data.
+# TODO: Finish implementing
+def drift(data: Array, rate: float, data_type: str, type: str = None,
+          m: int = 1, remove: bool = False) -> Array:
+    """Analyzes phase or frequency data for frequency drifts, or finds
+    frequency offsets in phase data.
+
+    Four frequency drift methods and three frequency offset methods are
+    available for phase data:
+
+    - `quadratic`:  least-squares quadratic fit. Optimal for WHPM noise.
+    - `avg 2diff`:  average of 2nd differences. Optimal for RWFM noise.
+    - `3-point`:    three-points average. Equivalent of the bisection model
+                    for frequency data. Good for WHFM and RWFM noise.
+    - `greenhall`:  Greenhall 4-points average. Applicable to all noise types.
+
+
+    - `linear`:     least-squares linear fit. Optimal for WHPM noise.
+    - `avg 1diff`:  average of 1st differences. Optimal for WHFM noise.
+    - `endpoints`:  difference between the first and last points of the
+                    data. This method is intended mainly to match the two
+                    endpoints to condition data for a TOTVAR analysis.
+
+    Five drift methods and one autoregression frequency drift method
+    are available for frequency data:
+
+    - `linear`:         least-squares linear fit. Optimal for WHFM noise.
+    - `bisection`:      drift computation from the frequency averages over
+                        the first and last halves of the data. Optimal for
+                        WHFM and RWFM noise.
+    - `log`:            log model fit.
+    - `diffusion`:      diffusion model.
+
+    - `autoregressive`: fit and remove AR(1) autoregressive noise from the
+                        data. Useful for prewhitening data before a jump
+                        analysis.
+
+    FIXME: Need to make this robust to floating point numerical precision
+    errors. This happens in particular when calculating the mean of small
+    values - resulting in erroneous results at the e-32 level
+
+    References:
+        [RileyStable32Manual]_ (Drift Function, pg.191-4)
+
+        [RileyStable32]_ (5.18-21, pg.67-70)
+
+        http://www.wriley.com/Frequency%20Drift%20Characterization%20in%20Stable32.pdf
+
+        C. A. Greenhall, "A frequency-drift estimator and its removal
+        from modified Allan variance," Proceedings of International
+        Frequency Control Symposium, Orlando, FL, USA, 1997,
+        pp. 428-432, doi: 10.1109/FREQ.1997.638639.
 
     Args:
-        data:       data array of input measurements.
+        data:       data array of phase or frequency measurements.
+        rate:       sampling rate of the input data, in Hz
         data_type:  input data type. Either `phase` or `freq`.
-
-    Returns:
-        detrended data.
+        type:       drift analysis type. Defaults to `quadratic` for phase
+                    data, and `linear` for frequency data.
+        m:          averaging factor to be used for the log, diffusion or
+                    autoregression drift analysis models
+        remove:     if `True` remove the drift from the data. If `False`
+                    only logs drift analysis results
     """
 
-    if data_type == 'freq':
-        deg = 1  # remove frequency drift
-    elif data_type == 'phase':
-        deg = 2  # remove frequency offset and drift)
-    else:
+    logger.warning("`Drift` function might be affected by numerical precision "
+                   "limits. Apologies if that is the case.")
+
+    if data_type not in ['phase', 'freq']:
         raise ValueError(f"Invalid data_type value: {data_type}. Should be "
                          f"`phase` or `freq`.")
 
-    t = range(data.size)
-    p = np.polyfit(t, data, deg)
-    detrended = data - np.polyval(p, t)
+    # Assign default drift analysis method for phase and frequency data
+    if type is None:
+        type = 'quadratic' if data_type == 'phase' else 'linear'
 
-    return detrended
+    N = data.size
+
+    # 'x' support vector onto which to fit drifts
+    t = np.arange(1, data.size + 1)
+
+    # PHASE DATA DRIFT ANALYSIS
+    if data_type == 'phase':
+
+        if type == 'quadratic':
+
+            coeffs = np.polyfit(t, data, deg=2)
+            a, b, c = coeffs[::-1]
+            slope = 2 * c * rate
+
+            logger.info("\nQuadratic")
+            logger.info("a=%.7g\nb=%.7g\nc=%.7g", a, b, c)
+            logger.info("%.7g", slope)
+
+            if remove:
+                data -= np.polyval(coeffs, t)
+
+        elif type == 'avg 2diff':
+
+            slope = data[2:] - 2 * data[1:-1] + data[:-2]
+            slope = np.mean(slope)
+
+            logger.info("\nAvg of 2nd Diff")
+            logger.info("%.7g", slope)
+
+        elif type == '3-point':
+
+            M = data.size
+            slope = 4 * (data[-1] - 2 * data[M // 2] + data[0])
+            slope /= (M - 1) ** 2
+
+            logger.info("\n3-point")
+            logger.info("%.7g", slope)
+
+        elif type == 'greenhall':  # see reference for details
+
+            def w(n, w0=0):
+                return w0 + np.sum(data[:n])
+
+            w_N = np.sum(data)
+            n1 = int(N / 10)
+            r1 = n1 / N
+
+            slope = 6. / (N ** 3 * (1/rate) ** 2 * r1 * (1 - r1)) * (
+                    w_N - (w(N - n1) - w(n1)) / (1 - 2 * r1))
+
+            logger.info("\nGreenhall")
+            logger.info("%.7g", slope)
+
+        # FREQUENCY OFFSETS
+
+        elif type == 'linear':
+
+            coeffs = np.polyfit(t, data, deg=1)
+            a, b = coeffs[::-1]
+            slope = b
+            f_offset = slope * rate
+
+            logger.info("\nLinear")
+            logger.info("a=%.7g\nb=%.7g", a, b)
+            logger.info("slope=%.7g", slope)
+            logger.info("f_offset=%.7g", f_offset)
+
+            if remove:  # removing frequency offset
+                data -= slope * t
+
+        elif type == 'avg 1diff':
+
+            slope = np.diff(data)
+
+            slope = np.mean(slope)
+
+            logger.info("\nAvg of 1st Diff")
+            logger.info("slope=%.7g", slope)
+            logger.info("f_offset=%.7g", slope * rate)
+
+            if remove:  # removing frequency offset
+                data -= slope * t
+
+        elif type == 'endpoints':
+
+            slope = (data[-1] - data[0]) / (N - 1)
+
+            logger.info("\nEndpoints")
+            logger.info("slope=%.7g", slope)
+            logger.info("f_offset=%.7g", slope * rate)
+
+            if remove:  # removing frequency offset
+                data -= slope * t
+
+        else:
+
+            raise ValueError(f"`{type}` drift analysis method is not "
+                             f"available for phase data")
+
+    # FREQUENCY DATA DRIFT ANALYSIS
+    else:
+
+        if type == 'linear':
+
+            coeffs = np.polyfit(t, data, deg=1)
+            a, b = coeffs[::-1]
+            slope = b
+
+            logger.info("\nLinear")
+            logger.info("a=%.7g\nb=%.7g", a, b)
+            logger.info("%.7g", slope)
+
+            if remove:
+                data -= np.polyval(coeffs, t)
+
+        elif type == 'bisection':
+
+            # calc mean of halves
+            w = N // 2  # width of a `half`
+
+            # mean of `halves`
+            mu1, mu2 = np.nanmean(data[:w]), np.nanmean(data[-w:])
+
+            # calc slope (extra sep if odd n samples)
+            slope = (mu2 - mu1) / (w + (N % 2))
+
+            logger.info("\nBisection")
+            logger.info("%.7g", slope)
+
+        # FIXME: this doesn't work yet. Probably need better param
+        #  guessing to give matching results
+        elif type == 'log':
+
+            raise NotImplementedError("Log drift analysis still "
+                                      "needs improvements...")
+
+            # Fitting function
+            def func(t, a, b, c):
+                return a * np.log(b * t + 1) + c
+
+            z = decimate(data=data, data_type=data_type, m=m)
+
+            t = np.arange(1, z.size + 1)
+
+            popt, pcov = curve_fit(func, xdata=t, ydata=z)
+
+            logger.info("\nLog")
+            logger.info("a=%.7g\nb=%.7g\nc=%.7g", *popt)
+
+            # TODO: remove drift from data
+
+        # FIXME: this doesn't work yet. Probably need better param
+        #  guessing to give matching results
+        elif type == 'diffusion':
+
+            raise NotImplementedError("Diffusion drift analysis still "
+                                      "needs improvements...")
+
+            # Fitting function
+            def func(t, a, b, c):
+                return a + b * np.sqrt(t + c)
+
+            z = decimate(data=data, data_type=data_type, m=m)
+
+            t = np.arange(1, z.size + 1)
+
+            popt, pcov = curve_fit(func, xdata=t, ydata=z)
+
+            logger.info("\nDiffusion")
+            logger.info("a=%.7g\nb=%.7g\nc=%.7g", *popt)
+
+            # TODO: remove drift from data
+
+        # FIXME: this doesn't give exactly the same results as Stable32 (
+        #  but it's quite close)
+        elif type == 'autoregression':
+
+            z = decimate(data=data, data_type=data_type, m=m)
+
+            r1 = noiseid.acf(z=z, k=1)
+
+            logger.info("\nAutoregression")
+            logger.info("%.3f", r1)
+
+            if remove:
+                data = data[1:] - r1 * data[:-1]
+
+        else:
+
+            raise ValueError(f"`{type}` drift analysis method is not "
+                             f"available for frequency data")
+
+    return data
 
 
 def read_datafile(fn: Union[str, Path]) -> Array:

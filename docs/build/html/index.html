@@ -130,6 +130,18 @@
   </a>
  </li>
 </ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  TUTORIALS
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="tutorial_intro.html">
+   First Steps
+  </a>
+ </li>
+</ul>
 
 </nav>
 </div>
@@ -242,21 +254,55 @@
                 
   <div class="section" id="welcome-to-allantoolkit">
 <h1>📑 Welcome to AllanToolkit!<a class="headerlink" href="#welcome-to-allantoolkit" title="Permalink to this headline">¶</a></h1>
-<p>Welcome to <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code>!</p>
+<p>Allantoolkit is a fork of <strong>Anders E.E. Wallin’s</strong> [AllanTools](https://github.
+com/aewallin/allantools): apython library for calculating Allan deviation
+and related time &amp; frequency statistics. Don’t hesitate to head over to his
+Github repo to check out the original project and to drop a star! 🌟</p>
 <div class="section" id="features">
 <h2>🔥 Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>new low-level API (based on NamedTuple)</p></li>
+<li><p>fully featured object-oriented high-level API</p></li>
+<li><p>Auto noise ID for all deviation types (Lag1 ACF, B1, R(n))</p></li>
+<li><p>Bias correction for all deviation types</p></li>
+<li><p>Non-naive EDF / confidence interval calculation for all deviation types</p></li>
+<li><p>Basic plotting and visualisation tools</p></li>
+<li><p>Fast Theo1 algorithm</p></li>
+<li><p>Many-tau tau generation</p></li>
+<li><p>Streamlined code architecture</p></li>
+<li><p>Support for tables and constant mappings from .yaml file</p></li>
+<li><p>Updated documentation and docstrings</p></li>
+<li><p>Type hinting</p></li>
+<li><p>Streamlined pytests</p></li>
+<li><p>Additional tests</p></li>
+<li><p>New demo test dataset based on optical lattice clock data</p></li>
+<li><p>General gap resistance for most deviation types (to be tested)</p></li>
+<li><p>Logging</p></li>
+</ul>
 </div>
-<hr class="docutils" />
 <div class="section" id="quick-start">
 <h2>🚀 Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
 <ol>
-<li><p>📚 Install <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> like any other python package, using pip to download it
-from PyPI:</p>
-<blockquote>
-<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install allantoolkit
+<li><p>📚 Install the latest development version of <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code>, using pip to
+download it from this repo:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python -m pip install git+https://gitlab.com/amv213/allantoolkit.git
 </pre></div>
 </div>
-</div></blockquote>
+</li>
+<li><p>🐍 Test your installation running the following minimal script:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
+ 
+<span class="c1"># Generate some frequency data</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># data sampling rate, in Hz</span>
+
+<span class="c1"># Compute overlappig Allan deviation</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">allantools</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;freq&#39;</span><span class="p">)</span>
+
+<span class="c1"># Display analysis results</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
 </li>
 </ol>
 </div>
@@ -287,6 +333,10 @@ from PyPI:</p>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">TUTORIALS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_intro.html">First Steps</a></li>
+</ul>
 </div>
 </div>
 </div>

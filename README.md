@@ -1,8 +1,9 @@
 # 📑 Welcome to Allantoolkit!
 
-Allantoolkit is a fork of Anders E.E. Wallin's [AllanTools](https://github.com/aewallin/allantools)
-
-A python library for calculating Allan deviation and related time & frequency statistics toolkit.
+Allantoolkit is a fork of **Anders E.E. Wallin's** [AllanTools](https://github.
+com/aewallin/allantools): apython library for calculating Allan deviation 
+and related time & frequency statistics. Don't hesitate to head over to his 
+Github repo to check out the original project and to drop a star! 🌟
 
 ## 🚀 Quick Start
 
@@ -16,17 +17,17 @@ A python library for calculating Allan deviation and related time & frequency st
 2. 🐍 Test your installation running the following minimal script:
     
    ```python
-      import allantoolkit
-       
-      # Generate some frequency data
-      y = allantoolkit.noise.white(10000)
-      r = 1. # data sampling rate, in Hz
-      
-      # Compute overlappig Allan deviation
-      out = allantoolkit.allantools.oadev(y, rate=r, data_type='freq')
-      
-      # Display analysis results
-      print(out)
+   import allantoolkit
+    
+   # Generate some frequency data
+   y = allantoolkit.noise.white(10000)
+   r = 1. # data sampling rate, in Hz
+   
+   # Compute overlappig Allan deviation
+   out = allantoolkit.allantools.oadev(y, rate=r, data_type='freq')
+   
+   # Display analysis results
+   print(out)
    ```
 
 ## 🔥 Changelog

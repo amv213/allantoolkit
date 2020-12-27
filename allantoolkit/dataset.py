@@ -254,6 +254,9 @@ class Dataset:
         References:
             [RileyStable32Manual]_ (Statistics Function, pg.187-8)
             [RileyStable32]_ (10.12, pg.109)
+
+        Returns:
+            plot axes
         """
 
         # Log Statistics:
@@ -443,3 +446,38 @@ class Dataset:
                         '%12.4e'])
 
         logger.info("Stability analysis results saved in %s", filename)
+
+    def plot_hist(self) -> plt.Axes:
+        """Plots a histogram of phase or frequency data.
+
+        Returns:
+            plot axes
+        """
+
+        N = self.data.size
+        sigma = np.nanstd(self.data)
+        mu = np.nanmean(self.data)
+
+        # Spawn figure
+        fig = plt.figure(figsize=(7, 7))
+        ax = plt.gca()
+
+        # Histogram
+        n, bins, patches = ax.hist(self.data, bins=int(np.sqrt(N)),
+                                   density=True, rwidth=0.8)
+
+        # Gaussian kernel
+        y = ((1 / (np.sqrt(2 * np.pi) * sigma)) * np.exp(
+            -0.5 * (1 / sigma * (bins - mu)) ** 2))
+
+        ax.plot(bins, y)
+
+        # Vertical Mean Line
+        ax.axvline(mu, ls='--', c='DarkGray')
+
+        ax.set_xlim(mu - 6*sigma, mu + 6*sigma)
+
+        ax.set_xlabel("Data Value")
+        ax.set_ylabel("# Points Per Bin")
+
+        return ax

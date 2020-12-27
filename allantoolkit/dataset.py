@@ -407,7 +407,7 @@ class Dataset:
         self.devs = out.devs
         self.devs_hi = out.devs_hi
 
-        print(out)
+        logger.info("\n%s", out)
 
     def save(self, filename: Union[str, Path] = None) -> None:
         """ Saves statistical analysis results to a .TXT file.

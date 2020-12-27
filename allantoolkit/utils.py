@@ -8,6 +8,7 @@ from . import allantools
 from . import noiseid
 from pathlib import Path
 from typing import List, Tuple, NamedTuple, Union, Callable
+from scipy import signal
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -754,6 +755,87 @@ def replace_outliers(data: Array, sigmas: float = 3.5,
                              f"recognised.")
 
     return data
+
+
+def filter(data: Array, rate: float, type: str, f_low: float = None,
+           f_high: float = None) -> Array:
+    """Applies a first-order Butterworth filter to an array of phase or
+    frequency data.
+
+    TODO: check scaling of frequencies for Wn filter parameter is correct
+
+    References:
+        [RileyStable32Manual]_ (Filter Function, pg.185-6)
+
+    Args:
+        data:       data array of phase or frequency measurements.
+        rate:           sampling rate of the input data, in Hz.
+        type:   the type of filter. Can be any of {'lowpass', 'highpass',
+                'bandpass', 'bandstop'}
+        f_low:  for a 'highpass' or 'band*' filter, the lower cutoff
+                frequency.
+        f_high: for a 'lowpass' or 'band*' filter, the higher cutoff
+                frequency.
+
+    Returns:
+        filtered input data
+    """
+
+    # Check user provided relevant cutoff frequencies
+    if type != 'lowpass' and f_low is None:
+        raise ValueError(f"Need to provide a `f_low` cutoff frequency for "
+                         f"{type} filter.")
+    elif type != 'highpass' and f_high is None:
+        raise ValueError(f"Need to provide a `f_high` cutoff frequency "
+                         f"for {type} filter.")
+
+    # Zero-pad data to next power of two
+    N = data.size
+    next_pow = int(np.ceil(np.log2(N)))
+    padded = np.concatenate((data, np.zeros(2**next_pow - N)))
+    N = padded.size
+
+    # Range of Fourier frequencies: frequency bin size to Nyquist frequency
+    f_min, f_max = rate / N, rate / 2
+
+    # Check cutoff frequencies are in right range
+    if f_low is not None:
+        if f_low >= f_max:
+            raise ValueError(f"`f_low` must be smaller than max Nyquist "
+                             f"frequency {f_max} Hz")
+
+    if f_high is not None:
+        if f_high <= f_min:
+            raise ValueError(f"`f_high` must be bigger than min "
+                             f"frequency bin {f_min} Hz")
+        elif f_high >= f_max:
+            raise ValueError(f"`f_high` must be smaller than max Nyquist "
+                             f"frequency {f_max} Hz")
+
+    # Critical frequencies for filter
+    if type == 'lowpass':
+
+        freqs = f_high
+
+    elif type == 'highpass':
+
+        freqs = max(f_min, f_low)
+
+    else:
+        freqs = np.array([max(f_min, f_low), f_high])
+
+    # It is recommended to use second-order sections format (ref. scipy)
+    # Also need to normalise frequencies to Nyquist frequency
+    sos = signal.butter(N=1, Wn=freqs/f_max, btype=type, output='sos')
+    filtered = signal.sosfilt(sos=sos, x=data)
+
+    logger.info("\n\n%s FILTER:\n"
+                "\tMax:      \t%.5e Hz\n"
+                "\tMin:      \t%.5e Hz\n"
+                "\tApplied:  \t%s Hz\n", type.upper(), f_max, f_min,
+                freqs)
+
+    return filtered
 
 
 # TODO: Finish implementing

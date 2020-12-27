@@ -213,6 +213,7 @@
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
 
 <span class="c1"># shorten type hint to save some space</span>
 <span class="n">Array</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">Array</span>
@@ -406,19 +407,41 @@
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Dataset parted to size </span><span class="si">%i</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span></div>
 
-    <span class="c1"># TODO: Implement</span>
-<div class="viewcode-block" id="Dataset.filter"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Dataset.filter"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">f_low</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">f_high</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Filters the current phase or frequency data.</span>
+
+<span class="sd">        Low pass filtration can be useful for removing high frequency noise</span>
+<span class="sd">        that may otherwise obscure underlying variations in the data.</span>
+<span class="sd">        Its effect is similar to data averaging, but does not lengthen the</span>
+<span class="sd">        sampling interval or reduce the number of data points. High pass</span>
+<span class="sd">        filtration can be useful for removing large amplitude low frequency</span>
+<span class="sd">        fluctuation in the data due to divergent noise, drift or wandering in</span>
+<span class="sd">        order to better see and analyze the high frequency noise. This is</span>
+<span class="sd">        particularly effective when the drift or wandering does not fit a</span>
+<span class="sd">        function to allow its removal. Band pass filtration can be useful for</span>
+<span class="sd">        analyzing the amplitude variations of a discrete interfering component.</span>
+<span class="sd">        Its function resembles that of a classic wave analyzer. Band stop</span>
+<span class="sd">        filtration can be useful for removing a discrete interfering</span>
+<span class="sd">        component. By repeating this operation, multiple components may be</span>
+<span class="sd">        removed without significantly affecting the underlying behavior.</span>
 
 <span class="sd">        References:</span>
 <span class="sd">            [RileyStable32Manual]_ (Filter Function, pg.185-6)</span>
 
 <span class="sd">        Args:</span>
-
+<span class="sd">            type:   the type of filter. Can be any of {&#39;lowpass&#39;, &#39;highpass&#39;,</span>
+<span class="sd">                    &#39;bandpass&#39;, &#39;bandstop&#39;}</span>
+<span class="sd">            f_low:  for a &#39;highpass&#39; or &#39;band*&#39; filter, the lower cutoff</span>
+<span class="sd">                    frequency.</span>
+<span class="sd">            f_high: for a &#39;lowpass&#39; or &#39;band*&#39; filter, the higher cutoff</span>
+<span class="sd">                    frequency.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Filter Function yet to be implemented!&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dataset.show_stats"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.show_stats">[docs]</a>    <span class="k">def</span> <span class="nf">show_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span>
+                                 <span class="n">f_low</span><span class="o">=</span><span class="n">f_low</span><span class="p">,</span> <span class="n">f_high</span><span class="o">=</span><span class="n">f_high</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset.show"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Displays basic statistics for, and a simple plot of, phase or</span>
 <span class="sd">        frequency data.</span>
 

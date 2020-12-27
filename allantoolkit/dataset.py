@@ -16,6 +16,7 @@ from . import tables
 from pathlib import Path
 from typing import Union
 from scipy.optimize import curve_fit
+from scipy import signal
 
 # shorten type hint to save some space
 Array = allantools.Array
@@ -209,19 +210,41 @@ class Dataset:
 
         logger.info("Dataset parted to size %i", self.data.size)
 
-    # TODO: Implement
-    def filter(self) -> None:
+    def filter(self, type: str, f_low: float = None,
+               f_high: float = None) -> None:
         """Filters the current phase or frequency data.
+
+        Low pass filtration can be useful for removing high frequency noise
+        that may otherwise obscure underlying variations in the data.
+        Its effect is similar to data averaging, but does not lengthen the
+        sampling interval or reduce the number of data points. High pass
+        filtration can be useful for removing large amplitude low frequency
+        fluctuation in the data due to divergent noise, drift or wandering in
+        order to better see and analyze the high frequency noise. This is
+        particularly effective when the drift or wandering does not fit a
+        function to allow its removal. Band pass filtration can be useful for
+        analyzing the amplitude variations of a discrete interfering component.
+        Its function resembles that of a classic wave analyzer. Band stop
+        filtration can be useful for removing a discrete interfering
+        component. By repeating this operation, multiple components may be
+        removed without significantly affecting the underlying behavior.
 
         References:
             [RileyStable32Manual]_ (Filter Function, pg.185-6)
 
         Args:
-
+            type:   the type of filter. Can be any of {'lowpass', 'highpass',
+                    'bandpass', 'bandstop'}
+            f_low:  for a 'highpass' or 'band*' filter, the lower cutoff
+                    frequency.
+            f_high: for a 'lowpass' or 'band*' filter, the higher cutoff
+                    frequency.
         """
-        raise NotImplementedError("Filter Function yet to be implemented!")
 
-    def show_stats(self) -> plt.Axes:
+        self.data = utils.filter(data=self.data, rate=self.rate, type=type,
+                                 f_low=f_low, f_high=f_high)
+
+    def show(self) -> plt.Axes:
         """Displays basic statistics for, and a simple plot of, phase or
         frequency data.
 

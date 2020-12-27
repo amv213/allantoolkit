@@ -9,25 +9,25 @@ A python library for calculating Allan deviation and related time & frequency st
 1. 📚 Install the latest development version of `allantoolkit`, using pip to 
    download it from this repo:
 
-    >```bash
-    >$ python -m pip install git+https://gitlab.com/amv213/allantoolkit.git
-    >```
+    ```bash
+    $ python -m pip install git+https://gitlab.com/amv213/allantoolkit.git
+    ```
    
 2. 🐍 Test your installation running the following minimal script:
     
-    ```python
-         import allantoolkit
-    
-         # Generate some frequency data
-         y = allantoolkit.noise.white(10000)
-         r = 1. # data sampling rate, in Hz
-    
-         # Compute overlappig Allan deviation
-         out = allantoolkit.allantools.oadev(y, rate=r, data_type='freq')
-    
-         # Display analysis results
-         print(out)
-    ```
+   ```python
+      import allantoolkit
+       
+      # Generate some frequency data
+      y = allantoolkit.noise.white(10000)
+      r = 1. # data sampling rate, in Hz
+      
+      # Compute overlappig Allan deviation
+      out = allantoolkit.allantools.oadev(y, rate=r, data_type='freq')
+      
+      # Display analysis results
+      print(out)
+   ```
 
 ## 🔥 Changelog
 

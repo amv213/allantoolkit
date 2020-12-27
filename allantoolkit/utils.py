@@ -4,11 +4,11 @@ import logging
 import warnings
 import numpy as np
 from . import tables
-from . import allantools
 from . import noiseid
+from . import allantools
+from scipy import signal
 from pathlib import Path
 from typing import List, Tuple, NamedTuple, Union, Callable
-from scipy import signal
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)

@@ -604,7 +604,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">devs</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">devs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">devs_hi</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">devs_hi</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Dataset.save"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.dataset.Dataset.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Saves statistical analysis results to a .TXT file.</span>

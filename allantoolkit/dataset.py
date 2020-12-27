@@ -481,3 +481,61 @@ class Dataset:
         ax.set_ylabel("# Points Per Bin")
 
         return ax
+
+    def plot(self) -> plt.Axes:
+        """Plot frequency stability results.
+
+        Make sure to call `.calc()` first to generate the results you wish
+        to be plotted.
+
+        Returns:
+            plot axes
+        """
+
+        if self.devs is None:
+            raise ValueError("No stability analysis results to plot. Make "
+                             "sure you have called .calc() to populate "
+                             "results first.")
+
+        # Spawn figure
+        fig = plt.figure(figsize=(13, 8))
+        ax = plt.gca()
+
+        # Confidence Interval
+        ax.fill_between(self.taus, y1=self.devs_hi, y2=self.devs_lo,
+                        color='LightGray', alpha=0.8, linewidth=0)
+
+        # Deviations
+        ax.plot(self.taus, self.devs, marker='o', ls='-')
+
+        # Text Box
+        tau_box = f"Tau\n\n"
+        for t in self.taus:
+            tau_box += f"{int(round(t)):<6n}\n"
+        sigma_box = f"Sigma\n\n"
+        for dev in self.devs:
+            sigma_box += f"{dev:<.2e}\n"
+
+        ax.text(0.8, 0.9, tau_box, horizontalalignment='left',
+                verticalalignment='top', transform=ax.transAxes)
+        ax.text(0.85, 0.9, sigma_box, horizontalalignment='left',
+                verticalalignment='top', transform=ax.transAxes)
+
+
+        # Axes Parameters
+        ax.set_ylim(10**np.floor(np.log10(min(self.devs))),
+                    10**np.ceil(np.log10(max(self.devs))))
+        ax.set_xlim(1, 10**np.ceil(np.log10(self.taus[-1])))
+
+        ax.set_yscale('log')
+        ax.set_xscale('log')
+
+        ax.grid(which='major', linestyle='--')
+        ax.grid(which='minor', linestyle=':')
+
+        ax.set_title("FREQUENCY STABILITY")
+        ax.set_ylabel(f"{self.dev_type.upper()}")
+        ax.set_xlabel("Averaging Time (s)")
+
+        return ax
+

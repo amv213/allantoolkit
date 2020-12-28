@@ -55,7 +55,6 @@ with a nicely formatted logger:
       logger.info("Amazing!")
 ````
 
-`````{margin}
 ````{tip}
 It is quite useful to lower the severity level for which `allantoolkit` logs
  are emitted. Just add the following line after having configured your own 
@@ -66,4 +65,3 @@ It is quite useful to lower the severity level for which `allantoolkit` logs
 logging.getLogger('allantoolkit').setLevel("INFO")
 ```
 ````
-`````

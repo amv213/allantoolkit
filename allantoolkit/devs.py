@@ -229,7 +229,7 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
     """Calculates the Allan deviation (ADEV) of phase or fractional
     frequency data.
 
-    Characteristics:
+    .. hint:
         classic - use only if required - relatively poor confidence.
 
     The Allan deviation - :math:`\\sigma_y(\\tau)` - is the square root of

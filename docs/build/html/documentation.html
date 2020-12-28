@@ -324,27 +324,27 @@ named as follows:</p>
 <p>If your using application does not use logging, then only events of severity
 <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> and greater will be printed to <code class="docutils literal notranslate"><span class="pre">sys.stderr</span></code>, thanks to the
 logger’s last resort handler. This is regarded as the best default behaviour.</p>
-<p>:::{note}
-It is generally recommended to use logging in your applications, instead of
+<p>.. note::</p>
+<p>It is generally recommended to use logging in your applications, instead of
 abusing the <code class="docutils literal notranslate"><span class="pre">print()</span></code> command. The following code snippet will set you up
 with a nicely formatted logger:</p>
-<p>.. code-block:: python</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  import logging
-
-  # Setup your basic logger
-  logging.basicConfig(
-     format=&#39;[%(asctime)s] %(levelname)s | %(message)s&#39;,
-     datefmt=&#39;%D %H:%M:%S&#39;
-  )
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  .. code-block:: python
   
-  # Spawn logger for current module 
-  logger = logging.getLogger(__name__)  
-  logger.setLevel(&quot;INFO&quot;)  # set default logging level
+     import logging
   
-  logger.info(&quot;Amazing!&quot;)
+     # Setup your basic logger
+     logging.basicConfig(
+        format=&#39;[%(asctime)s] %(levelname)s | %(message)s&#39;,
+        datefmt=&#39;%D %H:%M:%S&#39;
+     )
+     
+     # Spawn logger for current module 
+     logger = logging.getLogger(__name__)  
+     logger.setLevel(&quot;INFO&quot;)  # set default logging level
+     
+     logger.info(&quot;Amazing!&quot;)
 </pre></div>
 </div>
-<p>:::</p>
 <p>::::{tip}
 It is quite useful to lower the severity level for which <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> logs
 are emitted. Just add the following line after having configured your own

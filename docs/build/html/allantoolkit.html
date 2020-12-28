@@ -1615,39 +1615,32 @@ tau-list generation.</p></li>
 <dl class="py function">
 <dt id="allantoolkit.devs.mdev">
 <code class="sig-prename descclassname">allantoolkit.devs.</code><code class="sig-name descname">mdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>float<span class="p">, </span>List<span class="p">, </span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_af</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.devs.DevResult" title="allantoolkit.devs.DevResult">allantoolkit.devs.DevResult</a><a class="reference internal" href="_modules/allantoolkit/devs.html#mdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.devs.mdev" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Modified Allan deviation.</dt><dd><p>Used to distinguish between White and Flicker Phase Modulation.</p>
-</dd>
-</dl>
+<dd><p>Calculates the modified Allan deviation (MDEV) of phase or
+fractional frequency data.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Used to distinguish WHPM and FLPM noise.</p>
+</div>
+<p>The modified Allan deviation is the square root of the modified Allan
+variance (MVAR). The modified Allan variance is the same as the standard
+Allan variance at unity averaging factors, but includes an additional
+phase averaging operation, and has the advantage of being able to
+distinguish between white and flicker PM noise.</p>
+<p>The modified Allan variance is estimated from a set of
+<span class="math notranslate nohighlight">\(N\)</span> phase measurements for averaging time <span class="math notranslate nohighlight">\(\tau =
+m\tau_0\)</span>, where <span class="math notranslate nohighlight">\(m\)</span> is the averaging factor and <span class="math notranslate nohighlight">\(\tau_0\)</span>
+is the basic data sampling period, by the following expression:</p>
 <div class="math notranslate nohighlight">
-\[\sigma^2_{MDEV}(m\tau_0) = { 1 \over 2 (m \tau_0 )^2 (N-3m+1) }
+\[\sigma^{2}_y(\tau) = { 1 \over 2 m^2 \tau^2 (N-3m+1) }
 \sum_{j=1}^{N-3m+1} \lbrace
-\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \rbrace^2\]</div>
-<p>see <a class="reference external" href="http://www.leapsecond.com/tools/adev_lib.c">http://www.leapsecond.com/tools/adev_lib.c</a></p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id25"><span>[SP1065]</span></a> eqn (14), page 17.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>np.array</em>) – Input data. Provide either phase or frequency (fractional,
-adimensional).</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for data, in Hz. Defaults to 1.0</p></li>
-<li><p><strong>data_type</strong> (<em>{'phase'</em><em>, </em><em>'freq'}</em>) – Data type, i.e. phase or frequency. Defaults to “phase”.</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – Array of tau values, in seconds, for which to compute statistic.
-Optionally set taus=[“all”|”octave”|”decade”] for automatic
-tau-list generation.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>(taus2, md, mde, ns)</strong> (<em>tuple</em>) – Tuple of values</p></li>
-<li><p><strong>taus2</strong> (<em>np.array</em>) – Tau values for which td computed</p></li>
-<li><p><strong>md</strong> (<em>np.array</em>) – Computed mdev for each tau value</p></li>
-<li><p><strong>mde</strong> (<em>np.array</em>) – mdev errors</p></li>
-<li><p><strong>ns</strong> (<em>np.array</em>) – Values of N used in each mdev calculation</p></li>
-</ul>
-</p>
-</dd>
-</dl>
+\sum_{i=j}^{j+m-1} \left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \right]
+\rbrace^2\]</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
+</div>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id25"><span>[RileyStable32]</span></a> (5.2.5. Modified Allan Variance, pg.22-3)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1707,11 +1700,11 @@ fractional frequency data.</p>
 <p>General Purpose - most widely used – first choice.</p>
 </div>
 <p>The fully overlapping Allan deviation is the square root of the fully
-overlapping Allan variance: a form of the standard Allan variance, that
+overlapping Allan variance: a form of the standard Allan variance that
 makes maximum use of a data set by forming all possible overlapping
 samples at each averaging time <span class="math notranslate nohighlight">\(\tau\)</span>.</p>
 <p>The overlapping Allan variance can be estimated from a set of <span class="math notranslate nohighlight">\(N\)</span>
-phase measurements for averaging time <span class="math notranslate nohighlight">\(\tau = m*\tau_0\)</span>, where
+phase measurements for averaging time <span class="math notranslate nohighlight">\(\tau = m\tau_0\)</span>, where
 <span class="math notranslate nohighlight">\(m\)</span> is the averaging factor and <span class="math notranslate nohighlight">\(\tau_0\)</span> is the basic
 data sampling period, by the following expression:</p>
 <div class="math notranslate nohighlight">

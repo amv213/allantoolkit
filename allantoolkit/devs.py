@@ -287,12 +287,12 @@ def oadev(data: Array, rate: float = 1., data_type: str = "phase",
         General Purpose - most widely used – first choice.
 
     The fully overlapping Allan deviation is the square root of the fully
-    overlapping Allan variance: a form of the standard Allan variance, that
+    overlapping Allan variance: a form of the standard Allan variance that
     makes maximum use of a data set by forming all possible overlapping
     samples at each averaging time :math:`\\tau`.
 
     The overlapping Allan variance can be estimated from a set of :math:`N`
-    phase measurements for averaging time :math:`\\tau = m*\\tau_0`, where
+    phase measurements for averaging time :math:`\\tau = m\\tau_0`, where
     :math:`m` is the averaging factor and :math:`\\tau_0` is the basic
     data sampling period, by the following expression:
 
@@ -314,46 +314,36 @@ def oadev(data: Array, rate: float = 1., data_type: str = "phase",
 
 def mdev(data: Array, rate: float = 1., data_type: str = "phase",
          taus: Taus = None, max_af: int = None) -> DevResult:
-    """  Modified Allan deviation.
-         Used to distinguish between White and Flicker Phase Modulation.
+    """Calculates the modified Allan deviation (MDEV) of phase or
+    fractional frequency data.
+
+    .. hint::
+
+        Used to distinguish WHPM and FLPM noise.
+
+    The modified Allan deviation is the square root of the modified Allan
+    variance (MVAR). The modified Allan variance is the same as the standard
+    Allan variance at unity averaging factors, but includes an additional
+    phase averaging operation, and has the advantage of being able to
+    distinguish between white and flicker PM noise.
+
+    The modified Allan variance is estimated from a set of
+    :math:`N` phase measurements for averaging time :math:`\\tau =
+    m\\tau_0`, where :math:`m` is the averaging factor and :math:`\\tau_0`
+    is the basic data sampling period, by the following expression:
 
     .. math::
 
-        \\sigma^2_{MDEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-3m+1) }
+        \\sigma^{2}_y(\\tau) = { 1 \\over 2 m^2 \\tau^2 (N-3m+1) }
         \\sum_{j=1}^{N-3m+1} \\lbrace
-        \\sum_{i=j}^{j+m-1} {x}_{i+2m} - 2x_{i+m} + x_{i} \\rbrace^2
+        \\sum_{i=j}^{j+m-1} \\left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \\right]
+        \\rbrace^2
 
-    see http://www.leapsecond.com/tools/adev_lib.c
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
 
-    NIST [SP1065]_ eqn (14), page 17.
-
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
-
-    Returns
-    -------
-    (taus2, md, mde, ns): tuple
-          Tuple of values
-    taus2: np.array
-        Tau values for which td computed
-    md: np.array
-        Computed mdev for each tau value
-    mde: np.array
-        mdev errors
-    ns: np.array
-        Values of N used in each mdev calculation
-
+    References:
+       [RileyStable32]_ (5.2.5. Modified Allan Variance, pg.22-3)
     """
 
     return dev(dev_type='mdev', data=data, rate=rate, data_type=data_type,

@@ -24,7 +24,7 @@ class DevResult(NamedTuple('DevResult', [('afs', Array), ('taus', Array),
                                          ('devs_hi', Array)])):
     """Represents a statistical stability analysis result.
 
-    Attributes:
+    Args:
         afs (Array):        array of averaging factors for which deviations
                             were computed
         taus (Array):       array of corresponding averaging times, in seconds

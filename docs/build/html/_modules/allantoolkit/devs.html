@@ -306,7 +306,7 @@
 <span class="sd">                    Defaults to length of dataset.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (afs, taus, ns, alphas, devs_lo, devs, devs_hi) DevResult named tuple</span>
+<span class="sd">        frequency stability analysis results.</span>
 
 <span class="sd">    .. seealso::</span>
 <span class="sd">        Class :class:`allantoolkit.devs.DevResult` for more information on</span>
@@ -446,7 +446,7 @@
 
 <span class="sd">    .. hint::</span>
 
-<span class="sd">        classic - use only if required - relatively poor confidence.</span>
+<span class="sd">        Classic - use only if required - relatively poor confidence.</span>
 
 <span class="sd">    The Allan deviation - :math:`\\sigma_y(\\tau)` - is the square root of</span>
 <span class="sd">    the Allan variance. The Allan variance is the same as  the  ordinary</span>
@@ -481,7 +481,7 @@
 <span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
 
 <span class="sd">    References:</span>
-<span class="sd">       [SP1065]_ (pg.14-15)</span>
+<span class="sd">       [RileyStable32]_ (5.2.2. Allan Variance, pg.14-5)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;adev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
@@ -490,23 +490,33 @@
 
 <div class="viewcode-block" id="oadev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.oadev">[docs]</a><span class="k">def</span> <span class="nf">oadev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
           <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; overlapping Allan deviation.</span>
-<span class="sd">        General purpose - most widely used - first choice</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the overlapping Allan deviation (OADEV) of phase or</span>
+<span class="sd">    fractional frequency data.</span>
+
+<span class="sd">    .. hint::</span>
+
+<span class="sd">        General Purpose - most widely used – first choice.</span>
+
+<span class="sd">    The fully overlapping Allan deviation is the square root of the fully</span>
+<span class="sd">    overlapping Allan variance: a form of the standard Allan variance, that</span>
+<span class="sd">    makes maximum use of a data set by forming all possible overlapping</span>
+<span class="sd">    samples at each averaging time :math:`\\tau`.</span>
+
+<span class="sd">    The overlapping Allan variance can be estimated from a set of :math:`N`</span>
+<span class="sd">    phase measurements for averaging time :math:`\\tau = m*\\tau_0`, where</span>
+<span class="sd">    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic</span>
+<span class="sd">    data sampling period, by the following expression:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \\sigma^2_{OADEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-2m) }</span>
-<span class="sd">        \\sum_{n=1}^{N-2m} ( {x}_{n+2m} - 2x_{n+1m} + x_{n} )^2</span>
+<span class="sd">        \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-2m) }</span>
+<span class="sd">        \\sum_{i=1}^{N-2m} \\left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \\right]^2</span>
 
-<span class="sd">    where :math:`\\sigma^2_x(m\\tau_0)` is the overlapping Allan</span>
-<span class="sd">    deviation at an averaging time of :math:`\\tau=m\\tau_0`, and</span>
-<span class="sd">    :math:`x_n` is the time-series of phase observations, spaced by the</span>
-<span class="sd">    measurement interval :math:`\\tau_0`, with length :math:`N`.</span>
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
 
-<span class="sd">    NIST [SP1065]_ eqn (11), page 16.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        See documentation for allantoolkit.allantools.dev</span>
+<span class="sd">    References:</span>
+<span class="sd">       [RileyStable32]_ (5.2.4. Overlapping Allan Variance, pg.21-2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;oadev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>

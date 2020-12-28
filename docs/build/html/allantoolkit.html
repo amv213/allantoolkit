@@ -1454,7 +1454,7 @@ deviation</p></li>
 frequency data.</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>classic - use only if required - relatively poor confidence.</p>
+<p>Classic - use only if required - relatively poor confidence.</p>
 </div>
 <p>The Allan deviation - <span class="math notranslate nohighlight">\(\sigma_y(\tau)\)</span> - is the square root of
 the Allan variance. The Allan variance is the same as  the  ordinary
@@ -1481,7 +1481,7 @@ fractional frequency values averaged over the averaging time
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#sp1065" id="id23"><span>[SP1065]</span></a> (pg.14-15)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id23"><span>[RileyStable32]</span></a> (5.2.2. Allan Variance, pg.14-5)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1505,7 +1505,7 @@ Defaults to length of dataset.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(afs, taus, ns, alphas, devs_lo, devs, devs_hi) DevResult named tuple</p>
+<dd class="field-even"><p>frequency stability analysis results.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -1700,23 +1700,29 @@ tau-list generation.</p></li>
 <dl class="py function">
 <dt id="allantoolkit.devs.oadev">
 <code class="sig-prename descclassname">allantoolkit.devs.</code><code class="sig-name descname">oadev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>float<span class="p">, </span>List<span class="p">, </span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_af</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.devs.DevResult" title="allantoolkit.devs.DevResult">allantoolkit.devs.DevResult</a><a class="reference internal" href="_modules/allantoolkit/devs.html#oadev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.devs.oadev" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>overlapping Allan deviation.</dt><dd><p>General purpose - most widely used - first choice</p>
-</dd>
-</dl>
+<dd><p>Calculates the overlapping Allan deviation (OADEV) of phase or
+fractional frequency data.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>General Purpose - most widely used – first choice.</p>
+</div>
+<p>The fully overlapping Allan deviation is the square root of the fully
+overlapping Allan variance: a form of the standard Allan variance, that
+makes maximum use of a data set by forming all possible overlapping
+samples at each averaging time <span class="math notranslate nohighlight">\(\tau\)</span>.</p>
+<p>The overlapping Allan variance can be estimated from a set of <span class="math notranslate nohighlight">\(N\)</span>
+phase measurements for averaging time <span class="math notranslate nohighlight">\(\tau = m*\tau_0\)</span>, where
+<span class="math notranslate nohighlight">\(m\)</span> is the averaging factor and <span class="math notranslate nohighlight">\(\tau_0\)</span> is the basic
+data sampling period, by the following expression:</p>
 <div class="math notranslate nohighlight">
-\[\sigma^2_{OADEV}(m\tau_0) = { 1 \over 2 (m \tau_0 )^2 (N-2m) }
-\sum_{n=1}^{N-2m} ( {x}_{n+2m} - 2x_{n+1m} + x_{n} )^2\]</div>
-<p>where <span class="math notranslate nohighlight">\(\sigma^2_x(m\tau_0)\)</span> is the overlapping Allan
-deviation at an averaging time of <span class="math notranslate nohighlight">\(\tau=m\tau_0\)</span>, and
-<span class="math notranslate nohighlight">\(x_n\)</span> is the time-series of phase observations, spaced by the
-measurement interval <span class="math notranslate nohighlight">\(\tau_0\)</span>, with length <span class="math notranslate nohighlight">\(N\)</span>.</p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id27"><span>[SP1065]</span></a> eqn (11), page 16.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>documentation for allantoolkit.allantools.dev</strong> (<em>See</em>) – </p>
-</dd>
-</dl>
+\[\sigma^{2}_y(\tau) = { 1 \over 2 \tau^2 (N-2m) }
+\sum_{i=1}^{N-2m} \left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \right]^2\]</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
+</div>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id27"><span>[RileyStable32]</span></a> (5.2.4. Overlapping Allan Variance, pg.21-2)</p>
 </dd></dl>
 
 <dl class="py function">

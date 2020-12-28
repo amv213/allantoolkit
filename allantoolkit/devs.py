@@ -95,7 +95,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
                     Defaults to length of dataset.
 
     Returns:
-        (afs, taus, ns, alphas, devs_lo, devs, devs_hi) DevResult named tuple
+        frequency stability analysis results.
 
     .. seealso::
         Class :class:`allantoolkit.devs.DevResult` for more information on
@@ -235,7 +235,7 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
 
     .. hint::
 
-        classic - use only if required - relatively poor confidence.
+        Classic - use only if required - relatively poor confidence.
 
     The Allan deviation - :math:`\\sigma_y(\\tau)` - is the square root of
     the Allan variance. The Allan variance is the same as  the  ordinary
@@ -270,7 +270,7 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
         Function :func:`allantoolkit.devs.dev` for detailed usage.
 
     References:
-       [SP1065]_ (pg.14-15)
+       [RileyStable32]_ (5.2.2. Allan Variance, pg.14-5)
     """
 
     return dev(dev_type='adev', data=data, rate=rate, data_type=data_type,
@@ -279,23 +279,33 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
 
 def oadev(data: Array, rate: float = 1., data_type: str = "phase",
           taus: Taus = None, max_af: int = None) -> DevResult:
-    """ overlapping Allan deviation.
-        General purpose - most widely used - first choice
+    """Calculates the overlapping Allan deviation (OADEV) of phase or
+    fractional frequency data.
+
+    .. hint::
+
+        General Purpose - most widely used – first choice.
+
+    The fully overlapping Allan deviation is the square root of the fully
+    overlapping Allan variance: a form of the standard Allan variance, that
+    makes maximum use of a data set by forming all possible overlapping
+    samples at each averaging time :math:`\\tau`.
+
+    The overlapping Allan variance can be estimated from a set of :math:`N`
+    phase measurements for averaging time :math:`\\tau = m*\\tau_0`, where
+    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic
+    data sampling period, by the following expression:
 
     .. math::
 
-        \\sigma^2_{OADEV}(m\\tau_0) = { 1 \\over 2 (m \\tau_0 )^2 (N-2m) }
-        \\sum_{n=1}^{N-2m} ( {x}_{n+2m} - 2x_{n+1m} + x_{n} )^2
+        \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-2m) }
+        \\sum_{i=1}^{N-2m} \\left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \\right]^2
 
-    where :math:`\\sigma^2_x(m\\tau_0)` is the overlapping Allan
-    deviation at an averaging time of :math:`\\tau=m\\tau_0`, and
-    :math:`x_n` is the time-series of phase observations, spaced by the
-    measurement interval :math:`\\tau_0`, with length :math:`N`.
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
 
-    NIST [SP1065]_ eqn (11), page 16.
-
-    Args:
-        See documentation for allantoolkit.allantools.dev
+    References:
+       [RileyStable32]_ (5.2.4. Overlapping Allan Variance, pg.21-2)
     """
 
     return dev(dev_type='oadev', data=data, rate=rate, data_type=data_type,

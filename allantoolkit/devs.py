@@ -18,7 +18,10 @@ Taus = Union[str, float, List, Array]
 
 
 # define named tuple to hold dev results
-class DevResult(NamedTuple):
+class DevResult(NamedTuple('DevResult', [('afs', Array), ('taus', Array),
+                                         ('ns', Array), ('alphas', Array),
+                                         ('devs_lo', Array), ('devs', Array),
+                                         ('devs_hi', Array)])):
     """Represents a statistical stability analysis result.
 
     Args:
@@ -34,14 +37,6 @@ class DevResult(NamedTuple):
         devs_hi:    array of estimated statistical higher bounds for each
                     deviation
     """
-
-    afs: Array
-    taus: Array
-    ns: Array
-    alphas: Array
-    devs_lo: Array
-    devs: Array
-    devs_hi: Array
 
     def __str__(self) -> str:
         """A human-friendly pretty-print representation of the object.

@@ -229,7 +229,10 @@
 
 
 <span class="c1"># define named tuple to hold dev results</span>
-<div class="viewcode-block" id="DevResult"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.DevResult">[docs]</a><span class="k">class</span> <span class="nc">DevResult</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+<div class="viewcode-block" id="DevResult"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.DevResult">[docs]</a><span class="k">class</span> <span class="nc">DevResult</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">(</span><span class="s1">&#39;DevResult&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;afs&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;taus&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
+                                         <span class="p">(</span><span class="s1">&#39;ns&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;alphas&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
+                                         <span class="p">(</span><span class="s1">&#39;devs_lo&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;devs&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">),</span>
+                                         <span class="p">(</span><span class="s1">&#39;devs_hi&#39;</span><span class="p">,</span> <span class="n">Array</span><span class="p">)])):</span>
     <span class="sd">&quot;&quot;&quot;Represents a statistical stability analysis result.</span>
 
 <span class="sd">    Args:</span>
@@ -245,14 +248,6 @@
 <span class="sd">        devs_hi:    array of estimated statistical higher bounds for each</span>
 <span class="sd">                    deviation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">afs</span><span class="p">:</span> <span class="n">Array</span>
-    <span class="n">taus</span><span class="p">:</span> <span class="n">Array</span>
-    <span class="n">ns</span><span class="p">:</span> <span class="n">Array</span>
-    <span class="n">alphas</span><span class="p">:</span> <span class="n">Array</span>
-    <span class="n">devs_lo</span><span class="p">:</span> <span class="n">Array</span>
-    <span class="n">devs</span><span class="p">:</span> <span class="n">Array</span>
-    <span class="n">devs_hi</span><span class="p">:</span> <span class="n">Array</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;A human-friendly pretty-print representation of the object.</span>

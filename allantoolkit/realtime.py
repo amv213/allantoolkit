@@ -1,13 +1,8 @@
 """
-    Real-time statistics
-    ====================
+**Author:** Anders Wallin (anders.e.e.wallin "at" gmail.com)
 
-    **Author:** Anders Wallin (anders.e.e.wallin "at" gmail.com)
-
-    Statistics are computed 'on-the-fly' from a stream of phase/frequency samples
-    Initial version 2019 July, Anders E. E. Wallin.
-
-    This file is part of allantoolkit, see https://github.com/aewallin/allantools
+Statistics are computed 'on-the-fly' from a stream of phase/frequency samples
+Initial version 2019 July, Anders E. E. Wallin.
 """
 
 import logging

@@ -21,7 +21,7 @@ Taus = Union[str, float, List, Array]
 class DevResult(NamedTuple):
     """Represents a statistical stability analysis result.
 
-    Fields:
+    Args:
         afs:        array of averaging factors for which deviations were
                     computed
         taus:       array of corresponding averaging times, in seconds

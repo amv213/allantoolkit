@@ -335,9 +335,9 @@ def mdev(data: Array, rate: float = 1., data_type: str = "phase",
     .. math::
 
         \\sigma^{2}_y(\\tau) = { 1 \\over 2 m^2 \\tau^2 (N-3m+1) }
-        \\sum_{j=1}^{N-3m+1} \\lbrace
+        \\sum_{j=1}^{N-3m+1} \\left\\{
         \\sum_{i=j}^{j+m-1} \\left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \\right]
-        \\rbrace^2
+        \\right\\}^2
 
     .. seealso::
         Function :func:`allantoolkit.devs.dev` for detailed usage.

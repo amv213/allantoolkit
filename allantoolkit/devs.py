@@ -589,10 +589,10 @@ def mtotdev(data: Array, rate: float = 1., data_type: str = "phase",
         \\sum_{n=1}^{N-3m+1} \\left\\{
         { 1 \\over 6m } \\sum_{i=n-3m}^{N+3m-1}
         \\left[ z^{\\#}_i(m) \\right]^2
-        \\left\\}
+        \\right\\}
 
-    where the :math:`z^{\\#}_i(m)` terms are phase averages from
-    triply-extended subsequences with linear trend removed.
+    where the :math:`z^{\\#}_i(m)` terms are linear trend removed phase
+    averages from triply-extended subsequences of the original phase data.
 
     TODO: Find and add definition for frequency data
 

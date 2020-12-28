@@ -691,8 +691,9 @@ def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 def theo1(data: Array, rate: float = 1., data_type: str = "phase",
           taus: Taus = None, max_af: int = None) -> DevResult:
-    """Calculates the (Bias Removed) Thêo1 deviation (THEOBR) of phase or
-    fractional frequency data.
+    """Calculates the (Bias Removed) Thêo1 deviation (THEOBR) of phase data.
+    If fractional frequency data is provided, it is integrated to phase
+    before processing.
 
     .. hint::
 
@@ -736,47 +737,51 @@ def theo1(data: Array, rate: float = 1., data_type: str = "phase",
     implementations in the literature use instead
     :math:`n = \\lfloor {N \\over 30} - 3 \\rfloor`.
 
-
-    TODO: Find and add definition for fractional frequency data
-
     .. seealso::
         Function :func:`allantoolkit.devs.dev` for detailed usage.
 
     References:
-       [RileyStable32]_ (5.2.15. Thêo1, pg.37-41)
+       [RileyStable32]_ (5.2.15-6. Thêo1, pg.37-41)
     """
 
     return dev(dev_type='theo1', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 
 
-# TODO: Implement TheoH
+# TODO: Implement TheoH (not really necessary as a Fast THEO1 (BR) removes the
+#  fundamental reason for which TheoH was created)
 
 
 def mtie(data: Array, rate: float = 1., data_type: str = "phase",
          taus: Taus = None, max_af: int = None) -> DevResult:
-    """ Maximum Time Interval Error.
+    """Calculates the maximum time interval error deviation (MTIE) of phase
+    data. If fractional frequency data is provided, it is integrated to phase
+    before processing.
 
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
+    .. hint::
 
-    Notes
-    -----
-    this seems to correspond to Stable32 setting "Fast(u)"
-    Stable32 also has "Decade" and "Octave" modes where the
-    dataset is extended somehow?
+        MTIE is a measure of clock error commonly used in the
+        telecommunications industry.
+
+    The maximum time interval error is a measure of the maximum time error
+    of a clock over a particular time interval. This statistic is very
+    commonly used in the telecommunications industry. MTIE is a measure of
+    the peak time deviation of a clock and is therefore very sensitive to a
+    single extreme value, transient or outlier.
+
+    MTIE is calculated by moving a `m`-point window (`m` being the
+    averaging time of interest) through phase (time-error) data and finding
+    the difference between the maximum and minimum values at each window
+    position. MTIE is the overall maximum of this time interval error over
+    the entire data set.
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
+
+    References:
+       [RileyStable32]_ (5.2.17. MTIE, pg.41-2)
     """
+    
     return dev(dev_type='mtie', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 

@@ -902,8 +902,9 @@
 
 <div class="viewcode-block" id="theo1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.theo1">[docs]</a><span class="k">def</span> <span class="nf">theo1</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
           <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Calculates the (Bias Removed) Thêo1 deviation (THEOBR) of phase or</span>
-<span class="sd">    fractional frequency data.</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the (Bias Removed) Thêo1 deviation (THEOBR) of phase data.</span>
+<span class="sd">    If fractional frequency data is provided, it is integrated to phase</span>
+<span class="sd">    before processing.</span>
 
 <span class="sd">    .. hint::</span>
 
@@ -947,47 +948,51 @@
 <span class="sd">    implementations in the literature use instead</span>
 <span class="sd">    :math:`n = \\lfloor {N \\over 30} - 3 \\rfloor`.</span>
 
-
-<span class="sd">    TODO: Find and add definition for fractional frequency data</span>
-
 <span class="sd">    .. seealso::</span>
 <span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
 
 <span class="sd">    References:</span>
-<span class="sd">       [RileyStable32]_ (5.2.15. Thêo1, pg.37-41)</span>
+<span class="sd">       [RileyStable32]_ (5.2.15-6. Thêo1, pg.37-41)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;theo1&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
 
-<span class="c1"># TODO: Implement TheoH</span>
+<span class="c1"># TODO: Implement TheoH (not really necessary as a Fast THEO1 (BR) removes the</span>
+<span class="c1">#  fundamental reason for which TheoH was created)</span>
 
 
 <div class="viewcode-block" id="mtie"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.mtie">[docs]</a><span class="k">def</span> <span class="nf">mtie</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
          <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Maximum Time Interval Error.</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the maximum time interval error deviation (MTIE) of phase</span>
+<span class="sd">    data. If fractional frequency data is provided, it is integrated to phase</span>
+<span class="sd">    before processing.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data: np.array</span>
-<span class="sd">        Input data. Provide either phase or frequency (fractional,</span>
-<span class="sd">        adimensional).</span>
-<span class="sd">    rate: float</span>
-<span class="sd">        The sampling rate for data, in Hz. Defaults to 1.0</span>
-<span class="sd">    data_type: {&#39;phase&#39;, &#39;freq&#39;}</span>
-<span class="sd">        Data type, i.e. phase or frequency. Defaults to &quot;phase&quot;.</span>
-<span class="sd">    taus: np.array</span>
-<span class="sd">        Array of tau values, in seconds, for which to compute statistic.</span>
-<span class="sd">        Optionally set taus=[&quot;all&quot;|&quot;octave&quot;|&quot;decade&quot;] for automatic</span>
-<span class="sd">        tau-list generation.</span>
+<span class="sd">    .. hint::</span>
 
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    this seems to correspond to Stable32 setting &quot;Fast(u)&quot;</span>
-<span class="sd">    Stable32 also has &quot;Decade&quot; and &quot;Octave&quot; modes where the</span>
-<span class="sd">    dataset is extended somehow?</span>
+<span class="sd">        MTIE is a measure of clock error commonly used in the</span>
+<span class="sd">        telecommunications industry.</span>
+
+<span class="sd">    The maximum time interval error is a measure of the maximum time error</span>
+<span class="sd">    of a clock over a particular time interval. This statistic is very</span>
+<span class="sd">    commonly used in the telecommunications industry. MTIE is a measure of</span>
+<span class="sd">    the peak time deviation of a clock and is therefore very sensitive to a</span>
+<span class="sd">    single extreme value, transient or outlier.</span>
+
+<span class="sd">    MTIE is calculated by moving a `m`-point window (`m` being the</span>
+<span class="sd">    averaging time of interest) through phase (time-error) data and finding</span>
+<span class="sd">    the difference between the maximum and minimum values at each window</span>
+<span class="sd">    position. MTIE is the overall maximum of this time interval error over</span>
+<span class="sd">    the entire data set.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">       [RileyStable32]_ (5.2.17. MTIE, pg.41-2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;mtie&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 

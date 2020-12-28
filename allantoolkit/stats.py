@@ -4,23 +4,40 @@ from . import ci
 from . import utils
 from typing import NamedTuple
 
-
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
 
 # shorten type hint to save some space
 Array = np.ndarray
 
-# define named tuple to hold var results
-VarResult = NamedTuple('VarResult', [('var', float), ('n', int)])
-VarResults = NamedTuple('VarResult', [('vars', Array), ('ns', Array)])
+
+# define named tuples to hold var results
+class VarResult(NamedTuple):
+    """Container for variance calculated at single averaging factor. Defines
+    the following fields:
+    """
+
+    var: float
+    "variance at given averaging factor."
+    n: int
+    "number of samples used to estimate the variance."
+
+
+class VarResults(NamedTuple):
+    """Container for variance calculations over a range of averaging factors.
+    Defines the following fields:
+    """
+
+    vars: Array
+    "array of variances at each averaging factor."
+    ns: Array
+    "array of number of samples used to estimate the variance at each " \
+        "averaging factor."
 
 
 def calc_svar(x: Array, m: int, rate: float) -> VarResult:
-    """Main algorithm for standard variance calculation.
-
-    References:
-        [RileyStable32]_ (5.2.1, pg.17)
+    """Calculates standard variance (VAR) of phase data at given averaging
+    factor.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -28,8 +45,11 @@ def calc_svar(x: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        variance calculation results, stored in a
+        :class:`allantoolkit.stats.VarResult` NamedTuple.
+
+    References:
+        [RileyStable32]_ (5.2.1, pg.17)
     """
 
     # Decimate at given averaging factor

@@ -30,7 +30,7 @@ Github repo to check out the original project and to drop a star! 🌟
    download it from this repo:
 
     ```bash
-    $ python -m pip install git+https://gitlab.com/amv213/allantoolkit.git
+    python -m pip install git+https://gitlab.com/amv213/allantoolkit.git
     ```
    
 2. 🐍 Test your installation running the following minimal script:

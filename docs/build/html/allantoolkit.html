@@ -101,7 +101,7 @@
  </li>
  <li class="toctree-l1 current active collapsible-parent">
   <a class="reference internal" href="documentation.html">
-   📚 Documentation
+   Documentation
   </a>
   <ul class="current collapse-ul">
    <li class="toctree-l2 current active collapsible-parent">
@@ -126,11 +126,6 @@
   </ul>
   <i class="fas fa-chevron-down">
   </i>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="documentation.html#lower-the-severity-level-of-allantoolkit-logs-being-displayed">
-   lower the severity level of allantoolkit logs being displayed
-  </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="dev.html">
@@ -2759,26 +2754,42 @@ Dobrogowski &amp; Kasznia
 <span id="allantoolkit-stats"></span><h2>allantoolkit.stats<a class="headerlink" href="#module-allantoolkit.stats" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="allantoolkit.stats.VarResult">
-<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">VarResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">var</span></em>, <em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="headerlink" href="#allantoolkit.stats.VarResult" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">VarResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">var</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/stats.html#VarResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.VarResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>Container for variance calculated at single averaging factor. Defines
+the following fields:</p>
 <dl class="py attribute">
 <dt id="allantoolkit.stats.VarResult.n">
 <code class="sig-name descname">n</code><em class="property">: int</em><a class="headerlink" href="#allantoolkit.stats.VarResult.n" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
+<dd><p>number of samples used to estimate the variance.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="allantoolkit.stats.VarResult.var">
 <code class="sig-name descname">var</code><em class="property">: float</em><a class="headerlink" href="#allantoolkit.stats.VarResult.var" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
+<dd><p>variance at given averaging factor.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt id="allantoolkit.stats.VarResults">
+<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">VarResults</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vars</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">ns</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/stats.html#VarResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.VarResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>Container for variance calculations over a range of averaging factors.
+Defines the following fields:</p>
+<dl class="py attribute">
+<dt id="allantoolkit.stats.VarResults.ns">
+<code class="sig-name descname">ns</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.stats.VarResults.ns" title="Permalink to this definition">¶</a></dt>
+<dd><p>array of number of samples used to estimate the variance at each averaging factor.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="allantoolkit.stats.VarResults">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">VarResults</code><a class="headerlink" href="#allantoolkit.stats.VarResults" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">allantoolkit.stats.VarResult</span></code></a></p>
+<dt id="allantoolkit.stats.VarResults.vars">
+<code class="sig-name descname">vars</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#allantoolkit.stats.VarResults.vars" title="Permalink to this definition">¶</a></dt>
+<dd><p>array of variances at each averaging factor.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
@@ -3061,9 +3072,8 @@ number of samples used to estimate it.</p>
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_svar">
 <code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_svar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_svar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_svar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main algorithm for standard variance calculation.</p>
-<p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id64"><span>[RileyStable32]</span></a> (5.2.1, pg.17)</p>
+<dd><p>Calculates standard variance (VAR) of phase data at given averaging
+factor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -3073,10 +3083,12 @@ number of samples used to estimate it.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(var, n) NamedTuple of computed variance at given averaging time, and
-number of samples used to estimate it.</p>
+<dd class="field-even"><p>variance calculation results, stored in a
+<a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">allantoolkit.stats.VarResult</span></code></a> NamedTuple.</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id64"><span>[RileyStable32]</span></a> (5.2.1, pg.17)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -3126,7 +3138,7 @@ number of samples used to estimate it.</p>
 
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_theo1_fast">
-<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_theo1_fast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">explode</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_theo1_fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_theo1_fast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_theo1_fast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">explode</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResults" title="allantoolkit.stats.VarResults">allantoolkit.stats.VarResults</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_theo1_fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_theo1_fast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main algorithm for an all-tau Fast THEO1 calculation.</p>
 <p class="rubric">References</p>
 <p>B. Lewis, “Fast Algorithm for Calculation of  Theo1” Submitted to

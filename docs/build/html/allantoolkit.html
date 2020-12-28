@@ -1489,9 +1489,8 @@ fractional frequency values averaged over the averaging time
 <code class="sig-prename descclassname">allantoolkit.devs.</code><code class="sig-name descname">dev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>float<span class="p">, </span>List<span class="p">, </span>numpy.ndarray<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">max_af</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.devs.DevResult" title="allantoolkit.devs.DevResult">allantoolkit.devs.DevResult</a><a class="reference internal" href="_modules/allantoolkit/devs.html#dev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.devs.dev" title="Permalink to this definition">¶</a></dt>
 <dd><p>Core pipeline processing the input data and returning the appropriate
 frequency stability analysis results for the given deviation type.</p>
-<p>Usage:</p>
-<blockquote>
-<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate some frequency data</span>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate some frequency data</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
 
 <span class="c1"># Compute any deviation you want (e.g. oadev)</span>
@@ -1500,7 +1499,6 @@ frequency stability analysis results for the given deviation type.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 </pre></div>
 </div>
-</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

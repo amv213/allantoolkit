@@ -82,7 +82,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     """Core pipeline processing the input data and returning the appropriate
     frequency stability analysis results for the given deviation type.
 
-    Usage:
+    Example:
 
         .. code-block:: python
             :emphasize-lines: 5

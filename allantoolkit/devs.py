@@ -261,8 +261,8 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
     on the noise type, but is often estimated as
     :math:`\\pm\\sigma^{2}_y(\\tau) / \\sqrt{N}`.
 
-    Args:
-        See documentation for allantoolkit.allantools.dev
+    Notes:
+        See :func:`allantoolkit.devs.dev` for detailed usage.
     """
 
     return dev(dev_type='adev', data=data, rate=rate, data_type=data_type,

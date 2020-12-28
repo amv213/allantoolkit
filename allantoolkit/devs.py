@@ -115,12 +115,11 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
                     Defaults to length of dataset.
 
     Returns:
-        frequency stability analysis results, stored in a ``DevResult``
-        NamedTuple.
+        frequency stability analysis results, stored in a
+        :class:`allantoolkit.devs.DevResult` NamedTuple.
 
-    .. seealso::
-        Class :class:`allantoolkit.devs.DevResult` for more information on
-        the output ``DevResult`` NamedTuple.
+    References:
+        [RileyStable32Manual]_
     """
 
     # Easier to work with phase data, in units of seconds
@@ -709,6 +708,7 @@ def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
     return dev(dev_type='htotdev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 
+
 # PHASE-ONLY STATISTICS
 
 
@@ -842,80 +842,5 @@ def tierms(data: Array, rate: float = 1., data_type: str = "phase",
 
     return dev(dev_type='tierms', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
-
-
-# TODO: eliminate by making all deviations gap resistant
-def gradev(data, rate=1.0, data_type="phase", taus=None,
-           ci=0.9, noisetype='wp'):
-    """ gap resistant overlapping Allan deviation
-
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional). Warning : phase data works better (frequency data is
-        first trantformed into phase using numpy.cumsum() function, which can
-        lead to poor results).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
-    ci: float
-        the total confidence interval desired, i.e. if ci = 0.9, the bounds
-        will be at 0.05 and 0.95.
-    noisetype: string
-        the type of noise desired:
-        'wp' returns white phase noise.
-        'wf' returns white frequency noise.
-        'fp' returns flicker phase noise.
-        'ff' returns flicker frequency noise.
-        'rf' returns random walk frequency noise.
-        If the input is not recognized, it defaults to idealized, uncorrelated
-        noise with (N-1) degrees of freedom.
-
-    Returns
-    -------
-    taus: np.array
-        list of tau vales in seconds
-    adev: np.array
-        deviations
-    [err_l, err_h] : list of len()==2, np.array
-        the upper and lower bounds of the confidence interval taken as
-        distances from the the estimated two sample variance.
-    ns: np.array
-        numper of terms n in the adev estimate.
-
-    """
-    if data_type == "freq":
-        print("Warning : phase data is preferred as input to gradev()")
-    phase = utils.input_to_phase(data, rate, data_type)
-    (taus_used, m) = utils.tau_generator(data=phase, rate=rate,
-                                               dev_type='gradev', taus=taus)
-
-    ad = np.zeros_like(taus_used)
-    ade_l = np.zeros_like(taus_used)
-    ade_h = np.zeros_like(taus_used)
-    adn = np.zeros_like(taus_used)
-
-    for idx, mj in enumerate(m):
-        (dev, deverr, n) = stats.calc_gradev(data,
-                                             rate,
-                                             mj,
-                                             1,
-                                             ci,
-                                             noisetype)
-        # stride=1 for overlapping ADEV
-        ad[idx] = dev
-        ade_l[idx] = deverr[0]
-        ade_h[idx] = deverr[1]
-        adn[idx] = n
-
-    # Note that errors are split in 2 arrays
-    return utils.remove_small_ns(taus_used, ad, ade_l, ade_h, adn)
-
 
 

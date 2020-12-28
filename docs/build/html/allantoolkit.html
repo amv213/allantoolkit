@@ -1692,24 +1692,40 @@ dataset is extended somehow?</p>
 <dt id="allantoolkit.devs.mtotdev">
 <code class="sig-prename descclassname">allantoolkit.devs.</code><code class="sig-name descname">mtotdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>float<span class="p">, </span>List<span class="p">, </span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_af</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.devs.DevResult" title="allantoolkit.devs.DevResult">allantoolkit.devs.DevResult</a><a class="reference internal" href="_modules/allantoolkit/devs.html#mtotdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.devs.mtotdev" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
-<dt>PRELIMINARY - REQUIRES FURTHER TESTING.</dt><dd><p>Modified Total deviation.
-Better confidence at long averages for modified Allan</p>
+<dt>Calculates the modified total deviation (MTOTDEV) of phase or</dt><dd><p>fractional frequency data.</p>
 </dd>
 </dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>np.array</em>) – Input data. Provide either phase or frequency (fractional,
-adimensional).</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for data, in Hz. Defaults to 1.0</p></li>
-<li><p><strong>data_type</strong> (<em>{'phase'</em><em>, </em><em>'freq'}</em>) – Data type, i.e. phase or frequency. Defaults to “phase”.</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – Array of tau values, in seconds, for which to compute statistic.
-Optionally set taus=[“all”|”octave”|”decade”] for automatic
-tau-list generation.</p></li>
-<li><p><strong>SP1065 eqn</strong><strong> (</strong><strong>27</strong><strong>) </strong><strong>page 25</strong> (<em>NIST</em>) – </p></li>
-</ul>
-</dd>
-</dl>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Better confidence at long averaging times for modified Allan
+deviation. The modified total deviation combines the features of the
+modified Allan and total deviations.</p>
+</div>
+<p>The modified total deviation is the square root of the modified total
+variance (MTOTVAR). The modified total variance is similar to the
+modified Allan variance (MVAR), and has the same expected value,
+but offers improved confidence at long averaging times. It uses the same
+averaging technique as MVAR to distinguish between white and flicker PM
+noise.</p>
+<p>The modified total variance can be estimated from a set of <span class="math notranslate nohighlight">\(N\)</span> phase
+measurements for averaging time <span class="math notranslate nohighlight">\(\tau = m\tau_0\)</span>, where
+<span class="math notranslate nohighlight">\(m\)</span> is the averaging factor and <span class="math notranslate nohighlight">\(\tau_0\)</span> is the basic
+data sampling period, by the following expression:</p>
+<div class="math notranslate nohighlight">
+\[\sigma^{2}_y(\tau) = { 1 \over 2 \tau^2 (N-3m+1) }
+\sum_{n=1}^{N-3m+1} \left\{
+{ 1 \over 6m } \sum_{i=n-3m}^{N+3m-1}
+\left[ z^{#}_i(m) \right]^2
+\left\}\]</div>
+<p>where the <span class="math notranslate nohighlight">\(z^{#}_i(m)\)</span> terms are phase averages from
+triply-extended subsequences with linear trend removed.</p>
+<p>TODO: Find and add definition for frequency data</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
+</div>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id26"><span>[RileyStable32]</span></a> (5.2.12. Modified Total Variance, pg.31-2)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1896,6 +1912,7 @@ about both endpoints to form a virtual sequence <span class="math notranslate no
 <span class="math notranslate nohighlight">\(3N-4\)</span>, from <span class="math notranslate nohighlight">\(i=3-N\)</span> to <span class="math notranslate nohighlight">\(i=2N-2\)</span>. That is,
 the reflected portions added at each end have a 2-sample overlap each
 with the original dataset.</p>
+<p>TODO: Find and add definition for frequency data</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>

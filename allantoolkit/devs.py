@@ -546,7 +546,9 @@ def totdev(data: Array, rate: float = 1., data_type: str = "phase",
     :math:`3N-4`, from :math:`i=3-N` to :math:`i=2N-2`. That is,
     the reflected portions added at each end have a 2-sample overlap each
     with the original dataset.
-        
+
+    TODO: Find and add definition for frequency data
+
     .. seealso::
         Function :func:`allantoolkit.devs.dev` for detailed usage.
 
@@ -560,27 +562,47 @@ def totdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 def mtotdev(data: Array, rate: float = 1., data_type: str = "phase",
             taus: Taus = None, max_af: int = None) -> DevResult:
-    """ PRELIMINARY - REQUIRES FURTHER TESTING.
-        Modified Total deviation.
-        Better confidence at long averages for modified Allan
+    """Calculates the modified total deviation (MTOTDEV) of phase or
+       fractional frequency data.
 
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
+    .. hint::
 
-    NIST [SP1065]_ eqn (27) page 25
+        Better confidence at long averaging times for modified Allan
+        deviation. The modified total deviation combines the features of the
+        modified Allan and total deviations.
 
+    The modified total deviation is the square root of the modified total
+    variance (MTOTVAR). The modified total variance is similar to the
+    modified Allan variance (MVAR), and has the same expected value,
+    but offers improved confidence at long averaging times. It uses the same
+    averaging technique as MVAR to distinguish between white and flicker PM
+    noise.
+
+    The modified total variance can be estimated from a set of :math:`N` phase
+    measurements for averaging time :math:`\\tau = m\\tau_0`, where
+    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic
+    data sampling period, by the following expression:
+
+    .. math::
+
+        \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-3m+1) }
+        \\sum_{n=1}^{N-3m+1} \\left\\{
+        { 1 \\over 6m } \\sum_{i=n-3m}^{N+3m-1}
+        \\left[ z^{#}_i(m) \\right]^2
+        \\left\\}
+
+    where the :math:`z^{#}_i(m)` terms are phase averages from
+    triply-extended subsequences with linear trend removed.
+
+    TODO: Find and add definition for frequency data
+    
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
+
+    References:
+       [RileyStable32]_ (5.2.12. Modified Total Variance, pg.31-2)
     """
+
     return dev(dev_type='mtotdev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 

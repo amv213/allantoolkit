@@ -757,7 +757,9 @@
 <span class="sd">    :math:`3N-4`, from :math:`i=3-N` to :math:`i=2N-2`. That is,</span>
 <span class="sd">    the reflected portions added at each end have a 2-sample overlap each</span>
 <span class="sd">    with the original dataset.</span>
-<span class="sd">        </span>
+
+<span class="sd">    TODO: Find and add definition for frequency data</span>
+
 <span class="sd">    .. seealso::</span>
 <span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
 
@@ -771,27 +773,47 @@
 
 <div class="viewcode-block" id="mtotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.mtotdev">[docs]</a><span class="k">def</span> <span class="nf">mtotdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
             <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
-<span class="sd">        Modified Total deviation.</span>
-<span class="sd">        Better confidence at long averages for modified Allan</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the modified total deviation (MTOTDEV) of phase or</span>
+<span class="sd">       fractional frequency data.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data: np.array</span>
-<span class="sd">        Input data. Provide either phase or frequency (fractional,</span>
-<span class="sd">        adimensional).</span>
-<span class="sd">    rate: float</span>
-<span class="sd">        The sampling rate for data, in Hz. Defaults to 1.0</span>
-<span class="sd">    data_type: {&#39;phase&#39;, &#39;freq&#39;}</span>
-<span class="sd">        Data type, i.e. phase or frequency. Defaults to &quot;phase&quot;.</span>
-<span class="sd">    taus: np.array</span>
-<span class="sd">        Array of tau values, in seconds, for which to compute statistic.</span>
-<span class="sd">        Optionally set taus=[&quot;all&quot;|&quot;octave&quot;|&quot;decade&quot;] for automatic</span>
-<span class="sd">        tau-list generation.</span>
+<span class="sd">    .. hint::</span>
 
-<span class="sd">    NIST [SP1065]_ eqn (27) page 25</span>
+<span class="sd">        Better confidence at long averaging times for modified Allan</span>
+<span class="sd">        deviation. The modified total deviation combines the features of the</span>
+<span class="sd">        modified Allan and total deviations.</span>
 
+<span class="sd">    The modified total deviation is the square root of the modified total</span>
+<span class="sd">    variance (MTOTVAR). The modified total variance is similar to the</span>
+<span class="sd">    modified Allan variance (MVAR), and has the same expected value,</span>
+<span class="sd">    but offers improved confidence at long averaging times. It uses the same</span>
+<span class="sd">    averaging technique as MVAR to distinguish between white and flicker PM</span>
+<span class="sd">    noise.</span>
+
+<span class="sd">    The modified total variance can be estimated from a set of :math:`N` phase</span>
+<span class="sd">    measurements for averaging time :math:`\\tau = m\\tau_0`, where</span>
+<span class="sd">    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic</span>
+<span class="sd">    data sampling period, by the following expression:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-3m+1) }</span>
+<span class="sd">        \\sum_{n=1}^{N-3m+1} \\left\\{</span>
+<span class="sd">        { 1 \\over 6m } \\sum_{i=n-3m}^{N+3m-1}</span>
+<span class="sd">        \\left[ z^{#}_i(m) \\right]^2</span>
+<span class="sd">        \\left\\}</span>
+
+<span class="sd">    where the :math:`z^{#}_i(m)` terms are phase averages from</span>
+<span class="sd">    triply-extended subsequences with linear trend removed.</span>
+
+<span class="sd">    TODO: Find and add definition for frequency data</span>
+<span class="sd">    </span>
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">       [RileyStable32]_ (5.2.12. Modified Total Variance, pg.31-2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;mtotdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 

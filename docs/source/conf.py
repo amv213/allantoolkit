@@ -77,12 +77,12 @@ html_sidebars = {
            "sbt-sidebar-nav.html",
            "sbt-sidebar-footer.html"]
 }
-extra_navbar = '<div>Icons made by <a href="https://www.flaticon.com/authors/eucalyp" title="Eucalyp">Eucalyp</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>'
+extra_navbar = "<div>Icons made by <a href='https://www.flaticon.com/authors/eucalyp' title='Eucalyp'>Eucalyp</a> from <a href='https://www.flaticon.com/' title='Flaticon'>www.flaticon.com</a></div>"
 
 
 html_title = "AllanToolkit Documentation"
 html_logo = "_static/logo.png"
-# html_favicon = "../imgs/favico.png"
+html_favicon = "_static/favico.png"
 show_navbar_depth = 2
 
 # To build the documentation run the following:

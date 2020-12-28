@@ -688,6 +688,8 @@ def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
     return dev(dev_type='htotdev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 
+# PHASE-ONLY STATISTICS
+
 
 def theo1(data: Array, rate: float = 1., data_type: str = "phase",
           taus: Taus = None, max_af: int = None) -> DevResult:
@@ -754,8 +756,8 @@ def theo1(data: Array, rate: float = 1., data_type: str = "phase",
 
 def mtie(data: Array, rate: float = 1., data_type: str = "phase",
          taus: Taus = None, max_af: int = None) -> DevResult:
-    """Calculates the maximum time interval error deviation (MTIE) of phase
-    data. If fractional frequency data is provided, it is integrated to phase
+    """Calculates the maximum time interval error (MTIE) of phase data. If
+    fractional frequency data is provided, it is integrated to phase
     before processing.
 
     .. hint::
@@ -781,30 +783,42 @@ def mtie(data: Array, rate: float = 1., data_type: str = "phase",
     References:
        [RileyStable32]_ (5.2.17. MTIE, pg.41-2)
     """
-    
+
     return dev(dev_type='mtie', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 
 
 def tierms(data: Array, rate: float = 1., data_type: str = "phase",
            taus: Taus = None, max_af: int = None) -> DevResult:
-    """ Time Interval Error RMS.
+    """Calculates rms time interval error (TIE rms) of phase data. If
+    fractional frequency data is provided, it is integrated to phase
+    before processing.
 
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
+    The rms time interval error is another clock statistic commonly used by
+    the telecommunication industry. For no frequency offset, TIE rms is
+    approximately equal to the standard deviation of the integrated
+    fractional frequency fluctuations. It is therefore similar in behaviour
+    to the time Allan deviation (TDEV), although the latter properly
+    identifies divergent noise types.
 
+    The rms time interval error can be estimated from a set of
+    :math:`N` phase measurements for averaging time :math:`\\tau =
+    m\\tau_0`, where :math:`m` is the averaging factor and :math:`\\tau_0`
+    is the basic data sampling period, by the following expression:
+
+    .. math::
+
+        \\sigma_y(\\tau) = \\sqrt{
+        {1 \\over N-m} \\sum_{i=1}^{N-m} \\left[ x_{i+m} - x_i \\right]^2
+        }
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
+
+    References:
+       [RileyStable32]_ (5.2.18. TIE rms, pg.42-3)
     """
+
     return dev(dev_type='tierms', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 

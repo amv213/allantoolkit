@@ -691,7 +691,7 @@ def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 def theo1(data: Array, rate: float = 1., data_type: str = "phase",
           taus: Taus = None, max_af: int = None) -> DevResult:
-    """Calculates the Thêo1 deviation (THEO1) of phase or
+    """Calculates the (Bias Removed) Thêo1 deviation (THEO1) of phase or
     fractional frequency data.
 
     .. hint::
@@ -710,7 +710,7 @@ def theo1(data: Array, rate: float = 1., data_type: str = "phase",
 
     .. math::
 
-        \\sigma^{2}_y(\\tau = 0.75m\\tau_0) =
+        \\sigma^{2}_y(\\tau^*) =
         { 1 \\over 0.75 (m\\tau_0)^2 (N-m) }
         \\sum_{i=1}^{N-m} \\sum_{\\delta=0}^{m/2 - 1}
         { 1 \\over m/2 - \\delta }
@@ -719,7 +719,7 @@ def theo1(data: Array, rate: float = 1., data_type: str = "phase",
         \\left( x_{i+m} - x_{i+\\delta+m/2} \\right)
         \\right]^2
 
-    and applies to an effective averaging time :math:`\\tau = 0.75m\\tau_0`,
+    and applies to an effective averaging time :math:`\\tau^* = 0.75m\\tau_0`,
     where :math:`\\tau_0` is the basic data sampling period
 
     TODO: Find and add definition for fractional frequency data

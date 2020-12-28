@@ -1844,7 +1844,7 @@ frequency.</p>
 <dl class="py function">
 <dt id="allantoolkit.devs.theo1">
 <code class="sig-prename descclassname">allantoolkit.devs.</code><code class="sig-name descname">theo1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>float<span class="p">, </span>List<span class="p">, </span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_af</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.devs.DevResult" title="allantoolkit.devs.DevResult">allantoolkit.devs.DevResult</a><a class="reference internal" href="_modules/allantoolkit/devs.html#theo1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.devs.theo1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the Thêo1 deviation (THEO1) of phase or
+<dd><p>Calculates the (Bias Removed) Thêo1 deviation (THEO1) of phase or
 fractional frequency data.</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
@@ -1859,7 +1859,7 @@ maximum averaging time equal to <span class="math notranslate nohighlight">\(75\
 phase measurements for even averaging factor <span class="math notranslate nohighlight">\(m\)</span> where
 <span class="math notranslate nohighlight">\(10 \leq m \leq N-1\)</span>, by the following expression:</p>
 <div class="math notranslate nohighlight">
-\[\sigma^{2}_y(\tau = 0.75m\tau_0) =
+\[\sigma^{2}_y(\tau^*) =
 { 1 \over 0.75 (m\tau_0)^2 (N-m) }
 \sum_{i=1}^{N-m} \sum_{\delta=0}^{m/2 - 1}
 { 1 \over m/2 - \delta }
@@ -1867,7 +1867,7 @@ phase measurements for even averaging factor <span class="math notranslate nohig
 \left( x_i - x_{i-\delta+m/2} \right) +
 \left( x_{i+m} - x_{i+\delta+m/2} \right)
 \right]^2\]</div>
-<p>and applies to an effective averaging time <span class="math notranslate nohighlight">\(\tau = 0.75m\tau_0\)</span>,
+<p>and applies to an effective averaging time <span class="math notranslate nohighlight">\(\tau^* = 0.75m\tau_0\)</span>,
 where <span class="math notranslate nohighlight">\(\tau_0\)</span> is the basic data sampling period</p>
 <p>TODO: Find and add definition for fractional frequency data</p>
 <div class="admonition seealso">

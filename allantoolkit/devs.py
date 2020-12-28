@@ -509,51 +509,51 @@ def ohdev(data: Array, rate: float = 1., data_type: str = "phase",
     References:
        [RileyStable32]_ (5.2.9. Overlapping Hadamard Variance, pg.26-7)
     """
-    
+
     return dev(dev_type='ohdev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 
 
 def totdev(data: Array, rate: float = 1., data_type: str = "phase",
            taus: Taus = None, max_af: int = None) -> DevResult:
-    """ Total deviation.
-        Better confidence at long averages for Allan deviation.
+    """Calculates the Total deviation (TOTDEV) of phase or
+    fractional frequency data.
+
+    .. hint::
+
+        Offers improved confidence at large averaging factors by extedning
+        the data set by reflection at both ends.
+
+    The total deviation is the square root of the total variance (TOTVAR).
+    The total variance is similar to the two-sample or Allan variance,
+    and has the same expected value, but offers improved confidence at long
+    averaging times.
+
+    The total variance can be estimated from a set of :math:`N` phase
+    measurements for averaging time :math:`\\tau = m\\tau_0`, where
+    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic
+    data sampling period, by the following expression:
 
     .. math::
 
-        \\sigma^2_{TOTDEV}( m\\tau_0 ) = { 1 \\over 2 (m\\tau_0)^2 (N-2) }
-            \\sum_{i=2}^{N-1} ( {x}^*_{i-m} - 2x^*_{i} + x^*_{i+m} )^2
+        \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-2) }
+        \\sum_{i=2}^{N-1} \\left[
+        x^*_{i-m} - 2x^*_{i} + x^*_{i+m}
+        \\right]^2
 
+    where the original :math:`N` phase values are extended by reflection
+    about both endpoints to form a virtual sequence :math:`x^*` of length
+    :math:`3N-4`, from :math:`i=3-N` to :math:`i=2N-2`. That is,
+    the reflected portions added at each end have a 2-sample overlap each
+    with the original dataset.
+        
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
 
-    Where :math:`x^*_i` is a new time-series of length :math:`3N-4`
-    derived from the original phase time-series :math:`x_n` of
-    length :math:`N` by reflection at both ends.
-
-    FIXME: better description of reflection operation.
-    the original data x is in the center of x*:
-    x*(1-j) = 2x(1) - x(1+j)  for j=1..N-2
-    x*(i)   = x(i)            for i=1..N
-    x*(N+j) = 2x(N) - x(N-j)  for j=1..N-2
-    x* has length 3N-4
-    tau = m*tau0
-
-    NIST [SP1065]_ eqn (25) page 23
-
-    FIXME: bias correction http://www.wriley.com/CI2.pdf page 5
-
-    Parameters
-    ----------
-    phase: np.array
-        Phase data in seconds. Provide either phase or frequency.
-    frequency: np.array
-        Fractional frequency data (nondimensional). Provide either
-        frequency or phase.
-    rate: float
-        The sampling rate for phase or frequency, in Hz
-    taus: np.array
-        Array of tau values for which to compute measurement
-
+    References:
+       [RileyStable32]_ (5.2.11. Total Variance, pg.29-31)
     """
+
     return dev(dev_type='totdev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 

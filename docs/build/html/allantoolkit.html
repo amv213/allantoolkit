@@ -1871,36 +1871,37 @@ tau-list generation.</p></li>
 <dl class="py function">
 <dt id="allantoolkit.devs.totdev">
 <code class="sig-prename descclassname">allantoolkit.devs.</code><code class="sig-name descname">totdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>float<span class="p">, </span>List<span class="p">, </span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_af</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.devs.DevResult" title="allantoolkit.devs.DevResult">allantoolkit.devs.DevResult</a><a class="reference internal" href="_modules/allantoolkit/devs.html#totdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.devs.totdev" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Total deviation.</dt><dd><p>Better confidence at long averages for Allan deviation.</p>
-</dd>
-</dl>
+<dd><p>Calculates the Total deviation (TOTDEV) of phase or
+fractional frequency data.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Offers improved confidence at large averaging factors by extedning
+the data set by reflection at both ends.</p>
+</div>
+<p>The total deviation is the square root of the total variance (TOTVAR).
+The total variance is similar to the two-sample or Allan variance,
+and has the same expected value, but offers improved confidence at long
+averaging times.</p>
+<p>The total variance can be estimated from a set of <span class="math notranslate nohighlight">\(N\)</span> phase
+measurements for averaging time <span class="math notranslate nohighlight">\(\tau = m\tau_0\)</span>, where
+<span class="math notranslate nohighlight">\(m\)</span> is the averaging factor and <span class="math notranslate nohighlight">\(\tau_0\)</span> is the basic
+data sampling period, by the following expression:</p>
 <div class="math notranslate nohighlight">
-\[\sigma^2_{TOTDEV}( m\tau_0 ) = { 1 \over 2 (m\tau_0)^2 (N-2) }
-    \sum_{i=2}^{N-1} ( {x}^*_{i-m} - 2x^*_{i} + x^*_{i+m} )^2\]</div>
-<p>Where <span class="math notranslate nohighlight">\(x^*_i\)</span> is a new time-series of length <span class="math notranslate nohighlight">\(3N-4\)</span>
-derived from the original phase time-series <span class="math notranslate nohighlight">\(x_n\)</span> of
-length <span class="math notranslate nohighlight">\(N\)</span> by reflection at both ends.</p>
-<p>FIXME: better description of reflection operation.
-the original data x is in the center of x*:
-x*(1-j) = 2x(1) - x(1+j)  for j=1..N-2
-x*(i)   = x(i)            for i=1..N
-x*(N+j) = 2x(N) - x(N-j)  for j=1..N-2
-x* has length 3N-4
-tau = m*tau0</p>
-<p>NIST <a class="reference internal" href="references.html#sp1065" id="id32"><span>[SP1065]</span></a> eqn (25) page 23</p>
-<p>FIXME: bias correction <a class="reference external" href="http://www.wriley.com/CI2.pdf">http://www.wriley.com/CI2.pdf</a> page 5</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>phase</strong> (<em>np.array</em>) – Phase data in seconds. Provide either phase or frequency.</p></li>
-<li><p><strong>frequency</strong> (<em>np.array</em>) – Fractional frequency data (nondimensional). Provide either
-frequency or phase.</p></li>
-<li><p><strong>rate</strong> (<em>float</em>) – The sampling rate for phase or frequency, in Hz</p></li>
-<li><p><strong>taus</strong> (<em>np.array</em>) – Array of tau values for which to compute measurement</p></li>
-</ul>
-</dd>
-</dl>
+\[\sigma^{2}_y(\tau) = { 1 \over 2 \tau^2 (N-2) }
+\sum_{i=2}^{N-1} \left[
+x^*_{i-m} - 2x^*_{i} + x^*_{i+m}
+\right]^2\]</div>
+<p>where the original <span class="math notranslate nohighlight">\(N\)</span> phase values are extended by reflection
+about both endpoints to form a virtual sequence <span class="math notranslate nohighlight">\(x^*\)</span> of length
+<span class="math notranslate nohighlight">\(3N-4\)</span>, from <span class="math notranslate nohighlight">\(i=3-N\)</span> to <span class="math notranslate nohighlight">\(i=2N-2\)</span>. That is,
+the reflected portions added at each end have a 2-sample overlap each
+with the original dataset.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
+</div>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id32"><span>[RileyStable32]</span></a> (5.2.11. Total Variance, pg.29-31)</p>
 </dd></dl>
 
 <dl class="py function">

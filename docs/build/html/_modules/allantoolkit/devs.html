@@ -720,51 +720,51 @@
 <span class="sd">    References:</span>
 <span class="sd">       [RileyStable32]_ (5.2.9. Overlapping Hadamard Variance, pg.26-7)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;ohdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="totdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.totdev">[docs]</a><span class="k">def</span> <span class="nf">totdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
            <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Total deviation.</span>
-<span class="sd">        Better confidence at long averages for Allan deviation.</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the Total deviation (TOTDEV) of phase or</span>
+<span class="sd">    fractional frequency data.</span>
+
+<span class="sd">    .. hint::</span>
+
+<span class="sd">        Offers improved confidence at large averaging factors by extedning</span>
+<span class="sd">        the data set by reflection at both ends.</span>
+
+<span class="sd">    The total deviation is the square root of the total variance (TOTVAR).</span>
+<span class="sd">    The total variance is similar to the two-sample or Allan variance,</span>
+<span class="sd">    and has the same expected value, but offers improved confidence at long</span>
+<span class="sd">    averaging times.</span>
+
+<span class="sd">    The total variance can be estimated from a set of :math:`N` phase</span>
+<span class="sd">    measurements for averaging time :math:`\\tau = m\\tau_0`, where</span>
+<span class="sd">    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic</span>
+<span class="sd">    data sampling period, by the following expression:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \\sigma^2_{TOTDEV}( m\\tau_0 ) = { 1 \\over 2 (m\\tau_0)^2 (N-2) }</span>
-<span class="sd">            \\sum_{i=2}^{N-1} ( {x}^*_{i-m} - 2x^*_{i} + x^*_{i+m} )^2</span>
+<span class="sd">        \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-2) }</span>
+<span class="sd">        \\sum_{i=2}^{N-1} \\left[</span>
+<span class="sd">        x^*_{i-m} - 2x^*_{i} + x^*_{i+m}</span>
+<span class="sd">        \\right]^2</span>
 
+<span class="sd">    where the original :math:`N` phase values are extended by reflection</span>
+<span class="sd">    about both endpoints to form a virtual sequence :math:`x^*` of length</span>
+<span class="sd">    :math:`3N-4`, from :math:`i=3-N` to :math:`i=2N-2`. That is,</span>
+<span class="sd">    the reflected portions added at each end have a 2-sample overlap each</span>
+<span class="sd">    with the original dataset.</span>
+<span class="sd">        </span>
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
 
-<span class="sd">    Where :math:`x^*_i` is a new time-series of length :math:`3N-4`</span>
-<span class="sd">    derived from the original phase time-series :math:`x_n` of</span>
-<span class="sd">    length :math:`N` by reflection at both ends.</span>
-
-<span class="sd">    FIXME: better description of reflection operation.</span>
-<span class="sd">    the original data x is in the center of x*:</span>
-<span class="sd">    x*(1-j) = 2x(1) - x(1+j)  for j=1..N-2</span>
-<span class="sd">    x*(i)   = x(i)            for i=1..N</span>
-<span class="sd">    x*(N+j) = 2x(N) - x(N-j)  for j=1..N-2</span>
-<span class="sd">    x* has length 3N-4</span>
-<span class="sd">    tau = m*tau0</span>
-
-<span class="sd">    NIST [SP1065]_ eqn (25) page 23</span>
-
-<span class="sd">    FIXME: bias correction http://www.wriley.com/CI2.pdf page 5</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    phase: np.array</span>
-<span class="sd">        Phase data in seconds. Provide either phase or frequency.</span>
-<span class="sd">    frequency: np.array</span>
-<span class="sd">        Fractional frequency data (nondimensional). Provide either</span>
-<span class="sd">        frequency or phase.</span>
-<span class="sd">    rate: float</span>
-<span class="sd">        The sampling rate for phase or frequency, in Hz</span>
-<span class="sd">    taus: np.array</span>
-<span class="sd">        Array of tau values for which to compute measurement</span>
-
+<span class="sd">    References:</span>
+<span class="sd">       [RileyStable32]_ (5.2.11. Total Variance, pg.29-31)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;totdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 

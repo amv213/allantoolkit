@@ -459,51 +459,57 @@ def hdev(data: Array, rate: float = 1., data_type: str = "phase",
     References:
        [RileyStable32]_ (5.2.8. Hadamard Variance, pg.25-6)
     """
+
     return dev(dev_type='hdev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 
 
 def ohdev(data: Array, rate: float = 1., data_type: str = "phase",
           taus: Taus = None, max_af: int = None) -> DevResult:
-    """ Overlapping Hadamard deviation.
+    """Calculates the overlapping Hadamard deviation (OHDEV) of phase or
+    fractional frequency data.
+
+    .. hint::
+
         Better confidence than normal Hadamard.
+
+    The overlapping Hadamard deviation is the square root of the
+    overlapping Hadamard Variance (OHVAR). In the same way that the
+    overlapping Allan variance makes the maximum use of a data set by forming
+    all possible fully overlapping 2-sample pairs at each averaging time
+    :math:`\\tau`, the overlapping Hadamard variance uses all 3-sample
+    combinations.
+
+    The overlapping Hadamard variance can be estimated from a set of :math:`N`
+    phase measurements for averaging time :math:`\\tau = m\\tau_0`, where
+    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic
+    data sampling period, by the following expression:
 
     .. math::
 
-        \\sigma^2_{OHDEV}(m\\tau_0) = { 1 \\over 6 (m \\tau_0 )^2 (N-3m) }
-        \\sum_{i=1}^{N-3m} ( {x}_{i+3m} - 3x_{i+2m} + 3x_{i+m} - x_{i} )^2
+        \\sigma^{2}_y(\\tau) = { 1 \\over 6 \\tau^2 (N-3m) }
+        \\sum_{i=1}^{N-3m} \\left[
+        x_{i+3m} - 3x_{i+2m} + 3x_{i+m} - x_{i}
+        \\right]^2
 
-    where :math:`x_i` is the time-series of phase observations, spaced
-    by the measurement interval :math:`\\tau_0`, and with length :math:`N`.
+    For a time-series of :math:`M` fractional frequency values,
+    the overlapping Allan variance is instead defined as:
 
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
+    .. math::
 
-    Returns
-    -------
-    (taus2, hd, hde, ns): tuple
-          Tuple of values
-    taus2: np.array
-        Tau values for which td computed
-    hd: np.array
-        Computed hdev for each tau value
-    hde: np.array
-        hdev errors
-    ns: np.array
-        Values of N used in each hdev calculation
+        \\sigma^{2}_y(\\tau) = { 1 \\over 6 m^2 (M-3m+1) }
+        \\sum_{j=1}^{M-3m+1} \\left\\{
+        \\sum_{i=j}^{j+m-1} \\left[
+        y_{i+2m} - 2y_{i+m} + y_i \\right]
+        \\right\\}^2
 
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
+
+    References:
+       [RileyStable32]_ (5.2.9. Overlapping Hadamard Variance, pg.26-7)
     """
+    
     return dev(dev_type='ohdev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 

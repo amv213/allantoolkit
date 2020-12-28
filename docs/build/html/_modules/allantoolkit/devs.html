@@ -670,51 +670,57 @@
 <span class="sd">    References:</span>
 <span class="sd">       [RileyStable32]_ (5.2.8. Hadamard Variance, pg.25-6)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;hdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ohdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.ohdev">[docs]</a><span class="k">def</span> <span class="nf">ohdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
           <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Overlapping Hadamard deviation.</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the overlapping Hadamard deviation (OHDEV) of phase or</span>
+<span class="sd">    fractional frequency data.</span>
+
+<span class="sd">    .. hint::</span>
+
 <span class="sd">        Better confidence than normal Hadamard.</span>
+
+<span class="sd">    The overlapping Hadamard deviation is the square root of the</span>
+<span class="sd">    overlapping Hadamard Variance (OHVAR). In the same way that the</span>
+<span class="sd">    overlapping Allan variance makes the maximum use of a data set by forming</span>
+<span class="sd">    all possible fully overlapping 2-sample pairs at each averaging time</span>
+<span class="sd">    :math:`\\tau`, the overlapping Hadamard variance uses all 3-sample</span>
+<span class="sd">    combinations.</span>
+
+<span class="sd">    The overlapping Hadamard variance can be estimated from a set of :math:`N`</span>
+<span class="sd">    phase measurements for averaging time :math:`\\tau = m\\tau_0`, where</span>
+<span class="sd">    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic</span>
+<span class="sd">    data sampling period, by the following expression:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \\sigma^2_{OHDEV}(m\\tau_0) = { 1 \\over 6 (m \\tau_0 )^2 (N-3m) }</span>
-<span class="sd">        \\sum_{i=1}^{N-3m} ( {x}_{i+3m} - 3x_{i+2m} + 3x_{i+m} - x_{i} )^2</span>
+<span class="sd">        \\sigma^{2}_y(\\tau) = { 1 \\over 6 \\tau^2 (N-3m) }</span>
+<span class="sd">        \\sum_{i=1}^{N-3m} \\left[</span>
+<span class="sd">        x_{i+3m} - 3x_{i+2m} + 3x_{i+m} - x_{i}</span>
+<span class="sd">        \\right]^2</span>
 
-<span class="sd">    where :math:`x_i` is the time-series of phase observations, spaced</span>
-<span class="sd">    by the measurement interval :math:`\\tau_0`, and with length :math:`N`.</span>
+<span class="sd">    For a time-series of :math:`M` fractional frequency values,</span>
+<span class="sd">    the overlapping Allan variance is instead defined as:</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data: np.array</span>
-<span class="sd">        Input data. Provide either phase or frequency (fractional,</span>
-<span class="sd">        adimensional).</span>
-<span class="sd">    rate: float</span>
-<span class="sd">        The sampling rate for data, in Hz. Defaults to 1.0</span>
-<span class="sd">    data_type: {&#39;phase&#39;, &#39;freq&#39;}</span>
-<span class="sd">        Data type, i.e. phase or frequency. Defaults to &quot;phase&quot;.</span>
-<span class="sd">    taus: np.array</span>
-<span class="sd">        Array of tau values, in seconds, for which to compute statistic.</span>
-<span class="sd">        Optionally set taus=[&quot;all&quot;|&quot;octave&quot;|&quot;decade&quot;] for automatic</span>
-<span class="sd">        tau-list generation.</span>
+<span class="sd">    .. math::</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    (taus2, hd, hde, ns): tuple</span>
-<span class="sd">          Tuple of values</span>
-<span class="sd">    taus2: np.array</span>
-<span class="sd">        Tau values for which td computed</span>
-<span class="sd">    hd: np.array</span>
-<span class="sd">        Computed hdev for each tau value</span>
-<span class="sd">    hde: np.array</span>
-<span class="sd">        hdev errors</span>
-<span class="sd">    ns: np.array</span>
-<span class="sd">        Values of N used in each hdev calculation</span>
+<span class="sd">        \\sigma^{2}_y(\\tau) = { 1 \\over 6 m^2 (M-3m+1) }</span>
+<span class="sd">        \\sum_{j=1}^{M-3m+1} \\left\\{</span>
+<span class="sd">        \\sum_{i=j}^{j+m-1} \\left[</span>
+<span class="sd">        y_{i+2m} - 2y_{i+m} + y_i \\right]</span>
+<span class="sd">        \\right\\}^2</span>
 
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">       [RileyStable32]_ (5.2.9. Overlapping Hadamard Variance, pg.26-7)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;ohdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 

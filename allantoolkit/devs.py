@@ -22,8 +22,6 @@ class DevResult(NamedTuple):
     """Represents a statistical stability analysis result.
 
     Args:
-        afs:        array of averaging factors for which deviations were
-                    computed
         taus:       array of corresponding averaging times, in seconds
         ns:         array with number of analysis points used to compute each
                     deviation.
@@ -36,6 +34,8 @@ class DevResult(NamedTuple):
     """
 
     afs: Array
+    "array of averaging factors for which deviations were computed"
+
     taus: Array
     ns: Array
     alphas: Array

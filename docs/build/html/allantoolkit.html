@@ -1386,23 +1386,52 @@ Defaults to 1-sigma confidence intervals.</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">allantoolkit.devs.</code><code class="sig-name descname">DevResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">afs</span></em>, <em class="sig-param"><span class="n">taus</span></em>, <em class="sig-param"><span class="n">ns</span></em>, <em class="sig-param"><span class="n">alphas</span></em>, <em class="sig-param"><span class="n">devs_lo</span></em>, <em class="sig-param"><span class="n">devs</span></em>, <em class="sig-param"><span class="n">devs_hi</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/devs.html#DevResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.devs.DevResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#allantoolkit.devs.DevResult" title="allantoolkit.devs.DevResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">allantoolkit.devs.DevResult</span></code></a></p>
 <p>Represents a statistical stability analysis result.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>afs</strong> – array of averaging factors for which deviations were
-computed</p></li>
-<li><p><strong>taus</strong> – array of corresponding averaging times, in seconds</p></li>
-<li><p><strong>ns</strong> – array with number of analysis points used to compute each
-deviation.</p></li>
-<li><p><strong>alphas</strong> – array of estimated dominant noise type at each deviation</p></li>
-<li><p><strong>devs_lo</strong> – array of estimated statistical lower bounds for each
-deviation</p></li>
-<li><p><strong>devs</strong> – array with deviations computed at each averaging time</p></li>
-<li><p><strong>devs_hi</strong> – array of estimated statistical higher bounds for each
-deviation</p></li>
-</ul>
-</dd>
-</dl>
+<dl class="py attribute">
+<dt id="allantoolkit.devs.DevResult.afs">
+<code class="sig-name descname">afs</code><a class="headerlink" href="#allantoolkit.devs.DevResult.afs" title="Permalink to this definition">¶</a></dt>
+<dd><p>array of averaging factors for which deviations were
+computed</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="allantoolkit.devs.DevResult.taus">
+<code class="sig-name descname">taus</code><a class="headerlink" href="#allantoolkit.devs.DevResult.taus" title="Permalink to this definition">¶</a></dt>
+<dd><p>array of corresponding averaging times, in seconds</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="allantoolkit.devs.DevResult.ns">
+<code class="sig-name descname">ns</code><a class="headerlink" href="#allantoolkit.devs.DevResult.ns" title="Permalink to this definition">¶</a></dt>
+<dd><p>array with number of analysis points used to compute each
+deviation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="allantoolkit.devs.DevResult.alphas">
+<code class="sig-name descname">alphas</code><a class="headerlink" href="#allantoolkit.devs.DevResult.alphas" title="Permalink to this definition">¶</a></dt>
+<dd><p>array of estimated dominant noise type at each deviation</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="allantoolkit.devs.DevResult.devs_lo">
+<code class="sig-name descname">devs_lo</code><a class="headerlink" href="#allantoolkit.devs.DevResult.devs_lo" title="Permalink to this definition">¶</a></dt>
+<dd><p>array of estimated statistical lower bounds for each
+deviation</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="allantoolkit.devs.DevResult.devs">
+<code class="sig-name descname">devs</code><a class="headerlink" href="#allantoolkit.devs.DevResult.devs" title="Permalink to this definition">¶</a></dt>
+<dd><p>array with deviations computed at each averaging time</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="allantoolkit.devs.DevResult.devs_hi">
+<code class="sig-name descname">devs_hi</code><a class="headerlink" href="#allantoolkit.devs.DevResult.devs_hi" title="Permalink to this definition">¶</a></dt>
+<dd><p>array of estimated statistical higher bounds for each
+deviation</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">

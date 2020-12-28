@@ -79,19 +79,26 @@ class DevResult(NamedTuple):
 
 def dev(dev_type: str, data: Array, rate: float, data_type: str,
         taus: Taus, max_af: int) -> DevResult:
-    """Core pipeline processing the input data and returning the appropriate
+    """This function implements the core pipeline common to all frequency
+    stability analyses. It processes the input data and returns the appropriate
     frequency stability analysis results for the given deviation type.
+
+    The preferred usage of this function is through one of its many wrappers
+    offered in this module, each tailored to the calculation of a specific
+    deviation type.
 
     Example:
 
         .. code-block:: python
-            :emphasize-lines: 5
+            :emphasize-lines: 7
+
+            import allantoolkit
 
             # Generate some frequency data
             y = allantoolkit.noise.white(1000)
 
-            # Compute any deviation you want (e.g. oadev)
-            out = allantoolkit.devs.oadev(y, rate=r, data_type='freq')
+            # Compute deviation of choice (e.g. oadev)
+            out = allantoolkit.devs.oadev(y, rate=1., data_type='freq')
 
             print(out)
 

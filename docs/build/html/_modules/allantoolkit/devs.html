@@ -290,19 +290,26 @@
 
 <div class="viewcode-block" id="dev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.dev">[docs]</a><span class="k">def</span> <span class="nf">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Core pipeline processing the input data and returning the appropriate</span>
+    <span class="sd">&quot;&quot;&quot;This function implements the core pipeline common to all frequency</span>
+<span class="sd">    stability analyses. It processes the input data and returns the appropriate</span>
 <span class="sd">    frequency stability analysis results for the given deviation type.</span>
+
+<span class="sd">    The preferred usage of this function is through one of its many wrappers</span>
+<span class="sd">    offered in this module, each tailored to the calculation of a specific</span>
+<span class="sd">    deviation type.</span>
 
 <span class="sd">    Example:</span>
 
 <span class="sd">        .. code-block:: python</span>
-<span class="sd">            :emphasize-lines: 5</span>
+<span class="sd">            :emphasize-lines: 7</span>
+
+<span class="sd">            import allantoolkit</span>
 
 <span class="sd">            # Generate some frequency data</span>
 <span class="sd">            y = allantoolkit.noise.white(1000)</span>
 
-<span class="sd">            # Compute any deviation you want (e.g. oadev)</span>
-<span class="sd">            out = allantoolkit.devs.oadev(y, rate=r, data_type=&#39;freq&#39;)</span>
+<span class="sd">            # Compute deviation of choice (e.g. oadev)</span>
+<span class="sd">            out = allantoolkit.devs.oadev(y, rate=1., data_type=&#39;freq&#39;)</span>
 
 <span class="sd">            print(out)</span>
 

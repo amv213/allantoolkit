@@ -226,7 +226,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
 def adev(data: Array, rate: float = 1., data_type: str = "phase",
          taus: Taus = None, max_af: int = None) -> DevResult:
-    """Calculate Allan deviation (ADEV) for input phase or fractional
+    """Calculates the Allan deviation (ADEV) of phase or fractional
     frequency data.
 
     Characteristics:
@@ -259,11 +259,11 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
     where :math:`\\bar{y}_i` is the :math:`i`th of :math:`M` fractional
     frequency values averaged over the averaging time :math:`\\tau`.
 
-    References:
-        [SP1065]_ (pg.14-15)
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
 
-    Notes:
-        See :func:`allantoolkit.devs.dev` for detailed usage.
+    References:
+       [SP1065]_ (pg.14-15)
     """
 
     return dev(dev_type='adev', data=data, rate=rate, data_type=data_type,

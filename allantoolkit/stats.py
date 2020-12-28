@@ -44,8 +44,11 @@ def calc_svar(x: Array, m: int, rate: float) -> VarResult:
         The standard variance is not convergent for some clock noises,
         and should not be used for the analysis of frequency stability.
 
-    The classic `N`-sample or standard variance is defined for a time-series
-    of :math:`M` fractional frequency values as:
+    The classic `N`-sample or standard variance can be estimated from a
+    set of :math:`M` fractional frequency measurements averaged with averaging
+    time :math:`\\tau = m\\tau_0`, where :math:`m` is the averaging factor
+    and :math:`\\tau_0` is the basic data sampling period, by the following
+    expression:
 
     .. math::
 

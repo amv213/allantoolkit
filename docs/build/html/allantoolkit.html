@@ -3079,8 +3079,11 @@ factor.</p>
 <p>The standard variance is not convergent for some clock noises,
 and should not be used for the analysis of frequency stability.</p>
 </div>
-<p>The classic <cite>N</cite>-sample or standard variance is defined for a time-series
-of <span class="math notranslate nohighlight">\(M\)</span> fractional frequency values as:</p>
+<p>The classic <cite>N</cite>-sample or standard variance can be estimated from a
+set of <span class="math notranslate nohighlight">\(M\)</span> fractional frequency measurements averaged with averaging
+time <span class="math notranslate nohighlight">\(\tau = m\tau_0\)</span>, where <span class="math notranslate nohighlight">\(m\)</span> is the averaging factor
+and <span class="math notranslate nohighlight">\(\tau_0\)</span> is the basic data sampling period, by the following
+expression:</p>
 <div class="math notranslate nohighlight">
 \[\sigma_y^2 = { 1 \over M-1} \sum_{i=1}^{M} \left( y_i -
 \bar{y} \right)^2\]</div>

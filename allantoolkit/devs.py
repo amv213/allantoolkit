@@ -644,32 +644,47 @@ def ttotdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
             taus: Taus = None, max_af: int = None) -> DevResult:
-    """ PRELIMINARY - REQUIRES FURTHER TESTING.
-        Hadamard Total deviation.
-        Better confidence at long averages for Hadamard deviation
-        
-        Computed for N fractional frequency points y_i with sampling
-        period tau0, analyzed at tau = m*tau0
-        1. remove linear trend by averaging first and last half and divide by interval
-        2. extend sequence by uninverted even reflection
-        3. compute Hadamard for extended, length 9m, sequence.
+    """Calculates the Hadamard total deviation (HTOTDEV) of phase or fractional
+    frequency data.
 
+    .. hint::
 
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
+        The Hadamard total deviation combines the features of the Hadamard
+        and total variances by rejecting linear frequency drift, handling
+        more divergent noise types, and providing better confidence at large
+        averaging factors.
 
+    The Hadamard total deviation is the square root of the Hadamard total
+    variance (HTOTVAR). The Hadamard total variance is a total version of
+    the Hadamard variance. As such, it rejects linear frequency drift while
+    offering improved confidence at large averaging times.
+
+    The Hadamard total variance can be estimated from a set of :math:`M`
+    fractional frequency measurements for averaging time :math:`\\tau =
+    m\\tau_0`, where :math:`m` is the averaging factor and :math:`\\tau_0`
+    is the basic data sampling period, by the following expression:
+
+    .. math::
+
+        \\sigma^{2}_y(\\tau) = { 1 \\over 6 (M-3m+1) }
+        \\sum_{n=1}^{M-3m+1} \\left\\{
+        { 1 \\over 6m } \\sum_{i=n-3m}^{N+3m-1}
+        \\left[ H_i(m) \\right]^2
+        \\right\\}
+
+    where the :math:`H_i(m)` terms are the :math:`z^{\\#}_i(m)` linear trend
+    removed Hadamard second differences from triply-extended subsequences of
+    the original factional frequency data.
+
+    TODO: Find and add definition for phase data
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
+
+    References:
+       [RileyStable32]_ (5.2.14. Hadamard Total Variance, pg.33-7)
     """
+
     return dev(dev_type='htotdev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 

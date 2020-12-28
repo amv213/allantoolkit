@@ -40,6 +40,12 @@ extensions = [
     'sphinx_panels',
 ]
 
+#https://myst-parser.readthedocs.io/en/latest/using/syntax-optional.html
+myst_enable_extensions = [
+    "colon_fence",
+]
+
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

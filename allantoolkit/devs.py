@@ -20,7 +20,6 @@ Taus = Union[str, float, List, Array]
 # define named tuple to hold dev results
 class DevResult(NamedTuple):
     """Container for stability analysis results. Defines the following fields:
-    
     """
 
     afs: Array

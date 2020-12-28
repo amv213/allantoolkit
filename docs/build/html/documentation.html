@@ -101,7 +101,7 @@
  </li>
  <li class="toctree-l1 current active collapsible-parent">
   <a class="current reference internal" href="#">
-   Documentation
+   📚 Documentation
   </a>
   <ul class="collapse-ul">
    <li class="toctree-l2 collapsible-parent">
@@ -126,6 +126,11 @@
   </ul>
   <i class="fas fa-chevron-down">
   </i>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#lower-the-severity-level-of-allantoolkit-logs-being-displayed">
+   lower the severity level of allantoolkit logs being displayed
+  </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="dev.html">
@@ -227,14 +232,26 @@
         </div>
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#source-allantoolkit-documentation">
-   📔 Source AllanToolkit Documentation
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   📚 Documentation
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#source-allantoolkit-documentation">
+     📔 Source AllanToolkit Documentation
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#logging">
+     📃 Logging
+    </a>
+   </li>
+  </ul>
  </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#logging">
-   📃 Logging
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#lower-the-severity-level-of-allantoolkit-logs-being-displayed">
+   lower the severity level of allantoolkit logs being displayed
   </a>
  </li>
 </ul>
@@ -266,10 +283,7 @@
 <li class="toctree-l3"><a class="reference internal" href="allantoolkit.html#module-allantoolkit.noise_id">allantoolkit.noise_id</a></li>
 <li class="toctree-l3"><a class="reference internal" href="allantoolkit.html#module-allantoolkit.noise_kasdin">allantoolkit.noise_kasdin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="allantoolkit.html#module-allantoolkit.plot">allantoolkit.plot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="allantoolkit.html#module-allantoolkit.realtime">allantoolkit.realtime</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="allantoolkit.html#real-time-statistics">Real-time statistics</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="allantoolkit.html#module-allantoolkit.realtime">allantoolkit.realtime</a></li>
 <li class="toctree-l3"><a class="reference internal" href="allantoolkit.html#module-allantoolkit.stats">allantoolkit.stats</a></li>
 <li class="toctree-l3"><a class="reference internal" href="allantoolkit.html#module-allantoolkit.tables">allantoolkit.tables</a></li>
 <li class="toctree-l3"><a class="reference internal" href="allantoolkit.html#module-allantoolkit.testutils">allantoolkit.testutils</a></li>
@@ -310,38 +324,39 @@ named as follows:</p>
 <p>If your using application does not use logging, then only events of severity
 <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> and greater will be printed to <code class="docutils literal notranslate"><span class="pre">sys.stderr</span></code>, thanks to the
 logger’s last resort handler. This is regarded as the best default behaviour.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>It is generally recommended to use logging in your applications, instead of
+<p>:::{note}
+It is generally recommended to use logging in your applications, instead of
 abusing the <code class="docutils literal notranslate"><span class="pre">print()</span></code> command. The following code snippet will set you up
 with a nicely formatted logger:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
- 
-<span class="c1"># Setup your basic logger</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
-    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;[</span><span class="si">%(asctime)s</span><span class="s1">] </span><span class="si">%(levelname)s</span><span class="s1"> | </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%D %H:%M:%S&#39;</span>
-<span class="p">)</span>
+<p>.. code-block:: python</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  import logging
 
-<span class="c1"># Spawn logger for current module </span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>  
-<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>  <span class="c1"># set default logging level</span>
-
-<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Amazing!&quot;</span><span class="p">)</span>
+  # Setup your basic logger
+  logging.basicConfig(
+     format=&#39;[%(asctime)s] %(levelname)s | %(message)s&#39;,
+     datefmt=&#39;%D %H:%M:%S&#39;
+  )
+  
+  # Spawn logger for current module 
+  logger = logging.getLogger(__name__)  
+  logger.setLevel(&quot;INFO&quot;)  # set default logging level
+  
+  logger.info(&quot;Amazing!&quot;)
 </pre></div>
 </div>
-</div>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>It is quite useful to lower the severity level for which <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> logs
+<p>:::</p>
+<p>::::{tip}
+It is quite useful to lower the severity level for which <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> logs
 are emitted. Just add the following line after having configured your own
 logger:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># lower the severity level of allantoolkit logs being displayed</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;allantoolkit&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
-</pre></div>
+<p>:::python</p>
 </div>
 </div>
-</div>
+<div class="section" id="lower-the-severity-level-of-allantoolkit-logs-being-displayed">
+<h1>lower the severity level of allantoolkit logs being displayed<a class="headerlink" href="#lower-the-severity-level-of-allantoolkit-logs-being-displayed" title="Permalink to this headline">¶</a></h1>
+<p>logging.getLogger(‘allantoolkit’).setLevel(“INFO”)
+:::</p>
+<p>::::</p>
 </div>
 
 

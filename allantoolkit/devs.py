@@ -413,32 +413,51 @@ def tdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 def hdev(data: Array, rate: float = 1., data_type: str = "phase",
          taus: Taus = None, max_af: int = None) -> DevResult:
-    """ Hadamard deviation.
-        Rejects frequency drift, and handles divergent noise.
+    """Calculates the Hadamard deviation (HDEV) of phase or fractional
+    frequency data.
+
+    .. hint::
+
+        Rejects frequency drift, and handles divergent noise. Use the Hadamard
+        deviation to characterise frequency sources with divergent noise
+        and/or frequency drift.
+
+    The Hadamard deviation is the square root of the Hadamard Variance (HVAR).
+    The Hadamard variance is a three-sample variance similar to the
+    two-sample Allan variance, and is commonly applied for the analysis of
+    frequency stability data that has highly divergent noise or linear
+    frequency drift.
+
+    In terms of phase data, the Hadamard variance may be calculated as:
 
     .. math::
 
-        \\sigma^2_{HDEV}( \\tau ) = { 1 \\over 6 \\tau^2 (N-3) }
-        \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} - x_{i} )^2
+        \\sigma^2_y(\\tau) = { 1 \\over 6 \\tau^2 (N-3)}
+        \\sum_{i=1}^{N-3} \\left[
+        x_{i+3} - 3x_{i+2} + 3x_{i+1} - x_i
+        \\right]^2
 
-    where :math:`x_i` is the time-series of phase observations, spaced
-    by the measurement interval :math:`\\tau`, and with length :math:`N`.
+    where :math:`x_i` is the :math:`i^{th}` of :math:`N` phase
+    values spaced by an averaging time :math:`\\tau`.
 
-    NIST [SP1065]_ eqn (17) and (18), page 20
+    For a time-series of fractional frequency values, the Hadamard variance is
+    defined as:
 
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
+    .. math::
+
+        \\sigma^{2}_y(\\tau) =  { 1 \\over 6 (M - 2) }
+        \\sum_{i=1}^{M-2} \\left[
+        \\bar{y}_{i+2} - 2\\bar{y}_{i+1} + \\bar{y}_i \\right]^2
+
+    where :math:`\\bar{y}_i` is the :math:`i^{th}` of :math:`M`
+    fractional frequency values averaged over the averaging time
+    :math:`\\tau`.
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
+
+    References:
+       [RileyStable32]_ (5.2.8. Hadamard Variance, pg.25-6)
     """
     return dev(dev_type='hdev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)

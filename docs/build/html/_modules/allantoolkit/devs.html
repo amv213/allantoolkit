@@ -624,32 +624,51 @@
 
 <div class="viewcode-block" id="hdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.hdev">[docs]</a><span class="k">def</span> <span class="nf">hdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
          <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Hadamard deviation.</span>
-<span class="sd">        Rejects frequency drift, and handles divergent noise.</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the Hadamard deviation (HDEV) of phase or fractional</span>
+<span class="sd">    frequency data.</span>
+
+<span class="sd">    .. hint::</span>
+
+<span class="sd">        Rejects frequency drift, and handles divergent noise. Use the Hadamard</span>
+<span class="sd">        deviation to characterise frequency sources with divergent noise</span>
+<span class="sd">        and/or frequency drift.</span>
+
+<span class="sd">    The Hadamard deviation is the square root of the Hadamard Variance (HVAR).</span>
+<span class="sd">    The Hadamard variance is a three-sample variance similar to the</span>
+<span class="sd">    two-sample Allan variance, and is commonly applied for the analysis of</span>
+<span class="sd">    frequency stability data that has highly divergent noise or linear</span>
+<span class="sd">    frequency drift.</span>
+
+<span class="sd">    In terms of phase data, the Hadamard variance may be calculated as:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \\sigma^2_{HDEV}( \\tau ) = { 1 \\over 6 \\tau^2 (N-3) }</span>
-<span class="sd">        \\sum_{i=1}^{N-3} ( {x}_{i+3} - 3x_{i+2} + 3x_{i+1} - x_{i} )^2</span>
+<span class="sd">        \\sigma^2_y(\\tau) = { 1 \\over 6 \\tau^2 (N-3)}</span>
+<span class="sd">        \\sum_{i=1}^{N-3} \\left[</span>
+<span class="sd">        x_{i+3} - 3x_{i+2} + 3x_{i+1} - x_i</span>
+<span class="sd">        \\right]^2</span>
 
-<span class="sd">    where :math:`x_i` is the time-series of phase observations, spaced</span>
-<span class="sd">    by the measurement interval :math:`\\tau`, and with length :math:`N`.</span>
+<span class="sd">    where :math:`x_i` is the :math:`i^{th}` of :math:`N` phase</span>
+<span class="sd">    values spaced by an averaging time :math:`\\tau`.</span>
 
-<span class="sd">    NIST [SP1065]_ eqn (17) and (18), page 20</span>
+<span class="sd">    For a time-series of fractional frequency values, the Hadamard variance is</span>
+<span class="sd">    defined as:</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data: np.array</span>
-<span class="sd">        Input data. Provide either phase or frequency (fractional,</span>
-<span class="sd">        adimensional).</span>
-<span class="sd">    rate: float</span>
-<span class="sd">        The sampling rate for data, in Hz. Defaults to 1.0</span>
-<span class="sd">    data_type: {&#39;phase&#39;, &#39;freq&#39;}</span>
-<span class="sd">        Data type, i.e. phase or frequency. Defaults to &quot;phase&quot;.</span>
-<span class="sd">    taus: np.array</span>
-<span class="sd">        Array of tau values, in seconds, for which to compute statistic.</span>
-<span class="sd">        Optionally set taus=[&quot;all&quot;|&quot;octave&quot;|&quot;decade&quot;] for automatic</span>
-<span class="sd">        tau-list generation.</span>
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^{2}_y(\\tau) =  { 1 \\over 6 (M - 2) }</span>
+<span class="sd">        \\sum_{i=1}^{M-2} \\left[</span>
+<span class="sd">        \\bar{y}_{i+2} - 2\\bar{y}_{i+1} + \\bar{y}_i \\right]^2</span>
+
+<span class="sd">    where :math:`\\bar{y}_i` is the :math:`i^{th}` of :math:`M`</span>
+<span class="sd">    fractional frequency values averaged over the averaging time</span>
+<span class="sd">    :math:`\\tau`.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">       [RileyStable32]_ (5.2.8. Hadamard Variance, pg.25-6)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;hdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>

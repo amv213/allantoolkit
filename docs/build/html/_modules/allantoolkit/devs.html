@@ -294,19 +294,23 @@
 <span class="sd">    frequency stability analysis results for the given deviation type.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        dev_type:   type of deviation to be computed, e.g. `adev`.</span>
+<span class="sd">        dev_type:   type of deviation to be computed, e.g. ``adev``.</span>
 <span class="sd">        data:       array of phase (in units of seconds) or fractional</span>
 <span class="sd">                    frequency data for which to calculate deviation.</span>
 <span class="sd">        rate:       sampling rate of the input data, in Hz.</span>
-<span class="sd">        data_type:  input data type. Either `phase` or `freq`.</span>
+<span class="sd">        data_type:  input data type. Either ``phase`` or ``freq``.</span>
 <span class="sd">        taus:       array of averaging times for which to compute deviation.</span>
-<span class="sd">                    Can also be one of the keywords: `all`, `many`, `octave`,</span>
-<span class="sd">                    `decade`.</span>
+<span class="sd">                    Can also be one of the keywords: ``all``, ``many``,</span>
+<span class="sd">                    ``octave``, ``decade``.</span>
 <span class="sd">        max_af:     maximum averaging factor for which to compute deviation.</span>
 <span class="sd">                    Defaults to length of dataset.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (afs, taus, ns, alphas, devs_lo, devs, devs_hi) DevResult named tuple</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Class :class:`allantoolkit.devs.DevResult` for more information on</span>
+<span class="sd">        the output `DevResult` NamedTuple.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Easier to work with phase data, in units of seconds</span>

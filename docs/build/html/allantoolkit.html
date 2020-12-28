@@ -1492,14 +1492,14 @@ frequency stability analysis results for the given deviation type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dev_type</strong> – type of deviation to be computed, e.g. <cite>adev</cite>.</p></li>
+<li><p><strong>dev_type</strong> – type of deviation to be computed, e.g. <code class="docutils literal notranslate"><span class="pre">adev</span></code>.</p></li>
 <li><p><strong>data</strong> – array of phase (in units of seconds) or fractional
 frequency data for which to calculate deviation.</p></li>
 <li><p><strong>rate</strong> – sampling rate of the input data, in Hz.</p></li>
-<li><p><strong>data_type</strong> – input data type. Either <cite>phase</cite> or <cite>freq</cite>.</p></li>
+<li><p><strong>data_type</strong> – input data type. Either <code class="docutils literal notranslate"><span class="pre">phase</span></code> or <code class="docutils literal notranslate"><span class="pre">freq</span></code>.</p></li>
 <li><p><strong>taus</strong> – array of averaging times for which to compute deviation.
-Can also be one of the keywords: <cite>all</cite>, <cite>many</cite>, <cite>octave</cite>,
-<cite>decade</cite>.</p></li>
+Can also be one of the keywords: <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">many</span></code>,
+<code class="docutils literal notranslate"><span class="pre">octave</span></code>, <code class="docutils literal notranslate"><span class="pre">decade</span></code>.</p></li>
 <li><p><strong>max_af</strong> – maximum averaging factor for which to compute deviation.
 Defaults to length of dataset.</p></li>
 </ul>
@@ -1508,6 +1508,11 @@ Defaults to length of dataset.</p></li>
 <dd class="field-even"><p>(afs, taus, ns, alphas, devs_lo, devs, devs_hi) DevResult named tuple</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Class <a class="reference internal" href="#allantoolkit.devs.DevResult" title="allantoolkit.devs.DevResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">allantoolkit.devs.DevResult</span></code></a> for more information on
+the output <cite>DevResult</cite> NamedTuple.</p>
+</div>
 </dd></dl>
 
 <dl class="py function">

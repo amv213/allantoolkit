@@ -83,19 +83,23 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     frequency stability analysis results for the given deviation type.
 
     Args:
-        dev_type:   type of deviation to be computed, e.g. `adev`.
+        dev_type:   type of deviation to be computed, e.g. ``adev``.
         data:       array of phase (in units of seconds) or fractional
                     frequency data for which to calculate deviation.
         rate:       sampling rate of the input data, in Hz.
-        data_type:  input data type. Either `phase` or `freq`.
+        data_type:  input data type. Either ``phase`` or ``freq``.
         taus:       array of averaging times for which to compute deviation.
-                    Can also be one of the keywords: `all`, `many`, `octave`,
-                    `decade`.
+                    Can also be one of the keywords: ``all``, ``many``,
+                    ``octave``, ``decade``.
         max_af:     maximum averaging factor for which to compute deviation.
                     Defaults to length of dataset.
 
     Returns:
         (afs, taus, ns, alphas, devs_lo, devs, devs_hi) DevResult named tuple
+
+    .. seealso::
+        Class :class:`allantoolkit.devs.DevResult` for more information on
+        the output `DevResult` NamedTuple.
     """
 
     # Easier to work with phase data, in units of seconds

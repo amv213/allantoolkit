@@ -39,6 +39,22 @@ def calc_svar(x: Array, m: int, rate: float) -> VarResult:
     """Calculates standard variance (VAR) of phase data at given averaging
     factor.
 
+    .. hint::
+
+        The standard variance is not convergent for some clock noises,
+        and should not be used for the analysis of frequency stability.
+
+    The classic `N`-sample or standard variance is defined for a time-series
+    of :math:`M` fractional frequency values as:
+
+    .. math::
+
+        \\sigma_y^2 = { 1 \\over M-1} \\sum_{i=1}^{M} \\left y_i -
+        \\bar{y} \\right)^2
+
+    where :math:`\\bar{y} = {1 \\over M} \\sum_{i=1}^M y_i` is the average
+    frequency.
+
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance

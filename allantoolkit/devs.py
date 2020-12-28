@@ -628,7 +628,7 @@ def ttotdev(data: Array, rate: float = 1., data_type: str = "phase",
     where :math:`\\textrm{MTOTVAR}(\\tau)` is the modified total variance of
     the data at averaging time :math:`\\tau`.
 
-    Note that the modified total variance has units of seconds, and not
+    Note that the time total variance has units of seconds, and not
     fractional frequency.
 
     .. seealso::

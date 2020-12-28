@@ -418,6 +418,7 @@ def noise_id(data: Array, data_type: str, m: int, rate: float,
             alpha = rn_noise_id(measured=rn, m=m)
             return alpha
 
+        # FIXME: this is wrong, should be mu == 2, and then y=y
         # For the Hadamard variance, for which RRFM noise can apply (mu=3,
         # alpha=-4) the B1 ratio can be applied to frequency (rather than
         # phase) data, and adding 2 to the resulting mu

@@ -166,12 +166,11 @@ def calc_o_avar(x: Array, m: int, rate: float, stride: int) -> VarResult:
 
 
 def calc_avar(x: Array, m: int, rate: float) -> VarResult:
-    """Main algorithm for AVAR calculation.
+    """Calculates Allan variance (AVAR) of phase data at given averaging
+    factor.
 
-    References:
-        [RileyStable32]_ (5.2.2, pg.19)
-        [Wikipedia]_
-        http://www.leapsecond.com/tools/adev_lib.c
+    .. seealso::
+        Function :func:`allantoolkit.devs.adev` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -179,20 +178,20 @@ def calc_avar(x: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
     """
 
     return calc_o_avar(x=x, m=m, rate=rate, stride=m)
 
 
 def calc_oavar(x: Array, m: int, rate: float) -> VarResult:
-    """Main algorithm for OAVAR calculation.
+    """Calculates overlapping Allan variance (OAVAR) of phase data at given
+    averaging factor.
 
-    References:
-        [RileyStable32]_ (5.2.2, pg.19)
-        [Wikipedia]_
-        http://www.leapsecond.com/tools/adev_lib.c
+    .. seealso::
+        Function :func:`allantoolkit.devs.oadev` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -200,8 +199,9 @@ def calc_oavar(x: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it. 
     """
 
     return calc_o_avar(x=x, m=m, rate=rate, stride=1)

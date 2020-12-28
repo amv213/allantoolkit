@@ -25,17 +25,19 @@ class DevResult(NamedTuple('DevResult', [('afs', Array), ('taus', Array),
     """Represents a statistical stability analysis result.
 
     Attributes:
-        afs:        array of averaging factors for which deviations were
-                    computed
-        taus:       array of corresponding averaging times, in seconds
-        ns:         array with number of analysis points used to compute each
-                    deviation.
-        alphas:     array of estimated dominant noise type at each deviation
-        devs_lo:    array of estimated statistical lower bounds for each
-                    deviation
-        devs:       array with deviations computed at each averaging time
-        devs_hi:    array of estimated statistical higher bounds for each
-                    deviation
+        afs (Array):        array of averaging factors for which deviations
+                            were computed
+        taus (Array):       array of corresponding averaging times, in seconds
+        ns (Array):         array with number of analysis points used to
+                            compute each deviation.
+        alphas (Array):     array of estimated dominant noise type at each
+                            deviation
+        devs_lo (Array):    array of estimated statistical lower bounds for
+                            each deviation
+        devs (Array):       array with deviations computed at each
+                            averaging time
+        devs_hi (Array):    array of estimated statistical higher bounds for
+                            each deviation
     """
 
     def __str__(self) -> str:

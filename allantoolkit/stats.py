@@ -118,9 +118,8 @@ def calc_svar_freq(y: Array, m: int, rate: float = None) -> VarResult:
 
 def calc_o_avar(x: Array, m: int, rate: float, stride: int) -> VarResult:
     """Calculates Allan variance (AVAR) or overlapping Allan variance (
-    OAVAR) of phase data at given averaging factor.
-
-    The variance type is set by the ``stride`` parameter.
+    OAVAR) of phase data at given averaging factor. The variance type is set
+    by the ``stride`` parameter.
 
     .. seealso::
         Functions :func:`allantoolkit.devs.adev`, and
@@ -138,7 +137,7 @@ def calc_o_avar(x: Array, m: int, rate: float, stride: int) -> VarResult:
         computed variance at given averaging time, and number of samples
         used to estimate it.
 
-    Refs:
+    References:
        www.leapsecond.com/tools/adev_lib.c
     """
 

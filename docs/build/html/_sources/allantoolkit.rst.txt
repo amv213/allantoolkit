@@ -93,15 +93,6 @@ allantoolkit.stats
    :undoc-members:
    :show-inheritance:
 
-allantoolkit.tables
------------------------------
-
-.. automodule:: allantoolkit.tables
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 allantoolkit.testutils
 -----------------------------
 

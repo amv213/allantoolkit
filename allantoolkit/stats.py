@@ -201,7 +201,7 @@ def calc_oavar(x: Array, m: int, rate: float) -> VarResult:
     Returns:
         :class:`allantoolkit.stats.VarResult` NamedTuple of
         computed variance at given averaging time, and number of samples
-        used to estimate it. 
+        used to estimate it.
     """
 
     return calc_o_avar(x=x, m=m, rate=rate, stride=1)

@@ -82,6 +82,19 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     """Core pipeline processing the input data and returning the appropriate
     frequency stability analysis results for the given deviation type.
 
+    Usage:
+
+        .. code-block:: python
+            :emphasize-lines: 5
+
+            # Generate some frequency data
+            y = allantoolkit.noise.white(1000)
+
+            # Compute any deviation you want (e.g. oadev)
+            out = allantoolkit.devs.oadev(y, rate=r, data_type='freq')
+
+            print(out)
+
     Args:
         dev_type:   type of deviation to be computed, e.g. ``adev``.
         data:       array of phase (in units of seconds) or fractional
@@ -95,7 +108,8 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
                     Defaults to length of dataset.
 
     Returns:
-        frequency stability analysis results.
+        frequency stability analysis results, stored in a ``DevResult``
+        NamedTuple.
 
     .. seealso::
         Class :class:`allantoolkit.devs.DevResult` for more information on

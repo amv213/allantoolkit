@@ -902,45 +902,51 @@
 
 <div class="viewcode-block" id="theo1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.theo1">[docs]</a><span class="k">def</span> <span class="nf">theo1</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
           <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; PRELIMINARY - REQUIRES FURTHER TESTING.</span>
-<span class="sd">        Theo1 is a two-sample variance with improved confidence and</span>
-<span class="sd">        extended averaging factor range. [Howe_theo1]_</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the Thêo1 deviation (THEO1) of phase or</span>
+<span class="sd">    fractional frequency data.</span>
 
-<span class="sd">        .. math::</span>
+<span class="sd">    .. hint::</span>
 
-<span class="sd">            \\sigma^2_{THEO1}(m\\tau_0) = { 1 \\over  (m \\tau_0 )^2 (N-m) }</span>
-<span class="sd">                \\sum_{i=1}^{N-m}   \\sum_{\\delta=0}^{m/2-1}</span>
-<span class="sd">                {1\\over m/2-\\delta}\\lbrace</span>
-<span class="sd">                    ({x}_{i} - x_{i-\\delta +m/2}) +</span>
-<span class="sd">                    (x_{i+m}- x_{i+\\delta +m/2}) \\rbrace^2</span>
+<span class="sd">        Thêo1 is a 2-sample variance with improved confidence and extended</span>
+<span class="sd">        averaging factor range.</span>
 
+<span class="sd">    The Thêo1 deviation is the square root of the Thêo1 variance. The Thêo1</span>
+<span class="sd">    statistic is a two-sample variance similar to the Allan variance that</span>
+<span class="sd">    provides improved confidecne, and the ability to obtain a result for a</span>
+<span class="sd">    maximum averaging time equal to :math:`75\\%` of the record length.</span>
 
-<span class="sd">        Where :math:`10&lt;=m&lt;=N-1` is even.</span>
+<span class="sd">    The Thêo1 variance can be estimated from a set of :math:`N`</span>
+<span class="sd">    phase measurements for even averaging factor :math:`m` where</span>
+<span class="sd">    :math:`10 \\leq m \\leq N-1`, by the following expression:</span>
 
-<span class="sd">        FIXME: bias correction</span>
+<span class="sd">    .. math::</span>
 
-<span class="sd">        NIST [SP1065]_ eq (30) page 29</span>
+<span class="sd">        \\sigma^{2}_y(\\tau = 0.75m\\tau_0) =</span>
+<span class="sd">        { 1 \\over 0.75 (m\\tau_0)^2 (N-m) }</span>
+<span class="sd">        \\sum_{i=1}^{N-m} \\sum_{\\delta=0}^{m/2 - 1}</span>
+<span class="sd">        { 1 \\over m/2 - \\delta }</span>
+<span class="sd">        \\left[</span>
+<span class="sd">        \\left( x_i - x_{i-\\delta+m/2} \\right) +</span>
+<span class="sd">        \\left( x_{i+m} - x_{i+\\delta+m/2} \\right)</span>
+<span class="sd">        \\right]^2</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data: np.array</span>
-<span class="sd">        Input data. Provide either phase or frequency (fractional,</span>
-<span class="sd">        adimensional).</span>
-<span class="sd">    rate: float</span>
-<span class="sd">        The sampling rate for data, in Hz. Defaults to 1.0</span>
-<span class="sd">    data_type: {&#39;phase&#39;, &#39;freq&#39;}</span>
-<span class="sd">        Data type, i.e. phase or frequency. Defaults to &quot;phase&quot;.</span>
-<span class="sd">    taus: np.array</span>
-<span class="sd">        Array of tau values, in seconds, for which to compute statistic.</span>
-<span class="sd">        Optionally set taus=[&quot;all&quot;|&quot;octave&quot;|&quot;decade&quot;] for automatic</span>
-<span class="sd">        tau-list generation.</span>
+<span class="sd">    and applies to an effective averaging time :math:`\\tau = 0.75m\\tau_0`,</span>
+<span class="sd">    where :math:`\\tau_0` is the basic data sampling period</span>
 
+<span class="sd">    TODO: Find and add definition for fractional frequency data</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">       [RileyStable32]_ (5.2.15. Thêo1, pg.37-41)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;theo1&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
 
-<span class="c1"># FIXME: implement TheoBR and TheoH</span>
+<span class="c1"># TODO: Implement TheoH</span>
 
 
 <div class="viewcode-block" id="mtie"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.mtie">[docs]</a><span class="k">def</span> <span class="nf">mtie</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>

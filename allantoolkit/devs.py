@@ -691,45 +691,51 @@ def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 def theo1(data: Array, rate: float = 1., data_type: str = "phase",
           taus: Taus = None, max_af: int = None) -> DevResult:
-    """ PRELIMINARY - REQUIRES FURTHER TESTING.
-        Theo1 is a two-sample variance with improved confidence and
-        extended averaging factor range. [Howe_theo1]_
+    """Calculates the Thêo1 deviation (THEO1) of phase or
+    fractional frequency data.
 
-        .. math::
+    .. hint::
 
-            \\sigma^2_{THEO1}(m\\tau_0) = { 1 \\over  (m \\tau_0 )^2 (N-m) }
-                \\sum_{i=1}^{N-m}   \\sum_{\\delta=0}^{m/2-1}
-                {1\\over m/2-\\delta}\\lbrace
-                    ({x}_{i} - x_{i-\\delta +m/2}) +
-                    (x_{i+m}- x_{i+\\delta +m/2}) \\rbrace^2
+        Thêo1 is a 2-sample variance with improved confidence and extended
+        averaging factor range.
 
+    The Thêo1 deviation is the square root of the Thêo1 variance. The Thêo1
+    statistic is a two-sample variance similar to the Allan variance that
+    provides improved confidecne, and the ability to obtain a result for a
+    maximum averaging time equal to :math:`75\\%` of the record length.
 
-        Where :math:`10<=m<=N-1` is even.
+    The Thêo1 variance can be estimated from a set of :math:`N`
+    phase measurements for even averaging factor :math:`m` where
+    :math:`10 \\leq m \\leq N-1`, by the following expression:
 
-        FIXME: bias correction
+    .. math::
 
-        NIST [SP1065]_ eq (30) page 29
+        \\sigma^{2}_y(\\tau = 0.75m\\tau_0) =
+        { 1 \\over 0.75 (m\\tau_0)^2 (N-m) }
+        \\sum_{i=1}^{N-m} \\sum_{\\delta=0}^{m/2 - 1}
+        { 1 \\over m/2 - \\delta }
+        \\left[
+        \\left( x_i - x_{i-\\delta+m/2} \\right) +
+        \\left( x_{i+m} - x_{i+\\delta+m/2} \\right)
+        \\right]^2
 
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
+    and applies to an effective averaging time :math:`\\tau = 0.75m\\tau_0`,
+    where :math:`\\tau_0` is the basic data sampling period
 
+    TODO: Find and add definition for fractional frequency data
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
+
+    References:
+       [RileyStable32]_ (5.2.15. Thêo1, pg.37-41)
     """
+
     return dev(dev_type='theo1', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 
 
-# FIXME: implement TheoBR and TheoH
+# TODO: Implement TheoH
 
 
 def mtie(data: Array, rate: float = 1., data_type: str = "phase",

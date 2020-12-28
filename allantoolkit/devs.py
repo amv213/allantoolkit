@@ -711,7 +711,7 @@ def theo1(data: Array, rate: float = 1., data_type: str = "phase",
     .. math::
 
         \\sigma^{2}_y(\\tau^*) =
-        { 1 \\over 0.75 (m\\tau_0)^2 (N-m) }
+        { 0.75 \\over \\tau^{*^2} (N-m) }
         \\sum_{i=1}^{N-m} \\sum_{\\delta=0}^{m/2 - 1}
         { 1 \\over m/2 - \\delta }
         \\left[
@@ -728,12 +728,11 @@ def theo1(data: Array, rate: float = 1., data_type: str = "phase",
 
     .. math::
 
-        k_f = \\left[ { 1 \\over n+1 }
+        k_f = { 1 \\over n+1 }
         \\sum_{\\tau^*=9\\tau_0}^{(9+n)\\tau_0} { \\mathrm{AVAR(\\tau^*)}
         \\over \\mathrm{THEO1(\\tau^*)} }
-        \\right]
 
-    where :math:`n = \\lfloor N \\rfloor`
+    where :math:`n = \\lfloor {N \\over 6} - 3 \\rfloor`.
 
 
     TODO: Find and add definition for fractional frequency data

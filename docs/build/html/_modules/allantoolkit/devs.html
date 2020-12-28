@@ -922,7 +922,7 @@
 <span class="sd">    .. math::</span>
 
 <span class="sd">        \\sigma^{2}_y(\\tau^*) =</span>
-<span class="sd">        { 1 \\over 0.75 (m\\tau_0)^2 (N-m) }</span>
+<span class="sd">        { 0.75 \\over \\tau^{*^2} (N-m) }</span>
 <span class="sd">        \\sum_{i=1}^{N-m} \\sum_{\\delta=0}^{m/2 - 1}</span>
 <span class="sd">        { 1 \\over m/2 - \\delta }</span>
 <span class="sd">        \\left[</span>
@@ -939,12 +939,11 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        k_f = \\left[ { 1 \\over n+1 }</span>
+<span class="sd">        k_f = { 1 \\over n+1 }</span>
 <span class="sd">        \\sum_{\\tau^*=9\\tau_0}^{(9+n)\\tau_0} { \\mathrm{AVAR(\\tau^*)}</span>
 <span class="sd">        \\over \\mathrm{THEO1(\\tau^*)} }</span>
-<span class="sd">        \\right]</span>
 
-<span class="sd">    where :math:`n = \\lfloor N \\rfloor`</span>
+<span class="sd">    where :math:`n = \\lfloor {N \\over 6} - 3 \\rfloor`.</span>
 
 
 <span class="sd">    TODO: Find and add definition for fractional frequency data</span>

@@ -1860,7 +1860,7 @@ phase measurements for even averaging factor <span class="math notranslate nohig
 <span class="math notranslate nohighlight">\(10 \leq m \leq N-1\)</span>, by the following expression:</p>
 <div class="math notranslate nohighlight">
 \[\sigma^{2}_y(\tau^*) =
-{ 1 \over 0.75 (m\tau_0)^2 (N-m) }
+{ 0.75 \over \tau^{*^2} (N-m) }
 \sum_{i=1}^{N-m} \sum_{\delta=0}^{m/2 - 1}
 { 1 \over m/2 - \delta }
 \left[
@@ -1873,11 +1873,10 @@ phase measurements for even averaging factor <span class="math notranslate nohig
 ratio of the Allan and Thêo1 variances over a range of averaging times.
 The de-biasing factor <span class="math notranslate nohighlight">\(k_f\)</span> is given by:</p>
 <div class="math notranslate nohighlight">
-\[k_f = \left[ { 1 \over n+1 }
+\[k_f = { 1 \over n+1 }
 \sum_{\tau^*=9\tau_0}^{(9+n)\tau_0} { \mathrm{AVAR(\tau^*)}
-\over \mathrm{THEO1(\tau^*)} }
-\right]\]</div>
-<p>where <span class="math notranslate nohighlight">\(n = \lfloor N \rfloor\)</span></p>
+\over \mathrm{THEO1(\tau^*)} }\]</div>
+<p>where <span class="math notranslate nohighlight">\(n = \lfloor {N \over 6} - 3 \rfloor\)</span>.</p>
 <p>TODO: Find and add definition for fractional frequency data</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>

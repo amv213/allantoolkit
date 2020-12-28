@@ -732,7 +732,9 @@ def theo1(data: Array, rate: float = 1., data_type: str = "phase",
         \\sum_{\\tau^*=9\\tau_0}^{(9+n)\\tau_0} { \\mathrm{AVAR(\\tau^*)}
         \\over \\mathrm{THEO1(\\tau^*)} }
 
-    where :math:`n = \\lfloor {N \\over 6} - 3 \\rfloor`.
+    where :math:`n = \\lfloor {N \\over 6} - 3 \\rfloor`. Note that some
+    implementations in the literature use instead
+    :math:`n = \\lfloor {N \\over 30} - 3 \\rfloor`.
 
 
     TODO: Find and add definition for fractional frequency data

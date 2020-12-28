@@ -902,7 +902,7 @@
 
 <div class="viewcode-block" id="theo1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.theo1">[docs]</a><span class="k">def</span> <span class="nf">theo1</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
           <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Calculates the (Bias Removed) Thêo1 deviation (THEO1) of phase or</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the (Bias Removed) Thêo1 deviation (THEOBR) of phase or</span>
 <span class="sd">    fractional frequency data.</span>
 
 <span class="sd">    .. hint::</span>
@@ -930,8 +930,22 @@
 <span class="sd">        \\left( x_{i+m} - x_{i+\\delta+m/2} \\right)</span>
 <span class="sd">        \\right]^2</span>
 
-<span class="sd">    and applies to an effective averaging time :math:`\\tau^* = 0.75m\\tau_0`,</span>
-<span class="sd">    where :math:`\\tau_0` is the basic data sampling period</span>
+<span class="sd">    which applies to an effective averaging time :math:`\\tau^* =</span>
+<span class="sd">    0.75m\\tau_0`, where :math:`\\tau_0` is the basic data sampling period.</span>
+
+<span class="sd">    Automatic bias correction for a Thêo1 estimation is based on the average</span>
+<span class="sd">    ratio of the Allan and Thêo1 variances over a range of averaging times.</span>
+<span class="sd">    The de-biasing factor :math:`k_f` is given by:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        k_f = \\left[ { 1 \\over n+1 }</span>
+<span class="sd">        \\sum_{i=0}^{n} { \\mathrmm{AVAR(\\tau^*)} \\over \\THEO1{AVAR(</span>
+<span class="sd">        \\tau^*)} }</span>
+<span class="sd">        \\right]</span>
+
+<span class="sd">    where :math:`n = \\floor*\\{N\\}`</span>
+
 
 <span class="sd">    TODO: Find and add definition for fractional frequency data</span>
 

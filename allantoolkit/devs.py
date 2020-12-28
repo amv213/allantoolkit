@@ -691,7 +691,7 @@ def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 def theo1(data: Array, rate: float = 1., data_type: str = "phase",
           taus: Taus = None, max_af: int = None) -> DevResult:
-    """Calculates the (Bias Removed) Thêo1 deviation (THEO1) of phase or
+    """Calculates the (Bias Removed) Thêo1 deviation (THEOBR) of phase or
     fractional frequency data.
 
     .. hint::
@@ -719,8 +719,22 @@ def theo1(data: Array, rate: float = 1., data_type: str = "phase",
         \\left( x_{i+m} - x_{i+\\delta+m/2} \\right)
         \\right]^2
 
-    and applies to an effective averaging time :math:`\\tau^* = 0.75m\\tau_0`,
-    where :math:`\\tau_0` is the basic data sampling period
+    which applies to an effective averaging time :math:`\\tau^* =
+    0.75m\\tau_0`, where :math:`\\tau_0` is the basic data sampling period.
+
+    Automatic bias correction for a Thêo1 estimation is based on the average
+    ratio of the Allan and Thêo1 variances over a range of averaging times.
+    The de-biasing factor :math:`k_f` is given by:
+
+    .. math::
+
+        k_f = \\left[ { 1 \\over n+1 }
+        \\sum_{i=0}^{n} { \\mathrmm{AVAR(\\tau^*)} \\over \\THEO1{AVAR(
+        \\tau^*)} }
+        \\right]
+
+    where :math:`n = \\floor*\\{N\\}`
+
 
     TODO: Find and add definition for fractional frequency data
 

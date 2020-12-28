@@ -43,14 +43,13 @@ def calc_svar(x: Array, m: int, rate: float) -> VarResult:
         Function :func:`allantoolkit.stats.calc_svar_freq` for detailed
         implementation.
 
-
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n)  :class:`allantoolkit.stats.VarResult` NamedTuple of
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
         computed variance at given averaging time, and number of samples
         used to estimate it.
     """
@@ -90,7 +89,7 @@ def calc_svar_freq(y: Array, m: int, rate: float = None) -> VarResult:
         rate:   sampling rate of the input data, in Hz. Not used here.
 
     Returns:
-        (var, n)  :class:`allantoolkit.stats.VarResult` NamedTuple of
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
         computed variance at given averaging time, and number of samples
         used to estimate it.
 
@@ -118,23 +117,29 @@ def calc_svar_freq(y: Array, m: int, rate: float = None) -> VarResult:
 
 
 def calc_o_avar(x: Array, m: int, rate: float, stride: int) -> VarResult:
-    """Main algorithm for AVAR and OAVAR calculation.
+    """Calculates Allan variance (AVAR) or overlapping Allan variance (
+    OAVAR) of phase data at given averaging factor.
 
-    References:
-        [RileyStable32]_ (5.2.2, pg.19)
-        [Wikipedia]_
-        http://www.leapsecond.com/tools/adev_lib.c
+    The variance type is set by the ``stride`` parameter.
+
+    .. seealso::
+        Functions :func:`allantoolkit.devs.adev`, and
+        :func:`allantoolkit.devs.oadev` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
         rate:   sampling rate of the input data, in Hz.
         stride: stride at which to parse input phase data.
-                `m` for AVAR, `1` for OAVAR.
+                ``m`` for AVAR, ``1`` for OAVAR.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    Refs:
+       www.leapsecond.com/tools/adev_lib.c
     """
 
     N = x.size
@@ -144,8 +149,7 @@ def calc_o_avar(x: Array, m: int, rate: float, stride: int) -> VarResult:
     if N < d*m + 1:
         logger.warning("Not enough phase measurements to compute "
                        "variance at averaging factor %i (N=%i)", m, N)
-        var = np.NaN
-        return var, 0
+        return VarResult(var=np.NaN, n=0)
 
     # Calculate second differences
     summand = x[2*m::stride] - 2*x[m:-m:stride] + x[:-2*m:stride]
@@ -154,8 +158,7 @@ def calc_o_avar(x: Array, m: int, rate: float, stride: int) -> VarResult:
     if n == 0:
         logger.warning("Not enough valid phase measurements to compute "
                        "variance at averaging factor %i: %s", m, x)
-        var = np.NaN
-        return var, 0
+        return VarResult(var=np.NaN, n=0)
 
     # Calculate variance
     var = 1. / (2 * (m/rate)**2) * np.nanmean(summand**2)

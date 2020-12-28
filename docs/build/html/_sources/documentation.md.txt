@@ -60,9 +60,8 @@ It is quite useful to lower the severity level for which `allantoolkit` logs
  are emitted. Just add the following line after having configured your own 
  logger:
 
-   ```python
-   # lower the severity level of allantoolkit logs being displayed
-   logging.getLogger('allantoolkit').setLevel("INFO")
-   ```
+   .. code-block:: python
+      # lower the severity level of allantoolkit logs being displayed
+      logging.getLogger('allantoolkit').setLevel("INFO")
 
 ````

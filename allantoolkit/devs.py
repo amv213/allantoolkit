@@ -245,8 +245,8 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
         \\sigma^2_y(\\tau) = { 1 \\over 2 (N-2) \\tau^2 }
         \\sum_{i=1}^{N-2} \\left[ x_{i+2} - 2x_{i+1} + x_{i} \\right]^2
 
-    where .. :math::`x_i` is the .. :math::`i`th of .. :math::`N` phase values
-    spaced by an averaging time .. :math::`\\tau`.
+    where :math::`x_i` is the :math::`i`th of :math::`N` phase values
+    spaced by an averaging time :math::`\\tau`.
 
     For a time-series of fractional frequency values, the Allan variance is
     defined as:
@@ -256,9 +256,9 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
         \\sigma^{2}_y(\\tau) =  { 1 \\over 2 (M - 1) } \\sum_{i=1}^{M-1}
         \\left[ \\bar{y}_{i+1} - \\bar{y}_i \\right]^2
 
-    where .. :math::`\\bar{y}_i` is the .. :math::`i`th of :math::`M`
-    fractional frequency values averaged over the averaging time
-    .. :math::`\\tau`.
+    where :math::`\\bar{y}_i` is the :math::`i`th of :math::`M`
+    fractional frequency values averaged over the averaging time 
+    :math::`\\tau`.
 
     .. seealso::
         Function :func:`allantoolkit.devs.dev` for detailed usage.

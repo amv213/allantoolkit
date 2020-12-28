@@ -250,6 +250,32 @@
     <span class="sd">&quot;&quot;&quot;Calculates standard variance (VAR) of phase data at given averaging</span>
 <span class="sd">    factor.</span>
 
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.stats.calc_svar_freq` for detailed</span>
+<span class="sd">        implementation.</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        x:      input phase data, in units of seconds.</span>
+<span class="sd">        m:      averaging factor at which to calculate variance</span>
+<span class="sd">        rate:   sampling rate of the input data, in Hz.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (var, n)  :class:`allantoolkit.stats.VarResult` NamedTuple of</span>
+<span class="sd">        computed variance at given averaging time, and number of samples</span>
+<span class="sd">        used to estimate it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Convert to frequency and then use frequency VAR definition</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">phase2frequency</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">calc_svar_freq</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="calc_svar_freq"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_svar_freq">[docs]</a><span class="k">def</span> <span class="nf">calc_svar_freq</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates standard variance (VAR) of fractional frequency data at</span>
+<span class="sd">    given averaging factor.</span>
+
 <span class="sd">    .. hint::</span>
 
 <span class="sd">        The standard variance is not convergent for some clock noises,</span>
@@ -270,55 +296,17 @@
 <span class="sd">    frequency.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        x:      input phase data, in units of seconds.</span>
-<span class="sd">        m:      averaging factor at which to calculate variance</span>
-<span class="sd">        rate:   sampling rate of the input data, in Hz.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        variance calculation results, stored in a</span>
-<span class="sd">        :class:`allantoolkit.stats.VarResult` NamedTuple.</span>
-
-<span class="sd">    References:</span>
-<span class="sd">        [RileyStable32]_ (5.2.1, pg.17)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># Decimate at given averaging factor</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[::</span><span class="n">m</span><span class="p">]</span>
-
-    <span class="c1"># Integrate to frequency</span>
-    <span class="n">tau</span> <span class="o">=</span> <span class="n">m</span> <span class="o">/</span> <span class="n">rate</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">tau</span>
-    <span class="n">ybar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-    <span class="n">summand</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">ybar</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-
-    <span class="n">n</span> <span class="o">=</span> <span class="n">summand</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">summand</span><span class="p">)]</span><span class="o">.</span><span class="n">size</span>
-
-    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not enough phase measurements to compute &quot;</span>
-                       <span class="s2">&quot;variance at averaging factor </span><span class="si">%i</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-        <span class="n">var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-        <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-    <span class="n">var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">summand</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="calc_svar_freq"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_svar_freq">[docs]</a><span class="k">def</span> <span class="nf">calc_svar_freq</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Main algorithm for standard variance calculation on fractional</span>
-<span class="sd">    frequency data.</span>
-
-<span class="sd">    References:</span>
-<span class="sd">        [RileyStable32]_ (5.2.1, pg.17)</span>
-
-<span class="sd">    Args:</span>
 <span class="sd">        y:      input fractional frequency data.</span>
-<span class="sd">        m:      averaging factor at which to calculate variance</span>
+<span class="sd">        m:      averaging factor at which to calculate variance.</span>
 <span class="sd">        rate:   sampling rate of the input data, in Hz. Not used here.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
-<span class="sd">        number of samples used to estimate it.</span>
+<span class="sd">        (var, n)  :class:`allantoolkit.stats.VarResult` NamedTuple of</span>
+<span class="sd">        computed variance at given averaging time, and number of samples</span>
+<span class="sd">        used to estimate it.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32]_ (5.2.1. Standard Variance, pg.17-8)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># average at given averaging factor</span>

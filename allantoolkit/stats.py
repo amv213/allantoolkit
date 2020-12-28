@@ -39,6 +39,32 @@ def calc_svar(x: Array, m: int, rate: float) -> VarResult:
     """Calculates standard variance (VAR) of phase data at given averaging
     factor.
 
+    .. seealso::
+        Function :func:`allantoolkit.stats.calc_svar_freq` for detailed
+        implementation.
+
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        rate:   sampling rate of the input data, in Hz.
+
+    Returns:
+        (var, n)  :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+    """
+
+    # Convert to frequency and then use frequency VAR definition
+    y = utils.phase2frequency(x=x, rate=rate)
+
+    return calc_svar_freq(y=y, m=m, rate=rate)
+
+
+def calc_svar_freq(y: Array, m: int, rate: float = None) -> VarResult:
+    """Calculates standard variance (VAR) of fractional frequency data at
+    given averaging factor.
+
     .. hint::
 
         The standard variance is not convergent for some clock noises,
@@ -59,55 +85,17 @@ def calc_svar(x: Array, m: int, rate: float) -> VarResult:
     frequency.
 
     Args:
-        x:      input phase data, in units of seconds.
-        m:      averaging factor at which to calculate variance
-        rate:   sampling rate of the input data, in Hz.
-
-    Returns:
-        variance calculation results, stored in a
-        :class:`allantoolkit.stats.VarResult` NamedTuple.
-
-    References:
-        [RileyStable32]_ (5.2.1, pg.17)
-    """
-
-    # Decimate at given averaging factor
-    x = x[::m]
-
-    # Integrate to frequency
-    tau = m / rate
-    y = np.diff(x) / tau
-    ybar = np.nanmean(y)
-    summand = (y-ybar)**2
-
-    n = summand[~np.isnan(summand)].size
-
-    if n < 2:
-        logger.warning("Not enough phase measurements to compute "
-                       "variance at averaging factor %i: %s", m, x)
-        var = np.NaN
-        return VarResult(var=var, n=0)
-
-    var = np.nansum(summand) / (n - 1)
-
-    return VarResult(var=var, n=n)
-
-
-def calc_svar_freq(y: Array, m: int, rate: float = None) -> VarResult:
-    """Main algorithm for standard variance calculation on fractional
-    frequency data.
-
-    References:
-        [RileyStable32]_ (5.2.1, pg.17)
-
-    Args:
         y:      input fractional frequency data.
-        m:      averaging factor at which to calculate variance
+        m:      averaging factor at which to calculate variance.
         rate:   sampling rate of the input data, in Hz. Not used here.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        (var, n)  :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        [RileyStable32]_ (5.2.1. Standard Variance, pg.17-8)
     """
 
     # average at given averaging factor

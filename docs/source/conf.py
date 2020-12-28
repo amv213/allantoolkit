@@ -34,7 +34,10 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
-    "myst_parser",
+    'myst_parser',
+    'sphinx_copybutton',
+    'sphinx_togglebutton',
+    'sphinx_panels',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -60,6 +63,7 @@ exclude_patterns = [
 # html_static_path = ['_static']
 
 # https://sphinx-book-theme.readthedocs.io/en/latest/index.html
+# https://executablebooks.org/en/latest/tools.html
 html_theme = "sphinx_book_theme"
 
 html_theme_options = {
@@ -72,16 +76,10 @@ html_theme_options = {
     "home_page_in_toc": True,
 }
 
-extra_navbar = "<p>Your HTML</p>"
-
 html_sidebars = {
     "**": ["sidebar-search-bs.html",
-           "sbt-sidebar-nav.html",
-           "sbt-sidebar-footer.html"]
+           "sbt-sidebar-nav.html"]
 }
-# extra_navbar = "<div>Icons made by <a
-# href='https://www.flaticon.com/authors/eucalyp' title='Eucalyp'>Eucalyp</a> from <a href='https://www.flaticon.com/' title='Flaticon'>www.flaticon.com</a></div>"
-
 
 html_title = "AllanToolkit Documentation"
 html_logo = "_static/logo.png"

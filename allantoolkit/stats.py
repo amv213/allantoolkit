@@ -49,7 +49,7 @@ def calc_svar(x: Array, m: int, rate: float) -> VarResult:
 
     .. math::
 
-        \\sigma_y^2 = { 1 \\over M-1} \\sum_{i=1}^{M} \\left y_i -
+        \\sigma_y^2 = { 1 \\over M-1} \\sum_{i=1}^{M} \\left( y_i -
         \\bar{y} \\right)^2
 
     where :math:`\\bar{y} = {1 \\over M} \\sum_{i=1}^M y_i` is the average

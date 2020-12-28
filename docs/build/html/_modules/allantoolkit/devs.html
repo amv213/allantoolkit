@@ -437,9 +437,11 @@
 
 <div class="viewcode-block" id="adev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.adev">[docs]</a><span class="k">def</span> <span class="nf">adev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
          <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Allan deviation (ADEV):</span>
-<span class="sd">    classic - use only if required - relatively poor confidence</span>
-<span class="sd">    [[SP1065]_ (pg.14-15)].</span>
+    <span class="sd">&quot;&quot;&quot;Calculate Allan deviation (ADEV) for input phase or fractional</span>
+<span class="sd">    frequency data.</span>
+
+<span class="sd">    Characteristics:</span>
+<span class="sd">        classic - use only if required - relatively poor confidence.</span>
 
 <span class="sd">    The Allan deviation - :math:`\\sigma_y(\\tau)` - is the square root of</span>
 <span class="sd">    the Allan variance. The Allan variance is the same as  the  ordinary</span>
@@ -468,9 +470,8 @@
 <span class="sd">    where :math:`\\bar{y}_i` is the :math:`i`th of :math:`M` fractional</span>
 <span class="sd">    frequency values averaged over the averaging time :math:`\\tau`.</span>
 
-<span class="sd">    The  confidence  interval  of  an  Allan  deviation estimate is dependent</span>
-<span class="sd">    on the noise type, but is often estimated as</span>
-<span class="sd">    :math:`\\pm\\sigma^{2}_y(\\tau) / \\sqrt{N}`.</span>
+<span class="sd">    References:</span>
+<span class="sd">        [SP1065]_ (pg.14-15)</span>
 
 <span class="sd">    Notes:</span>
 <span class="sd">        See :func:`allantoolkit.devs.dev` for detailed usage.</span>

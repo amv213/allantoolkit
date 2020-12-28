@@ -226,9 +226,11 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
 def adev(data: Array, rate: float = 1., data_type: str = "phase",
          taus: Taus = None, max_af: int = None) -> DevResult:
-    """Allan deviation (ADEV):
-    classic - use only if required - relatively poor confidence
-    [[SP1065]_ (pg.14-15)].
+    """Calculate Allan deviation (ADEV) for input phase or fractional
+    frequency data.
+
+    Characteristics:
+        classic - use only if required - relatively poor confidence.
 
     The Allan deviation - :math:`\\sigma_y(\\tau)` - is the square root of
     the Allan variance. The Allan variance is the same as  the  ordinary
@@ -257,9 +259,8 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
     where :math:`\\bar{y}_i` is the :math:`i`th of :math:`M` fractional
     frequency values averaged over the averaging time :math:`\\tau`.
 
-    The  confidence  interval  of  an  Allan  deviation estimate is dependent
-    on the noise type, but is often estimated as
-    :math:`\\pm\\sigma^{2}_y(\\tau) / \\sqrt{N}`.
+    References:
+        [SP1065]_ (pg.14-15)
 
     Notes:
         See :func:`allantoolkit.devs.dev` for detailed usage.

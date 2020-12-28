@@ -1450,9 +1450,12 @@ deviation</p></li>
 <dl class="py function">
 <dt id="allantoolkit.devs.adev">
 <code class="sig-prename descclassname">allantoolkit.devs.</code><code class="sig-name descname">adev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>float<span class="p">, </span>List<span class="p">, </span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_af</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.devs.DevResult" title="allantoolkit.devs.DevResult">allantoolkit.devs.DevResult</a><a class="reference internal" href="_modules/allantoolkit/devs.html#adev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.devs.adev" title="Permalink to this definition">¶</a></dt>
-<dd><p>Allan deviation (ADEV):
-classic - use only if required - relatively poor confidence
-[<a class="reference internal" href="references.html#sp1065" id="id23"><span>[SP1065]</span></a> (pg.14-15)].</p>
+<dd><p>Calculate Allan deviation (ADEV) for input phase or fractional
+frequency data.</p>
+<dl class="simple">
+<dt>Characteristics:</dt><dd><p>classic - use only if required - relatively poor confidence.</p>
+</dd>
+</dl>
 <p>The Allan deviation - <span class="math notranslate nohighlight">\(\sigma_y(\tau)\)</span> - is the square root of
 the Allan variance. The Allan variance is the same as  the  ordinary
 variance  for  white  FM  noise, but  has  the  advantage,  for  more
@@ -1471,9 +1474,8 @@ defined as:</p>
 \left[ \bar{y}_{i+1} - \bar{y}_i \right]^2\]</div>
 <p>where <span class="math notranslate nohighlight">\(\bar{y}_i\)</span> is the <span class="math notranslate nohighlight">\(i\)</span> fractional
 frequency values averaged over the averaging time <span class="math notranslate nohighlight">\(\tau\)</span>.</p>
-<p>The  confidence  interval  of  an  Allan  deviation estimate is dependent
-on the noise type, but is often estimated as
-<span class="math notranslate nohighlight">\(\pm\sigma^{2}_y(\tau) / \sqrt{N}\)</span>.</p>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#sp1065" id="id23"><span>[SP1065]</span></a> (pg.14-15)</p>
 <p class="rubric">Notes</p>
 <p>See <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </dd></dl>

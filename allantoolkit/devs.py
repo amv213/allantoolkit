@@ -563,7 +563,7 @@ def totdev(data: Array, rate: float = 1., data_type: str = "phase",
 def mtotdev(data: Array, rate: float = 1., data_type: str = "phase",
             taus: Taus = None, max_af: int = None) -> DevResult:
     """Calculates the modified total deviation (MTOTDEV) of phase or
-       fractional frequency data.
+    fractional frequency data.
 
     .. hint::
 
@@ -588,14 +588,14 @@ def mtotdev(data: Array, rate: float = 1., data_type: str = "phase",
         \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-3m+1) }
         \\sum_{n=1}^{N-3m+1} \\left\\{
         { 1 \\over 6m } \\sum_{i=n-3m}^{N+3m-1}
-        \\left[ z^{#}_i(m) \\right]^2
+        \\left[ z^{\\#}_i(m) \\right]^2
         \\left\\}
 
-    where the :math:`z^{#}_i(m)` terms are phase averages from
+    where the :math:`z^{\\#}_i(m)` terms are phase averages from
     triply-extended subsequences with linear trend removed.
 
     TODO: Find and add definition for frequency data
-    
+
     .. seealso::
         Function :func:`allantoolkit.devs.dev` for detailed usage.
 

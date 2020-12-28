@@ -774,7 +774,7 @@
 <div class="viewcode-block" id="mtotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.mtotdev">[docs]</a><span class="k">def</span> <span class="nf">mtotdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
             <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Calculates the modified total deviation (MTOTDEV) of phase or</span>
-<span class="sd">       fractional frequency data.</span>
+<span class="sd">    fractional frequency data.</span>
 
 <span class="sd">    .. hint::</span>
 
@@ -799,14 +799,14 @@
 <span class="sd">        \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-3m+1) }</span>
 <span class="sd">        \\sum_{n=1}^{N-3m+1} \\left\\{</span>
 <span class="sd">        { 1 \\over 6m } \\sum_{i=n-3m}^{N+3m-1}</span>
-<span class="sd">        \\left[ z^{#}_i(m) \\right]^2</span>
+<span class="sd">        \\left[ z^{\\#}_i(m) \\right]^2</span>
 <span class="sd">        \\left\\}</span>
 
-<span class="sd">    where the :math:`z^{#}_i(m)` terms are phase averages from</span>
+<span class="sd">    where the :math:`z^{\\#}_i(m)` terms are phase averages from</span>
 <span class="sd">    triply-extended subsequences with linear trend removed.</span>
 
 <span class="sd">    TODO: Find and add definition for frequency data</span>
-<span class="sd">    </span>
+
 <span class="sd">    .. seealso::</span>
 <span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
 

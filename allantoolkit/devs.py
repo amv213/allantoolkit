@@ -230,6 +230,7 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
     frequency data.
 
     .. hint:
+    
         classic - use only if required - relatively poor confidence.
 
     The Allan deviation - :math:`\\sigma_y(\\tau)` - is the square root of

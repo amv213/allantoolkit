@@ -301,6 +301,16 @@ def oadev(data: Array, rate: float = 1., data_type: str = "phase",
         \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-2m) }
         \\sum_{i=1}^{N-2m} \\left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \\right]^2
 
+    For a time-series of :math:`M` fractional frequency values,
+    the overlapping Allan variance is instead defined as:
+
+    .. math::
+
+        \\sigma^{2}_y(\\tau) = { 1 \\over 2 m^2 (M-2m+1) }
+        \\sum_{j=1}^{M-2m+1} \\left\\{
+        \\sum_{i=j}^{j+m-1} \\left[ y_{i+m} - y_i \\right]
+        \\right\\}^2
+
     .. seealso::
         Function :func:`allantoolkit.devs.dev` for detailed usage.
 
@@ -337,6 +347,18 @@ def mdev(data: Array, rate: float = 1., data_type: str = "phase",
         \\sigma^{2}_y(\\tau) = { 1 \\over 2 m^2 \\tau^2 (N-3m+1) }
         \\sum_{j=1}^{N-3m+1} \\left\\{
         \\sum_{i=j}^{j+m-1} \\left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \\right]
+        \\right\\}^2
+
+    For a time-series of :math:`M` fractional frequency values, the modified
+    Allan variance is instead defined as:
+
+    .. math::
+
+        \\sigma^{2}_y(\\tau) = { 1 \\over 2 m^4 (M-3m+2) }
+        \\sum_{j=1}^{M-3m+2} \\left\\{
+        \\sum_{i=j}^{j+m-1} \\left(
+        \\sum_{k=i}^{i+m-1} \\left[ y_{k+m} - y_k \\right]
+        \\right)
         \\right\\}^2
 
     .. seealso::

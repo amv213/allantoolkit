@@ -512,6 +512,16 @@
 <span class="sd">        \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-2m) }</span>
 <span class="sd">        \\sum_{i=1}^{N-2m} \\left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \\right]^2</span>
 
+<span class="sd">    For a time-series of :math:`M` fractional frequency values,</span>
+<span class="sd">    the overlapping Allan variance is instead defined as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^{2}_y(\\tau) = { 1 \\over 2 m^2 (M-2m+1) }</span>
+<span class="sd">        \\sum_{j=1}^{M-2m+1} \\left\\{</span>
+<span class="sd">        \\sum_{i=j}^{j+m-1} \\left[ y_{i+m} - y_i \\right]</span>
+<span class="sd">        \\right\\}^2</span>
+
 <span class="sd">    .. seealso::</span>
 <span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
 
@@ -548,6 +558,18 @@
 <span class="sd">        \\sigma^{2}_y(\\tau) = { 1 \\over 2 m^2 \\tau^2 (N-3m+1) }</span>
 <span class="sd">        \\sum_{j=1}^{N-3m+1} \\left\\{</span>
 <span class="sd">        \\sum_{i=j}^{j+m-1} \\left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \\right]</span>
+<span class="sd">        \\right\\}^2</span>
+
+<span class="sd">    For a time-series of :math:`M` fractional frequency values, the modified</span>
+<span class="sd">    Allan variance is instead defined as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^{2}_y(\\tau) = { 1 \\over 2 m^4 (M-3m+2) }</span>
+<span class="sd">        \\sum_{j=1}^{M-3m+2} \\left\\{</span>
+<span class="sd">        \\sum_{i=j}^{j+m-1} \\left(</span>
+<span class="sd">        \\sum_{k=i}^{i+m-1} \\left[ y_{k+m} - y_k \\right]</span>
+<span class="sd">        \\right)</span>
 <span class="sd">        \\right\\}^2</span>
 
 <span class="sd">    .. seealso::</span>

@@ -1635,6 +1635,15 @@ is the basic data sampling period, by the following expression:</p>
 \sum_{j=1}^{N-3m+1} \left\{
 \sum_{i=j}^{j+m-1} \left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \right]
 \right\}^2\]</div>
+<p>For a time-series of <span class="math notranslate nohighlight">\(M\)</span> fractional frequency values, the modified
+Allan variance is instead defined as:</p>
+<div class="math notranslate nohighlight">
+\[\sigma^{2}_y(\tau) = { 1 \over 2 m^4 (M-3m+2) }
+\sum_{j=1}^{M-3m+2} \left\{
+\sum_{i=j}^{j+m-1} \left(
+\sum_{k=i}^{i+m-1} \left[ y_{k+m} - y_k \right]
+\right)
+\right\}^2\]</div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
@@ -1710,6 +1719,13 @@ data sampling period, by the following expression:</p>
 <div class="math notranslate nohighlight">
 \[\sigma^{2}_y(\tau) = { 1 \over 2 \tau^2 (N-2m) }
 \sum_{i=1}^{N-2m} \left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \right]^2\]</div>
+<p>For a time-series of <span class="math notranslate nohighlight">\(M\)</span> fractional frequency values,
+the overlapping Allan variance is instead defined as:</p>
+<div class="math notranslate nohighlight">
+\[\sigma^{2}_y(\tau) = { 1 \over 2 m^2 (M-2m+1) }
+\sum_{j=1}^{M-2m+1} \left\{
+\sum_{i=j}^{j+m-1} \left[ y_{i+m} - y_i \right]
+\right\}^2\]</div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>

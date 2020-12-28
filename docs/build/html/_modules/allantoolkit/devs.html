@@ -230,29 +230,24 @@
 
 <span class="c1"># define named tuple to hold dev results</span>
 <div class="viewcode-block" id="DevResult"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.DevResult">[docs]</a><span class="k">class</span> <span class="nc">DevResult</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a statistical stability analysis result.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        taus:       array of corresponding averaging times, in seconds</span>
-<span class="sd">        ns:         array with number of analysis points used to compute each</span>
-<span class="sd">                    deviation.</span>
-<span class="sd">        alphas:     array of estimated dominant noise type at each deviation</span>
-<span class="sd">        devs_lo:    array of estimated statistical lower bounds for each</span>
-<span class="sd">                    deviation</span>
-<span class="sd">        devs:       array with deviations computed at each averaging time</span>
-<span class="sd">        devs_hi:    array of estimated statistical higher bounds for each</span>
-<span class="sd">                    deviation</span>
+    <span class="sd">&quot;&quot;&quot;Container for stability analysis results. The following fields are</span>
+<span class="sd">    defined:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">afs</span><span class="p">:</span> <span class="n">Array</span>
-    <span class="s2">&quot;array of averaging factors for which deviations were computed&quot;</span>
-
+    <span class="s2">&quot;array of averaging factors for which deviations were computed.&quot;</span>
     <span class="n">taus</span><span class="p">:</span> <span class="n">Array</span>
+    <span class="s2">&quot;array of corresponding averaging times, in seconds.&quot;</span>
     <span class="n">ns</span><span class="p">:</span> <span class="n">Array</span>
+    <span class="s2">&quot;array with number of analysis points used to compute each deviation.&quot;</span>
     <span class="n">alphas</span><span class="p">:</span> <span class="n">Array</span>
+    <span class="s2">&quot;array of estimated dominant noise type at each deviation.&quot;</span>
     <span class="n">devs_lo</span><span class="p">:</span> <span class="n">Array</span>
+    <span class="s2">&quot;array of estimated statistical lower bounds for each deviation.&quot;</span>
     <span class="n">devs</span><span class="p">:</span> <span class="n">Array</span>
+    <span class="s2">&quot;array with deviations computed at each averaging time.&quot;</span>
     <span class="n">devs_hi</span><span class="p">:</span> <span class="n">Array</span>
+    <span class="s2">&quot;array of estimated statistical higher bounds for each deviation.&quot;</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;A human-friendly pretty-print representation of the object.</span>

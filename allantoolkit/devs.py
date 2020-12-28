@@ -19,29 +19,24 @@ Taus = Union[str, float, List, Array]
 
 # define named tuple to hold dev results
 class DevResult(NamedTuple):
-    """Represents a statistical stability analysis result.
-
-    Args:
-        taus:       array of corresponding averaging times, in seconds
-        ns:         array with number of analysis points used to compute each
-                    deviation.
-        alphas:     array of estimated dominant noise type at each deviation
-        devs_lo:    array of estimated statistical lower bounds for each
-                    deviation
-        devs:       array with deviations computed at each averaging time
-        devs_hi:    array of estimated statistical higher bounds for each
-                    deviation
+    """Container for stability analysis results. The following fields are
+    defined:
     """
 
     afs: Array
-    "array of averaging factors for which deviations were computed"
-
+    "array of averaging factors for which deviations were computed."
     taus: Array
+    "array of corresponding averaging times, in seconds."
     ns: Array
+    "array with number of analysis points used to compute each deviation."
     alphas: Array
+    "array of estimated dominant noise type at each deviation."
     devs_lo: Array
+    "array of estimated statistical lower bounds for each deviation."
     devs: Array
+    "array with deviations computed at each averaging time."
     devs_hi: Array
+    "array of estimated statistical higher bounds for each deviation."
 
     def __str__(self) -> str:
         """A human-friendly pretty-print representation of the object.

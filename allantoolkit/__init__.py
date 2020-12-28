@@ -2,11 +2,11 @@ import logging
 
 import allantoolkit.tables
 import allantoolkit.stats
-import allantoolkit.noiseid
-import allantoolkit.allantools
+import allantoolkit.noise_id
+import allantoolkit.devs
 import allantoolkit.ci
 import allantoolkit.bias
-import allantoolkit.dataset
+import allantoolkit.api
 import allantoolkit.noise
 import allantoolkit.noise_kasdin
 import allantoolkit.plot

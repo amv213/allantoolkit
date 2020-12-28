@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 from . import ci
-from . import noiseid
+from . import noise_id
 from . import bias
 from . import stats
 from . import utils
@@ -77,14 +77,10 @@ class DevResult(NamedTuple):
             devs_lo=devs_lo, devs=devs, devs_hi=devs_hi)
 
 
-# TODO: Add data preprocessing before feeding to dev:
-# [RileyStable32]_ (10, pg.103)
-
-
 def dev(dev_type: str, data: Array, rate: float, data_type: str,
         taus: Taus, max_af: int) -> DevResult:
-    """Dispatches the input data and parameters to the appropriate statistical
-    algorithm computing the requested deviation.
+    """Core pipeline processing the input data and returning the appropriate
+    frequency stability analysis results for the given deviation type.
 
     Args:
         dev_type:   type of deviation to be computed, e.g. `adev`.
@@ -102,7 +98,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         (afs, taus, ns, alphas, devs_lo, devs, devs_hi) DevResult named tuple
     """
 
-    # Work with phase data, in units of seconds
+    # Easier to work with phase data, in units of seconds
     x = utils.input_to_phase(data=data, rate=rate, data_type=data_type,
                              normalize=True)
 
@@ -170,9 +166,9 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
             # Estimate Noise ID
             if i < afs.size - 1:  # Only estimate if not last averaging time
-                alpha = noiseid.noise_id(data=x, m=m, rate=rate,
-                                         data_type='phase',
-                                         dev_type=dev_type, n=n)
+                alpha = noise_id.noise_id(data=x, m=m, rate=rate,
+                                          data_type='phase',
+                                          dev_type=dev_type, n=n)
 
             else:
                 # Use previous estimate at longest averaging time
@@ -200,7 +196,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         vars = kf*vars
 
         # ID noise type for the whole run
-        alpha = noiseid.noise_id_theoBR_fixed(kf=kf)
+        alpha = noise_id.noise_id_theoBR_fixed(kf=kf)
         alphas = np.full(afs.size, alpha)
 
     # ---------------------------------------------

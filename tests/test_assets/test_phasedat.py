@@ -28,22 +28,22 @@ RATE = 1.  # Hz
 
 # Function to check
 params = [
-    allantoolkit.allantools.adev,
-    allantoolkit.allantools.oadev,
-    allantoolkit.allantools.mdev,
-    allantoolkit.allantools.tdev,
-    allantoolkit.allantools.hdev,
-    allantoolkit.allantools.ohdev,
-    allantoolkit.allantools.totdev,
-    pytest.param(allantoolkit.allantools.mtotdev,
+    allantoolkit.devs.adev,
+    allantoolkit.devs.oadev,
+    allantoolkit.devs.mdev,
+    allantoolkit.devs.tdev,
+    allantoolkit.devs.hdev,
+    allantoolkit.devs.ohdev,
+    allantoolkit.devs.totdev,
+    pytest.param(allantoolkit.devs.mtotdev,
                  marks=pytest.mark.slow),
-    pytest.param(allantoolkit.allantools.ttotdev,
+    pytest.param(allantoolkit.devs.ttotdev,
                  marks=pytest.mark.slow),
-    pytest.param(allantoolkit.allantools.htotdev,
+    pytest.param(allantoolkit.devs.htotdev,
                  marks=pytest.mark.slow),
-    allantoolkit.allantools.tierms,
-    allantoolkit.allantools.mtie,
-    allantoolkit.allantools.theo1,
+    allantoolkit.devs.tierms,
+    allantoolkit.devs.mtie,
+    allantoolkit.devs.theo1,
 ]
 
 

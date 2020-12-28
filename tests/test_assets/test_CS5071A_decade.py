@@ -38,14 +38,14 @@ RATE = 1.  # Hz
 #  using fixed alpha = 0, instead of using auto noise ID. Test_ci is set to
 #  False because CI implementation doesn't match yet Stable32 results.
 params = [
-    (allantoolkit.allantools.adev, False, False),
-    (allantoolkit.allantools.oadev, False, False),
-    (allantoolkit.allantools.mdev, False, False),
-    (allantoolkit.allantools.tdev, False, False),
-    (allantoolkit.allantools.hdev, False, False),
-    (allantoolkit.allantools.ohdev, False, False),
-    (allantoolkit.allantools.totdev, False, False),
-    (allantoolkit.allantools.tierms, False, False),
+    (allantoolkit.devs.adev, False, False),
+    (allantoolkit.devs.oadev, False, False),
+    (allantoolkit.devs.mdev, False, False),
+    (allantoolkit.devs.tdev, False, False),
+    (allantoolkit.devs.hdev, False, False),
+    (allantoolkit.devs.ohdev, False, False),
+    (allantoolkit.devs.totdev, False, False),
+    (allantoolkit.devs.tierms, False, False),
 ]
 
 

@@ -33,13 +33,13 @@ RATE = 1.  # Hz
 # FIXME: Test_ci is set to False because CI implementation doesn't match yet
 #  Stable32 results.
 params = [
-    (allantoolkit.allantools.adev, True, False),
-    (allantoolkit.allantools.oadev, True, False),
-    (allantoolkit.allantools.mdev, True, False),
-    (allantoolkit.allantools.tdev, True, False),
-    (allantoolkit.allantools.hdev, True, False),
-    (allantoolkit.allantools.ohdev, True, False),
-    (allantoolkit.allantools.totdev, True, False),
+    (allantoolkit.devs.adev, True, False),
+    (allantoolkit.devs.oadev, True, False),
+    (allantoolkit.devs.mdev, True, False),
+    (allantoolkit.devs.tdev, True, False),
+    (allantoolkit.devs.hdev, True, False),
+    (allantoolkit.devs.ohdev, True, False),
+    (allantoolkit.devs.totdev, True, False),
 ]
 
 

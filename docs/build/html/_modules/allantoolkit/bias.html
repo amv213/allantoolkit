@@ -1,0 +1,638 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>allantoolkit.bias &#8212; AllanToolkit Documentation</title>
+    
+  <link rel="stylesheet" href="../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <link rel="shortcut icon" href="../../_static/favico.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../../index.html">
+  
+  <img src="../../_static/logo.png" class="logo" alt="logo">
+  
+  
+  <h1 class="site-logo" id="site-title">AllanToolkit Documentation</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../index.html">
+   📑 Welcome to AllanToolkit!
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  MAIN DOCS
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../readme_copy.html">
+   Readme
+  </a>
+ </li>
+ <li class="toctree-l1 collapsible-parent">
+  <a class="reference internal" href="../../documentation.html">
+   Documentation
+  </a>
+  <ul class="collapse-ul">
+   <li class="toctree-l2 collapsible-parent">
+    <a class="reference internal" href="../../modules.html">
+     Modules
+    </a>
+    <ul class="collapse-ul">
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../allantoolkit.html">
+       allantoolkit package
+      </a>
+     </li>
+    </ul>
+    <i class="fas fa-chevron-down">
+    </i>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../functions.html">
+     Functions
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../api.html">
+     API
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../references.html">
+     References
+    </a>
+   </li>
+  </ul>
+  <i class="fas fa-chevron-down">
+  </i>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../dev.html">
+   Development
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  TUTORIALS
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../tutorial_intro.html">
+   First Steps
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://gitlab.com/amv213/allantoolkit"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2F_modules/allantoolkit/bias.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <h1>Source code for allantoolkit.bias</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tables</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">stats</span>
+
+<span class="c1"># shorten type hint to save some space</span>
+<span class="n">Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+
+<div class="viewcode-block" id="calc_bias_avar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.bias.calc_bias_avar">[docs]</a><span class="k">def</span> <span class="nf">calc_bias_avar</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates bias by which to correct AVAR results for given noise type.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32Manual]_ (Table pg. 97)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   array for which variance was computed</span>
+<span class="sd">        m:      averaging factor for which variance was computed</span>
+<span class="sd">        alpha:  dominant fractional frequency noise type `alpha` at given</span>
+<span class="sd">                averaging factor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bias correction by which to multiply computed variance</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="calc_bias_oavar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.bias.calc_bias_oavar">[docs]</a><span class="k">def</span> <span class="nf">calc_bias_oavar</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates bias by which to correct OAVAR results for given noise type.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32Manual]_ (Table pg. 97)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   array for which variance was computed</span>
+<span class="sd">        m:      averaging factor for which variance was computed</span>
+<span class="sd">        alpha:  dominant fractional frequency noise type `alpha` at given</span>
+<span class="sd">                averaging factor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bias correction by which to multiply computed variance</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="calc_bias_mvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.bias.calc_bias_mvar">[docs]</a><span class="k">def</span> <span class="nf">calc_bias_mvar</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates bias by which to correct MVAR results for given noise type.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32Manual]_ (Table pg. 97)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   array for which variance was computed</span>
+<span class="sd">        m:      averaging factor for which variance was computed</span>
+<span class="sd">        alpha:  dominant fractional frequency noise type `alpha` at given</span>
+<span class="sd">                averaging factor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bias correction by which to multiply computed variance</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="calc_bias_tvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.bias.calc_bias_tvar">[docs]</a><span class="k">def</span> <span class="nf">calc_bias_tvar</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates bias by which to correct TVAR results for given noise type.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32Manual]_ (Table pg. 97)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   array for which variance was computed</span>
+<span class="sd">        m:      averaging factor for which variance was computed</span>
+<span class="sd">        alpha:  dominant fractional frequency noise type `alpha` at given</span>
+<span class="sd">                averaging factor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bias correction by which to multiply computed variance</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="calc_bias_hvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.bias.calc_bias_hvar">[docs]</a><span class="k">def</span> <span class="nf">calc_bias_hvar</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates bias by which to correct HVAR results for given noise type.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32Manual]_ (Table pg. 97)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   array for which variance was computed</span>
+<span class="sd">        m:      averaging factor for which variance was computed</span>
+<span class="sd">        alpha:  dominant fractional frequency noise type `alpha` at given</span>
+<span class="sd">                averaging factor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bias correction by which to multiply computed variance</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="calc_bias_ohvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.bias.calc_bias_ohvar">[docs]</a><span class="k">def</span> <span class="nf">calc_bias_ohvar</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates bias by which to correct OHVAR results for given noise type.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [RileyStable32Manual]_ (Table pg. 97)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   array for which variance was computed</span>
+<span class="sd">        m:      averaging factor for which variance was computed</span>
+<span class="sd">        alpha:  dominant fractional frequency noise type `alpha` at given</span>
+<span class="sd">                averaging factor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bias correction by which to multiply computed variance</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="calc_bias_totvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.bias.calc_bias_totvar">[docs]</a><span class="k">def</span> <span class="nf">calc_bias_totvar</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates bias by which to correct TOTVAR results for given noise type.</span>
+
+
+<span class="sd">    References:</span>
+
+<span class="sd">        D.A. Howe, &quot;Total Variance Explained&quot;, Proc. 1999 Joint Meeting of the</span>
+<span class="sd">        European Freq. and Time Forum and the IEEE Freq. Contrl. Symp.,</span>
+<span class="sd">        pp. 1093-1099, April 1999.</span>
+<span class="sd">        https://www.nist.gov/publications/total-variance-explained (Table 1)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   array for which variance was computed</span>
+<span class="sd">        m:      averaging factor for which variance was computed</span>
+<span class="sd">        alpha:  dominant fractional frequency noise type `alpha` at given</span>
+<span class="sd">                averaging factor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bias correction by which to multiply computed variance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">tables</span><span class="o">.</span><span class="n">BIAS_TOTVAR</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># no bias correction for this noise type</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">m</span><span class="o">/</span><span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No bias correction at m = </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># no bias corrections beyond half of dataset size</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">m</span><span class="o">/</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="n">b</span></div>
+
+
+<div class="viewcode-block" id="calc_bias_mtotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.bias.calc_bias_mtotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_bias_mtotvar</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates bias by which to correct MTOTVAR results for given noise</span>
+<span class="sd">    type.</span>
+
+<span class="sd">    The TOTMVAR bias factor (the ratio of the expected value of TOTMVAR to</span>
+<span class="sd">    MVAR) depends on the noise type but is essentially independent of the</span>
+<span class="sd">    averaging factor and # of data points.</span>
+
+<span class="sd">    FIXME: Bias is now disabled because Stable32 doesn&#39;t seem to be applying</span>
+<span class="sd">    it (at least not on averaging factors seen so far). Should we implement it</span>
+<span class="sd">    and diverge from Stable32?</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        http://www.wriley.com/CI2.pdf</span>
+<span class="sd">        MTOT and TTOT Bias Function, Table Pg.6)</span>
+
+<span class="sd">        D.A. Howe and F. Vernotte, &quot;Generalization of the Total Variance</span>
+<span class="sd">        Approach to the ModifiedAllan Variance&quot;,Proc. 31st PTTI Meeting,</span>
+<span class="sd">        pp. 267-276, Dec. 1999</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   array for which variance was computed</span>
+<span class="sd">        m:      averaging factor for which variance was computed</span>
+<span class="sd">        alpha:  dominant fractional frequency noise type `alpha` at given</span>
+<span class="sd">                averaging factor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bias correction by which to multiply computed variance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">b</span> <span class="o">=</span> <span class="n">tables</span><span class="o">.</span><span class="n">BIAS_MTOTVAR</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">b</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># no bias correction for this noise type</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="mi">1</span>  <span class="c1"># should return b, but Stable32 doesn&#39;t seem to be doing it</span></div>
+
+
+<div class="viewcode-block" id="calc_bias_ttotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.bias.calc_bias_ttotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_bias_ttotvar</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates bias by which to correct TTOTVAR results for given noise</span>
+<span class="sd">    type.</span>
+
+<span class="sd">    Same as MTOTVAR.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        http://www.wriley.com/CI2.pdf</span>
+<span class="sd">        MTOT and TTOT Bias Function, Table Pg.6)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   array for which variance was computed</span>
+<span class="sd">        m:      averaging factor for which variance was computed</span>
+<span class="sd">        alpha:  dominant fractional frequency noise type `alpha` at given</span>
+<span class="sd">                averaging factor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bias correction by which to multiply computed variance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">calc_bias_mtotvar</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="calc_bias_htotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.bias.calc_bias_htotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_bias_htotvar</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates bias by which to correct HTOTVAR results for given noise</span>
+<span class="sd">    type.</span>
+
+<span class="sd">    The TOTMVAR bias factor (the ratio of the expected value of TOTMVAR to</span>
+<span class="sd">    MVAR) depends on the noise type but is essentially independent of the</span>
+<span class="sd">    averaging factor and # of data points.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        D.A. Howe, et. Al., “A Total Estimator of the Hadamard Function Used</span>
+<span class="sd">        for GPS Operations”, Proc. 32nd PTTI Meeting, pp. 255-268, November</span>
+<span class="sd">        2000</span>
+
+<span class="sd">        http://www.wriley.com/CI2.pdf</span>
+<span class="sd">        (HTOT Bias Function, Table Pg.6)</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   array for which variance was computed</span>
+<span class="sd">        m:      averaging factor for which variance was computed</span>
+<span class="sd">        alpha:  dominant fractional frequency noise type `alpha` at given</span>
+<span class="sd">                averaging factor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bias correction by which to multiply computed variance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">tables</span><span class="o">.</span><span class="n">BIAS_HTOTVAR</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># no bias correction for this noise type</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="c1"># HTOTVAR uses HVAR at m=1, so dispatch to correct bias calculator</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">a</span> <span class="k">if</span> <span class="n">m</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">calc_bias_hvar</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="n">b</span></div>
+
+
+<div class="viewcode-block" id="calc_bias_theo1"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.bias.calc_bias_theo1">[docs]</a><span class="k">def</span> <span class="nf">calc_bias_theo1</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates bias by which to correct THEO1 results for given noise</span>
+<span class="sd">    type.</span>
+
+<span class="sd">    The Thêo1 statistic is an unbiased estimator of the Allan variance for</span>
+<span class="sd">    white FM noise. For other power law noise types, the following bias</span>
+<span class="sd">    corrections should be applied to the Thêo1 deviation.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        Theo1: characterization of very long-term frequency stability</span>
+<span class="sd">        Howe,D.A. et al.</span>
+<span class="sd">        18th European Frequency and Time Forum (EFTF 2004)</span>
+<span class="sd">        2004 (Table 1)</span>
+
+<span class="sd">        [RileyStable32Manual]_ (Theo1 Bias, pg.80)</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:   array for which variance was computed</span>
+<span class="sd">        m:      averaging factor for which variance was computed</span>
+<span class="sd">        alpha:  dominant fractional frequency noise type `alpha` at given</span>
+<span class="sd">                averaging factor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bias correction by which to multiply computed variance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="n">tables</span><span class="o">.</span><span class="n">BIAS_THEO1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># no bias correction for this noise type</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">params</span>
+
+    <span class="c1"># The `theo1` tau is 0.75*m</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">/</span><span class="p">(</span><span class="mf">0.75</span><span class="o">*</span><span class="n">m</span><span class="p">)</span><span class="o">**</span><span class="n">c</span>
+
+    <span class="c1"># this bias is b = AVAR/THEO1 so THEO1/AVAR = 1/b</span>
+
+    <span class="k">return</span> <span class="n">b</span></div>
+
+
+<div class="viewcode-block" id="calc_bias_theobr"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.bias.calc_bias_theobr">[docs]</a><span class="k">def</span> <span class="nf">calc_bias_theobr</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate dynamic correction factor by which to debias THEO1 variances,</span>
+<span class="sd">    to get correspoinding THEOBR value. Bias removal via THEOBR does not</span>
+<span class="sd">    require the prior estimation of a dominant noise type at any single</span>
+<span class="sd">    averaging time.</span>
+
+<span class="sd">    There is one bias factor value for the whole run, expressed as a sum of</span>
+<span class="sd">    ratios of AVAR / THEO1 over a number of relevant averaging factors.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        Theo1: characterization of very long-term frequency stability</span>
+<span class="sd">        Howe,D.A. et al.</span>
+<span class="sd">        18th European Frequency and Time Forum (EFTF 2004)</span>
+<span class="sd">        2004</span>
+
+<span class="sd">        J.A. Taylor and D.A. Howe, “Fast ThêoBR: A Method for Long Data Set</span>
+<span class="sd">        Stability  Analysis” (Used by Stable32)</span>
+
+<span class="sd">        http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf</span>
+
+<span class="sd">        [RileyStable32Manual]_ (TheoBR and TheoH, pg.80)</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        x:      array of phase data for which variance was computed</span>
+<span class="sd">        rate:   sampling rate of the input data, in Hz.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bias correction by which to scale computed variance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># For TheoBR algorithm to work, need to precalculate a support vector of</span>
+    <span class="c1"># THEO1 values at all taus</span>
+    <span class="n">theo1s</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_theo1_fast</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">explode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># phase array size</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="c1"># Number of AVAR/Theo1 variance ratio averages to use:</span>
+    <span class="c1"># - Use 6 on the denominator to end up with the bias correction factor used</span>
+    <span class="c1">#   by Stable32 in the `Run` &amp; `Plot` calculations</span>
+    <span class="c1"># - Use 30 on the denominator to end up with the bias correction factor</span>
+    <span class="c1">#   used by Stable32 in the `Sigma` calculations</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">N</span> <span class="o">/</span> <span class="mi">6</span> <span class="o">-</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="c1"># Correction factor summation loop</span>
+    <span class="n">kf</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+
+        <span class="c1"># Calculate ratio of AVAR to THEO1 at each equivalent taus, starting</span>
+        <span class="c1"># from m=12 for THEO1 == m=9 for AVAR</span>
+
+        <span class="c1"># FIXME: for some reason replacing this loop with the official stats</span>
+        <span class="c1">#  avar function doesn&#39;t give the same results ... investigate...</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="mi">9</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">i</span>
+        <span class="n">avar</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">):</span>
+            <span class="n">avar</span> <span class="o">+=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="n">m</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span>
+                        <span class="n">x</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="n">m</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">avar</span> <span class="o">/=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">kf</span> <span class="o">+=</span> <span class="p">(</span><span class="n">avar</span> <span class="o">/</span> <span class="n">theo1s</span><span class="p">[</span><span class="mi">12</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># Divide kf sum by # ratios</span>
+    <span class="n">kf</span> <span class="o">/=</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">kf</span></div>
+
+</pre></div>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Alvise Vianello<br/>
+        
+            &copy; Copyright 2020, Alvise Vianello.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>

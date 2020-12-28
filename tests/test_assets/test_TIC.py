@@ -26,13 +26,13 @@ RATE = 1.  # Hz
 # Function to check
 params = [
     # allantoolkit.allantools.adev,  # ADEV file is on many-tau instead of oct
-    allantoolkit.allantools.oadev,
-    allantoolkit.allantools.mdev,
-    allantoolkit.allantools.tdev,
-    allantoolkit.allantools.hdev,
-    allantoolkit.allantools.ohdev,
-    allantoolkit.allantools.totdev,
-    allantoolkit.allantools.tierms,
+    allantoolkit.devs.oadev,
+    allantoolkit.devs.mdev,
+    allantoolkit.devs.tdev,
+    allantoolkit.devs.hdev,
+    allantoolkit.devs.ohdev,
+    allantoolkit.devs.totdev,
+    allantoolkit.devs.tierms,
 ]
 
 

@@ -26,13 +26,13 @@ RATE = 1./42  # Hz
 
 # Function to check
 params = [
-    allantoolkit.allantools.adev,
-    allantoolkit.allantools.oadev,
-    allantoolkit.allantools.mdev,
-    allantoolkit.allantools.tdev,
-    allantoolkit.allantools.hdev,
-    allantoolkit.allantools.ohdev,
-    allantoolkit.allantools.totdev,
+    allantoolkit.devs.adev,
+    allantoolkit.devs.oadev,
+    allantoolkit.devs.mdev,
+    allantoolkit.devs.tdev,
+    allantoolkit.devs.hdev,
+    allantoolkit.devs.ohdev,
+    allantoolkit.devs.totdev,
 ]
 
 

@@ -225,8 +225,8 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tables</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">noiseid</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">allantools</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">noise_id</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">devs</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
@@ -848,13 +848,13 @@
 <span class="sd">        estimated errors, number of samples used to calculate each deviaiton.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">out_ab</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
+    <span class="n">out_ab</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">devs</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
         <span class="n">data</span><span class="o">=</span><span class="n">x_ab</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
 
-    <span class="n">out_bc</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
+    <span class="n">out_bc</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">devs</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
         <span class="n">data</span><span class="o">=</span><span class="n">x_bc</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
 
-    <span class="n">out_ca</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">allantools</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
+    <span class="n">out_ca</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">devs</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)(</span>
         <span class="n">data</span><span class="o">=</span><span class="n">x_ca</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">)</span>
 
     <span class="n">var_ab</span> <span class="o">=</span> <span class="n">out_ab</span><span class="o">.</span><span class="n">devs</span><span class="o">**</span><span class="mi">2</span>
@@ -1316,7 +1316,7 @@
 
             <span class="n">z</span> <span class="o">=</span> <span class="n">decimate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
 
-            <span class="n">r1</span> <span class="o">=</span> <span class="n">noiseid</span><span class="o">.</span><span class="n">acf</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">r1</span> <span class="o">=</span> <span class="n">noise_id</span><span class="o">.</span><span class="n">acf</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Autoregression&quot;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">r1</span><span class="p">)</span>

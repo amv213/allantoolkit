@@ -18,43 +18,43 @@ expected_reduced_2 = [1., 5., 17.]
 
 
 def test_tau_generator_empty():
-    out = allantoolkit.allantools.adev(d)
+    out = allantoolkit.devs.adev(d)
     np.testing.assert_allclose(out.taus, expected_octave)
 
 # TODO: Revisit what behaviour should be if passing an empty string
 @pytest.mark.skip
 def test_tau_generator_empty_list():
-    out = allantoolkit.allantools.adev(d, taus=[])
+    out = allantoolkit.devs.adev(d, taus=[])
     np.testing.assert_allclose(out.taus, expected_octave)
 
 
 def test_tau_generator_all():
-    out = allantoolkit.allantools.adev(d, rate=RATE, taus="all")
+    out = allantoolkit.devs.adev(d, rate=RATE, taus="all")
     np.testing.assert_allclose(out.taus, expected_all)
 
 
 def test_tau_generator_octave():
-    out = allantoolkit.allantools.adev(d, rate=RATE, taus="octave")
+    out = allantoolkit.devs.adev(d, rate=RATE, taus="octave")
     np.testing.assert_allclose(out.taus, expected_octave)
 
 
 def test_tau_generator_decade():
-    out = allantoolkit.allantools.adev(d, rate=RATE, taus="decade")
+    out = allantoolkit.devs.adev(d, rate=RATE, taus="decade")
     np.testing.assert_allclose(out.taus, expected_decade)
 
 
 def test_tau_generator_1234():
     wanted_taus = [1, 2, 3, 4]
-    out = allantoolkit.allantools.adev(d, rate=RATE, taus=wanted_taus)
+    out = allantoolkit.devs.adev(d, rate=RATE, taus=wanted_taus)
     np.testing.assert_allclose(out.taus, wanted_taus)
 
 
 def test_tau_generator_numpy1234():
     wanted_taus = np.array([1, 2, 3, 4])
-    out = allantoolkit.allantools.adev(d, rate=RATE, taus=wanted_taus)
+    out = allantoolkit.devs.adev(d, rate=RATE, taus=wanted_taus)
     np.testing.assert_allclose(out.taus, wanted_taus)
 
 
 def test_zero_rate():
     with pytest.raises(ZeroDivisionError):
-        allantoolkit.allantools.adev(d, rate=0.0)
+        allantoolkit.devs.adev(d, rate=0.0)

@@ -34,7 +34,7 @@ Github repo to check out the original project and to drop a star! 🌟
     ```
    
 2. 🐍 Test your installation running the following minimal script:
-    
+
    ```python
    import allantoolkit
     
@@ -43,7 +43,7 @@ Github repo to check out the original project and to drop a star! 🌟
    r = 1. # data sampling rate, in Hz
    
    # Compute overlappig Allan deviation
-   out = allantoolkit.allantools.oadev(y, rate=r, data_type='freq')
+   out = allantoolkit.devs.oadev(y, rate=r, data_type='freq')
    
    # Display analysis results
    print(out)

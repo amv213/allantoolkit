@@ -56,12 +56,12 @@ nbs14_10_ref = {
 
 
 fcts10 = [
-    allantoolkit.allantools.adev,
-    allantoolkit.allantools.oadev,
-    allantoolkit.allantools.mdev,
-    allantoolkit.allantools.totdev,
-    allantoolkit.allantools.hdev,
-    allantoolkit.allantools.tdev,
+    allantoolkit.devs.adev,
+    allantoolkit.devs.oadev,
+    allantoolkit.devs.mdev,
+    allantoolkit.devs.totdev,
+    allantoolkit.devs.hdev,
+    allantoolkit.devs.tdev,
 ]
 
 
@@ -113,16 +113,16 @@ nbs14_1000_ref = {
 }
 
 fcts1000 = [
-    allantoolkit.allantools.adev,
-    allantoolkit.allantools.oadev,
-    allantoolkit.allantools.mdev,
-    allantoolkit.allantools.tdev,
-    allantoolkit.allantools.hdev,
-    allantoolkit.allantools.ohdev,
-    allantoolkit.allantools.totdev,
-    pytest.param(allantoolkit.allantools.mtotdev,  marks=pytest.mark.slow),
-    pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
-    pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
+    allantoolkit.devs.adev,
+    allantoolkit.devs.oadev,
+    allantoolkit.devs.mdev,
+    allantoolkit.devs.tdev,
+    allantoolkit.devs.hdev,
+    allantoolkit.devs.ohdev,
+    allantoolkit.devs.totdev,
+    pytest.param(allantoolkit.devs.mtotdev, marks=pytest.mark.slow),
+    pytest.param(allantoolkit.devs.ttotdev, marks=pytest.mark.slow),
+    pytest.param(allantoolkit.devs.htotdev, marks=pytest.mark.slow),
 ]
 
 

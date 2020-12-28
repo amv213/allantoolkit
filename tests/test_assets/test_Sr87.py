@@ -96,17 +96,17 @@ tau_types = [
 ]
 
 fcts = [
-    allantoolkit.allantools.adev,
-    allantoolkit.allantools.oadev,
-    allantoolkit.allantools.mdev,
-    allantoolkit.allantools.tdev,
-    allantoolkit.allantools.hdev,
-    allantoolkit.allantools.ohdev,
-    allantoolkit.allantools.totdev,
+    allantoolkit.devs.adev,
+    allantoolkit.devs.oadev,
+    allantoolkit.devs.mdev,
+    allantoolkit.devs.tdev,
+    allantoolkit.devs.hdev,
+    allantoolkit.devs.ohdev,
+    allantoolkit.devs.totdev,
     # pytest.param(allantoolkit.allantools.mtotdev,  marks=pytest.mark.slow),
     # pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
     # pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
-    allantoolkit.allantools.theo1,
+    allantoolkit.devs.theo1,
     #allantoolkit.allantools.mtie,  # FIXME: fails if CPU under load
     #allantoolkit.allantools.tierms, # FIXME: fails if CPU under load
 ]

@@ -3,19 +3,19 @@ import tempfile
 import pytest
 
 fcts = [
-    allantoolkit.allantools.adev,
-    allantoolkit.allantools.oadev,
-    allantoolkit.allantools.mdev,
-    allantoolkit.allantools.tdev,
-    allantoolkit.allantools.hdev,
-    allantoolkit.allantools.ohdev,
-    allantoolkit.allantools.totdev,
-    allantoolkit.allantools.mtotdev,
-    allantoolkit.allantools.ttotdev,
-    allantoolkit.allantools.htotdev,
-    allantoolkit.allantools.theo1,
-    allantoolkit.allantools.tierms,
-    allantoolkit.allantools.mtie,
+    allantoolkit.devs.adev,
+    allantoolkit.devs.oadev,
+    allantoolkit.devs.mdev,
+    allantoolkit.devs.tdev,
+    allantoolkit.devs.hdev,
+    allantoolkit.devs.ohdev,
+    allantoolkit.devs.totdev,
+    allantoolkit.devs.mtotdev,
+    allantoolkit.devs.ttotdev,
+    allantoolkit.devs.htotdev,
+    allantoolkit.devs.theo1,
+    allantoolkit.devs.tierms,
+    allantoolkit.devs.mtie,
 ]
 
 

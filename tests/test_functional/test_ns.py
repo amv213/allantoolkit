@@ -16,15 +16,15 @@ Y = allantoolkit.noise.white(N)
 TAUS = [x for x in numpy.logspace(0, 4, 4000)]
 
 funcs = [
-    allantoolkit.allantools.adev,
-    allantoolkit.allantools.oadev,
-    allantoolkit.allantools.mdev,
-    allantoolkit.allantools.tdev,
-    allantoolkit.allantools.hdev,
-    allantoolkit.allantools.ohdev,
-    allantoolkit.allantools.totdev,
-    allantoolkit.allantools.mtie,
-    allantoolkit.allantools.tierms,
+    allantoolkit.devs.adev,
+    allantoolkit.devs.oadev,
+    allantoolkit.devs.mdev,
+    allantoolkit.devs.tdev,
+    allantoolkit.devs.hdev,
+    allantoolkit.devs.ohdev,
+    allantoolkit.devs.totdev,
+    allantoolkit.devs.mtie,
+    allantoolkit.devs.tierms,
 ]
 
 

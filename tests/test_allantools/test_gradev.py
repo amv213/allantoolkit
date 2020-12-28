@@ -1,4 +1,4 @@
-import allantoolkit.allantools as at
+import allantoolkit.devs as at
 import numpy as np
 import os.path
 import pytest

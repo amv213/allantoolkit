@@ -14,7 +14,7 @@
   AW2014-02-07
 """
 
-import allantoolkit.allantools as allan
+import allantoolkit.devs as allan
 import allantoolkit.testutils as testutils
 
 import time

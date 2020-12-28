@@ -4,8 +4,8 @@ import logging
 import warnings
 import numpy as np
 from . import tables
-from . import noiseid
-from . import allantools
+from . import noise_id
+from . import devs
 from scipy import signal
 from pathlib import Path
 from typing import List, Tuple, NamedTuple, Union, Callable
@@ -627,13 +627,13 @@ def three_cornered_hat_phase(x_ab: Array, x_bc: Array, x_ca: Array,
         estimated errors, number of samples used to calculate each deviaiton.
     """
 
-    out_ab = getattr(allantools, dev_type)(
+    out_ab = getattr(devs, dev_type)(
         data=x_ab, data_type='phase', rate=rate, taus=taus)
 
-    out_bc = getattr(allantools, dev_type)(
+    out_bc = getattr(devs, dev_type)(
         data=x_bc, data_type='phase', rate=rate, taus=taus)
 
-    out_ca = getattr(allantools, dev_type)(
+    out_ca = getattr(devs, dev_type)(
         data=x_ca, data_type='phase', rate=rate, taus=taus)
 
     var_ab = out_ab.devs**2
@@ -1095,7 +1095,7 @@ def drift(data: Array, rate: float, data_type: str, type: str = None,
 
             z = decimate(data=data, data_type=data_type, m=m)
 
-            r1 = noiseid.acf(z=z, k=1)
+            r1 = noise_id.acf(z=z, k=1)
 
             logger.info("\nAutoregression")
             logger.info("%.3f", r1)

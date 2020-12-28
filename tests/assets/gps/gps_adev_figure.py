@@ -1,4 +1,4 @@
-import allantoolkit.allantools as allan
+import allantoolkit.devs as allan
 import allantoolkit.testutils as testutils
 import numpy
 import matplotlib.pyplot as plt

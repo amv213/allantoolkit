@@ -10,8 +10,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from . import utils
-from . import allantools
-from . import noiseid
+from . import devs
+from . import noise_id
 from . import tables
 from pathlib import Path
 from typing import Union
@@ -19,8 +19,8 @@ from scipy.optimize import curve_fit
 from scipy import signal
 
 # shorten type hint to save some space
-Array = allantools.Array
-Taus = allantools.Taus
+Array = devs.Array
+Taus = devs.Taus
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -269,7 +269,7 @@ class Dataset:
         median = np.nanmedian(self.data)
         std = np.nanstd(self.data)
         var = np.nanvar(self.data)
-        p = noiseid.acf_noise_id_core(z=self.data, dmax=2)
+        p = noise_id.acf_noise_id_core(z=self.data, dmax=2)
         alpha = p + 2 if self.data_type == 'phase' else p
         noise = tables.ALPHA_TO_NAMES.get(alpha)
 
@@ -385,7 +385,7 @@ class Dataset:
 
         # Dispatch to correct deviation calculator
         try:
-            func = getattr(allantools, dev_type)
+            func = getattr(devs, dev_type)
 
         except AttributeError:
             raise ValueError(f"{dev_type} is not implemented in Allantoolkit.")

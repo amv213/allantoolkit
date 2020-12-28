@@ -13,10 +13,18 @@ Module contents
 Submodules
 ----------
 
-allantoolkit.allantools
+allantoolkit.api
 ------------------------------
 
-.. automodule:: allantoolkit.allantools
+.. automodule:: allantoolkit.api
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+allantoolkit.bias
+----------------------
+
+.. automodule:: allantoolkit.bias
    :members:
    :undoc-members:
    :show-inheritance:
@@ -29,10 +37,10 @@ allantoolkit.ci
    :undoc-members:
    :show-inheritance:
 
-allantoolkit.dataset
+allantoolkit.devs
 ---------------------------
 
-.. automodule:: allantoolkit.dataset
+.. automodule:: allantoolkit.devs
    :members:
    :undoc-members:
    :show-inheritance:
@@ -41,6 +49,14 @@ allantoolkit.noise
 -------------------------
 
 .. automodule:: allantoolkit.noise
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+allantoolkit.noise\_id
+---------------------------------
+
+.. automodule:: allantoolkit.noise_id
    :members:
    :undoc-members:
    :show-inheritance:

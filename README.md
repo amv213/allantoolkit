@@ -1,6 +1,6 @@
 # 📑 Welcome to Allantoolkit!
 
-Allantoolkit is a fork of **Anders E.E. Wallin's** [AllanTools](https://github.com/aewallin/allantools): apython library for calculating Allan deviation 
+Allantoolkit is a fork of **Anders E.E. Wallin's** [AllanTools](https://github.com/aewallin/allantools): a python library for calculating Allan deviation 
 and related time & frequency statistics. Don't hesitate to head over to his 
 Github repo to check out the original project and to drop a star! 🌟
 

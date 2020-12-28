@@ -73,11 +73,15 @@ html_theme_options = {
 }
 
 html_sidebars = {
-    "**": ["sidebar-search-bs.html", "sbt-sidebar-nav.html"]
+    "**": ["sidebar-search-bs.html",
+           "sbt-sidebar-nav.html",
+           "sbt-sidebar-footer.html"]
 }
+extra_navbar = '<div>Icons made by <a href="https://www.flaticon.com/authors/eucalyp" title="Eucalyp">Eucalyp</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>'
+
 
 html_title = "AllanToolkit Documentation"
-# html_logo = "../imgs/logo_single.png"
+html_logo = "_static/logo.png"
 # html_favicon = "../imgs/favico.png"
 show_navbar_depth = 2
 
@@ -85,3 +89,4 @@ show_navbar_depth = 2
 # cd docs/
 # sphinx-apidoc -o source/ ../ "../setup.py"
 # sphinx-build -b html source build/html
+

@@ -310,7 +310,7 @@
 
 <span class="sd">    .. seealso::</span>
 <span class="sd">        Class :class:`allantoolkit.devs.DevResult` for more information on</span>
-<span class="sd">        the output `DevResult` NamedTuple.</span>
+<span class="sd">        the output ``DevResult`` NamedTuple.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Easier to work with phase data, in units of seconds</span>
@@ -585,48 +585,37 @@
 
 <div class="viewcode-block" id="tdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.tdev">[docs]</a><span class="k">def</span> <span class="nf">tdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
          <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Time deviation.</span>
-<span class="sd">        Based on modified Allan variance.</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the Time Allan deviation (TDEV) of phase or fractional</span>
+<span class="sd">    frequency data.</span>
+
+<span class="sd">    .. hint::</span>
+
+<span class="sd">        Based on modified Allan variance. Use the Time Allan deviation to</span>
+<span class="sd">        characterise the time error of a time source (clock) or distribution</span>
+<span class="sd">        system.</span>
+
+<span class="sd">    The Time Allan deviation is the square root of the Time Allan</span>
+<span class="sd">    variance (TVAR). The Time Allan variance is a measure of stability based on</span>
+<span class="sd">    the modified Allan variance, and is eual to the standard variance of the</span>
+<span class="sd">    time deviations for white PM noise.</span>
+
+<span class="sd">    The Time Allan variance is defined as:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \\sigma^2_{TDEV}( \\tau ) = { \\tau^2 \\over 3 }</span>
-<span class="sd">        \\sigma^2_{MDEV}( \\tau )</span>
+<span class="sd">        \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {MVAR(\\tau)}</span>
 
-<span class="sd">    Note that TDEV has a unit of seconds.</span>
+<span class="sd">    where :math:`MVAR(\\tau)` is the modified Allan variance of the data at</span>
+<span class="sd">    averaging time :math:`\\tau`.</span>
 
-<span class="sd">    NIST [SP1065]_ eqn (15), page 18.</span>
+<span class="sd">    Note that the Time Allan variance has units of seconds, and not fractional</span>
+<span class="sd">    frequency.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data: np.array</span>
-<span class="sd">        Input data. Provide either phase or frequency (fractional,</span>
-<span class="sd">        adimensional).</span>
-<span class="sd">    rate: float</span>
-<span class="sd">        The sampling rate for data, in Hz. Defaults to 1.0</span>
-<span class="sd">    data_type: {&#39;phase&#39;, &#39;freq&#39;}</span>
-<span class="sd">        Data type, i.e. phase or frequency. Defaults to &quot;phase&quot;.</span>
-<span class="sd">    taus: np.array</span>
-<span class="sd">        Array of tau values, in seconds, for which to compute statistic.</span>
-<span class="sd">        Optionally set taus=[&quot;all&quot;|&quot;octave&quot;|&quot;decade&quot;] for automatic</span>
-<span class="sd">        tau-list generation.</span>
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    (taus, tdev, tdev_error, ns): tuple</span>
-<span class="sd">          Tuple of values</span>
-<span class="sd">    taus: np.array</span>
-<span class="sd">        Tau values for which td computed</span>
-<span class="sd">    tdev: np.array</span>
-<span class="sd">        Computed time deviations (in seconds) for each tau value</span>
-<span class="sd">    tdev_errors: np.array</span>
-<span class="sd">        Time deviation errors</span>
-<span class="sd">    ns: np.array</span>
-<span class="sd">        Values of N used in mdev_phase()</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    http://en.wikipedia.org/wiki/Time_deviation</span>
+<span class="sd">    References:</span>
+<span class="sd">       [RileyStable32]_ (5.2.6. Time Variance, pg.23-4)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;tdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>

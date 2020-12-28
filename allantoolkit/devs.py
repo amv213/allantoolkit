@@ -99,7 +99,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
     .. seealso::
         Class :class:`allantoolkit.devs.DevResult` for more information on
-        the output `DevResult` NamedTuple.
+        the output ``DevResult`` NamedTuple.
     """
 
     # Easier to work with phase data, in units of seconds
@@ -374,48 +374,37 @@ def mdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 def tdev(data: Array, rate: float = 1., data_type: str = "phase",
          taus: Taus = None, max_af: int = None) -> DevResult:
-    """ Time deviation.
-        Based on modified Allan variance.
+    """Calculates the Time Allan deviation (TDEV) of phase or fractional
+    frequency data.
+
+    .. hint::
+
+        Based on modified Allan variance. Use the Time Allan deviation to
+        characterise the time error of a time source (clock) or distribution
+        system.
+
+    The Time Allan deviation is the square root of the Time Allan
+    variance (TVAR). The Time Allan variance is a measure of stability based on
+    the modified Allan variance, and is eual to the standard variance of the
+    time deviations for white PM noise.
+
+    The Time Allan variance is defined as:
 
     .. math::
 
-        \\sigma^2_{TDEV}( \\tau ) = { \\tau^2 \\over 3 }
-        \\sigma^2_{MDEV}( \\tau )
+        \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {MVAR(\\tau)}
 
-    Note that TDEV has a unit of seconds.
+    where :math:`MVAR(\\tau)` is the modified Allan variance of the data at
+    averaging time :math:`\\tau`.
 
-    NIST [SP1065]_ eqn (15), page 18.
+    Note that the Time Allan variance has units of seconds, and not fractional
+    frequency.
 
-    Parameters
-    ----------
-    data: np.array
-        Input data. Provide either phase or frequency (fractional,
-        adimensional).
-    rate: float
-        The sampling rate for data, in Hz. Defaults to 1.0
-    data_type: {'phase', 'freq'}
-        Data type, i.e. phase or frequency. Defaults to "phase".
-    taus: np.array
-        Array of tau values, in seconds, for which to compute statistic.
-        Optionally set taus=["all"|"octave"|"decade"] for automatic
-        tau-list generation.
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
 
-    Returns
-    -------
-    (taus, tdev, tdev_error, ns): tuple
-          Tuple of values
-    taus: np.array
-        Tau values for which td computed
-    tdev: np.array
-        Computed time deviations (in seconds) for each tau value
-    tdev_errors: np.array
-        Time deviation errors
-    ns: np.array
-        Values of N used in mdev_phase()
-
-    Notes
-    -----
-    http://en.wikipedia.org/wiki/Time_deviation
+    References:
+       [RileyStable32]_ (5.2.6. Time Variance, pg.23-4)
     """
     return dev(dev_type='tdev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)

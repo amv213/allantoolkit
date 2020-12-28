@@ -392,9 +392,9 @@ def tdev(data: Array, rate: float = 1., data_type: str = "phase",
 
     .. math::
 
-        \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {MVAR(\\tau)}
+        \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {\\textrm{MVAR}(\\tau)}
 
-    where :math:`MVAR(\\tau)` is the modified Allan variance of the data at
+    where :math:`\\textrm{MVAR}(\\tau)` is the modified Allan variance of the data at
     averaging time :math:`\\tau`.
 
     Note that the Time Allan variance has units of seconds, and not fractional
@@ -406,6 +406,7 @@ def tdev(data: Array, rate: float = 1., data_type: str = "phase",
     References:
        [RileyStable32]_ (5.2.6. Time Variance, pg.23-4)
     """
+
     return dev(dev_type='tdev', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 

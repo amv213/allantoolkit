@@ -603,9 +603,9 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {MVAR(\\tau)}</span>
+<span class="sd">        \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {\\textrm{MVAR}(\\tau)}</span>
 
-<span class="sd">    where :math:`MVAR(\\tau)` is the modified Allan variance of the data at</span>
+<span class="sd">    where :math:`\\textrm{MVAR}(\\tau)` is the modified Allan variance of the data at</span>
 <span class="sd">    averaging time :math:`\\tau`.</span>
 
 <span class="sd">    Note that the Time Allan variance has units of seconds, and not fractional</span>
@@ -617,6 +617,7 @@
 <span class="sd">    References:</span>
 <span class="sd">       [RileyStable32]_ (5.2.6. Time Variance, pg.23-4)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;tdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 

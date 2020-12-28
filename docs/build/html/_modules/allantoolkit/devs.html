@@ -596,7 +596,7 @@
 
 <span class="sd">    The Time Allan deviation is the square root of the Time Allan</span>
 <span class="sd">    variance (TVAR). The Time Allan variance is a measure of stability based on</span>
-<span class="sd">    the modified Allan variance, and is eual to the standard variance of the</span>
+<span class="sd">    the modified Allan variance, and is equal to the standard variance of the</span>
 <span class="sd">    time deviations for white PM noise.</span>
 
 <span class="sd">    The Time Allan variance is defined as:</span>
@@ -605,8 +605,8 @@
 
 <span class="sd">        \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {\\textrm{MVAR}(\\tau)}</span>
 
-<span class="sd">    where :math:`\\textrm{MVAR}(\\tau)` is the modified Allan variance of the data at</span>
-<span class="sd">    averaging time :math:`\\tau`.</span>
+<span class="sd">    where :math:`\\textrm{MVAR}(\\tau)` is the modified Allan variance of the</span>
+<span class="sd">    data at averaging time :math:`\\tau`.</span>
 
 <span class="sd">    Note that the Time Allan variance has units of seconds, and not fractional</span>
 <span class="sd">    frequency.</span>
@@ -820,11 +820,33 @@
 
 <div class="viewcode-block" id="ttotdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.devs.ttotdev">[docs]</a><span class="k">def</span> <span class="nf">ttotdev</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span>
             <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DevResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Time Total Deviation</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the time total deviation (TTOTDEV) of phase or fractional</span>
+<span class="sd">    frequency data.</span>
 
-<span class="sd">        Modified total variance scaled by tau^2 / 3</span>
+<span class="sd">    .. hint::</span>
 
-<span class="sd">        NIST [SP1065]_ eqn (28) page 26.  Note that [SP1065]_ erroneously has tau-cubed here (!).</span>
+<span class="sd">        Better confidence at long averaging times. The time total deviation</span>
+<span class="sd">        is a measure of time stability based on the modified total deviation.</span>
+
+<span class="sd">    The time total deviation is the square root of the time total variance</span>
+<span class="sd">    (TTOTVAR). The time total variance is a measure of stability based on</span>
+<span class="sd">    the modified total variance, and is defined as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {\\textrm{MTOTVAR}(\\tau)}</span>
+
+<span class="sd">    where :math:`\\textrm{MTOTVAR}(\\tau)` is the modified total variance of</span>
+<span class="sd">    the data at averaging time :math:`\\tau`.</span>
+
+<span class="sd">    Note that the modified total variance has units of seconds, and not</span>
+<span class="sd">    fractional frequency.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.dev` for detailed usage.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">       [RileyStable32]_ (5.2.13. Time Total Variance, pg.33)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;ttotdev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>

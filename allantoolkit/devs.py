@@ -385,7 +385,7 @@ def tdev(data: Array, rate: float = 1., data_type: str = "phase",
 
     The Time Allan deviation is the square root of the Time Allan
     variance (TVAR). The Time Allan variance is a measure of stability based on
-    the modified Allan variance, and is eual to the standard variance of the
+    the modified Allan variance, and is equal to the standard variance of the
     time deviations for white PM noise.
 
     The Time Allan variance is defined as:
@@ -394,8 +394,8 @@ def tdev(data: Array, rate: float = 1., data_type: str = "phase",
 
         \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {\\textrm{MVAR}(\\tau)}
 
-    where :math:`\\textrm{MVAR}(\\tau)` is the modified Allan variance of the data at
-    averaging time :math:`\\tau`.
+    where :math:`\\textrm{MVAR}(\\tau)` is the modified Allan variance of the
+    data at averaging time :math:`\\tau`.
 
     Note that the Time Allan variance has units of seconds, and not fractional
     frequency.
@@ -609,11 +609,33 @@ def mtotdev(data: Array, rate: float = 1., data_type: str = "phase",
 
 def ttotdev(data: Array, rate: float = 1., data_type: str = "phase",
             taus: Taus = None, max_af: int = None) -> DevResult:
-    """ Time Total Deviation
+    """Calculates the time total deviation (TTOTDEV) of phase or fractional
+    frequency data.
 
-        Modified total variance scaled by tau^2 / 3
+    .. hint::
 
-        NIST [SP1065]_ eqn (28) page 26.  Note that [SP1065]_ erroneously has tau-cubed here (!).
+        Better confidence at long averaging times. The time total deviation
+        is a measure of time stability based on the modified total deviation.
+
+    The time total deviation is the square root of the time total variance
+    (TTOTVAR). The time total variance is a measure of stability based on
+    the modified total variance, and is defined as:
+
+    .. math::
+
+        \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {\\textrm{MTOTVAR}(\\tau)}
+
+    where :math:`\\textrm{MTOTVAR}(\\tau)` is the modified total variance of
+    the data at averaging time :math:`\\tau`.
+
+    Note that the modified total variance has units of seconds, and not
+    fractional frequency.
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.dev` for detailed usage.
+
+    References:
+       [RileyStable32]_ (5.2.13. Time Total Variance, pg.33)
     """
 
     return dev(dev_type='ttotdev', data=data, rate=rate, data_type=data_type,

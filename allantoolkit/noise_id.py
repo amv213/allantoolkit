@@ -363,6 +363,7 @@ def noise_id(data: Array, data_type: str, m: int, rate: float,
                'mtotdev', 'ttotdev', 'htotdev', 'theoh']
     use_b1 = ['adev', 'oadev', 'mdev', 'tdev', 'hdev', 'ohdev', 'totdev',
                'mtotdev', 'ttotdev', 'htotdev', 'theoh']  # hdev?
+    use_b1_star = ['hdev']  # TODO: any others?
     use_rn = ['mdev', 'tdev', 'mtotdev', 'ttotdev', 'htotdev',
               'theoh']
 
@@ -381,8 +382,7 @@ def noise_id(data: Array, data_type: str, m: int, rate: float,
         return acf_noise_id(data=data, data_type=data_type, m=m,
                             dev_type=dev_type)
 
-    # Estimate alpha when there are less than 30 analysis datapoints (
-    # acf_noise_1d throws this warning when it is the case)
+    # Estimate alpha when there are less than 30 analysis datapoints
     elif dev_type in use_b1:
 
         # print(f"AF: {m} | TAU: {m/rate} - Using B1 noise id")
@@ -418,11 +418,13 @@ def noise_id(data: Array, data_type: str, m: int, rate: float,
             alpha = rn_noise_id(measured=rn, m=m)
             return alpha
 
-        # FIXME: this is wrong, should be mu == 2, and then y=y
         # For the Hadamard variance, for which RRFM noise can apply (mu=3,
         # alpha=-4) the B1 ratio can be applied to frequency (rather than
         # phase) data, and adding 2 to the resulting mu
-        elif m == 2:  # find if alpha = -3 or -4
+        # FIXME: implement this correctly and then remove the False
+        #  statement to make it run
+        elif False and mu == 2 and dev_type in use_b1_star:  # find if alpha =
+            # -3 or -4
 
             # print("Using *B1 ratio")
 
@@ -430,7 +432,7 @@ def noise_id(data: Array, data_type: str, m: int, rate: float,
             y = data if data_type == 'freq' else utils.phase2frequency(x=data,
                                                                        rate=rate)
             svar, _ = stats.calc_svar_freq(y=y, m=m, rate=rate)
-            avar, _ = stats.calc_avar_freq(y=x, m=m, rate=rate)
+            avar, _ = stats.calc_avar_freq(y=y, m=m, rate=rate)
             b1star = svar / avar
 
             # B1 noise_id

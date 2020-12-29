@@ -619,8 +619,9 @@ def calc_mtotvar(x: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
 
     References:
         [Howe1999]_
@@ -707,12 +708,23 @@ def calc_mtotvar(x: Array, m: int, rate: float) -> VarResult:
 
 
 def calc_ttotvar(x: Array, m: int, rate: float) -> VarResult:
-    """Main algorithm for TTOTVAR calculation.
+    """Calculates the time total variance (TTOTVAR) of phase data at
+    given averaging factor.
 
-    PRELIMINARY - REQUIRES FURTHER TESTING.
+    The time total variance is calculated as:
 
-    References:
-        [RileyStable32]_ (5.2.13, pg.31)
+    .. math::
+
+        \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {\\textrm{MTOTVAR}(\\tau)}
+
+    where :math:`\\textrm{MTOTVAR}(\\tau)` is the modified total variance of
+    the data at averaging time :math:`\\tau`.
+
+    Note that the time total variance has units of seconds, and not
+    fractional frequency.
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.ttotdev` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -720,8 +732,12 @@ def calc_ttotvar(x: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        TODO: find exact reference
     """
 
     mtotvar, n = calc_mtotvar(x=x, m=m, rate=rate)

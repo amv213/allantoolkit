@@ -830,8 +830,9 @@
 <span class="sd">        rate:   sampling rate of the input data, in Hz.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
-<span class="sd">        number of samples used to estimate it.</span>
+<span class="sd">        :class:`allantoolkit.stats.VarResult` NamedTuple of</span>
+<span class="sd">        computed variance at given averaging time, and number of samples</span>
+<span class="sd">        used to estimate it.</span>
 
 <span class="sd">    References:</span>
 <span class="sd">        [Howe1999]_</span>
@@ -918,12 +919,23 @@
 
 
 <div class="viewcode-block" id="calc_ttotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_ttotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_ttotvar</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Main algorithm for TTOTVAR calculation.</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the time total variance (TTOTVAR) of phase data at</span>
+<span class="sd">    given averaging factor.</span>
 
-<span class="sd">    PRELIMINARY - REQUIRES FURTHER TESTING.</span>
+<span class="sd">    The time total variance is calculated as:</span>
 
-<span class="sd">    References:</span>
-<span class="sd">        [RileyStable32]_ (5.2.13, pg.31)</span>
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {\\textrm{MTOTVAR}(\\tau)}</span>
+
+<span class="sd">    where :math:`\\textrm{MTOTVAR}(\\tau)` is the modified total variance of</span>
+<span class="sd">    the data at averaging time :math:`\\tau`.</span>
+
+<span class="sd">    Note that the time total variance has units of seconds, and not</span>
+<span class="sd">    fractional frequency.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.ttotdev` for background details.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        x:      input phase data, in units of seconds.</span>
@@ -931,8 +943,12 @@
 <span class="sd">        rate:   sampling rate of the input data, in Hz.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
-<span class="sd">        number of samples used to estimate it.</span>
+<span class="sd">        :class:`allantoolkit.stats.VarResult` NamedTuple of</span>
+<span class="sd">        computed variance at given averaging time, and number of samples</span>
+<span class="sd">        used to estimate it.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        TODO: find exact reference</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">mtotvar</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">calc_mtotvar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>

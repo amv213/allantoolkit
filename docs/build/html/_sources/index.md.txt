@@ -49,7 +49,8 @@ Github repo to check out the original project and to drop a star! 🌟
    >print(out)
    >```
 
-3. 🎉 If everything went well you are now all set-up to use `allantoolit`! Enjoy!
+3. 🎉 If everything went well you are now all set-up to use `allantoolkit`! 
+   Enjoy!
 
 ## 📚 Table of Contents
 
@@ -70,7 +71,7 @@ Development <dev.rst>
 First Steps <tutorial_intro.md>
 ```
 
-## ✏ Authors
+## 📝 Authors
 
 * Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com , https://github.com/aewallin
 * Danny Price, https://github.com/telegraphic

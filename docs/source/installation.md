@@ -11,3 +11,20 @@ These commands should be run as root for system-wide installation, or
 you can use the `--user` option to install for your account only. Exact 
 command names may vary depending on your OS / package manager / target python 
 version.
+
+
+You can then test your installation running the following minimal script:
+
+```python
+import allantoolkit
+
+# Generate some frequency data
+y = allantoolkit.noise.white(10000)
+r = 1. # data sampling rate, in Hz
+
+# Compute overlappig Allan deviation
+out = allantoolkit.devs.oadev(y, rate=r, data_type='freq')
+
+# Display analysis results
+print(out)
+```

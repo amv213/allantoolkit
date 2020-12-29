@@ -18,7 +18,7 @@ The sphinx documentation is also auto-generated online
 
 ## Tests
 
-The tests compare the output of allantools to other programs such
+The tests compare the output of `allantoolkit` to other programs such
 as Stable32. Tests may be run using py.test (http://pytest.org). 
 Package managers may install it with different binary names (e.g. pytest-3 
 for the python3 version on debian).

@@ -1,11 +1,11 @@
-# Basic usage
+# 🎈 Basic usage
 
 As a general rule of thumb, `allantoolkit` expects the user to provide input 
 data either as evenly spaced phase measurements - in units of second - or 
 as fractional frequency measurements. Deviations are then calculated by 
 `allantoolkit` in seconds, over a requested range of averaging times.
 
-## Minimal Examples
+## 🧩 Minimal Examples
 
 ### Phase data
 

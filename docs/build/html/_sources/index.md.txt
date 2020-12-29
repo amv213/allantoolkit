@@ -4,7 +4,9 @@ Allantoolkit is a fork of **Anders E.E. Wallin's** [AllanTools](https://githubco
 and related time & frequency statistics. Don't hesitate to head over to his 
 Github repo to check out the original project and to drop a star! 🌟
 
-```{dropdown} ## 🔥 Changelog
+```{dropdown}
+:title: ## 🔥 Changelog
+:animate: fade-in-slide-down
 - new low-level API (based on NamedTuple)
 - fully featured object-oriented high-level API
 - Auto noise ID for all deviation types (Lag1 ACF, B1, R(n))

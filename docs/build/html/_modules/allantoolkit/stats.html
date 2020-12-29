@@ -735,7 +735,7 @@
 
 <span class="sd">    .. caution::</span>
 <span class="sd">        This algorithm is slow. Try to limit the input data size.</span>
-<span class="sd">        </span>
+
 <span class="sd">    The total variance is calculated from a set of :math:`N` phase</span>
 <span class="sd">    measurements for averaging time :math:`\\tau = m\\tau_0`, where</span>
 <span class="sd">    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic</span>
@@ -1524,59 +1524,6 @@
     <span class="n">var</span> <span class="o">=</span> <span class="mi">1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">summand</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span></div>
-
-
-<span class="c1"># FIXME: integrate this in normal adev i.e. make all stats gap resistant</span>
-<div class="viewcode-block" id="calc_gradev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_gradev">[docs]</a><span class="k">def</span> <span class="nf">calc_gradev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">confidence</span><span class="p">,</span> <span class="n">noisetype</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; see http://www.leapsecond.com/tools/adev_lib.c</span>
-<span class="sd">        stride = mj for nonoverlapping allan deviation</span>
-<span class="sd">        stride = 1 for overlapping allan deviation</span>
-
-<span class="sd">        [Wikipedia]_</span>
-<span class="sd">        see http://en.wikipedia.org/wiki/Allan_variance</span>
-
-<span class="sd">    .. math::</span>
-
-<span class="sd">        \\sigma^2_{y}(t) = { 1 \\over ( 2 \\tau^2 } sum [x(i+2) - 2x(i+1) + x(i) ]^2</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">d2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj</span><span class="p">)::</span><span class="nb">int</span><span class="p">(</span><span class="n">stride</span><span class="p">)]</span>
-    <span class="n">d1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj</span><span class="p">)::</span><span class="nb">int</span><span class="p">(</span><span class="n">stride</span><span class="p">)]</span>
-    <span class="n">d0</span> <span class="o">=</span> <span class="n">data</span><span class="p">[::</span><span class="nb">int</span><span class="p">(</span><span class="n">stride</span><span class="p">)]</span>
-
-    <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d0</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d2</span><span class="p">))</span>
-
-    <span class="n">v_arr</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">d1</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">d0</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
-
-    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">v_arr</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># only average for non-nans</span>
-
-    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="ne">RuntimeWarning</span><span class="p">(</span><span class="s2">&quot;Data array length is too small: </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
-
-    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-
-    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">v_arr</span> <span class="o">*</span> <span class="n">v_arr</span><span class="p">)</span>   <span class="c1">#  a summation robust to nans</span>
-
-    <span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">n</span><span class="p">))</span> <span class="o">/</span> <span class="n">mj</span>  <span class="o">*</span> <span class="n">rate</span>
-    <span class="c1">#deverr = dev / np.sqrt(n) # old simple errorbars</span>
-    <span class="k">if</span> <span class="n">noisetype</span> <span class="o">==</span> <span class="s1">&#39;wp&#39;</span><span class="p">:</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="k">elif</span> <span class="n">noisetype</span> <span class="o">==</span> <span class="s1">&#39;wf&#39;</span><span class="p">:</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">elif</span> <span class="n">noisetype</span> <span class="o">==</span> <span class="s1">&#39;fp&#39;</span><span class="p">:</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">edf</span> <span class="o">=</span> <span class="n">ci</span><span class="o">.</span><span class="n">edf_simple</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">mj</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
-        <span class="n">deverr</span> <span class="o">=</span> <span class="n">ci</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">confidence</span><span class="p">,</span> <span class="n">edf</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">deverr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">dev</span><span class="p">,</span> <span class="n">deverr</span><span class="p">,</span> <span class="n">n</span></div>
 </pre></div>
 
               </div>

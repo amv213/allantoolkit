@@ -524,7 +524,7 @@ def calc_totvar(x: Array, m: int, rate: float) -> VarResult:
 
     .. caution::
         This algorithm is slow. Try to limit the input data size.
-        
+
     The total variance is calculated from a set of :math:`N` phase
     measurements for averaging time :math:`\\tau = m\\tau_0`, where
     :math:`m` is the averaging factor and :math:`\\tau_0` is the basic
@@ -1313,56 +1313,3 @@ def calc_tierms(x: Array, m: int, rate: float = None) -> VarResult:
     var = 1*np.nanmean(summand**2)
 
     return VarResult(var=var, n=n)
-
-
-# FIXME: integrate this in normal adev i.e. make all stats gap resistant
-def calc_gradev(data, rate, mj, stride, confidence, noisetype):
-    """ see http://www.leapsecond.com/tools/adev_lib.c
-        stride = mj for nonoverlapping allan deviation
-        stride = 1 for overlapping allan deviation
-
-        [Wikipedia]_
-        see http://en.wikipedia.org/wiki/Allan_variance
-
-    .. math::
-
-        \\sigma^2_{y}(t) = { 1 \\over ( 2 \\tau^2 } sum [x(i+2) - 2x(i+1) + x(i) ]^2
-
-    """
-
-    d2 = data[2 * int(mj)::int(stride)]
-    d1 = data[1 * int(mj)::int(stride)]
-    d0 = data[::int(stride)]
-
-    n = min(len(d0), len(d1), len(d2))
-
-    v_arr = d2[:n] - 2 * d1[:n] + d0[:n]
-
-    n = len(np.where(np.isnan(v_arr) == False)[0]) # only average for non-nans
-
-    if n == 0:
-        RuntimeWarning("Data array length is too small: %i" % len(data))
-        n = 1
-
-    N = len(np.where(np.isnan(data) == False)[0])
-
-    s = np.nansum(v_arr * v_arr)   #  a summation robust to nans
-
-    dev = np.sqrt(s / (2.0 * n)) / mj  * rate
-    #deverr = dev / np.sqrt(n) # old simple errorbars
-    if noisetype == 'wp':
-        alpha = 2
-    elif noisetype == 'wf':
-        alpha = 0
-    elif noisetype == 'fp':
-        alpha = -2
-    else:
-        alpha = None
-
-    if n > 1:
-        edf = ci.edf_simple(N, mj, alpha)
-        deverr = ci.confidence_interval(dev, confidence, edf)
-    else:
-        deverr = [0, 0]
-
-    return dev, deverr, n

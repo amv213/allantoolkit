@@ -886,15 +886,30 @@ def calc_htotvar(x: Array, m: int, rate: float) -> VarResult:
 
 
 def calc_theo1_slow(x: Array, m: int, rate: float) -> VarResult:
-    """Older (naive) algorithm for THEO1 calculation.
+    """Calculates the Thêo1 variance (THEO1VAR) of phase data at
+    given averaging factor. The variance is calculated using a slow but
+    straightforward algorithm.
 
-    References:
-        Theo1: characterization of very long-term frequency stability
-        Howe,D.A. et al.
-        18th European Frequency and Time Forum (EFTF 2004)
-        2004
+    The Thêo1 variance is calculated from a set of :math:`N`
+    phase measurements for even averaging factor :math:`m` where
+    :math:`10 \\leq m \\leq N-1`, by the following expression:
 
-        [RileyStable32]_ (5.2.15, pg.37-8)
+    .. math::
+
+        \\sigma^{2}_y(\\tau^*) =
+        { 0.75 \\over \\tau^{*^2} (N-m) }
+        \\sum_{i=1}^{N-m} \\sum_{\\delta=0}^{m/2 - 1}
+        { 1 \\over m/2 - \\delta }
+        \\left[
+        \\left( x_i - x_{i-\\delta+m/2} \\right) +
+        \\left( x_{i+m} - x_{i+\\delta+m/2} \\right)
+        \\right]^2
+
+    which applies to an effective averaging time :math:`\\tau^* =
+    0.75m\\tau_0`, where :math:`\\tau_0` is the basic data sampling period.
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.theo1` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -902,8 +917,15 @@ def calc_theo1_slow(x: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        Theo1: characterization of very long-term frequency stability
+        Howe,D.A. et al.
+        18th European Frequency and Time Forum (EFTF 2004)
+        2004
     """
 
     if m % 2 != 0 or m < 10:  # m must be even and >= 10

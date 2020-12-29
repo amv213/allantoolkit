@@ -12,7 +12,10 @@ calculating Allan deviation and related time & frequency statistics.
 Don't hesitate to head over to the original Github repo to check out the 
 project and to drop a star! 🌟
 
-
+This fork was born in an effort to implement some key missing features: 
+automatic noise identification for all frequency stability analysis types, 
+bias correction for all biased frequency stability analysis types, and 
+calculation of confidence intervals based on {math}`\\Chi^2` statistics.
 
 ```{dropdown} 🔥 CHANGELOG
 :title: text-center

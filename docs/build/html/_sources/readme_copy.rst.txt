@@ -60,24 +60,6 @@ see /tests for tests that compare allantools output to other
 (e.g. Stable32) programs. More test data, benchmarks, ipython notebooks,
 and comparisons to known-good algorithms are welcome!
 
-Installation
-------------
-
-
-Install from pypi::
-
-    pip install allantools
-
-Latest version + examples, tests, test data, iPython notebooks : clone from github, then install ::
-
-    python setup.py install
-
-(see `python setup.py --help install` for install options)
-
-These commands should be run as root for system-wide installation, or
-you can use the `--user` option to install for your account only.
-Exact command names may vary depending on your OS / package manager / target python version.
-
 
 Jupyter notebooks with examples
 -------------------------------
@@ -92,13 +74,3 @@ github formats the notebooks into nice web-pages, for example
 
 * https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb
 * https://github.com/aewallin/allantools/blob/master/examples/three-cornered-hat-demo.ipynb
-
-
-Authors
--------
-* Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com , https://github.com/aewallin
-* Danny Price, https://github.com/telegraphic
-* Cantwell G. Carson, carsonc "at" gmail.com
-* Frédéric Meynadier, https://github.com/fmeynadier
-* Yan Xie, https://github.com/yxie-git
-* Erik Benkler, https://github.com/EBenkler

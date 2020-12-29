@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AllanTools &#8212; AllanToolkit Documentation</title>
+    <title>Installation &#8212; AllanToolkit Documentation</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -50,6 +50,8 @@
     <link rel="shortcut icon" href="_static/favico.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="🎈 Basic usage" href="basic_usage.html" />
+    <link rel="prev" title="AllanTools" href="readme_copy.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -91,9 +93,14 @@
   MAIN DOCS
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="current nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="installation.html">
+  <a class="reference internal" href="readme_copy.html">
+   Readme
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    Installation
   </a>
  </li>
@@ -182,9 +189,9 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/readme_copy.rst.txt"><button type="button"
+        <a class="dropdown-buttons" href="_sources/installation.md.txt"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.rst</button></a>
+                data-placement="left">.md</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
@@ -202,10 +209,10 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2Freadme_copy.html&body=Your%20issue%20content%20here."><button
+            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2Finstallation.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
-        <a class="edit-button" href="https://github.com/amv213/allantoolkit/edit/master/docs/source/readme_copy.rst"><button
+        <a class="edit-button" href="https://github.com/amv213/allantoolkit/edit/master/docs/source/installation.md"><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
     </div>
@@ -225,20 +232,6 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
-        <div class="tocsection onthispage pt-5 pb-3">
-            <i class="fas fa-list"></i> Contents
-        </div>
-        <nav id="bd-toc-nav">
-            <ul class="nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#jupyter-notebooks-with-examples">
-   Jupyter notebooks with examples
-  </a>
- </li>
-</ul>
-
-        </nav>
-        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -246,102 +239,19 @@
         
               <div>
                 
-  <div class="section" id="allantools">
-<h1>AllanTools<a class="headerlink" href="#allantools" title="Permalink to this headline">¶</a></h1>
-<a class="reference external image-reference" href="https://badge.fury.io/py/AllanTools"><img alt="https://badge.fury.io/py/AllanTools.svg" src="https://badge.fury.io/py/AllanTools.svg" /></a>
-<a class="reference external image-reference" href="https://anaconda.org/conda-forge/allantools"><img alt="https://img.shields.io/conda/vn/conda-forge/allantools.svg" src="https://img.shields.io/conda/vn/conda-forge/allantools.svg" /></a>
-<a class="reference external image-reference" href="https://anaconda.org/conda-forge/allantools"><img alt="https://img.shields.io/conda/dn/conda-forge/allantools.svg" src="https://img.shields.io/conda/dn/conda-forge/allantools.svg" /></a>
-<a class="reference external image-reference" href="https://travis-ci.org/aewallin/allantools"><img alt="https://travis-ci.org/aewallin/allantools.svg?branch=master" src="https://travis-ci.org/aewallin/allantools.svg?branch=master" /></a>
-<a class="reference external image-reference" href="http://allantools.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="http://readthedocs.org/projects/allantools/badge/?version=latest" /></a>
-<a class="reference external image-reference" href="https://coveralls.io/github/aewallin/allantools?branch=master"><img alt="https://coveralls.io/repos/github/aewallin/allantools/badge.svg?branch=master" src="https://coveralls.io/repos/github/aewallin/allantools/badge.svg?branch=master" /></a>
-<p>A python library for calculating Allan deviation and related
-time &amp; frequency statistics. <a class="reference external" href="https://www.gnu.org/licenses/lgpl.html">LGPL v3+ license</a>.</p>
-<ul class="simple">
-<li><p>Development at <a class="reference external" href="https://github.com/aewallin/allantools">https://github.com/aewallin/allantools</a></p></li>
-<li><p>Installation package at <a class="reference external" href="https://pypi.python.org/pypi/AllanTools">https://pypi.python.org/pypi/AllanTools</a></p></li>
-<li><p>Discussion group at <a class="reference external" href="https://groups.google.com/d/forum/allantools">https://groups.google.com/d/forum/allantools</a></p></li>
-<li><p>Documentation available at <a class="reference external" href="https://allantools.readthedocs.org">https://allantools.readthedocs.org</a></p></li>
-</ul>
-<p>Input data should be evenly spaced observations of either fractional frequency,
-or phase in seconds. Deviations are calculated for given tau values in seconds.</p>
-<table class="table">
-<colgroup>
-<col style="width: 42%" />
-<col style="width: 58%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Function</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">adev()</span></code></p></td>
-<td><p>Allan deviation</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oadev()</span></code></p></td>
-<td><p>Overlapping Allan deviation</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mdev()</span></code></p></td>
-<td><p>Modified Allan deviation</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tdev()</span></code></p></td>
-<td><p>Time deviation</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hdev()</span></code></p></td>
-<td><p>Hadamard deviation</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ohdev()</span></code></p></td>
-<td><p>Overlapping Hadamard deviation</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">totdev()</span></code></p></td>
-<td><p>Total deviation</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mtotdev()</span></code></p></td>
-<td><p>Modified total deviation</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ttotdev()</span></code></p></td>
-<td><p>Time total deviation</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">htotdev()</span></code></p></td>
-<td><p>Hadamard total deviation</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">theo1()</span></code></p></td>
-<td><p>Theo1 deviation</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mtie()</span></code></p></td>
-<td><p>Maximum Time Interval Error</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tierms()</span></code></p></td>
-<td><p>Time Interval Error RMS</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gradev()</span></code></p></td>
-<td><p>Gap resistant overlapping Allan deviation</p></td>
-</tr>
-</tbody>
-</table>
-<p>Noise generators for creating synthetic datasets are also included:</p>
-<ul class="simple">
-<li><p>violet noise with f^2 PSD</p></li>
-<li><p>white noise with f^0 PSD</p></li>
-<li><p>pink noise with f^-1 PSD</p></li>
-<li><p>Brownian or random walk noise with f^-2 PSD</p></li>
-</ul>
-<p>More details on available statistics and noise generators : <a class="reference external" href="functions.html">full list of available functions</a></p>
-<p>see /tests for tests that compare allantools output to other
-(e.g. Stable32) programs. More test data, benchmarks, ipython notebooks,
-and comparisons to known-good algorithms are welcome!</p>
-<div class="section" id="jupyter-notebooks-with-examples">
-<h2>Jupyter notebooks with examples<a class="headerlink" href="#jupyter-notebooks-with-examples" title="Permalink to this headline">¶</a></h2>
-<p>Jupyter notebooks are interactive python scripts, embedded in a browser,
-allowing you to manipulate data and display plots like easily. For guidance
-on installing jupyter, please refer to <a class="reference external" href="https://jupyter.org/install">https://jupyter.org/install</a>.</p>
-<p>See /examples for some examples in notebook format.</p>
-<p>github formats the notebooks into nice web-pages, for example</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb">https://github.com/aewallin/allantools/blob/master/examples/noise-color-demo.ipynb</a></p></li>
-<li><p><a class="reference external" href="https://github.com/aewallin/allantools/blob/master/examples/three-cornered-hat-demo.ipynb">https://github.com/aewallin/allantools/blob/master/examples/three-cornered-hat-demo.ipynb</a></p></li>
-</ul>
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>📚 Install the latest development version of <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code>, using pip to
+download it from this repo:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;```bash
+&gt;python -m pip install git+https://gitlab.com/amv213/allantoolkit.git
+&gt;```
+</pre></div>
 </div>
+<p>These commands should be run as root for system-wide installation, or
+you can use the <code class="docutils literal notranslate"><span class="pre">--user</span></code> option to install for your account only. Exact
+command names may vary depending on your OS / package manager / target python
+version.</p>
 </div>
 
 
@@ -353,6 +263,8 @@ on installing jupyter, please refer to <a class="reference external" href="https
     
     <div class='prev-next-bottom'>
         
+    <a class='left-prev' id="prev-link" href="readme_copy.html" title="previous page">AllanTools</a>
+    <a class='right-next' id="next-link" href="basic_usage.html" title="next page">🎈 Basic usage</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

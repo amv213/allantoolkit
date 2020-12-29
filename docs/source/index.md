@@ -4,7 +4,7 @@ Allantoolkit is a fork of **Anders E.E. Wallin's** [AllanTools](https://githubco
 and related time & frequency statistics. Don't hesitate to head over to his 
 Github repo to check out the original project and to drop a star! 🌟
 
-.. dropdown:: Click to see
+```{dropdown}
 
     ## 🔥 Changelog
 
@@ -25,6 +25,7 @@ Github repo to check out the original project and to drop a star! 🌟
     - New demo test dataset based on optical lattice clock data
     - General gap resistance for most deviation types (to be tested)
     - Logging
+```
 
 ## 🚀 Quick Start
 

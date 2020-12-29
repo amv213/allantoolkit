@@ -450,7 +450,7 @@ def calc_hvar(x: Array, m: int, rate: float) -> VarResult:
     """Calculates the Hadamard variance (HVAR) of phase data at given
     averaging factor.
 
-    The Hadamard variance may is calculated as:
+    The Hadamard variance is calculated as:
 
     .. math::
 
@@ -461,7 +461,7 @@ def calc_hvar(x: Array, m: int, rate: float) -> VarResult:
 
     where :math:`x_i` is the :math:`i^{th}` of :math:`N` phase
     values spaced by an averaging time :math:`\\tau`.
-    
+
     .. seealso::
         Function :func:`allantoolkit.devs.hdev` for background details.
 
@@ -483,10 +483,23 @@ def calc_hvar(x: Array, m: int, rate: float) -> VarResult:
 
 
 def calc_ohvar(x: Array, m: int, rate: float) -> VarResult:
-    """Main algorithm for OHVAR calculation.
+    """Calculates the overlapping Hadamard variance (OHVAR) of phase data at
+    given averaging factor.
 
-    References:
-        [RileyStable32]_ (5.2.9, pg.26-27)
+    The overlapping Hadamard variance is calculated from a set of :math:`N`
+    phase measurements for averaging time :math:`\\tau = m\\tau_0`, where
+    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic
+    data sampling period, by the following expression:
+
+    .. math::
+
+        \\sigma^{2}_y(\\tau) = { 1 \\over 6 \\tau^2 (N-3m) }
+        \\sum_{i=1}^{N-3m} \\left[
+        x_{i+3m} - 3x_{i+2m} + 3x_{i+m} - x_{i}
+        \\right]^2
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.ohdev` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -494,8 +507,12 @@ def calc_ohvar(x: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        TODO: find exact references
     """
 
     return calc_o_hvar(x=x, m=m, rate=rate, stride=1)

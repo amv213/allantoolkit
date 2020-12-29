@@ -608,22 +608,29 @@
 
 
 <div class="viewcode-block" id="calc_o_hvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_o_hvar">[docs]</a><span class="k">def</span> <span class="nf">calc_o_hvar</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">stride</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Main algorithm for HVAR and OHVAR calculation.</span>
+    <span class="sd">&quot;&quot;&quot;Calculates Hadamard variance (HVAR) or overlapping Hadamard variance (</span>
+<span class="sd">    OHVAR) of phase data at given averaging factor. The variance type is set</span>
+<span class="sd">    by the ``stride`` parameter.</span>
 
-<span class="sd">    References:</span>
-<span class="sd">        [RileyStable32]_ (5.2.8-9, pg.25-27)</span>
-<span class="sd">        http://www.leapsecond.com/tools/adev_lib.c</span>
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Functions :func:`allantoolkit.stats.calc_hvar`, and</span>
+<span class="sd">        :func:`allantoolkit.stats.calc_ohvar` for background details.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        x:      input phase data, in units of seconds.</span>
 <span class="sd">        m:      averaging factor at which to calculate variance</span>
 <span class="sd">        rate:   sampling rate of the input data, in Hz.</span>
 <span class="sd">        stride: stride at which to parse input phase data.</span>
-<span class="sd">                `m` for HVAR, `1` for OHVAR.</span>
+<span class="sd">                ``m`` for HVAR, ``1`` for OHVAR.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
-<span class="sd">        number of samples used to estimate it.</span>
+<span class="sd">        :class:`allantoolkit.stats.VarResult` NamedTuple of</span>
+<span class="sd">        computed variance at given averaging time, and number of samples</span>
+<span class="sd">        used to estimate it.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        TODO: find exact references</span>
+<span class="sd">        http://www.leapsecond.com/tools/adev_lib.c</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>

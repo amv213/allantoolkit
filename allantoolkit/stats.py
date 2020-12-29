@@ -397,22 +397,29 @@ def calc_tvar(x: Array, m: int, rate: float) -> VarResult:
 
 
 def calc_o_hvar(x: Array, m: int, rate: float, stride: int) -> VarResult:
-    """Main algorithm for HVAR and OHVAR calculation.
+    """Calculates Hadamard variance (HVAR) or overlapping Hadamard variance (
+    OHVAR) of phase data at given averaging factor. The variance type is set
+    by the ``stride`` parameter.
 
-    References:
-        [RileyStable32]_ (5.2.8-9, pg.25-27)
-        http://www.leapsecond.com/tools/adev_lib.c
+    .. seealso::
+        Functions :func:`allantoolkit.stats.calc_hvar`, and
+        :func:`allantoolkit.stats.calc_ohvar` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
         rate:   sampling rate of the input data, in Hz.
         stride: stride at which to parse input phase data.
-                `m` for HVAR, `1` for OHVAR.
+                ``m`` for HVAR, ``1`` for OHVAR.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        TODO: find exact references
+        http://www.leapsecond.com/tools/adev_lib.c
     """
 
     N = x.size

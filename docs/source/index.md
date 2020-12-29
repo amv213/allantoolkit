@@ -25,6 +25,8 @@ Github repo to check out the original project and to drop a star! 🌟
 - Logging
 ```
 
+---
+
 ## 🚀 Quick Start
 
 1. 📚 Install the latest development version of `allantoolkit`, using pip to 
@@ -53,6 +55,8 @@ Github repo to check out the original project and to drop a star! 🌟
 3. 🎉 If everything went well you are now all set-up to use `allantoolkit`! 
    Enjoy!
 
+---
+
 ## 📚 Table of Contents
 
 
@@ -71,6 +75,8 @@ Development <dev.rst>
 
 First Steps <tutorial_intro.md>
 ```
+
+---
 
 ## 📝 Authors
 

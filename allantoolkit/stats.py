@@ -522,6 +522,9 @@ def calc_totvar(x: Array, m: int, rate: float) -> VarResult:
     """Calculates the total variance (TOTVAR) of phase data at
     given averaging factor.
 
+    .. caution::
+        This algorithm is slow. Try to limit the input data size.
+        
     The total variance is calculated from a set of :math:`N` phase
     measurements for averaging time :math:`\\tau = m\\tau_0`, where
     :math:`m` is the averaging factor and :math:`\\tau_0` is the basic
@@ -593,6 +596,9 @@ def calc_totvar(x: Array, m: int, rate: float) -> VarResult:
 def calc_mtotvar(x: Array, m: int, rate: float) -> VarResult:
     """Calculates the modified total variance (MTOTVAR) of phase data at
     given averaging factor.
+
+    .. caution::
+        This algorithm is slow. Try to limit the input data size.
 
     The modified total variance is calculated from a set of :math:`N` phase
     measurements for averaging time :math:`\\tau = m\\tau_0`, where
@@ -710,6 +716,9 @@ def calc_mtotvar(x: Array, m: int, rate: float) -> VarResult:
 def calc_ttotvar(x: Array, m: int, rate: float) -> VarResult:
     """Calculates the time total variance (TTOTVAR) of phase data at
     given averaging factor.
+
+    .. caution::
+        This algorithm is slow. Try to limit the input data size.
 
     The time total variance is calculated as:
 

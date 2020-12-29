@@ -36,8 +36,8 @@ or provide custom averaging times to the `taus` parameter of the deviation
 of choice.
 
 ```{seealso}
-A complete list of implemented deviations available:
 {mod}`allantoolkit.devs`
+    a complete list of available deviations
 ```
 
 ### Frequency data
@@ -63,9 +63,9 @@ print(out)
 ```
 
 ```{seealso}
-Some helpful utility functions to rescale your frequency data:
-{func}`allantoolkit.utils.frequency2fractional`
-{func}`allantoolkit.utils.scale` 
+{func}`allantoolkit.utils.frequency2fractional`, {func}`allantoolkit.utils.
+scale`
+    some helpful utility functions to rescale your frequency data
 ```
 
 ### API

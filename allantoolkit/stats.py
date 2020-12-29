@@ -519,10 +519,29 @@ def calc_ohvar(x: Array, m: int, rate: float) -> VarResult:
 
 
 def calc_totvar(x: Array, m: int, rate: float) -> VarResult:
-    """Main algorithm for TOTVAR calculation.
+    """Calculates the total variance (TOTVAR) of phase data at
+    given averaging factor.
 
-    References:
-        [RileyStable32]_ (5.2.11, pg.29-31)
+    The total variance is calculated from a set of :math:`N` phase
+    measurements for averaging time :math:`\\tau = m\\tau_0`, where
+    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic
+    data sampling period, by the following expression:
+
+    .. math::
+
+        \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-2) }
+        \\sum_{i=2}^{N-1} \\left[
+        x^*_{i-m} - 2x^*_{i} + x^*_{i+m}
+        \\right]^2
+
+    where the original :math:`N` phase values are extended by reflection
+    about both endpoints to form a virtual sequence :math:`x^*` of length
+    :math:`3N-4`, from :math:`i=3-N` to :math:`i=2N-2`. That is,
+    the reflected portions added at each end have a 2-sample overlap each
+    with the original dataset.
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.totdev` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -530,8 +549,12 @@ def calc_totvar(x: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        TODO: find exact references
     """
 
     N = x.size

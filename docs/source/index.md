@@ -15,7 +15,7 @@ project and to drop a star! 🌟
 This fork was born in an effort to implement some key missing features: 
 automatic noise identification for all frequency stability analysis types, 
 bias correction for all biased frequency stability analysis types, and 
-calculation of confidence intervals based on $`\\Chi^2`$ statistics.
+calculation of confidence intervals based on $$`\\Chi^2`$$ statistics.
 
 ```{dropdown} 🔥 CHANGELOG
 :title: text-center

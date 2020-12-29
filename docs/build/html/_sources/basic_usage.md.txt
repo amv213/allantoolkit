@@ -63,8 +63,8 @@ print(out)
 ```
 
 ```{seealso}
-{func}`allantoolkit.utils.frequency2fractional`, {func}`allantoolkit.utils.
-scale`
+{func}`allantoolkit.utils.frequency2fractional` 
+{func}`allantoolkit.utils.scale`
     some helpful utility functions to rescale your frequency data
 ```
 

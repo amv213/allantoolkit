@@ -35,9 +35,9 @@ One can also choose another of the in-built options (`all`, `many`, `decade`)
 or provide custom averaging times to the `taus` parameter of the deviation 
 of choice.
 
-.. seealso::
-    
-    :func:`allantoolkit.utils.tau_generator`
+```{seealso}
+Test :func:`allantoolkit.utils.tau_generator`
+```
 
 ### Frequency data
 

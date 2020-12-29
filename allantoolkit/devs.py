@@ -257,7 +257,7 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
     divergent  noise  types  such  as flicker  noise,  of  converging  to  a
     value  that  is  independent  on  the  number  of  samples.
 
-    In terms of `phase` data, the Allan variance may be calculated as:
+    In terms of phase data, the Allan variance may be calculated as:
 
     .. math::
 
@@ -265,8 +265,7 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
         \\sum_{i=1}^{N-2} \\left[ x_{i+2} - 2x_{i+1} + x_{i} \\right]^2
 
     where :math:`x_i` is the :math:`i^{th}` of :math:`N` phase
-    values
-    spaced by an averaging time :math:`\\tau`.
+    values spaced by an averaging time :math:`\\tau`.
 
     For a time-series of fractional frequency values, the Allan variance is
     defined as:

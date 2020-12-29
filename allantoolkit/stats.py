@@ -122,8 +122,8 @@ def calc_o_avar(x: Array, m: int, rate: float, stride: int) -> VarResult:
     by the ``stride`` parameter.
 
     .. seealso::
-        Functions :func:`allantoolkit.devs.adev`, and
-        :func:`allantoolkit.devs.oadev` for background details.
+        Functions :func:`allantoolkit.stats.calc_avar`, and
+        :func:`allantoolkit.stats.calc_oavar` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -169,6 +169,16 @@ def calc_avar(x: Array, m: int, rate: float) -> VarResult:
     """Calculates Allan variance (AVAR) of phase data at given averaging
     factor.
 
+    The Allan variance is calculated as:
+
+    .. math::
+
+        \\sigma^2_y(\\tau) = { 1 \\over 2 (N-2) \\tau^2 }
+        \\sum_{i=1}^{N-2} \\left[ x_{i+2} - 2x_{i+1} + x_{i} \\right]^2
+
+    where :math:`x_i` is the :math:`i^{th}` of :math:`N` phase
+    values spaced by an averaging time :math:`\\tau`.
+
     .. seealso::
         Function :func:`allantoolkit.devs.adev` for background details.
 
@@ -181,6 +191,9 @@ def calc_avar(x: Array, m: int, rate: float) -> VarResult:
         :class:`allantoolkit.stats.VarResult` NamedTuple of
         computed variance at given averaging time, and number of samples
         used to estimate it.
+
+    References:
+        TODO: add exact reference
     """
 
     return calc_o_avar(x=x, m=m, rate=rate, stride=m)
@@ -189,6 +202,16 @@ def calc_avar(x: Array, m: int, rate: float) -> VarResult:
 def calc_oavar(x: Array, m: int, rate: float) -> VarResult:
     """Calculates overlapping Allan variance (OAVAR) of phase data at given
     averaging factor.
+
+    The overlapping Allan variance is estimated from a set of :math:`N`
+    phase measurements for averaging time :math:`\\tau = m\\tau_0`, where
+    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic
+    data sampling period, by the following expression:
+
+    .. math::
+
+        \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-2m) }
+        \\sum_{i=1}^{N-2m} \\left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \\right]^2
 
     .. seealso::
         Function :func:`allantoolkit.devs.oadev` for background details.
@@ -202,16 +225,32 @@ def calc_oavar(x: Array, m: int, rate: float) -> VarResult:
         :class:`allantoolkit.stats.VarResult` NamedTuple of
         computed variance at given averaging time, and number of samples
         used to estimate it.
+
+    References:
+        TODO: add exact reference
     """
 
     return calc_o_avar(x=x, m=m, rate=rate, stride=1)
 
 
 def calc_avar_freq(y: Array, m: int, rate: float) -> VarResult:
-    """Main algorithm for AVAR calculation on fractional frequency data.
+    """Calculates Allan variance (AVAR) of fractional frequency data at given
+    averaging factor.
 
-    References:
-        [RileyStable32]_ (5.2.2, pg.19)
+    For a time-series of fractional frequency values, the Allan variance is
+    calculated as:
+
+    .. math::
+
+        \\sigma^{2}_y(\\tau) =  { 1 \\over 2 (M - 1) } \\sum_{i=1}^{M-1}
+        \\left[ \\bar{y}_{i+1} - \\bar{y}_i \\right]^2
+
+    where :math:`\\bar{y}_i` is the :math:`i^{th}` of :math:`M`
+    fractional frequency values averaged over the averaging time
+    :math:`\\tau`.
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.adev` for background details.
 
     Args:
         y:      input phase fractional frequency data.
@@ -219,8 +258,12 @@ def calc_avar_freq(y: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz. Not used here.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        TODO: add exact reference
     """
 
     # average at given averaging factor
@@ -231,8 +274,7 @@ def calc_avar_freq(y: Array, m: int, rate: float) -> VarResult:
     if M < 2:
         logger.warning("Not enough fractional frequency measurements to "
                        "compute variance at averaging factor %i: %s", m, y)
-        var = np.NaN
-        return var, 0
+        return VarResult(var=np.NaN, n=0)
 
     # Calculate first difference
     summand = np.diff(y)
@@ -241,8 +283,7 @@ def calc_avar_freq(y: Array, m: int, rate: float) -> VarResult:
     if m == 0:
         logger.warning("Not enough valid phase measurements to compute "
                        "variance at averaging factor %i: %s", m, y)
-        var = np.NaN
-        return var, 0
+        return VarResult(var=np.NaN, n=0)
 
     # Calculate variance
     var = (1. / 2) * np.nanmean(summand**2)

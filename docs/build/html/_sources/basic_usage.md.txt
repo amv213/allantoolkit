@@ -37,8 +37,9 @@ of choice.
 
 ```{seealso}
 {mod}`allantoolkit.devs` for more details on available deviation types
-{func}`allantoolkit.utils.tau_generator` for more details on choosing 
-averaging times at which to calculate deviations
+
+{func}`allantoolkit.utils.tau_generator` for more details on available 
+averaging times
 ```
 
 ### Frequency data

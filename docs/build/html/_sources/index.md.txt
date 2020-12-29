@@ -73,10 +73,11 @@ First Steps <tutorial_intro.md>
 
 ## 📝 Authors
 
-* Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com , https://github.com/aewallin
-* Danny Price, https://github.com/telegraphic
+* Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com , 
+  [https://github.com/aewallin](https://github.com/aewallin)
+* Danny Price, [https://github.com/telegraphic](https://github.com/telegraphic)
 * Cantwell G. Carson, carsonc "at" gmail.com
-* Frédéric Meynadier, https://github.com/fmeynadier
-* Yan Xie, https://github.com/yxie-git
-* Erik Benkler, https://github.com/EBenkler
-* Alvise Vianello, https://gitlab.com/amv213
+* Frédéric Meynadier, [https://github.com/fmeynadier](https://github.com/fmeynadier)
+* Yan Xie, [https://github.com/yxie-git](https://github.com/yxie-git)
+* Erik Benkler, [https://github.com/EBenkler](https://github.com/EBenkler)
+* Alvise Vianello, [https://gitlab.com/amv213](https://gitlab.com/amv213)

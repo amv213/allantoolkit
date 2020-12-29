@@ -748,13 +748,31 @@ def calc_ttotvar(x: Array, m: int, rate: float) -> VarResult:
 
 
 def calc_htotvar(x: Array, m: int, rate: float) -> VarResult:
-    """Main algorithm for HTOTVAR calculation.
+    """Calculates the Hadamard total variance (HTOTVAR) of phase data at
+    given averaging factor. Phase data is pre-converted to frequency data
+    before being processed by the algorithm.
 
-    PRELIMINARY - REQUIRES FURTHER TESTING.
+    The Hadamard total variance is calculated from a set of :math:`M`
+    fractional frequency measurements for averaging time :math:`\\tau =
+    m\\tau_0`, where :math:`m` is the averaging factor and :math:`\\tau_0`
+    is the basic data sampling period, by the following expression:
 
-    References:
-        [RileyStable32]_ (5.2.14, pg.33-37)
-        http://www.wriley.com/paper4ht.htm
+    .. math::
+
+        \\sigma^{2}_y(\\tau) = { 1 \\over 6 (M-3m+1) }
+        \\sum_{n=1}^{M-3m+1} \\left\\{
+        { 1 \\over 6m } \\sum_{i=n-3m}^{N+3m-1}
+        \\left[ H_i(m) \\right]^2
+        \\right\\}
+
+    where the :math:`H_i(m)` terms are the :math:`z^{\\#}_i(m)` linear trend
+    removed Hadamard second differences from triply-extended subsequences of
+    the original factional frequency data.
+
+    TODO: switch to a phase only algorithm
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.htotdev` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -762,8 +780,13 @@ def calc_htotvar(x: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        TODO: find exact reference
+        http://www.wriley.com/paper4ht.htm
     """
 
     # TODO: make gap resistant and return correct number of non-NaN samples
@@ -774,8 +797,8 @@ def calc_htotvar(x: Array, m: int, rate: float) -> VarResult:
     #  memory really needed...
     if m == 1:
 
-        var, n = calc_hvar(x=x, m=m, rate=rate)
-        return var, n
+        out = calc_hvar(x=x, m=m, rate=rate)
+        return out
 
     else:
 

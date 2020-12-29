@@ -959,13 +959,31 @@
 
 
 <div class="viewcode-block" id="calc_htotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_htotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_htotvar</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Main algorithm for HTOTVAR calculation.</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the Hadamard total variance (HTOTVAR) of phase data at</span>
+<span class="sd">    given averaging factor. Phase data is pre-converted to frequency data</span>
+<span class="sd">    before being processed by the algorithm.</span>
 
-<span class="sd">    PRELIMINARY - REQUIRES FURTHER TESTING.</span>
+<span class="sd">    The Hadamard total variance is calculated from a set of :math:`M`</span>
+<span class="sd">    fractional frequency measurements for averaging time :math:`\\tau =</span>
+<span class="sd">    m\\tau_0`, where :math:`m` is the averaging factor and :math:`\\tau_0`</span>
+<span class="sd">    is the basic data sampling period, by the following expression:</span>
 
-<span class="sd">    References:</span>
-<span class="sd">        [RileyStable32]_ (5.2.14, pg.33-37)</span>
-<span class="sd">        http://www.wriley.com/paper4ht.htm</span>
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^{2}_y(\\tau) = { 1 \\over 6 (M-3m+1) }</span>
+<span class="sd">        \\sum_{n=1}^{M-3m+1} \\left\\{</span>
+<span class="sd">        { 1 \\over 6m } \\sum_{i=n-3m}^{N+3m-1}</span>
+<span class="sd">        \\left[ H_i(m) \\right]^2</span>
+<span class="sd">        \\right\\}</span>
+
+<span class="sd">    where the :math:`H_i(m)` terms are the :math:`z^{\\#}_i(m)` linear trend</span>
+<span class="sd">    removed Hadamard second differences from triply-extended subsequences of</span>
+<span class="sd">    the original factional frequency data.</span>
+
+<span class="sd">    TODO: switch to a phase only algorithm</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.htotdev` for background details.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        x:      input phase data, in units of seconds.</span>
@@ -973,8 +991,13 @@
 <span class="sd">        rate:   sampling rate of the input data, in Hz.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
-<span class="sd">        number of samples used to estimate it.</span>
+<span class="sd">        :class:`allantoolkit.stats.VarResult` NamedTuple of</span>
+<span class="sd">        computed variance at given averaging time, and number of samples</span>
+<span class="sd">        used to estimate it.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        TODO: find exact reference</span>
+<span class="sd">        http://www.wriley.com/paper4ht.htm</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># TODO: make gap resistant and return correct number of non-NaN samples</span>
@@ -985,8 +1008,8 @@
     <span class="c1">#  memory really needed...</span>
     <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 
-        <span class="n">var</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">calc_hvar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="n">n</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">calc_hvar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
 
     <span class="k">else</span><span class="p">:</span>
 

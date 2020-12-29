@@ -1263,10 +1263,26 @@ def calc_mtie_fast(x: Array, m: int, rate: float = None) -> VarResult:
 
 
 def calc_tierms(x: Array, m: int, rate: float = None) -> VarResult:
-    """Main algorithm for TIErms calculation.
+    """Calculates rms time interval variance (TIE rms VAR) of phase
+    data at given averaging factor.
 
-    References:
-        [RileyStable32]_ (5.2.18, pg.42-43)
+    The rms time interval variance can be estimated from a set of
+    :math:`N` phase measurements for averaging time :math:`\\tau =
+    m\\tau_0`, where :math:`m` is the averaging factor and :math:`\\tau_0`
+    is the basic data sampling period, by the following expression:
+
+    .. math::
+
+        \\sigma^2_y(\\tau) =
+        {1 \\over N-m} \\sum_{i=1}^{N-m} \\left[ x_{i+m} - x_i \\right]^2
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        rate:   sampling rate of the input data, in Hz.
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.tierms` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -1274,8 +1290,12 @@ def calc_tierms(x: Array, m: int, rate: float = None) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        TODO: find exact reference
     """
 
     summand = x[m:] - x[:-m]

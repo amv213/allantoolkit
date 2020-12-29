@@ -429,8 +429,7 @@ def calc_o_hvar(x: Array, m: int, rate: float, stride: int) -> VarResult:
     if N < d*m + 1:
         logger.warning("Not enough phase measurements to compute "
                        "variance at averaging factor %i (N=%i)", m, N)
-        var = np.NaN
-        return var, 0
+        return VarResult(var=np.NaN, n=0)
 
     # Calculate third differences
     summand = x[3*m::stride] - 3*x[2*m:-m:stride] + 3*x[m:-2*m:stride] - x[:-3*m:stride]
@@ -439,8 +438,7 @@ def calc_o_hvar(x: Array, m: int, rate: float, stride: int) -> VarResult:
     if n == 0:
         logger.warning("Not enough valid phase measurements to compute "
                        "variance at averaging factor %i (N=%i)", m, N)
-        var = np.NaN
-        return var, 0
+        return VarResult(var=np.NaN, n=0)
 
     # Calculate variance
     var = 1. / (6 * (m/rate)**2) * np.nanmean(summand**2)
@@ -449,10 +447,23 @@ def calc_o_hvar(x: Array, m: int, rate: float, stride: int) -> VarResult:
 
 
 def calc_hvar(x: Array, m: int, rate: float) -> VarResult:
-    """Main algorithm for HVAR calculation.
+    """Calculates the Hadamard variance (HVAR) of phase data at given
+    averaging factor.
 
-    References:
-        [RileyStable32]_ (5.2.8, pg.25-26)
+    The Hadamard variance may is calculated as:
+
+    .. math::
+
+        \\sigma^2_y(\\tau) = { 1 \\over 6 \\tau^2 (N-3)}
+        \\sum_{i=1}^{N-3} \\left[
+        x_{i+3} - 3x_{i+2} + 3x_{i+1} - x_i
+        \\right]^2
+
+    where :math:`x_i` is the :math:`i^{th}` of :math:`N` phase
+    values spaced by an averaging time :math:`\\tau`.
+    
+    .. seealso::
+        Function :func:`allantoolkit.devs.hdev` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -460,8 +471,12 @@ def calc_hvar(x: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        TODO: find exact references
     """
 
     return calc_o_hvar(x=x, m=m, rate=rate, stride=m)

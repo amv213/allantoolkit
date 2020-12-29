@@ -5,8 +5,9 @@ data either as evenly spaced phase measurements - in units of second - or
 as fractional frequency measurements. Deviations are then calculated by 
 `allantoolkit` in seconds, over a requested range of averaging times.
 
+## Minimal Examples
 
-## Minimal example, phase data
+### Phase data
 
 We can call `allantoolkit` with only two parameters - an array of phase 
 data and its associated data sampling rate. 
@@ -34,7 +35,7 @@ One can also choose another of the in-built options (`all`, `many`, `decade`)
 or provide custom averaging times to the `taus` parameter of the deviation 
 of choice.
 
-## Minimal example, frequency data
+### Frequency data
 
 For input fractional frequency data, it is important to remember to set 
 explicitly the `data_type` argument to `freq`. The default value is `phase`,
@@ -56,7 +57,7 @@ out = allantoolkit.devs.oadev(y, rate=1, data_type='freq')
 print(out)
 ```
 
-## Minimal example, API
+### API
 
 `allantoolkit` also offers a top-level `API` which allows to conveniently 
 handle data, stability analysis results, and plots all at once.

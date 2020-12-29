@@ -233,19 +233,26 @@
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#minimal-example-phase-data">
-   Minimal example, phase data
+  <a class="reference internal nav-link" href="#minimal-examples">
+   Minimal Examples
   </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#minimal-example-frequency-data">
-   Minimal example, frequency data
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#minimal-example-api">
-   Minimal example, API
-  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#phase-data">
+     Phase data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#frequency-data">
+     Frequency data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#api">
+     API
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -264,8 +271,10 @@
 data either as evenly spaced phase measurements - in units of second - or
 as fractional frequency measurements. Deviations are then calculated by
 <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> in seconds, over a requested range of averaging times.</p>
-<div class="section" id="minimal-example-phase-data">
-<h2>Minimal example, phase data<a class="headerlink" href="#minimal-example-phase-data" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="minimal-examples">
+<h2>Minimal Examples<a class="headerlink" href="#minimal-examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="phase-data">
+<h3>Phase data<a class="headerlink" href="#phase-data" title="Permalink to this headline">¶</a></h3>
 <p>We can call <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> with only two parameters - an array of phase
 data and its associated data sampling rate.</p>
 <p>For example, here is how one would go about calculating the overlapping
@@ -289,8 +298,8 @@ One can also choose another of the in-built options (<code class="docutils liter
 or provide custom averaging times to the <code class="docutils literal notranslate"><span class="pre">taus</span></code> parameter of the deviation
 of choice.</p>
 </div>
-<div class="section" id="minimal-example-frequency-data">
-<h2>Minimal example, frequency data<a class="headerlink" href="#minimal-example-frequency-data" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="frequency-data">
+<h3>Frequency data<a class="headerlink" href="#frequency-data" title="Permalink to this headline">¶</a></h3>
 <p>For input fractional frequency data, it is important to remember to set
 explicitly the <code class="docutils literal notranslate"><span class="pre">data_type</span></code> argument to <code class="docutils literal notranslate"><span class="pre">freq</span></code>. The default value is <code class="docutils literal notranslate"><span class="pre">phase</span></code>,
 for input phase data.</p>
@@ -309,8 +318,8 @@ normalization and scaling is left to the user.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="minimal-example-api">
-<h2>Minimal example, API<a class="headerlink" href="#minimal-example-api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="api">
+<h3>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> also offers a top-level <code class="docutils literal notranslate"><span class="pre">API</span></code> which allows to conveniently
 handle data, stability analysis results, and plots all at once.</p>
 <p>For example, the minimal frequency data example from above can be
@@ -336,6 +345,7 @@ re-implemented as follows:</p>
 <span class="c1"># Show plots</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+</div>
 </div>
 </div>
 </div>

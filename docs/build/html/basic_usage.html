@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>📑 Welcome to AllanToolkit! &#8212; AllanToolkit Documentation</title>
+    <title>Basic usage &#8212; AllanToolkit Documentation</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -50,7 +50,8 @@
     <link rel="shortcut icon" href="_static/favico.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="AllanTools" href="readme_copy.html" />
+    <link rel="next" title="Development" href="dev.html" />
+    <link rel="prev" title="AllanTools" href="readme_copy.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -67,7 +68,7 @@
 <div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
     
         <div class="navbar-brand-box">
-<a class="navbar-brand text-wrap" href="#">
+<a class="navbar-brand text-wrap" href="index.html">
   
   <img src="_static/logo.png" class="logo" alt="logo">
   
@@ -81,8 +82,8 @@
 </form>
 <nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
     <ul class="nav sidenav_l1">
- <li class="toctree-l1 current active">
-  <a class="reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="index.html">
    📑 Welcome to AllanToolkit!
   </a>
  </li>
@@ -92,14 +93,14 @@
   MAIN DOCS
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="current nav sidenav_l1">
  <li class="toctree-l1">
   <a class="reference internal" href="readme_copy.html">
    Readme
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="basic_usage.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    Basic Usage
   </a>
  </li>
@@ -183,7 +184,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/index.md.txt"><button type="button"
+        <a class="dropdown-buttons" href="_sources/basic_usage.md.txt"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.md</button></a>
         <!-- Download PDF via print -->
@@ -203,10 +204,10 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2Findex.html&body=Your%20issue%20content%20here."><button
+            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2Fbasic_usage.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
-        <a class="edit-button" href="https://github.com/amv213/allantoolkit/edit/master/docs/source/index.md"><button
+        <a class="edit-button" href="https://github.com/amv213/allantoolkit/edit/master/docs/source/basic_usage.md"><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
     </div>
@@ -232,20 +233,18 @@
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#quick-start">
-   🚀 Quick Start
+  <a class="reference internal nav-link" href="#minimal-example-phase-data">
+   Minimal example, phase data
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#table-of-contents">
-   📚 Table of Contents
+  <a class="reference internal nav-link" href="#minimal-example-frequency-data">
+   Minimal example, frequency data
   </a>
-  <ul class="nav section-nav flex-column">
-  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#authors">
-   📝 Authors
+  <a class="reference internal nav-link" href="#minimal-example-api">
+   Minimal example, API
   </a>
  </li>
 </ul>
@@ -259,124 +258,85 @@
         
               <div>
                 
-  <div class="section" id="welcome-to-allantoolkit">
-<h1>📑 Welcome to AllanToolkit!<a class="headerlink" href="#welcome-to-allantoolkit" title="Permalink to this headline">¶</a></h1>
-<p>Allantoolkit is a fork of <strong>Anders E.E. Wallin’s</strong> <a class="reference external" href="https://githubcom/aewallin/allantools">AllanTools</a>: a python library for calculating
-Allan deviation and related time &amp; frequency statistics.</p>
-<p>Don’t hesitate to head over to the original Github repo to check out the
-project and to drop a star! 🌟</p>
-<details class="sphinx-bs dropdown card mb-3 fade-in-slide-down">
-<summary class="summary-title card-header text-center">
-🔥 CHANGELOG<div class="summary-down docutils">
-<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
-<div class="summary-up docutils">
-<svg version="1.1" width="24" height="24" class="octicon octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
-</summary><div class="summary-content card-body docutils">
-<ul class="simple">
-<li><p class="card-text">new low-level API (based on NamedTuple)</p></li>
-<li><p class="card-text">fully featured object-oriented high-level API</p></li>
-<li><p class="card-text">Auto noise ID for all deviation types (Lag1 ACF, B1, R(n))</p></li>
-<li><p class="card-text">Bias correction for all deviation types</p></li>
-<li><p class="card-text">Non-naive EDF / confidence interval calculation for all deviation types</p></li>
-<li><p class="card-text">Basic plotting and visualisation tools</p></li>
-<li><p class="card-text">Fast Theo1 algorithm</p></li>
-<li><p class="card-text">Many-tau tau generation</p></li>
-<li><p class="card-text">Streamlined code architecture</p></li>
-<li><p class="card-text">Support for tables and constant mappings from .yaml file</p></li>
-<li><p class="card-text">Updated documentation and docstrings</p></li>
-<li><p class="card-text">Type hinting</p></li>
-<li><p class="card-text">Streamlined pytests</p></li>
-<li><p class="card-text">Additional tests</p></li>
-<li><p class="card-text">New demo test dataset based on optical lattice clock data</p></li>
-<li><p class="card-text">General gap resistance for most deviation types (to be tested)</p></li>
-<li><p class="card-text">Logging</p></li>
-</ul>
-</div>
-</details><hr class="docutils" />
-<div class="section" id="quick-start">
-<h2>🚀 Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
-<ol>
-<li><p>📚 Install the latest development version of <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code>, using pip to
-download it from this repo:</p>
-<blockquote>
-<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install git+https://gitlab.com/amv213/allantoolkit.git
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-<li><p>🐍 Test your installation running the following minimal script:</p>
-<blockquote>
-<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
+  <div class="section" id="basic-usage">
+<h1>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
+<p>As a general rule, <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> expects the user to provide input data
+either as evenly spaced phase measurements - in units of second - or
+as fractional frequency measurements. Deviations are then calculated by
+<code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> in seconds, over a requested range of averaging times.</p>
+<div class="section" id="minimal-example-phase-data">
+<h2>Minimal example, phase data<a class="headerlink" href="#minimal-example-phase-data" title="Permalink to this headline">¶</a></h2>
+<p>We can call <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> with only two parameters - an array of phase
+data and its associated data sampling rate.</p>
+<p>For example, here is how one would go about calculating the overlapping
+allan deviation (OADEV) for a time-interval measurement at 1 Hz from a
+time-interval-counter measuring the 1PPS output of two clocks:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
 
-<span class="c1"># Generate some frequency data</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
-<span class="n">r</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># data sampling rate, in Hz</span>
+<span class="c1"># Generate some mock phase data</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>  <span class="c1"># frequency</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">frequency2phase</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># phase</span>
 
-<span class="c1"># Compute overlappig Allan deviation</span>
-<span class="n">out</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">devs</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;freq&#39;</span><span class="p">)</span>
+<span class="c1"># Compute the overlapping Allan deviation (OADEV)</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">devs</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="c1"># Display analysis results</span>
+<span class="c1"># Print deviation results</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 </pre></div>
 </div>
-</div></blockquote>
-</li>
-<li><p>🎉 If everything went well you are now all set-up to use <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code>!
-Enjoy!</p></li>
-</ol>
+<p>By default, the deviations will be computed at <code class="docutils literal notranslate"><span class="pre">octave</span></code> averaging times.
+One can also choose another of the in-built options (<code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">many</span></code>, <code class="docutils literal notranslate"><span class="pre">decade</span></code>)
+or provide custom averaging times to the <code class="docutils literal notranslate"><span class="pre">taus</span></code> parameter of the deviation
+of choice.</p>
 </div>
-<hr class="docutils" />
-<div class="section" id="table-of-contents">
-<h2>📚 Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">MAIN DOCS</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="readme_copy.html">Readme</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="readme_copy.html#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="readme_copy.html#jupyter-notebooks-with-examples">Jupyter notebooks with examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="readme_copy.html#authors">Authors</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="basic_usage.html#minimal-example-phase-data">Minimal example, phase data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="basic_usage.html#minimal-example-frequency-data">Minimal example, frequency data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="basic_usage.html#minimal-example-api">Minimal example, API</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="dev.html">Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="dev.html#to-do-list">To-do list</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dev.html#documentation-generation">Documentation generation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dev.html#tests">Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dev.html#notes-for-pypi">Notes for Pypi</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="documentation.html">Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="documentation.html#source-allantoolkit-documentation">📔 Source AllanToolkit Documentation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="documentation.html#logging">📃 Logging</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">TUTORIALS</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial_intro.html">First Steps</a></li>
-</ul>
+<div class="section" id="minimal-example-frequency-data">
+<h2>Minimal example, frequency data<a class="headerlink" href="#minimal-example-frequency-data" title="Permalink to this headline">¶</a></h2>
+<p>For input fractional frequency data, it is important to remember to set
+explicitly the <code class="docutils literal notranslate"><span class="pre">data_type</span></code> argument to <code class="docutils literal notranslate"><span class="pre">freq</span></code>. The default value is <code class="docutils literal notranslate"><span class="pre">phase</span></code>,
+for input phase data.</p>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> assumes non-dimensional frequency data input, so
+normalization and scaling is left to the user.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
+
+<span class="c1"># Generate some mock frequency data</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+
+<span class="c1"># Compute the overlapping Allan deviation (OADEV)</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">devs</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;freq&#39;</span><span class="p">)</span>
+
+<span class="c1"># Print deviation results</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
-<hr class="docutils" />
-<div class="section" id="authors">
-<h2>📝 Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>Anders E.E. Wallin, anders.e.e.wallin “at” gmail.com ,
-<a class="reference external" href="https://github.com/aewallin">https://github.com/aewallin</a></p></li>
-<li><p>Danny Price, <a class="reference external" href="https://github.com/telegraphic">https://github.com/telegraphic</a></p></li>
-<li><p>Cantwell G. Carson, carsonc “at” gmail.com</p></li>
-<li><p>Frédéric Meynadier, <a class="reference external" href="https://github.com/fmeynadier">https://github.com/fmeynadier</a></p></li>
-<li><p>Yan Xie, <a class="reference external" href="https://github.com/yxie-git">https://github.com/yxie-git</a></p></li>
-<li><p>Erik Benkler, <a class="reference external" href="https://github.com/EBenkler">https://github.com/EBenkler</a></p></li>
-<li><p>Alvise Vianello, <a class="reference external" href="https://gitlab.com/amv213">https://gitlab.com/amv213</a></p></li>
-</ul>
+<div class="section" id="minimal-example-api">
+<h2>Minimal example, API<a class="headerlink" href="#minimal-example-api" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> also offers a top-level <code class="docutils literal notranslate"><span class="pre">API</span></code> which allows to conveniently
+handle data, stability analysis results, and plots all at once.</p>
+<p>For example, the minimal frequency data example from above can be
+re-implemented as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1"># Generate some mock frequency data</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+
+<span class="c1"># Store data in API wrapper</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;freq&#39;</span><span class="p">)</span>
+
+<span class="c1"># Show raw data</span>
+<span class="n">y</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Compute the overlapping Allan deviation (OADEV)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="s1">&#39;oadev&#39;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="s1">&#39;octave&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plot deviation results</span>
+<span class="n">y</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="c1"># Show plots</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -389,7 +349,8 @@ Enjoy!</p></li>
     
     <div class='prev-next-bottom'>
         
-    <a class='right-next' id="next-link" href="readme_copy.html" title="next page">AllanTools</a>
+    <a class='left-prev' id="prev-link" href="readme_copy.html" title="previous page">AllanTools</a>
+    <a class='right-next' id="next-link" href="dev.html" title="next page">Development</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

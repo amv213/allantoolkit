@@ -68,8 +68,9 @@ project and to drop a star! 🌟
 :maxdepth: 2
 
 Readme <readme_copy>
-Documentation <documentation.md>
+Basic Usage <basic_usage.md>
 Development <dev.rst>
+Documentation <documentation.md>
 ```
 
 ```{toctree}

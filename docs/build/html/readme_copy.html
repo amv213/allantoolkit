@@ -50,7 +50,7 @@
     <link rel="shortcut icon" href="_static/favico.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="📚 Documentation" href="documentation.html" />
+    <link rel="next" title="Basic usage" href="basic_usage.html" />
     <link rel="prev" title="📑 Welcome to AllanToolkit!" href="index.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -99,6 +99,16 @@
    Readme
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="basic_usage.html">
+   Basic Usage
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dev.html">
+   Development
+  </a>
+ </li>
  <li class="toctree-l1 collapsible-parent">
   <a class="reference internal" href="documentation.html">
    Documentation
@@ -119,16 +129,6 @@
     </i>
    </li>
    <li class="toctree-l2">
-    <a class="reference internal" href="functions.html">
-     Functions
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="api.html">
-     API
-    </a>
-   </li>
-   <li class="toctree-l2">
     <a class="reference internal" href="references.html">
      References
     </a>
@@ -136,11 +136,6 @@
   </ul>
   <i class="fas fa-chevron-down">
   </i>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="dev.html">
-   Development
-  </a>
  </li>
 </ul>
 <p class="caption collapsible-parent">
@@ -241,23 +236,6 @@
   <a class="reference internal nav-link" href="#installation">
    Installation
   </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#basic-usage">
-   Basic usage
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#minimal-example-phase-data">
-     Minimal example, phase data
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#frequency-data-example">
-     Frequency data example
-    </a>
-   </li>
-  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#jupyter-notebooks-with-examples">
@@ -379,61 +357,6 @@ and comparisons to known-good algorithms are welcome!</p>
 you can use the <cite>–user</cite> option to install for your account only.
 Exact command names may vary depending on your OS / package manager / target python version.</p>
 </div>
-<div class="section" id="basic-usage">
-<h2>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="minimal-example-phase-data">
-<h3>Minimal example, phase data<a class="headerlink" href="#minimal-example-phase-data" title="Permalink to this headline">¶</a></h3>
-<p>We can call allantools with only one parameter - an array of phase data.
-This is suitable for time-interval measurements at 1 Hz, for example
-from a time-interval-counter measuring the 1PPS output of two clocks.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">allantools</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>        <span class="c1"># Generate some phase data, in seconds.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">taus</span><span class="p">,</span> <span class="n">adevs</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>when only one input parameter is given, phase data in seconds is assumed
-when no rate parameter is given, rate=1.0 is the default
-when no taus parameter is given, taus=’octave’ is the default</p>
-</div>
-<div class="section" id="frequency-data-example">
-<h3>Frequency data example<a class="headerlink" href="#frequency-data-example" title="Permalink to this headline">¶</a></h3>
-<p>Note that allantools assumes non-dimensional frequency data input.
-Normalization, by e.g. dividing all data points with the average
-frequency, is left to the user.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">allantools</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>  <span class="c1"># tau values from 1 to 1000</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>  <span class="c1"># Generate some frequency data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="mf">12.3</span>  <span class="c1"># sample rate in Hz of the input data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="n">ad</span><span class="p">,</span> <span class="n">ade</span><span class="p">,</span> <span class="n">adn</span><span class="p">)</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>  <span class="c1"># Compute the overlapping ADEV</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t2</span><span class="p">,</span> <span class="n">ad</span><span class="p">)</span> <span class="c1"># Plot the results</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># plt.show()</span>
-</pre></div>
-</div>
-<p><em>New in 2016.11</em> : simple top-level <a class="reference external" href="api.html">API</a>, using dedicated classes for data handling and plotting.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantools</span> <span class="c1"># https://github.com/aewallin/allantools/</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="c1"># Compute a deviation using the Dataset class</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>
-<span class="n">a</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="s2">&quot;mdev&quot;</span><span class="p">)</span>
-
-<span class="c1"># New in 2019.7 : write results to file</span>
-<span class="n">a</span><span class="o">.</span><span class="n">write_results</span><span class="p">(</span><span class="s2">&quot;output.dat&quot;</span><span class="p">)</span>
-
-<span class="c1"># Plot it using the Plot class</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">allantools</span><span class="o">.</span><span class="n">Plot</span><span class="p">()</span>
-<span class="c1"># New in 2019.7 : additional keyword arguments are passed to</span>
-<span class="c1"># matplotlib.pyplot.plot()</span>
-<span class="n">b</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">errorbars</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="c1"># You can override defaults before &quot;show&quot; if needed</span>
-<span class="n">b</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Tau (s)&quot;</span><span class="p">)</span>
-<span class="n">b</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
 <div class="section" id="jupyter-notebooks-with-examples">
 <h2>Jupyter notebooks with examples<a class="headerlink" href="#jupyter-notebooks-with-examples" title="Permalink to this headline">¶</a></h2>
 <p>Jupyter notebooks are interactive python scripts, embedded in a browser,
@@ -469,7 +392,7 @@ on installing jupyter, please refer to <a class="reference external" href="https
     <div class='prev-next-bottom'>
         
     <a class='left-prev' id="prev-link" href="index.html" title="previous page">📑 Welcome to AllanToolkit!</a>
-    <a class='right-next' id="next-link" href="documentation.html" title="next page">📚 Documentation</a>
+    <a class='right-next' id="next-link" href="basic_usage.html" title="next page">Basic usage</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

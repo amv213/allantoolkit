@@ -5,7 +5,7 @@ and related time & frequency statistics. Don't hesitate to head over to his
 Github repo to check out the original project and to drop a star! 🌟
 
 ```{dropdown}
-:title: ## 🔥 Changelog
+:title: 🔥 Changelog
 :animate: fade-in-slide-down
 - new low-level API (based on NamedTuple)
 - fully featured object-oriented high-level API

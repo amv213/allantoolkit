@@ -1128,8 +1128,7 @@ def calc_mtie(x: Array, m: int, rate: float = None) -> VarResult:
     given averaging factor.
 
     .. warning::
-        algorithm seems to start giving wrong results if CPU already
-        under heavy load...
+        algorithm seems to give wrong results if CPU under heavy load
 
     FIXME: implement better algorithm
 
@@ -1156,6 +1155,9 @@ def calc_mtie(x: Array, m: int, rate: float = None) -> VarResult:
         TODO: find exact reference
     """
 
+    logger.warning("MTIE implementation might be unreliable if CPU under "
+                   "load. Apologies if that is the case.")
+
     # Move an n-point window through the phase data, and find the difference
     # between the max nad min values at each windows position
     n = m + 1  # n is defined as m+1
@@ -1163,7 +1165,7 @@ def calc_mtie(x: Array, m: int, rate: float = None) -> VarResult:
     if m < 1 or m >= x.size:
         logger.warning("Cannot calculate MTIE over this time interval: %f",
                        n/rate)
-        return np.NaN, 0
+        return VarResult(var=np.NaN, n=0)
 
     grads = utils.rolling_grad(x, n)
     assert grads.size == x.size - (n-1)
@@ -1175,16 +1177,37 @@ def calc_mtie(x: Array, m: int, rate: float = None) -> VarResult:
     var = mtie**2
 
     # The number of analysis points is the whole dataset
-    return var, x.size
+    return VarResult(var=var, n=x.size)
 
 
 # FIXME: mtie_phase_fast() is incomplete.
 # TODO: Complete and swap in for when `fastu` selected
-def calc_mtie_fast(phase, rate=1.0, data_type="phase", taus=None):
-    """ fast binary decomposition algorithm for MTIE
+def calc_mtie_fast(x: Array, m: int, rate: float = None) -> VarResult:
+    """Calculates the maximum time interval variance (MTIEVAR) of phase data
+    at given averaging factor - using a fast binary decomposition algorithm.
 
-        See: [Bregni2001]_ STEFANO BREGNI "Fast Algorithms for TVAR and MTIE Computation in
+    .. seealso::
+        Function :func:`allantoolkit.devs.mtie` for background details.
+
+    Args:
+        x:      input phase data, in units of seconds.
+        m:      averaging factor at which to calculate variance
+        rate:   sampling rate of the input data, in Hz.
+
+    Returns:
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        [Bregni2001]_
+        STEFANO BREGNI "Fast Algorithms for TVAR and MTIE Computation in
         Characterization of Network Synchronization Performance"
+    """
+
+    raise NotImplementedError("Fast binary decomposition algorithm for MTIE "
+                              "has not been implemented yet")
+
     """
     rate = float(rate)
     phase = np.asarray(phase)
@@ -1236,6 +1259,7 @@ def calc_mtie_fast(phase, rate=1.0, data_type="phase", taus=None):
     print("devs N=", len(devs), " ", devs)
     print("taus N=", len(taus_used), " ", taus_used)
     return utils.remove_small_ns(taus_used, devs, deverrs, ns)
+    """
 
 
 def calc_tierms(x: Array, m: int, rate: float = None) -> VarResult:

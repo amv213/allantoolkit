@@ -920,7 +920,7 @@ def calc_theo1_slow(x: Array, m: int, rate: float) -> VarResult:
         :class:`allantoolkit.stats.VarResult` NamedTuple of
         computed variance at given averaging time, and number of samples
         used to estimate it. The averaging time for which Theo1 variances
-        apply is ::math::`\\tau^*=0.75m\\tau_0`.
+        apply is :math:`\\tau^*=0.75m\\tau_0`.
 
     References:
         Theo1: characterization of very long-term frequency stability
@@ -983,7 +983,7 @@ def calc_theo1_fast(x: Array, rate: float, explode: bool = True) -> \
         number of analysis points. If ``exploded``, the THEO1
         variance at averaging factor ``m`` will be at index ``m`` of the array.
         The averaging time for which Theo1 variances apply is
-        ::math::`\\tau^*=0.75m\\tau_0`.
+        :math:`\\tau^*=0.75m\\tau_0`.
 
 
     References:

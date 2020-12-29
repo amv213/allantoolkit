@@ -312,7 +312,7 @@ def calc_mvar(x: Array, m: int, rate: float) -> VarResult:
 
     .. seealso::
         Function :func:`allantoolkit.devs.mdev` for background details.
-    
+
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
@@ -326,7 +326,6 @@ def calc_mvar(x: Array, m: int, rate: float) -> VarResult:
     References:
         TODO: add exact reference
         TODO: add reference justifying loop unrolled algorithm
-        http://www.leapsecond.com/tools/adev_lib.c
     """
 
     # TODO: make gap resistant and return correct number of non-NaN samples
@@ -358,10 +357,23 @@ def calc_mvar(x: Array, m: int, rate: float) -> VarResult:
 
 
 def calc_tvar(x: Array, m: int, rate: float) -> VarResult:
-    """Main algorithm for TVAR calculation.
+    """Calculates time Allan variance (TVAR) of phase data at given
+    averaging factor.
 
-    References:
-        [RileyStable32]_ (5.2.6, pg.23)
+    The Time Allan variance is calculated as:
+
+    .. math::
+
+        \\sigma^2_x( \\tau ) = { \\tau^2 \\over 3 } {\\textrm{MVAR}(\\tau)}
+
+    where :math:`\\textrm{MVAR}(\\tau)` is the modified Allan variance of the
+    data at averaging time :math:`\\tau`.
+
+    Note that the Time Allan variance has units of seconds, and not fractional
+    frequency.
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.tdev` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -369,8 +381,12 @@ def calc_tvar(x: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        TODO: add exact reference
     """
 
     mvar, n = calc_mvar(x=x, m=m, rate=rate)

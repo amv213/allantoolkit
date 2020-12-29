@@ -237,8 +237,7 @@ def calc_avar_freq(y: Array, m: int, rate: float) -> VarResult:
     """Calculates Allan variance (AVAR) of fractional frequency data at given
     averaging factor.
 
-    For a time-series of fractional frequency values, the Allan variance is
-    calculated as:
+    The Allan variance is calculated as:
 
     .. math::
 
@@ -292,24 +291,42 @@ def calc_avar_freq(y: Array, m: int, rate: float) -> VarResult:
 
 
 def calc_mvar(x: Array, m: int, rate: float) -> VarResult:
-    """Main algorithm for MVAR calculation.
+    """Calculates modified Allan variance (MVAR) of phase data at given
+    averaging factor.
 
-    This implementation is a `loop-unrolled` algorithm, as per
-    http://www.leapsecond.com/tools/adev_lib.c
+    The modified Allan variance is estimated from a set of
+    :math:`N` phase measurements for averaging time :math:`\\tau =
+    m\\tau_0`, where :math:`m` is the averaging factor and :math:`\\tau_0`
+    is the basic data sampling period, by the following expression:
 
+    .. math::
 
-    References:
-        [RileyStable32]_ (5.2.5, pg.22)
-        TODO: add reference justifying loop unrolled algorithm
+        \\sigma^{2}_y(\\tau) = { 1 \\over 2 m^2 \\tau^2 (N-3m+1) }
+        \\sum_{j=1}^{N-3m+1} \\left\\{
+        \\sum_{i=j}^{j+m-1} \\left[ {x}_{i+2m} - 2x_{i+m} + x_{i} \\right]
+        \\right\\}^2
 
+    .. note::
+        The algorithm used in practice in this code, is a `loop-unrolled`
+        algorithm - as per http://www.leapsecond.com/tools/adev_lib.c
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.mdev` for background details.
+    
     Args:
         x:      input phase data, in units of seconds.
         m:      averaging factor at which to calculate variance
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        TODO: add exact reference
+        TODO: add reference justifying loop unrolled algorithm
+        http://www.leapsecond.com/tools/adev_lib.c
     """
 
     # TODO: make gap resistant and return correct number of non-NaN samples

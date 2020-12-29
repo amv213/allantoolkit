@@ -1,7 +1,7 @@
-# Installation
+# 📚 Installation
 
-📚 Install the latest development version of `allantoolkit`, using pip to 
-   download it from this repo:
+Install the latest development version of `allantoolkit`, using pip to 
+download it from this repo:
 
  ```bash
  python -m pip install git+https://gitlab.com/amv213/allantoolkit.git

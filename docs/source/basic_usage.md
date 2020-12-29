@@ -38,7 +38,7 @@ of choice.
 ```{seealso}
 {mod}`allantoolkit.devs` for more details on available deviation types
 
-{func}`allantoolkit.utils.tau_generator` for more details on available 
+{func}`allantoolkit.utils.tau_generator` for more details on built-in 
 averaging times
 ```
 
@@ -62,6 +62,12 @@ out = allantoolkit.devs.oadev(y, rate=1, data_type='freq')
 
 # Print deviation results
 print(out)
+```
+
+```{seealso}
+{func}`allantoolkit.utils.frequency2fractional` and 
+{func}`allantoolkit.utils.scale` for utility functions available to rescale 
+your frequency data
 ```
 
 ### API

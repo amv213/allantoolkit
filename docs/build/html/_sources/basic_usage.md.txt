@@ -5,6 +5,10 @@ data either as evenly spaced phase measurements - in units of second - or
 as fractional frequency measurements. Deviations are then calculated by 
 `allantoolkit` in seconds, over a requested range of averaging times.
 
+Phase data - in seconds - is usually denoted as `x`. Fractional frequency 
+data is instead denoted as `y`.
+
+
 ## 🧩 Minimal Examples
 
 ### Phase data

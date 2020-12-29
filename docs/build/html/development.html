@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Python Module Index &#8212; AllanToolkit Documentation</title>
+    <title>🛠 Development &#8212; AllanToolkit Documentation</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -51,11 +51,8 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 
-
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
-
-
 
 
 
@@ -103,11 +100,6 @@
  <li class="toctree-l1">
   <a class="reference internal" href="basic_usage.html">
    Basic Usage
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="development.html">
-   Development
   </a>
  </li>
  <li class="toctree-l1 collapsible-parent">
@@ -177,6 +169,23 @@
         </button>
         
         
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/development.md.txt"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
         <!-- Source interaction buttons -->
 
 <div class="dropdown-buttons-trigger">
@@ -188,10 +197,12 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2Fpy-modindex.html&body=Your%20issue%20content%20here."><button
+            href="https://gitlab.com/amv213/allantoolkit/issues/new?title=Issue%20on%20page%20%2Fdevelopment.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
-        
+        <a class="edit-button" href="https://github.com/amv213/allantoolkit/edit/master/docs/source/development.md"><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
     </div>
 </div>
 
@@ -209,6 +220,25 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#documentation-generation">
+   Documentation generation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#tests">
+   Tests
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -216,84 +246,62 @@
         
               <div>
                 
-
-   <h1>Python Module Index</h1>
-
-   <div class="modindex-jumpbox">
-   <a href="#cap-a"><strong>a</strong></a>
-   </div>
-
-   <table class="indextable modindextable">
-     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
-     <tr class="cap" id="cap-a"><td></td><td>
-       <strong>a</strong></td><td></td></tr>
-     <tr>
-       <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-       <td>
-       <a href="allantoolkit.html#module-allantoolkit"><code class="xref">allantoolkit</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="allantoolkit.html#module-allantoolkit.api"><code class="xref">allantoolkit.api</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="allantoolkit.html#module-allantoolkit.bias"><code class="xref">allantoolkit.bias</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="allantoolkit.html#module-allantoolkit.ci"><code class="xref">allantoolkit.ci</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="allantoolkit.html#module-allantoolkit.devs"><code class="xref">allantoolkit.devs</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="allantoolkit.html#module-allantoolkit.noise"><code class="xref">allantoolkit.noise</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="allantoolkit.html#module-allantoolkit.noise_id"><code class="xref">allantoolkit.noise_id</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="allantoolkit.html#module-allantoolkit.noise_kasdin"><code class="xref">allantoolkit.noise_kasdin</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="allantoolkit.html#module-allantoolkit.plot"><code class="xref">allantoolkit.plot</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="allantoolkit.html#module-allantoolkit.realtime"><code class="xref">allantoolkit.realtime</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="allantoolkit.html#module-allantoolkit.stats"><code class="xref">allantoolkit.stats</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="allantoolkit.html#module-allantoolkit.testutils"><code class="xref">allantoolkit.testutils</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="allantoolkit.html#module-allantoolkit.utils"><code class="xref">allantoolkit.utils</code></a></td><td>
-       <em></em></td></tr>
-   </table>
+  <div class="section" id="development">
+<h1>🛠 Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="documentation-generation">
+<h2>Documentation generation<a class="headerlink" href="#documentation-generation" title="Permalink to this headline">¶</a></h2>
+<p>See /docs for documentation in sphinx format. On Ubuntu this requires
+the <strong>python-sphinx</strong> and <strong>python-numpydoc</strong> packages.
+html/pdf documentation using sphinx can be built locally with::</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>/docs$ make html
+/docs$ make latexpdf
+</pre></div>
+</div>
+<p>this generates html documentation in docs/_build/html and pdf
+documentation in docs/_build/latex.</p>
+<p>The sphinx documentation is also auto-generated online</p>
+<ul class="simple">
+<li><p>https://allantools.readthedocs.org</p></li>
+</ul>
+</div>
+<div class="section" id="tests">
+<h2>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
+<p>The tests compare the output of allantools to other programs such
+as Stable32. Tests may be run using py.test (http://pytest.org).
+Package managers may install it with different binary names (e.g. pytest-3
+for the python3 version on debian).</p>
+<p>Slow tests are marked ‘slow’ and tests failing because of a known
+reason are marked ‘fails’. To run all tests::</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ py.test
+</pre></div>
+</div>
+<p>To exclude known failing tests::</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ py.test -m &quot;not fails&quot; --durations=10
+</pre></div>
+</div>
+<p>To exclude tests that run slowly::</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ py.test -m &quot;not slow&quot; --durations=10
+</pre></div>
+</div>
+<p>To exclude both (note option change) and also check docstrings is ReST files ::</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ py.test -k &quot;not (slow or fails)&quot; --durations=10 --doctest-glob=&#39;*.rst&#39;
+</pre></div>
+</div>
+<p>To run the above command without installing the package::</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ python setup.py test --addopts &quot;-k &#39;not (fails or slow)&#39;&quot;
+</pre></div>
+</div>
+<p>Test coverage may be obtained with the
+(https://pypi.python.org/pypi/coverage) module::</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>coverage run --source allantools setup.py test --addopts &quot;-k &#39;not (fails or slow)&#39;&quot;
+coverage report # Reports on standard output 
+coverage html # Writes annotated source code as html in ./htmlcov/
+</pre></div>
+</div>
+<p>On Ubuntu this requires packages <strong>python-pytest</strong> and
+<strong>python-coverage</strong>.</p>
+</div>
+</div>
 
 
               </div>

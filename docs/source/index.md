@@ -77,7 +77,7 @@ project and to drop a star! 🌟
 
 Installation <installation.md>
 Basic Usage <basic_usage.md>
-Development <dev.rst>
+Development <development.md>
 Documentation <documentation.md>
 ```
 

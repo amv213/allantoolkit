@@ -277,9 +277,9 @@ as fractional frequency measurements. Deviations are then calculated by
 <h3>Phase data<a class="headerlink" href="#phase-data" title="Permalink to this headline">¶</a></h3>
 <p>We can call <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code> with only two parameters - an array of phase
 data and its associated data sampling rate.</p>
-<p>For example, here is how one would go about calculating the overlapping
-allan deviation (OADEV) for a time-interval measurement at 1 Hz from a
-time-interval-counter measuring the 1PPS output of two clocks:</p>
+<p>For example, to calculate the overlapping allan deviation (OADEV) for a
+time-interval measurement at 1 Hz from a time-interval-counter measuring the
+1PPS output of two clocks:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
 
 <span class="c1"># Generate some mock phase data</span>
@@ -297,6 +297,10 @@ time-interval-counter measuring the 1PPS output of two clocks:</p>
 One can also choose another of the in-built options (<code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">many</span></code>, <code class="docutils literal notranslate"><span class="pre">decade</span></code>)
 or provide custom averaging times to the <code class="docutils literal notranslate"><span class="pre">taus</span></code> parameter of the deviation
 of choice.</p>
+<p>.. seealso:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>:func:`allantoolkit.utils.tau_generator`
+</pre></div>
+</div>
 </div>
 <div class="section" id="frequency-data">
 <h3>Frequency data<a class="headerlink" href="#frequency-data" title="Permalink to this headline">¶</a></h3>

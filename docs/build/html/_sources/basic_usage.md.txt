@@ -12,9 +12,9 @@ as fractional frequency measurements. Deviations are then calculated by
 We can call `allantoolkit` with only two parameters - an array of phase 
 data and its associated data sampling rate. 
 
-For example, here is how one would go about calculating the overlapping 
-allan deviation (OADEV) for a time-interval measurement at 1 Hz from a 
-time-interval-counter measuring the 1PPS output of two clocks:
+For example, to calculate the overlapping allan deviation (OADEV) for a 
+time-interval measurement at 1 Hz from a time-interval-counter measuring the 
+1PPS output of two clocks:
 
 ```python
 import allantoolkit
@@ -34,6 +34,10 @@ By default, the deviations will be computed at `octave` averaging times.
 One can also choose another of the in-built options (`all`, `many`, `decade`) 
 or provide custom averaging times to the `taus` parameter of the deviation 
 of choice.
+
+.. seealso:
+    
+    :func:`allantoolkit.utils.tau_generator`
 
 ### Frequency data
 

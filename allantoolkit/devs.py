@@ -72,7 +72,7 @@ class DevResult(NamedTuple):
 
 
 def dev(dev_type: str, data: Array, rate: float, data_type: str,
-        taus: Taus, max_af: int) -> DevResult:
+        taus: Taus, max_af: int, alpha: int = None) -> DevResult:
     """This function implements the core pipeline common to all frequency
     stability analyses. It processes the input data and returns the appropriate
     frequency stability analysis results for the given deviation type.
@@ -107,6 +107,8 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
                     ``octave``, ``decade``.
         max_af:     maximum averaging factor for which to compute deviation.
                     Defaults to length of dataset.
+        alpha:      global dominant noise type. If ``None``, it is
+                    automatically estimated at each averaging time.
 
     Returns:
         frequency stability analysis results, stored in a
@@ -171,17 +173,18 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         return DevResult(afs=afs, taus=taus,  ns=ns, alphas=nan_array,
                          devs_lo=nan_array,  devs=devs, devs_hi=nan_array)
 
-    # -----------------------------------
+    # ----------------------------------
     # NOISE ID and DE-BIASING
-    # -----------------------------------
-    # generates [alphas], modifies [vars]
-    # -----------------------------------
+    # ----------------------------------
+    # generates [alphas], scales [vars]
+    # ----------------------------------
 
-    if dev_type == 'theo1':  # batch noise id and de-biasing for theo1
+    if dev_type == 'theo1' and alpha is None:  # Stable32 `TheoBR` conditions
+        # batch noise id and de-biasing for theo1
 
-        # Note that if we ever switch from letting users provide an `alpha` to
-        # the API, Stable32 calculates the bias using the hard-coded
-        # biasing factors in bias.calc_bias_theo1() instead
+        # Note that if users provide an `alpha` to the API, Stable32
+        # calculates the bias using the hard-coded biasing factors in
+        # bias.calc_bias_theo1() instead (so the else case below applies)
 
         # Calculate TheoBR correction factor
         kf = bias.calc_bias_theobr(x=x, rate=rate)
@@ -195,20 +198,26 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
     else:  # individual noise id at each averaging time for everyone else
 
-        # Initialise array for noise ID
-        alphas = np.zeros(afs.size, dtype=int)
+        if alpha is None:  # need to auto ID noise
 
-        for i, (m, n, var) in enumerate(zip(afs, ns, vars)):
+            # Initialise array for noise ID
+            alphas = np.zeros(afs.size, dtype=int)
 
-            # Estimate Noise ID
-            if i < afs.size - 1:  # Only estimate if not last averaging time
-                alphas[i] = noise_id.noise_id(data=x, m=m, rate=rate,
-                                              data_type='phase',
-                                              dev_type=dev_type, n=n)
+            for i, (m, n, var) in enumerate(zip(afs, ns, vars)):
 
-            else:
-                # Use previous estimate at longest averaging time
-                alphas[i] = alphas[i-1]
+                # Estimate Noise ID
+                if i < afs.size - 1:  # Only estimate if not last averaging time
+                    alphas[i] = noise_id.noise_id(data=x, m=m, rate=rate,
+                                                  data_type='phase',
+                                                  dev_type=dev_type, n=n)
+
+                else:
+                    # Use previous estimate at longest averaging time
+                    alphas[i] = alphas[i-1]
+
+        else:  # global dominant noise has been provided
+
+            alphas = np.full(afs.size, fill_value=alpha, dtype=int)
 
         # Apply Bias Corrections based on noise type
 
@@ -250,7 +259,8 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
 
 def adev(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Taus = None, max_af: int = None) -> DevResult:
+         taus: Taus = None, max_af: int = None, alpha: int = None) -> \
+        DevResult:
     """Calculates the Allan deviation (ADEV) of phase or fractional
     frequency data.
 
@@ -294,11 +304,11 @@ def adev(data: Array, rate: float = 1., data_type: str = "phase",
     """
 
     return dev(dev_type='adev', data=data, rate=rate, data_type=data_type,
-               taus=taus, max_af=max_af)
+               taus=taus, max_af=max_af, alpha=alpha)
 
 
 def oadev(data: Array, rate: float = 1., data_type: str = "phase",
-          taus: Taus = None, max_af: int = None) -> DevResult:
+          taus: Taus = None, max_af: int = None, alpha: int = None) -> DevResult:
     """Calculates the overlapping Allan deviation (OADEV) of phase or
     fractional frequency data.
 
@@ -339,11 +349,11 @@ def oadev(data: Array, rate: float = 1., data_type: str = "phase",
     """
 
     return dev(dev_type='oadev', data=data, rate=rate, data_type=data_type,
-               taus=taus, max_af=max_af)
+               taus=taus, max_af=max_af, alpha=alpha)
 
 
 def mdev(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Taus = None, max_af: int = None) -> DevResult:
+         taus: Taus = None, max_af: int = None, alpha: int = None) -> DevResult:
     """Calculates the modified Allan deviation (MDEV) of phase or
     fractional frequency data.
 
@@ -389,11 +399,11 @@ def mdev(data: Array, rate: float = 1., data_type: str = "phase",
     """
 
     return dev(dev_type='mdev', data=data, rate=rate, data_type=data_type,
-               taus=taus, max_af=max_af)
+               taus=taus, max_af=max_af, alpha=alpha)
 
 
 def tdev(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Taus = None, max_af: int = None) -> DevResult:
+         taus: Taus = None, max_af: int = None, alpha: int = None) -> DevResult:
     """Calculates the Time Allan deviation (TDEV) of phase or fractional
     frequency data.
 
@@ -428,11 +438,11 @@ def tdev(data: Array, rate: float = 1., data_type: str = "phase",
     """
 
     return dev(dev_type='tdev', data=data, rate=rate, data_type=data_type,
-               taus=taus, max_af=max_af)
+               taus=taus, max_af=max_af, alpha=alpha)
 
 
 def hdev(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Taus = None, max_af: int = None) -> DevResult:
+         taus: Taus = None, max_af: int = None, alpha: int = None) -> DevResult:
     """Calculates the Hadamard deviation (HDEV) of phase or fractional
     frequency data.
 
@@ -481,11 +491,11 @@ def hdev(data: Array, rate: float = 1., data_type: str = "phase",
     """
 
     return dev(dev_type='hdev', data=data, rate=rate, data_type=data_type,
-               taus=taus, max_af=max_af)
+               taus=taus, max_af=max_af, alpha=alpha)
 
 
 def ohdev(data: Array, rate: float = 1., data_type: str = "phase",
-          taus: Taus = None, max_af: int = None) -> DevResult:
+          taus: Taus = None, max_af: int = None, alpha: int = None) -> DevResult:
     """Calculates the overlapping Hadamard deviation (OHDEV) of phase or
     fractional frequency data.
 
@@ -531,11 +541,11 @@ def ohdev(data: Array, rate: float = 1., data_type: str = "phase",
     """
 
     return dev(dev_type='ohdev', data=data, rate=rate, data_type=data_type,
-               taus=taus, max_af=max_af)
+               taus=taus, max_af=max_af, alpha=alpha)
 
 
 def totdev(data: Array, rate: float = 1., data_type: str = "phase",
-           taus: Taus = None, max_af: int = None) -> DevResult:
+           taus: Taus = None, max_af: int = None, alpha: int = None) -> DevResult:
     """Calculates the Total deviation (TOTDEV) of phase or
     fractional frequency data.
 
@@ -577,11 +587,11 @@ def totdev(data: Array, rate: float = 1., data_type: str = "phase",
     """
 
     return dev(dev_type='totdev', data=data, rate=rate, data_type=data_type,
-               taus=taus, max_af=max_af)
+               taus=taus, max_af=max_af, alpha=alpha)
 
 
 def mtotdev(data: Array, rate: float = 1., data_type: str = "phase",
-            taus: Taus = None, max_af: int = None) -> DevResult:
+            taus: Taus = None, max_af: int = None, alpha: int = None) -> DevResult:
     """Calculates the modified total deviation (MTOTDEV) of phase or
     fractional frequency data.
 
@@ -624,11 +634,11 @@ def mtotdev(data: Array, rate: float = 1., data_type: str = "phase",
     """
 
     return dev(dev_type='mtotdev', data=data, rate=rate, data_type=data_type,
-               taus=taus, max_af=max_af)
+               taus=taus, max_af=max_af, alpha=alpha)
 
 
 def ttotdev(data: Array, rate: float = 1., data_type: str = "phase",
-            taus: Taus = None, max_af: int = None) -> DevResult:
+            taus: Taus = None, max_af: int = None, alpha: int = None) -> DevResult:
     """Calculates the time total deviation (TTOTDEV) of phase or fractional
     frequency data.
 
@@ -659,11 +669,11 @@ def ttotdev(data: Array, rate: float = 1., data_type: str = "phase",
     """
 
     return dev(dev_type='ttotdev', data=data, rate=rate, data_type=data_type,
-               taus=taus, max_af=max_af)
+               taus=taus, max_af=max_af, alpha=alpha)
 
 
 def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
-            taus: Taus = None, max_af: int = None) -> DevResult:
+            taus: Taus = None, max_af: int = None, alpha: int = None) -> DevResult:
     """Calculates the Hadamard total deviation (HTOTDEV) of phase or fractional
     frequency data.
 
@@ -706,14 +716,14 @@ def htotdev(data: Array, rate: float = 1., data_type: str = "phase",
     """
 
     return dev(dev_type='htotdev', data=data, rate=rate, data_type=data_type,
-               taus=taus, max_af=max_af)
+               taus=taus, max_af=max_af, alpha=alpha)
 
 
 # PHASE-ONLY STATISTICS
 
 
 def theo1(data: Array, rate: float = 1., data_type: str = "phase",
-          taus: Taus = None, max_af: int = None) -> DevResult:
+          taus: Taus = None, max_af: int = None, alpha: int = None) -> DevResult:
     """Calculates the (Bias Removed) Thêo1 deviation (THEOBR) of phase data.
     If fractional frequency data is provided, it is integrated to phase
     before processing.
@@ -768,7 +778,7 @@ def theo1(data: Array, rate: float = 1., data_type: str = "phase",
     """
 
     return dev(dev_type='theo1', data=data, rate=rate, data_type=data_type,
-               taus=taus, max_af=max_af)
+               taus=taus, max_af=max_af, alpha=alpha)
 
 
 # TODO: Implement TheoH (not really necessary as a Fast THEO1 (BR) removes the

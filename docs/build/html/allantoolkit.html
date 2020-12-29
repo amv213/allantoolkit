@@ -3261,11 +3261,14 @@ used to estimate it.</p>
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_theo1">
 <code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_theo1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult">allantoolkit.stats.VarResult</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_theo1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_theo1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate THEO1 variance at single averaging factor. The resulting
-variance is at the effective averaging time tau = 0.75*m*tau_0</p>
-<p>This is a utility function to match the signatures of the other variance
-functions. Note that this is still not efficient as it recalculates the
-full <cite>fast</cite> all-tau array of THEO1 vars every-time it is called.</p>
+<dd><p>Calculates the Thêo1 variance (THEO1VAR) of phase data at
+given averaging factor. The variance is calculated using a fast Lewis
+algorithm.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.stats.calc_theo1_fast" title="allantoolkit.stats.calc_theo1_fast"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.stats.calc_theo1_fast()</span></code></a> for the
+preferred implementation.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -3275,8 +3278,10 @@ full <cite>fast</cite> all-tau array of THEO1 vars every-time it is called.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(var, n) NamedTuple of computed variance at given averaging time, and
-number of samples used to estimate it.</p>
+<dd class="field-even"><p><a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">allantoolkit.stats.VarResult</span></code></a> NamedTuple of
+computed variance at given averaging time, and number of samples
+used to estimate it. The averaging time for which Theo1 variances
+apply is <span class="math notranslate nohighlight">\(\tau^*=0.75m\tau_0\)</span>.</p>
 </dd>
 </dl>
 </dd></dl>

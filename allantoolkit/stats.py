@@ -1092,12 +1092,19 @@ def calc_theo1_fast(x: Array, rate: float, explode: bool = True) -> \
 
 
 def calc_theo1(x: Array, m: int, rate: float) -> VarResult:
-    """ Calculate THEO1 variance at single averaging factor. The resulting
-    variance is at the effective averaging time tau = 0.75*m*tau_0
+    """Calculates the Thêo1 variance (THEO1VAR) of phase data at
+    given averaging factor. The variance is calculated using a fast Lewis
+    algorithm.
 
-    This is a utility function to match the signatures of the other variance
-    functions. Note that this is still not efficient as it recalculates the
-    full `fast` all-tau array of THEO1 vars every-time it is called.
+    .. caution:
+        This is only a utility function to match the signatures of the other
+        variance functions. Calculation of the variance is still not efficient
+        as the `fast` algorithm requires calculating nonetheless an all-tau
+        array of THEO1 variances every-time it is called.
+
+    .. seealso::
+        Function :func:`allantoolkit.stats.calc_theo1_fast` for the
+        preferred implementation.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -1105,8 +1112,10 @@ def calc_theo1(x: Array, m: int, rate: float) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it. The averaging time for which Theo1 variances
+        apply is :math:`\\tau^*=0.75m\\tau_0`.
     """
 
     vars, ns = calc_theo1_fast(x=x, rate=rate, explode=True)

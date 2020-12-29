@@ -1096,7 +1096,7 @@ def calc_theo1(x: Array, m: int, rate: float) -> VarResult:
     given averaging factor. The variance is calculated using a fast Lewis
     algorithm.
 
-    .. caution:
+    .. caution::
         This is only a utility function to match the signatures of the other
         variance functions. Calculation of the variance is still not efficient
         as the `fast` algorithm requires calculating nonetheless an all-tau
@@ -1124,13 +1124,23 @@ def calc_theo1(x: Array, m: int, rate: float) -> VarResult:
 
 
 def calc_mtie(x: Array, m: int, rate: float = None) -> VarResult:
-    """Main algorithm for MTIE var calculation.
+    """Calculates the maximum time interval variance (MTIEVAR) of phase data at
+    given averaging factor.
 
-    # FIXME: algorithm seems to start giving wrong results if CPU already
-    under heavy load...
+    .. warning::
+        algorithm seems to start giving wrong results if CPU already
+        under heavy load...
 
-    References:
-        [RileyStable32]_ (5.2.17, pg.41-42)
+    FIXME: implement better algorithm
+
+    MTIE is calculated by moving a `m`-point window (`m` being the
+    averaging time of interest) through phase (time-error) data and finding
+    the difference between the maximum and minimum values at each window
+    position. MTIEVAR is the square of the overall maximum of this time
+    interval error over the entire data set.
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.mtie` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -1138,8 +1148,12 @@ def calc_mtie(x: Array, m: int, rate: float = None) -> VarResult:
         rate:   sampling rate of the input data, in Hz.
 
     Returns:
-        (var, n) NamedTuple of computed variance at given averaging time, and
-        number of samples used to estimate it.
+        :class:`allantoolkit.stats.VarResult` NamedTuple of
+        computed variance at given averaging time, and number of samples
+        used to estimate it.
+
+    References:
+        TODO: find exact reference
     """
 
     # Move an n-point window through the phase data, and find the difference

@@ -136,7 +136,12 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     # generates [vars, ns]
     # ---------------------
 
-    if dev_type != 'theo1':
+    if dev_type == 'theo1':  # Fast batch calculation for theo1
+
+        vars, ns = stats.calc_theo1_fast(x=x, rate=rate, explode=True)
+        vars, ns = vars[afs], ns[afs]  # index out only selected AFS
+
+    else:  # individual calculations at each averaging time for everyone else
 
         # Initialise arrays
         ns, vars = np.zeros(afs.size, dtype=int), np.zeros(afs.size)
@@ -153,15 +158,12 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
             ns[i], vars[i] = n, var
 
-    else:  # Fast batch calculation for theo1
-
-        vars, ns = stats.calc_theo1_fast(x=x, rate=rate, explode=True)
-        vars, ns = vars[afs], ns[afs]  # index out only selected AFS
-
     # Get rid of averaging times where dev calculated on too few samples (<= 1)
     afs, taus, ns, vars = utils.remove_small_ns(afs, taus, ns, vars)
 
-    if dev_type in ['mtie', 'tierms']:  # Stop here
+    # Stop here if calculating MTIE or TIERMS. We don't need confidence
+    # noise estimation, de-biasing, or confidence intervals
+    if dev_type in ['mtie', 'tierms']:
 
         devs = np.sqrt(vars)
 
@@ -169,30 +171,48 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         return DevResult(afs=afs, taus=taus,  ns=ns, alphas=nan_array,
                          devs_lo=nan_array,  devs=devs, devs_hi=nan_array)
 
-    # -------------------------
-    # DE-BIAS VARS AND NOISE ID
-    # -------------------------
-    # generates [alphas]
-    # -------------------------
+    # -----------------------------------
+    # NOISE ID and DE-BIASING
+    # -----------------------------------
+    # generates [alphas], modifies [vars]
+    # -----------------------------------
 
-    if dev_type != 'theo1':
+    if dev_type == 'theo1':  # batch noise id and de-biasing for theo1
 
-        # Initialise arrays
-        alphas, devs = np.zeros(afs.size, dtype=int), np.zeros(afs.size)
+        # Note that if we ever switch from letting users provide an `alpha` to
+        # the API, Stable32 calculates the bias using the hard-coded
+        # biasing factors in bias.calc_bias_theo1() instead
+
+        # Calculate TheoBR correction factor
+        kf = bias.calc_bias_theobr(x=x, rate=rate)
+
+        # ID noise type for the whole run
+        alpha = noise_id.noise_id_theoBR_fixed(kf=kf)
+        alphas = np.full(afs.size, alpha)
+
+        # De-bias theo1 to make TheoBR
+        vars = kf*vars
+
+    else:  # individual noise id at each averaging time for everyone else
+
+        # Initialise array for noise ID
+        alphas = np.zeros(afs.size, dtype=int)
 
         for i, (m, n, var) in enumerate(zip(afs, ns, vars)):
 
             # Estimate Noise ID
             if i < afs.size - 1:  # Only estimate if not last averaging time
-                alpha = noise_id.noise_id(data=x, m=m, rate=rate,
-                                          data_type='phase',
-                                          dev_type=dev_type, n=n)
+                alphas[i] = noise_id.noise_id(data=x, m=m, rate=rate,
+                                              data_type='phase',
+                                              dev_type=dev_type, n=n)
 
             else:
                 # Use previous estimate at longest averaging time
-                alpha = alphas[i-1]
+                alphas[i] = alphas[i-1]
 
-            # Apply Bias Corrections
+        # Apply Bias Corrections based on noise type
+
+        for i, (m, var, alpha) in enumerate(zip(afs, vars, alphas)):
 
             # Dispatch to appropriate bias calculator for this dev_type:
             # should be function of this signature: func(x, m, alpha) -> b
@@ -202,20 +222,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
             var *= b  # correct variance
 
-            alphas[i], vars[i] = alpha, var
-
-    else:  # batch de-biasing using theoBR
-
-        # Note that if we ever switch from letting users provide an `alpha` to
-        # the API, Stable32 calculates the bias using the hard-coded
-        # biasing factors in bias.calc_bias_theo1() instead
-
-        kf = bias.calc_bias_theobr(x=x, rate=rate)
-        vars = kf*vars
-
-        # ID noise type for the whole run
-        alpha = noise_id.noise_id_theoBR_fixed(kf=kf)
-        alphas = np.full(afs.size, alpha)
+            vars[i] = var
 
     # ---------------------------------------------
     # CALCULATE CONFIDENCE INTERVALS AND OUTPUT DEV

@@ -3,8 +3,7 @@
 Allantoolkit is a fork of **Anders E.E. Wallin's** [AllanTools](https://githubcom/aewallin/allantools): 
 
 > A python library for calculating Allan deviation and related
-> time & frequency statistics. ![LGPL v3+ license](https://www.gnu.
-> org/licenses/lgpl.html)
+> time & frequency statistics. [LGPL v3+ license](https://www.gnu.org/licenses/lgpl.html)
 
 * Development at https://github.com/aewallin/allantools
 * Installation package at https://pypi.python.org/pypi/AllanTools

@@ -36,9 +36,9 @@ or provide custom averaging times to the `taus` parameter of the deviation
 of choice.
 
 ```{seealso}
-Module {mod}`allantoolkit.devs`
-
-Function {func}`allantoolkit.utils.tau_generator`
+{mod}`allantoolkit.devs` for more details on available deviation types
+{func}`allantoolkit.utils.tau_generator` for more details on choosing 
+averaging times at which to calculate deviations
 ```
 
 ### Frequency data

@@ -227,8 +227,8 @@
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#features">
-   🔥 Features
+  <a class="reference internal nav-link" href="#changelog">
+   🔥 Changelog
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -242,6 +242,11 @@
   </a>
   <ul class="nav section-nav flex-column">
   </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#authors">
+   ✏ Authors
+  </a>
  </li>
 </ul>
 
@@ -259,8 +264,8 @@
 <p>Allantoolkit is a fork of <strong>Anders E.E. Wallin’s</strong> <a class="reference external" href="https://githubcom/aewallin/allantools">AllanTools</a>: a python library for calculating Allan deviation
 and related time &amp; frequency statistics. Don’t hesitate to head over to his
 Github repo to check out the original project and to drop a star! 🌟</p>
-<div class="section" id="features">
-<h2>🔥 Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="changelog">
+<h2>🔥 Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>new low-level API (based on NamedTuple)</p></li>
 <li><p>fully featured object-oriented high-level API</p></li>
@@ -286,13 +291,16 @@ Github repo to check out the original project and to drop a star! 🌟</p>
 <ol>
 <li><p>📚 Install the latest development version of <code class="docutils literal notranslate"><span class="pre">allantoolkit</span></code>, using pip to
 download it from this repo:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install git+https://gitlab.com/amv213/allantoolkit.git
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install git+https://gitlab.com/amv213/allantoolkit.git
 </pre></div>
 </div>
+</div></blockquote>
 </li>
 <li><p>🐍 Test your installation running the following minimal script:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
- 
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
+
 <span class="c1"># Generate some frequency data</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
 <span class="n">r</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># data sampling rate, in Hz</span>
@@ -304,7 +312,9 @@ download it from this repo:</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 </pre></div>
 </div>
+</div></blockquote>
 </li>
+<li><p>🎉 If everything went well you are now all set-up to use <code class="docutils literal notranslate"><span class="pre">allantoolit</span></code>! Enjoy!</p></li>
 </ol>
 </div>
 <div class="section" id="table-of-contents">
@@ -339,6 +349,18 @@ download it from this repo:</p>
 <li class="toctree-l1"><a class="reference internal" href="tutorial_intro.html">First Steps</a></li>
 </ul>
 </div>
+</div>
+<div class="section" id="authors">
+<h2>✏ Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Anders E.E. Wallin, anders.e.e.wallin “at” gmail.com , https://github.com/aewallin</p></li>
+<li><p>Danny Price, https://github.com/telegraphic</p></li>
+<li><p>Cantwell G. Carson, carsonc “at” gmail.com</p></li>
+<li><p>Frédéric Meynadier, https://github.com/fmeynadier</p></li>
+<li><p>Yan Xie, https://github.com/yxie-git</p></li>
+<li><p>Erik Benkler, https://github.com/EBenkler</p></li>
+<li><p>Alvise Vianello, https://gitlab.com/amv213</p></li>
+</ul>
 </div>
 </div>
 

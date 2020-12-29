@@ -4,7 +4,7 @@ Allantoolkit is a fork of **Anders E.E. Wallin's** [AllanTools](https://githubco
 and related time & frequency statistics. Don't hesitate to head over to his 
 Github repo to check out the original project and to drop a star! 🌟
 
-## 🔥 Features
+## 🔥 Changelog
 
 - new low-level API (based on NamedTuple)
 - fully featured object-oriented high-level API
@@ -29,25 +29,27 @@ Github repo to check out the original project and to drop a star! 🌟
 1. 📚 Install the latest development version of `allantoolkit`, using pip to 
    download it from this repo:
 
-    ```bash
-    python -m pip install git+https://gitlab.com/amv213/allantoolkit.git
-    ```
+    >```bash
+    >python -m pip install git+https://gitlab.com/amv213/allantoolkit.git
+    >```
    
 2. 🐍 Test your installation running the following minimal script:
 
-   ```python
-   import allantoolkit
-    
-   # Generate some frequency data
-   y = allantoolkit.noise.white(10000)
-   r = 1. # data sampling rate, in Hz
-   
-   # Compute overlappig Allan deviation
-   out = allantoolkit.devs.oadev(y, rate=r, data_type='freq')
-   
-   # Display analysis results
-   print(out)
-   ```
+   >```python
+   >import allantoolkit
+   > 
+   ># Generate some frequency data
+   >y = allantoolkit.noise.white(10000)
+   >r = 1. # data sampling rate, in Hz
+   >
+   ># Compute overlappig Allan deviation
+   >out = allantoolkit.devs.oadev(y, rate=r, data_type='freq')
+   >
+   ># Display analysis results
+   >print(out)
+   >```
+
+3. 🎉 If everything went well you are now all set-up to use `allantoolit`! Enjoy!
 
 ## 📚 Table of Contents
 
@@ -67,3 +69,13 @@ Development <dev.rst>
 
 First Steps <tutorial_intro.md>
 ```
+
+## ✏ Authors
+
+* Anders E.E. Wallin, anders.e.e.wallin "at" gmail.com , https://github.com/aewallin
+* Danny Price, https://github.com/telegraphic
+* Cantwell G. Carson, carsonc "at" gmail.com
+* Frédéric Meynadier, https://github.com/fmeynadier
+* Yan Xie, https://github.com/yxie-git
+* Erik Benkler, https://github.com/EBenkler
+* Alvise Vianello, https://gitlab.com/amv213

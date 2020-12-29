@@ -3284,7 +3284,32 @@ number of samples used to estimate it.</p>
 <dl class="py function">
 <dt id="allantoolkit.stats.calc_theo1_fast">
 <code class="sig-prename descclassname">allantoolkit.stats.</code><code class="sig-name descname">calc_theo1_fast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">explode</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.stats.VarResults" title="allantoolkit.stats.VarResults">allantoolkit.stats.VarResults</a><a class="reference internal" href="_modules/allantoolkit/stats.html#calc_theo1_fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.stats.calc_theo1_fast" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main algorithm for an all-tau Fast THEO1 calculation.</p>
+<dd><p>Calculates the Thêo1 variance (THEO1VAR) of phase data over a range
+of averaging factors. This batch variance calculation is implemented via a
+fast Lewis algorithm.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.devs.theo1" title="allantoolkit.devs.theo1"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.theo1()</span></code></a> for background details.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
+<li><p><strong>rate</strong> – data sampling rate, in Hz.</p></li>
+<li><p><strong>explode</strong> (<em>optional</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> returns exploded arrays for intuitive
+indexing; with Theo1(m) at index <code class="docutils literal notranslate"><span class="pre">m</span></code> of the
+array. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="#allantoolkit.stats.VarResults" title="allantoolkit.stats.VarResults"><code class="xref py py-class docutils literal notranslate"><span class="pre">allantoolkit.stats.VarResults</span></code></a> NamedTuple of computed
+variances at all allowed (even) averaging factors and corresponding
+number of analysis points. If <code class="docutils literal notranslate"><span class="pre">exploded</span></code>, the THEO1
+variance at averaging factor <code class="docutils literal notranslate"><span class="pre">m</span></code> will be at index <code class="docutils literal notranslate"><span class="pre">m</span></code> of the array.
+The averaging time for which Theo1 variances apply is
+::math::<cite>tau^*=0.75mtau_0</cite>.</p>
+</dd>
+</dl>
 <p class="rubric">References</p>
 <p>B. Lewis, “Fast Algorithm for Calculation of  Theo1” Submitted to
 IEEE Transactions on Ultrasonics Ferroelectrics,  and  Frequency
@@ -3293,23 +3318,6 @@ for “all tau” Thêo1 calculations</p>
 <blockquote>
 <div><p><a class="reference external" href="http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf">http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf</a></p>
 </div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> – input phase data, in units of seconds.</p></li>
-<li><p><strong>rate</strong> – data sampling rate, in Hz.</p></li>
-<li><p><strong>explode</strong> (<em>optional</em>) – if True returns exploded arrays for intuitive
-indexing; with Theo1(m) at index m of the array.
-Defaults to False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>tuple of computed variances at all allowed (even) averaging factors
-and corresponding number of analysis points. If <cite>exploded</cite>, the THEO1
-variance at averaging factor m will be at index m of the array.
-The averaging time for which Theo1 variances apply is 0.75*m*tau_0.</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -3347,7 +3355,8 @@ phase measurements for even averaging factor <span class="math notranslate nohig
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><a class="reference internal" href="#allantoolkit.stats.VarResult" title="allantoolkit.stats.VarResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">allantoolkit.stats.VarResult</span></code></a> NamedTuple of
 computed variance at given averaging time, and number of samples
-used to estimate it.</p>
+used to estimate it. The averaging time for which Theo1 variances
+apply is ::math::<cite>tau^*=0.75mtau_0</cite>.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>

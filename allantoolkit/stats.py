@@ -919,7 +919,8 @@ def calc_theo1_slow(x: Array, m: int, rate: float) -> VarResult:
     Returns:
         :class:`allantoolkit.stats.VarResult` NamedTuple of
         computed variance at given averaging time, and number of samples
-        used to estimate it.
+        used to estimate it. The averaging time for which Theo1 variances
+        apply is ::math::`\\tau^*=0.75m\\tau_0`.
 
     References:
         Theo1: characterization of very long-term frequency stability
@@ -962,7 +963,28 @@ def calc_theo1_slow(x: Array, m: int, rate: float) -> VarResult:
 
 def calc_theo1_fast(x: Array, rate: float, explode: bool = True) -> \
         VarResults:
-    """Main algorithm for an all-tau Fast THEO1 calculation.
+    """Calculates the Thêo1 variance (THEO1VAR) of phase data over a range
+    of averaging factors. This batch variance calculation is implemented via a
+    fast Lewis algorithm.
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.theo1` for background details.
+
+    Args:
+        x:                  input phase data, in units of seconds.
+        rate:               data sampling rate, in Hz.
+        explode (optional): if ``True`` returns exploded arrays for intuitive
+                            indexing; with Theo1(m) at index ``m`` of the
+                            array. Defaults to ``False``.
+
+    Returns:
+        :class:`allantoolkit.stats.VarResults` NamedTuple of computed
+        variances at all allowed (even) averaging factors and corresponding
+        number of analysis points. If ``exploded``, the THEO1
+        variance at averaging factor ``m`` will be at index ``m`` of the array.
+        The averaging time for which Theo1 variances apply is
+        ::math::`\\tau^*=0.75m\\tau_0`.
+
 
     References:
         B. Lewis, "Fast Algorithm for Calculation of  Theo1" Submitted to
@@ -971,19 +993,6 @@ def calc_theo1_fast(x: Array, rate: float, explode: bool = True) -> \
         for “all tau” Thêo1 calculations
 
        http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf
-
-    Args:
-        x:                  input phase data, in units of seconds.
-        rate:               data sampling rate, in Hz.
-        explode (optional): if True returns exploded arrays for intuitive
-                            indexing; with Theo1(m) at index m of the array.
-                            Defaults to False.
-
-    Returns:
-        tuple of computed variances at all allowed (even) averaging factors
-        and corresponding number of analysis points. If `exploded`, the THEO1
-        variance at averaging factor m will be at index m of the array.
-        The averaging time for which Theo1 variances apply is 0.75*m*tau_0.
     """
 
     N = x.size

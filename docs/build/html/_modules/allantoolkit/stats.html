@@ -1130,7 +1130,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        :class:`allantoolkit.stats.VarResult` NamedTuple of</span>
 <span class="sd">        computed variance at given averaging time, and number of samples</span>
-<span class="sd">        used to estimate it.</span>
+<span class="sd">        used to estimate it. The averaging time for which Theo1 variances</span>
+<span class="sd">        apply is ::math::`\\tau^*=0.75m\\tau_0`.</span>
 
 <span class="sd">    References:</span>
 <span class="sd">        Theo1: characterization of very long-term frequency stability</span>
@@ -1173,7 +1174,28 @@
 
 <div class="viewcode-block" id="calc_theo1_fast"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_theo1_fast">[docs]</a><span class="k">def</span> <span class="nf">calc_theo1_fast</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">explode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> \
         <span class="n">VarResults</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Main algorithm for an all-tau Fast THEO1 calculation.</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the Thêo1 variance (THEO1VAR) of phase data over a range</span>
+<span class="sd">    of averaging factors. This batch variance calculation is implemented via a</span>
+<span class="sd">    fast Lewis algorithm.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.theo1` for background details.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x:                  input phase data, in units of seconds.</span>
+<span class="sd">        rate:               data sampling rate, in Hz.</span>
+<span class="sd">        explode (optional): if ``True`` returns exploded arrays for intuitive</span>
+<span class="sd">                            indexing; with Theo1(m) at index ``m`` of the</span>
+<span class="sd">                            array. Defaults to ``False``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`allantoolkit.stats.VarResults` NamedTuple of computed</span>
+<span class="sd">        variances at all allowed (even) averaging factors and corresponding</span>
+<span class="sd">        number of analysis points. If ``exploded``, the THEO1</span>
+<span class="sd">        variance at averaging factor ``m`` will be at index ``m`` of the array.</span>
+<span class="sd">        The averaging time for which Theo1 variances apply is</span>
+<span class="sd">        ::math::`\\tau^*=0.75m\\tau_0`.</span>
+
 
 <span class="sd">    References:</span>
 <span class="sd">        B. Lewis, &quot;Fast Algorithm for Calculation of  Theo1&quot; Submitted to</span>
@@ -1182,19 +1204,6 @@
 <span class="sd">        for “all tau” Thêo1 calculations</span>
 
 <span class="sd">       http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        x:                  input phase data, in units of seconds.</span>
-<span class="sd">        rate:               data sampling rate, in Hz.</span>
-<span class="sd">        explode (optional): if True returns exploded arrays for intuitive</span>
-<span class="sd">                            indexing; with Theo1(m) at index m of the array.</span>
-<span class="sd">                            Defaults to False.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        tuple of computed variances at all allowed (even) averaging factors</span>
-<span class="sd">        and corresponding number of analysis points. If `exploded`, the THEO1</span>
-<span class="sd">        variance at averaging factor m will be at index m of the array.</span>
-<span class="sd">        The averaging time for which Theo1 variances apply is 0.75*m*tau_0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>

@@ -775,8 +775,7 @@
     <span class="k">if</span> <span class="n">N</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not enough phase measurements to compute &quot;</span>
                        <span class="s2">&quot;variance at averaging factor </span><span class="si">%i</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-        <span class="n">var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-        <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="c1"># Build extended virtual dataset as required by totvar, of size 3N - 4</span>
     <span class="n">xxx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;symmetric&#39;</span><span class="p">,</span> <span class="n">reflect_type</span><span class="o">=</span><span class="s1">&#39;odd&#39;</span><span class="p">)</span>
@@ -794,8 +793,7 @@
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not enough valid phase measurements to compute &quot;</span>
                        <span class="s2">&quot;variance at averaging factor </span><span class="si">%i</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-        <span class="n">var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-        <span class="k">return</span> <span class="n">var</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="c1"># Calculate variance</span>
     <span class="n">var</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">m</span><span class="o">/</span><span class="n">rate</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">summand</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
@@ -804,17 +802,27 @@
 
 
 <div class="viewcode-block" id="calc_mtotvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_mtotvar">[docs]</a><span class="k">def</span> <span class="nf">calc_mtotvar</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Main algorithm for TOTVAR calculation.</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the modified total variance (MTOTVAR) of phase data at</span>
+<span class="sd">    given averaging factor.</span>
 
-<span class="sd">    PRELIMINARY - REQUIRES FURTHER TESTING.</span>
+<span class="sd">    The modified total variance is calculated from a set of :math:`N` phase</span>
+<span class="sd">    measurements for averaging time :math:`\\tau = m\\tau_0`, where</span>
+<span class="sd">    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic</span>
+<span class="sd">    data sampling period, by the following expression:</span>
 
-<span class="sd">    References:</span>
-<span class="sd">        [RileyStable32]_ (5.2.12, pg.31-32)</span>
-<span class="sd">        [Howe1999]_</span>
-<span class="sd">        D.A. Howe and F. Vernotte, &quot;Generalization of the Total Variance</span>
-<span class="sd">        Approach to the Modified Allan Variance,&quot; Proc.</span>
-<span class="sd">        31 st PTTI Meeting, pp. 267-276, Dec. 1999.</span>
-<span class="sd">        TODO: find justification for last part of algorithm</span>
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-3m+1) }</span>
+<span class="sd">        \\sum_{n=1}^{N-3m+1} \\left\\{</span>
+<span class="sd">        { 1 \\over 6m } \\sum_{i=n-3m}^{N+3m-1}</span>
+<span class="sd">        \\left[ z^{\\#}_i(m) \\right]^2</span>
+<span class="sd">        \\right\\}</span>
+
+<span class="sd">    where the :math:`z^{\\#}_i(m)` terms are linear trend removed phase</span>
+<span class="sd">    averages from triply-extended subsequences of the original phase data.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        Function :func:`allantoolkit.devs.mtotdev` for background details.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        x:      input phase data, in units of seconds.</span>
@@ -824,6 +832,14 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        (var, n) NamedTuple of computed variance at given averaging time, and</span>
 <span class="sd">        number of samples used to estimate it.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [Howe1999]_</span>
+<span class="sd">        D.A. Howe and F. Vernotte, &quot;Generalization of the Total Variance</span>
+<span class="sd">        Approach to the Modified Allan Variance,&quot; Proc.</span>
+<span class="sd">        31 st PTTI Meeting, pp. 267-276, Dec. 1999.</span>
+
+<span class="sd">        TODO: find justification for last part of algorithm</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># TODO: make gap resistant and return correct number of non-NaN samples</span>

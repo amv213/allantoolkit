@@ -564,8 +564,7 @@ def calc_totvar(x: Array, m: int, rate: float) -> VarResult:
     if N < 3:
         logger.warning("Not enough phase measurements to compute "
                        "variance at averaging factor %i: %s", m, x)
-        var = np.NaN
-        return var, 0
+        return VarResult(var=np.NaN, n=0)
 
     # Build extended virtual dataset as required by totvar, of size 3N - 4
     xxx = np.pad(x, N-1, 'symmetric', reflect_type='odd')
@@ -583,8 +582,7 @@ def calc_totvar(x: Array, m: int, rate: float) -> VarResult:
     if n == 0:
         logger.warning("Not enough valid phase measurements to compute "
                        "variance at averaging factor %i: %s", m, x)
-        var = np.NaN
-        return var, 0
+        return VarResult(var=np.NaN, n=0)
 
     # Calculate variance
     var = 1. / (2 * (m/rate)**2) * np.nanmean(summand**2)
@@ -593,17 +591,27 @@ def calc_totvar(x: Array, m: int, rate: float) -> VarResult:
 
 
 def calc_mtotvar(x: Array, m: int, rate: float) -> VarResult:
-    """Main algorithm for TOTVAR calculation.
+    """Calculates the modified total variance (MTOTVAR) of phase data at
+    given averaging factor.
 
-    PRELIMINARY - REQUIRES FURTHER TESTING.
+    The modified total variance is calculated from a set of :math:`N` phase
+    measurements for averaging time :math:`\\tau = m\\tau_0`, where
+    :math:`m` is the averaging factor and :math:`\\tau_0` is the basic
+    data sampling period, by the following expression:
 
-    References:
-        [RileyStable32]_ (5.2.12, pg.31-32)
-        [Howe1999]_
-        D.A. Howe and F. Vernotte, "Generalization of the Total Variance
-        Approach to the Modified Allan Variance," Proc.
-        31 st PTTI Meeting, pp. 267-276, Dec. 1999.
-        TODO: find justification for last part of algorithm
+    .. math::
+
+        \\sigma^{2}_y(\\tau) = { 1 \\over 2 \\tau^2 (N-3m+1) }
+        \\sum_{n=1}^{N-3m+1} \\left\\{
+        { 1 \\over 6m } \\sum_{i=n-3m}^{N+3m-1}
+        \\left[ z^{\\#}_i(m) \\right]^2
+        \\right\\}
+
+    where the :math:`z^{\\#}_i(m)` terms are linear trend removed phase
+    averages from triply-extended subsequences of the original phase data.
+
+    .. seealso::
+        Function :func:`allantoolkit.devs.mtotdev` for background details.
 
     Args:
         x:      input phase data, in units of seconds.
@@ -613,6 +621,14 @@ def calc_mtotvar(x: Array, m: int, rate: float) -> VarResult:
     Returns:
         (var, n) NamedTuple of computed variance at given averaging time, and
         number of samples used to estimate it.
+
+    References:
+        [Howe1999]_
+        D.A. Howe and F. Vernotte, "Generalization of the Total Variance
+        Approach to the Modified Allan Variance," Proc.
+        31 st PTTI Meeting, pp. 267-276, Dec. 1999.
+
+        TODO: find justification for last part of algorithm
     """
 
     # TODO: make gap resistant and return correct number of non-NaN samples

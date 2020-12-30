@@ -231,6 +231,7 @@ def test_Stable32_run(data: Array, func: Callable, rate: float, data_type: str,
 
     # Unpack and round/format to same number of significant digits as Stable32
     afs2, taus2, ns2, alphas2, devs_lo2, devs2, devs_hi2 = actual_results
+
     taus2, devs_lo2, devs2, devs_hi2 = S32format(taus2), S32format(devs_lo2), \
         S32format(devs2), S32format(devs_hi2)
 

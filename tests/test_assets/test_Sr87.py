@@ -93,7 +93,6 @@ input_data = [
 tau_types = [
     'octave',
     'decade',
-    #'many',
 ]
 
 fcts = [
@@ -125,5 +124,26 @@ def test_dev(data, data_type, func, taus):
 
     allantoolkit.testutils.test_Stable32_run(data=data, func=func, rate=RATE,
                                              data_type=data_type, taus=taus,
+                                             fn=fn, test_alpha=True,
+                                             test_ci=False)
+
+# FIXME: Many-taus tests will fail because Stable32 `Run` noise estimation
+#  when many-taus is selected starts happening in an undocumented hidden way
+#  which is not the same as for other tau types, and also doesn't correspond
+#  anymore to what the Stable32 `Sigma` box says the noise should be...
+#  either find how Stable32 `Run` is estimating noise for 'many-tau` or just
+#  don't bother and don't try to match results with Stable32
+@pytest.mark.skip
+@pytest.mark.parametrize('data, data_type', input_data)
+@pytest.mark.parametrize('func', fcts)
+def test_dev_many_taus(data, data_type, func):
+
+    if data_type == 'freq':
+        fn = ASSETS_DIR / data_type / 'many' / (func.__name__ + '.txt')
+    else:
+        fn = ASSETS_DIR / (data_type + '0') / 'many' / (func.__name__ + '.txt')
+
+    allantoolkit.testutils.test_Stable32_run(data=data, func=func, rate=RATE,
+                                             data_type=data_type, taus='many',
                                              fn=fn, test_alpha=True,
                                              test_ci=False)

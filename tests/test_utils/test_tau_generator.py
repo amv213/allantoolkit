@@ -224,6 +224,34 @@ def test_NaN_taus(data_with_gaps, dev_type):
     assert output.taus.size == 0 and output.afs.size == 0
 
 
+@pytest.mark.parametrize('dev_type', dev_types)
+def test_many_taus_build(dev_type):
+    """Test many-tau tau generation gives expected results"""
+
+    N = 200
+    y = allantoolkit.noise.white(N)
+
+
+    # Expected many-taus for 200 samples
+    expected_afs = np.concatenate((np.arange(1, 72), np.arange(73, 144, 2),
+                                   np.arange(146, 216, 3)))
+    expected_afs = expected_afs[expected_afs < N]
+
+    # Many-taus for theo1 is slightly different
+    if dev_type == 'theo1':
+
+        expected_afs = 2*expected_afs
+        expected_afs = expected_afs[expected_afs >= 10]
+        expected_afs = expected_afs[expected_afs < N]
+
+    output = allantoolkit.utils.tau_generator(data=y, rate=RATE,
+                                              dev_type=dev_type,
+                                              taus="many")
+
+    print(output.afs)
+    assert np.array_equal(output.afs, expected_afs)
+
+
 # TODO:
 #  test decades, octaves and all building correctly
 #  test outputs unique

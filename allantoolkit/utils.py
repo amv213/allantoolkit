@@ -395,7 +395,7 @@ def tau_generator(data: Array, rate: float, dev_type: str,
 
             density = 72  # afs per epoch
 
-            afs = np.linspace(1, density, density)
+            afs = np.linspace(1, density-1, density)
 
             i = 0
             while i < N // density:  # number of epochs to generate
@@ -435,14 +435,18 @@ def tau_generator(data: Array, rate: float, dev_type: str,
         afs = afs.astype(int)
 
     # Consistency checks for averaging factors:
+    afs = afs[afs > 0]  # make sure minimum averaging time is at least 1
+
+    if dev_type == 'theo1':
+
+        # Match Stable32 in-builts...
+        if isinstance(taus, str):
+            afs = afs*2 if taus == 'many' else afs*10
+
+        afs = afs[afs >= 10]
+        afs = afs[afs % 2 == 0]
 
     afs = afs[afs < N]  # make sure averaging time smaller than size of dataset
-    afs = afs[afs > 0]  # make sure minimum averaging time is at least 1
-    # Technically theo1 should have afs > 10. So for example if `octave`: 16,
-    # 32... Stable 32 decides instead to multiply by 10 the whole sequence
-    # so we get 10, 20, 40, ...
-    afs = afs*10 if (dev_type == 'theo1' and isinstance(taus, str)) else afs
-    afs = afs[afs % 2 == 0] if dev_type == 'theo1' else afs
     afs = afs[afs <= maximum_m]  # make sure afs within maximum allowed
 
     # Apply a Stable32 `stop-ratio`. Only applies to 'octave' and 'decade'

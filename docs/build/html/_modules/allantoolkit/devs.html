@@ -1030,6 +1030,9 @@
 <span class="sd">       [RileyStable32]_ (5.2.17. MTIE, pg.41-2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;MTIE implementation might be unreliable if CPU under &quot;</span>
+                   <span class="s2">&quot;load. Apologies if that is the case.&quot;</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;mtie&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>
 
@@ -1064,6 +1067,9 @@
 <span class="sd">    References:</span>
 <span class="sd">       [RileyStable32]_ (5.2.18. TIE rms, pg.42-3)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;TIERMS implementation might be unreliable if CPU under &quot;</span>
+                   <span class="s2">&quot;load. Apologies if that is the case.&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">dev</span><span class="p">(</span><span class="n">dev_type</span><span class="o">=</span><span class="s1">&#39;tierms&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
                <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span></div>

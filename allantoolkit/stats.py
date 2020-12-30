@@ -1164,9 +1164,6 @@ def calc_mtie(x: Array, m: int, rate: float = None) -> VarResult:
         TODO: find exact reference
     """
 
-    logger.warning("MTIE implementation might be unreliable if CPU under "
-                   "load. Apologies if that is the case.")
-
     # Move an n-point window through the phase data, and find the difference
     # between the max nad min values at each windows position
     n = m + 1  # n is defined as m+1

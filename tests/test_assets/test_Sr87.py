@@ -93,7 +93,7 @@ input_data = [
 tau_types = [
     'octave',
     'decade',
-    # 'many',
+    #'many',
 ]
 
 fcts = [
@@ -104,12 +104,12 @@ fcts = [
     allantoolkit.devs.hdev,
     allantoolkit.devs.ohdev,
     allantoolkit.devs.totdev,
-    # pytest.param(allantoolkit.allantools.mtotdev,  marks=pytest.mark.slow),
-    # pytest.param(allantoolkit.allantools.ttotdev, marks=pytest.mark.slow),
-    # pytest.param(allantoolkit.allantools.htotdev, marks=pytest.mark.slow),
+    #pytest.param(allantoolkit.devs.mtotdev,  marks=pytest.mark.slow),
+    #pytest.param(allantoolkit.devs.ttotdev, marks=pytest.mark.slow),
+    #pytest.param(allantoolkit.devs.htotdev, marks=pytest.mark.slow),
     allantoolkit.devs.theo1,
-    #allantoolkit.allantools.mtie,  # FIXME: fails if CPU under load
-    #allantoolkit.allantools.tierms, # FIXME: fails if CPU under load
+    #allantoolkit.devs.mtie,  # FIXME: fails if CPU under load
+    #allantoolkit.devs.tierms,  # FIXME: fails if CPU under load
 ]
 
 

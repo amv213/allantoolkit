@@ -815,6 +815,9 @@ def mtie(data: Array, rate: float = 1., data_type: str = "phase",
        [RileyStable32]_ (5.2.17. MTIE, pg.41-2)
     """
 
+    logger.warning("MTIE implementation might be unreliable if CPU under "
+                   "load. Apologies if that is the case.")
+
     return dev(dev_type='mtie', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 
@@ -849,6 +852,9 @@ def tierms(data: Array, rate: float = 1., data_type: str = "phase",
     References:
        [RileyStable32]_ (5.2.18. TIE rms, pg.42-3)
     """
+
+    logger.warning("TIERMS implementation might be unreliable if CPU under "
+                   "load. Apologies if that is the case.")
 
     return dev(dev_type='tierms', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)

@@ -226,19 +226,43 @@ def test_NaN_taus(data_with_gaps, dev_type):
 
 @pytest.mark.parametrize('dev_type', dev_types)
 def test_many_taus_build(dev_type):
-    """Test many-tau tau generation gives expected results"""
+    """Test many-tau tau generation gives expected results.
+    Expected results are taken from Stable32 Runs."""
 
     N = 200
     y = allantoolkit.noise.white(N)
 
-
     # Expected many-taus for 200 samples
-    expected_afs = np.concatenate((np.arange(1, 72), np.arange(73, 144, 2),
-                                   np.arange(146, 216, 3)))
-    expected_afs = expected_afs[expected_afs < N]
+    expected_afs = np.array([
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+        17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+        31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+        45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
+        59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 73,
+        75, 77, 79, 81, 83, 85, 87, 89, 91, 93, 95, 97, 99, 101,
+        103, 105, 107, 109, 111, 113, 115, 117, 119, 121, 123,
+        125, 127, 129, 131, 133, 135, 137, 139, 141, 143, 146,
+        149, 152, 155, 158, 161, 164, 167, 170, 173, 176, 179,
+        182, 185, 188, 191, 194, 197]
+    )
 
-    # Many-taus for theo1 is slightly different
-    if dev_type == 'theo1':
+    # Many-taus for totdev is slightly different
+    if dev_type == 'totdev':
+
+        expected_afs = np.array([
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+            16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+            29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
+            42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55,
+            57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81,
+            83, 85, 87, 89, 91, 93, 95, 97, 99, 101, 103, 105,
+            107, 110, 113, 116, 119, 122, 125, 128, 131, 134,
+            137, 140, 143, 146, 149, 152, 155, 158, 161, 165,
+            169, 173, 177, 181, 185, 189, 193, 197]
+        )
+
+    # Many-taus for theo1 is also slightly different
+    elif dev_type == 'theo1':
 
         expected_afs = 2*expected_afs
         expected_afs = expected_afs[expected_afs >= 10]
@@ -248,7 +272,6 @@ def test_many_taus_build(dev_type):
                                               dev_type=dev_type,
                                               taus="many")
 
-    print(output.afs)
     assert np.array_equal(output.afs, expected_afs)
 
 

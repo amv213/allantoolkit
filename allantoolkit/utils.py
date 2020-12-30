@@ -390,21 +390,24 @@ def tau_generator(data: Array, rate: float, dev_type: str,
         elif taus == "many":
             # 1, 2, 3, 4, ... 71, 73, 75, 77, ..., 141, 143, 146, 149, 152, ...
 
-            # FIXME: add effect of the many-tau `size` (=500) parameter
-            # for example if N >= 10000, density seems to be 52...
+            # TODO: this is all calibrated for the many-tau `size` (=500)
+            #  parameter (in Stable32 config options). I don't know how
+            #  other values play out
 
-            density = 72  # afs per epoch
+            # max_af per epoch
+            density = 53 if dev_type == 'totdev' else 71
 
-            afs = np.linspace(1, density-1, density)
+            afs = np.arange(1, stop=density, step=1)
 
-            i = 0
-            while i < N // density:  # number of epochs to generate
+            epoch = 1
+            while epoch * density < N:
 
-                new = np.linspace((i + 1) * density + 1, (i + 2) * density,
-                                  density)[i::i + 2]
+                last = afs[-1]
+                new = np.arange(start=last + epoch, stop=(epoch + 1) * density,
+                                step=epoch + 1)
                 afs = np.concatenate([afs, new])
 
-                i += 1
+                epoch += 1
 
             afs = afs.astype(int)
 

@@ -246,8 +246,8 @@ def test_many_taus_build(dev_type):
         182, 185, 188, 191, 194, 197]
     )
 
-    # Many-taus for totdev is slightly different
-    if dev_type == 'totdev':
+    # Many-taus for total deviations is slightly different
+    if 'tot' in dev_type:
 
         expected_afs = np.array([
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,

@@ -395,7 +395,7 @@ def tau_generator(data: Array, rate: float, dev_type: str,
             #  other values play out
 
             # max_af per epoch
-            density = 53 if dev_type == 'totdev' else 71
+            density = 53 if 'tot' in dev_type else 71
 
             afs = np.arange(1, stop=density, step=1)
 

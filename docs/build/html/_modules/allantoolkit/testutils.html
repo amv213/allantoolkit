@@ -221,6 +221,7 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">decimal</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
@@ -231,6 +232,10 @@
 
 <span class="c1"># shorten type hint to save some space</span>
 <span class="n">Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+<span class="c1"># Set intuitive rounding behaviour for Decimal</span>
+<span class="n">decimal</span><span class="o">.</span><span class="n">getcontext</span><span class="p">()</span><span class="o">.</span><span class="n">rounding</span> <span class="o">=</span> <span class="n">decimal</span><span class="o">.</span><span class="n">ROUND_HALF_UP</span>
+
 
 <span class="c1"># read a result-file, produced by copy/paste from Stable32</span>
 <span class="c1"># note: header-lines need to be manually commented-out with &quot;#&quot;</span>
@@ -365,6 +370,35 @@
     <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span></div>
 
 
+<div class="viewcode-block" id="S32format"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.S32format">[docs]</a><span class="k">def</span> <span class="nf">S32format</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Format an array of numbers in the same way as Stable32: numbers are</span>
+<span class="sd">    rounded - half up - to the 4th digit of their scientific notation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:  input array to format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        input array rounded to the correct number of digits.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        https://realpython.com/python-rounding/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">exponent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">scaled</span> <span class="o">=</span> <span class="n">data</span> <span class="o">/</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="n">exponent</span><span class="p">)</span>
+
+    <span class="c1"># Round number in the intuitive way avoiding machine precision issues</span>
+    <span class="n">rounded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">))</span><span class="o">.</span><span class="n">quantize</span><span class="p">(</span><span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0.0001&quot;</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">scaled</span><span class="p">])</span>
+
+    <span class="c1"># Convert back to original decimal places</span>
+    <span class="n">ori</span> <span class="o">=</span> <span class="n">rounded</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">exponent</span>
+
+    <span class="c1"># Avoid machine precision errors by reformatting one last time</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">ori</span><span class="p">])</span></div>
+
+
 <div class="viewcode-block" id="test_Stable32_run"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.testutils.test_Stable32_run">[docs]</a><span class="k">def</span> <span class="nf">test_Stable32_run</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                       <span class="n">taus</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Array</span><span class="p">],</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
                       <span class="n">test_alpha</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">test_ci</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
@@ -390,7 +424,7 @@
     <span class="k">if</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;theo1&#39;</span><span class="p">,</span> <span class="s1">&#39;tierms&#39;</span><span class="p">,</span> <span class="s1">&#39;mtie&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">1</span>
 
-    <span class="c1"># Check if we are reading a file for a TIE-lik deviation from Stable32 (</span>
+    <span class="c1"># Check if we are reading a file for a TIE-like deviation from Stable32 (</span>
     <span class="c1"># they have a different number of columns from standard)</span>
     <span class="n">file_type</span> <span class="o">=</span> <span class="s1">&#39;tie&#39;</span> <span class="k">if</span> <span class="s1">&#39;tie&#39;</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">else</span> <span class="kc">None</span>
 
@@ -410,12 +444,14 @@
         <span class="n">devs_lo</span><span class="p">,</span> <span class="n">devs_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">),</span>  <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">afs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
     <span class="n">afs</span><span class="p">,</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">afs</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">ns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-    <span class="c1"># Unpack and format to same number of significant digits as Stable32</span>
+    <span class="c1"># Unpack and round/format to same number of significant digits as Stable32</span>
     <span class="n">afs2</span><span class="p">,</span> <span class="n">taus2</span><span class="p">,</span> <span class="n">ns2</span><span class="p">,</span> <span class="n">alphas2</span><span class="p">,</span> <span class="n">devs_lo2</span><span class="p">,</span> <span class="n">devs2</span><span class="p">,</span> <span class="n">devs_hi2</span> <span class="o">=</span> <span class="n">actual_results</span>
-    <span class="n">taus2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">format_float_scientific</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">taus2</span><span class="p">]</span>
-    <span class="n">devs_lo2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">format_float_scientific</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="k">for</span> <span class="n">lo</span> <span class="ow">in</span> <span class="n">devs_lo2</span><span class="p">]</span>
-    <span class="n">devs2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">format_float_scientific</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="k">for</span> <span class="n">dev</span> <span class="ow">in</span> <span class="n">devs2</span><span class="p">]</span>
-    <span class="n">devs_hi2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">format_float_scientific</span><span class="p">(</span><span class="n">hi</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="k">for</span> <span class="n">hi</span> <span class="ow">in</span> <span class="n">devs_hi2</span><span class="p">]</span>
+    <span class="n">taus2</span><span class="p">,</span> <span class="n">devs_lo2</span><span class="p">,</span> <span class="n">devs2</span><span class="p">,</span> <span class="n">devs_hi2</span> <span class="o">=</span> <span class="n">S32format</span><span class="p">(</span><span class="n">taus2</span><span class="p">),</span> <span class="n">S32format</span><span class="p">(</span><span class="n">devs_lo2</span><span class="p">),</span> \
+        <span class="n">S32format</span><span class="p">(</span><span class="n">devs2</span><span class="p">),</span> <span class="n">S32format</span><span class="p">(</span><span class="n">devs_hi2</span><span class="p">)</span>
+
+    <span class="c1"># for theo1, ns are also formatted in rounded scientific notation</span>
+    <span class="k">if</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;theo1&#39;</span><span class="p">:</span>
+        <span class="n">ns2</span> <span class="o">=</span> <span class="n">S32format</span><span class="p">(</span><span class="n">ns2</span><span class="p">)</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; AF TAU   #   ALPHA   DEV_LO       DEV      DEV_HI&quot;</span><span class="p">)</span>
 
@@ -438,7 +474,7 @@
         <span class="k">assert</span> <span class="n">af</span> <span class="o">==</span> <span class="n">af2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;S32:</span><span class="si">{</span><span class="n">af</span><span class="si">}</span><span class="s1"> vs. AT </span><span class="si">{</span><span class="n">af2</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="k">assert</span> <span class="n">tau</span> <span class="o">==</span> <span class="n">tau2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;S32:</span><span class="si">{</span><span class="n">tau</span><span class="si">}</span><span class="s1"> vs. AT </span><span class="si">{</span><span class="n">tau2</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="k">assert</span> <span class="n">n</span> <span class="o">==</span> <span class="n">n2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;S32:</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1"> vs. AT </span><span class="si">{</span><span class="n">n2</span><span class="si">}</span><span class="s1">&#39;</span>
-        <span class="k">assert</span> <span class="n">dev</span> <span class="o">==</span> <span class="n">dev2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;S32:</span><span class="se">\n</span><span class="si">{</span><span class="n">dev</span><span class="si">}</span><span class="se">\n</span><span class="s1">vs.</span><span class="se">\n</span><span class="s1">AT:</span><span class="se">\n</span><span class="si">{</span><span class="n">dev2</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">assert</span> <span class="n">dev</span> <span class="o">==</span> <span class="n">dev2</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;S32:</span><span class="si">{</span><span class="n">dev</span><span class="si">}</span><span class="s1"> vs. AT: </span><span class="si">{</span><span class="n">dev2</span><span class="si">}</span><span class="s1">&#39;</span>
 
         <span class="k">if</span> <span class="n">file_type</span> <span class="o">!=</span> <span class="s1">&#39;tie&#39;</span><span class="p">:</span>
 

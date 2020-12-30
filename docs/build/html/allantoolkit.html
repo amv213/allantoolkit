@@ -3574,6 +3574,23 @@ used to estimate it.</p>
 <span id="allantoolkit-testutils"></span><h2>allantoolkit.testutils<a class="headerlink" href="#module-allantoolkit.testutils" title="Permalink to this headline">¶</a></h2>
 <p>Useful collection of functions for the allantoolkit test-suite</p>
 <dl class="py function">
+<dt id="allantoolkit.testutils.S32format">
+<code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">S32format</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/testutils.html#S32format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.S32format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format an array of numbers in the same way as Stable32: numbers are
+rounded - half up - to the 4th digit of their scientific notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – input array to format</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>input array rounded to the correct number of digits.</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://realpython.com/python-rounding/">https://realpython.com/python-rounding/</a></p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="allantoolkit.testutils.check_approx_equal">
 <code class="sig-prename descclassname">allantoolkit.testutils.</code><code class="sig-name descname">check_approx_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a1</span></em>, <em class="sig-param"><span class="n">a2</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/testutils.html#check_approx_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.testutils.check_approx_equal" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>

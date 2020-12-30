@@ -6,6 +6,7 @@
 import time
 import numpy
 import logging
+import decimal
 import numpy as np
 from pathlib import Path
 from typing import Union, Callable
@@ -16,6 +17,10 @@ logger = logging.getLogger(__name__)
 
 # shorten type hint to save some space
 Array = np.ndarray
+
+# Set intuitive rounding behaviour for Decimal
+decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+
 
 # read a result-file, produced by copy/paste from Stable32
 # note: header-lines need to be manually commented-out with "#"
@@ -150,6 +155,35 @@ def print_elapsed(label, start, start0=None):
     return time.clock()
 
 
+def S32format(data: Array) -> Array:
+    """Format an array of numbers in the same way as Stable32: numbers are
+    rounded - half up - to the 4th digit of their scientific notation.
+
+    Args:
+        data:  input array to format
+
+    Returns:
+        input array rounded to the correct number of digits.
+
+    References:
+        https://realpython.com/python-rounding/
+    """
+
+    exponent = np.floor(np.log10(data))
+    scaled = data / (10 ** exponent)
+
+    # Round number in the intuitive way avoiding machine precision issues
+    rounded = np.array([
+        float(decimal.Decimal(str(n)).quantize(decimal.Decimal("0.0001")))
+        for n in scaled])
+
+    # Convert back to original decimal places
+    ori = rounded * 10 ** exponent
+
+    # Avoid machine precision errors by reformatting one last time
+    return np.array([float(f"{n:.4e}") for n in ori])
+
+
 def test_Stable32_run(data: Array, func: Callable, rate: float, data_type: str,
                       taus: Union[str, Array], fn: Union[str, Path],
                       test_alpha: bool, test_ci: bool):
@@ -175,7 +209,7 @@ def test_Stable32_run(data: Array, func: Callable, rate: float, data_type: str,
     if func.__name__ in ['theo1', 'tierms', 'mtie'] and data_type == 'freq':
         return 1
 
-    # Check if we are reading a file for a TIE-lik deviation from Stable32 (
+    # Check if we are reading a file for a TIE-like deviation from Stable32 (
     # they have a different number of columns from standard)
     file_type = 'tie' if 'tie' in func.__name__ else None
 
@@ -195,12 +229,14 @@ def test_Stable32_run(data: Array, func: Callable, rate: float, data_type: str,
         devs_lo, devs_hi = np.full(afs.size, np.NaN),  np.full(afs.size, np.NaN)
     afs, ns = afs.astype(int), ns.astype(int)
 
-    # Unpack and format to same number of significant digits as Stable32
+    # Unpack and round/format to same number of significant digits as Stable32
     afs2, taus2, ns2, alphas2, devs_lo2, devs2, devs_hi2 = actual_results
-    taus2 = [float(np.format_float_scientific(t, 4)) for t in taus2]
-    devs_lo2 = [float(np.format_float_scientific(lo, 4)) for lo in devs_lo2]
-    devs2 = [float(np.format_float_scientific(dev, 4)) for dev in devs2]
-    devs_hi2 = [float(np.format_float_scientific(hi, 4)) for hi in devs_hi2]
+    taus2, devs_lo2, devs2, devs_hi2 = S32format(taus2), S32format(devs_lo2), \
+        S32format(devs2), S32format(devs_hi2)
+
+    # for theo1, ns are also formatted in rounded scientific notation
+    if func.__name__ == 'theo1':
+        ns2 = S32format(ns2)
 
     logger.debug(" AF TAU   #   ALPHA   DEV_LO       DEV      DEV_HI")
 
@@ -223,7 +259,7 @@ def test_Stable32_run(data: Array, func: Callable, rate: float, data_type: str,
         assert af == af2, f'S32:{af} vs. AT {af2}'
         assert tau == tau2, f'S32:{tau} vs. AT {tau2}'
         assert n == n2, f'S32:{n} vs. AT {n2}'
-        assert dev == dev2, f'S32:\n{dev}\nvs.\nAT:\n{dev2}'
+        assert dev == dev2, f'S32:{dev} vs. AT: {dev2}'
 
         if file_type != 'tie':
 

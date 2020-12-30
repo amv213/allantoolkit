@@ -1097,7 +1097,7 @@ def calc_theo1_fast(x: Array, rate: float, explode: bool = True) -> \
         xns[2::2] = ns
         ns = xns
 
-    return VarResults(vars=vars, ns=ns)
+    return VarResults(vars=vars, ns=ns.astype(int))
 
 
 def calc_theo1(x: Array, m: int, rate: float) -> VarResult:

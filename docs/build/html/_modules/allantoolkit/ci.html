@@ -220,6 +220,7 @@
 <span class="sd">- functions for computing equivalent degrees of freedom</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.special</span>
@@ -320,6 +321,121 @@
     <span class="n">var_hi</span> <span class="o">=</span> <span class="n">edf</span> <span class="o">*</span> <span class="n">var</span> <span class="o">/</span> <span class="n">chi2_r</span>
 
     <span class="k">return</span> <span class="n">var_lo</span><span class="p">,</span> <span class="n">var_hi</span></div>
+
+
+<span class="c1"># Stable32 CI functions</span>
+
+<div class="viewcode-block" id="chi2_ppf_stable32"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.chi2_ppf_stable32">[docs]</a><span class="k">def</span> <span class="nf">chi2_ppf_stable32</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">edf</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates Stable32&#39;s implementation of the :math:`\\chi^2`</span>
+<span class="sd">    inverse cumulative distribution function.</span>
+
+<span class="sd">    ..warning::</span>
+<span class="sd">        Stable32 implementation is an approximation of the true :math:`\\chi^2`</span>
+<span class="sd">        inverse cumulative distribution function. Moreover it&#39;s practical</span>
+<span class="sd">        implementation in software has a bug in the source code.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        http://www.anderswallin.net/2020/12/fun-with-chi-squared/ for</span>
+<span class="sd">        discussion</span>
+
+<span class="sd">    .. codeauthor:: Anders Wallin</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p:      lower-tail probability for which to calculate inverse cdf</span>
+<span class="sd">        edf:    number of degrees of freedom</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        approximate :math:`\\chi^2` inverse cumulative function at p.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        Stable32 source code: CICS3.c</span>
+
+<span class="sd">        Abramowitz &amp; Stegun, Handbook of Mathematical Functions, Sections</span>
+<span class="sd">        26.2.22 &amp; 26.4.17</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Number of max iterations used by Stable32 for iterative solution</span>
+    <span class="n">ITMAX</span> <span class="o">=</span> <span class="mi">100</span>
+
+    <span class="c1"># Abramowitz &amp; Stegun approximation for edf&gt;100</span>
+    <span class="k">if</span> <span class="n">edf</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+
+        <span class="c1"># A&amp;S 26.2.22:</span>
+        <span class="c1"># approximate inverse Normal cumulative distribution for 0 &lt; p &lt; 0.5</span>
+
+        <span class="n">p1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span>  <span class="c1"># constrain to lower tail</span>
+
+        <span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">b2</span> <span class="o">=</span> <span class="n">tables</span><span class="o">.</span><span class="n">ABRAMOWITZ_COEFFICIENTS</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="mf">0.27601</span>  <span class="c1"># replace with the typo in the Stable32 source code!</span>
+
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p1</span><span class="p">))</span>
+        <span class="n">xp</span> <span class="o">=</span> <span class="n">t</span> <span class="o">-</span> <span class="p">(</span><span class="n">a0</span> <span class="o">+</span> <span class="n">a1</span><span class="o">*</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">b1</span><span class="o">*</span><span class="n">t</span> <span class="o">+</span> <span class="n">b2</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Greenhall revision depending on which interval p really was on</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="mf">0.5</span><span class="p">:</span>
+            <span class="n">xp</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">xp</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="c1"># A&amp;S 26.4.17:</span>
+        <span class="c1"># approximate inverse chi-squared distribution for large edf</span>
+
+        <span class="n">chi2</span> <span class="o">=</span> <span class="n">edf</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">9</span><span class="o">*</span><span class="n">edf</span><span class="p">))</span> <span class="o">+</span> <span class="n">xp</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">9</span><span class="o">*</span><span class="n">edf</span><span class="p">)))</span><span class="o">**</span><span class="mi">3</span>
+
+        <span class="k">return</span> <span class="n">chi2</span>
+
+    <span class="c1"># Iterative solution for edf &lt;= 100</span>
+    <span class="c1"># see e.g. https://daviddeley.com/random/code.htm</span>
+    <span class="c1"># Press et al., Numerical Recipes</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">edf</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">edf</span> <span class="o">*</span> <span class="mf">0.5</span>  <span class="c1"># start value for chi squared</span>
+
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">gammp</span><span class="p">(</span><span class="n">edf</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">itmax</span><span class="o">=</span><span class="n">ITMAX</span><span class="p">)</span>
+
+        <span class="n">div</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="k">while</span> <span class="nb">abs</span><span class="p">((</span><span class="n">prob</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0001</span><span class="p">:</span>  <span class="c1"># accuracy criterion</span>
+
+            <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="p">(</span><span class="n">prob</span> <span class="o">-</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># save sign of error</span>
+
+            <span class="n">x</span> <span class="o">+=</span> <span class="n">edf</span> <span class="o">*</span> <span class="p">(</span><span class="n">prob</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="n">div</span>  <span class="c1"># iteration increment</span>
+
+            <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># make sure argument is positive</span>
+                <span class="n">prob</span> <span class="o">=</span> <span class="n">gammp</span><span class="p">(</span><span class="n">edf</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">itmax</span><span class="o">=</span><span class="n">ITMAX</span><span class="p">)</span>
+                <span class="n">prob</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">prob</span>
+
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># otherwise restore it &amp; reduce increment</span>
+                <span class="n">x</span> <span class="o">-=</span> <span class="n">edf</span> <span class="o">*</span> <span class="p">(</span><span class="n">prob</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="n">div</span>
+                <span class="n">div</span> <span class="o">*=</span> <span class="mi">2</span>
+
+            <span class="k">if</span> <span class="p">((</span><span class="n">prob</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="n">sign</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># did sign of error reverse?</span>
+                <span class="n">div</span> <span class="o">*=</span> <span class="mi">2</span>  <span class="c1"># reduce increment if it did</span>
+
+        <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="chi2_interval_stable32"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.chi2_interval_stable32">[docs]</a><span class="k">def</span> <span class="nf">chi2_interval_stable32</span><span class="p">(</span><span class="n">ci</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">edf</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates double-sided confidence intervals with equal areas around</span>
+<span class="sd">    the median for the Stable32&#39;s implementation of the :math:`\\chi^2`</span>
+<span class="sd">    inverse cumulative distribution function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ci:     confidence factor for which to set confidence limits</span>
+<span class="sd">                e.g. `0.6827` would set a 1-sigma confidence interval.</span>
+<span class="sd">        edf:    degrees of freedom</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Stable32 end-points of the range that contain ``100 * ci`` of its</span>
+<span class="sd">        approximate :math:`\\chi^2` distribution possible values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ci</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="c1"># chi2_r, chi2_l</span>
+    <span class="k">return</span> <span class="n">chi2_ppf_stable32</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">edf</span><span class="p">),</span> <span class="n">chi2_ppf_stable32</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">,</span> <span class="n">edf</span><span class="p">)</span></div>
+
 
 <span class="c1"># Dispatchers</span>
 
@@ -1087,6 +1203,197 @@
         <span class="n">edf</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">edf</span></div>
+
+
+<span class="c1">########################################################################</span>
+<span class="c1"># Numerical recipes in python</span>
+<span class="c1"># from https://github.com/mauriceling/dose/blob/master/dose/copads/nrpy.py</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) Maurice H.T. Ling &lt;mauriceling@acm.org&gt;</span>
+<span class="c1"># Date created: 19th March 2008</span>
+<span class="c1"># License: Unless specified otherwise, all parts of this package, except</span>
+<span class="c1"># those adapted, are covered under Python Software Foundation License</span>
+<span class="c1"># version 2.</span>
+
+<div class="viewcode-block" id="gammp"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.gammp">[docs]</a><span class="k">def</span> <span class="nf">gammp</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">itmax</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the lower incomplete Gamma function :math:`\\gamma (a, x)` .</span>
+
+<span class="sd">    The incomplete gamma function is defined as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\gamma(a,x) = {1 \\over \\Gamma(a) }</span>
+<span class="sd">        \\int_0^x t^{a-1} e^{-t} \\mathrm{dt}</span>
+
+<span class="sd">    where :math:`\\Gamma(a)` is the ordinary (complete) gamma function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        a:      gamma function parameter</span>
+<span class="sd">        x:      gamma function integral upper limit</span>
+<span class="sd">        itmax:  maximum number of iterations in algorithm approximation</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        value of the lower incomplete gamma function :math:`\\gamma (a, x)`</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        NRP 6.2</span>
+
+<span class="sd">        Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-</span>
+<span class="sd">        Square, F, Gamma, Geometric, Poisson, Student&#39;s t, and Uniform. The</span>
+<span class="sd">        Python Papers Source Codes 1:4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bad value for a or x: </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># use series approximation</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">gser</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">itmax</span><span class="o">=</span><span class="n">itmax</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># use continued fraction approximation</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">gcf</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">itmax</span><span class="o">=</span><span class="n">itmax</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="gser"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.gser">[docs]</a><span class="k">def</span> <span class="nf">gser</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">itmax</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">700</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.e-7</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+    <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the series approximation to the incomplete gamma function</span>
+<span class="sd">    :math:`\\gamma (a, x)` .</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        a:                  gamma function parameter</span>
+<span class="sd">        x:                  gamma function integral upper limit</span>
+<span class="sd">        itmax (optional):   maximum number of iterations in algorithm</span>
+<span class="sd">                            approximation</span>
+<span class="sd">        eps (optional):     tolerance for convergence</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple with value of the series approximation to the incomplete gamma</span>
+<span class="sd">        function :math:`\\gamma (a, x)`, and value of the complete gamma</span>
+<span class="sd">        function :math:`\\Gamma (a)`</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        http://mail.python.org/pipermail/python-list/2000-June/671838.html</span>
+
+<span class="sd">        Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-</span>
+<span class="sd">        Square, F, Gamma, Geometric, Poisson, Student&#39;s t, and Uniform. The</span>
+<span class="sd">        Python Papers Source Codes 1:4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">gln</span> <span class="o">=</span> <span class="n">gammln</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>  <span class="c1"># complete gamma function</span>
+
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bad value for x: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">a</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+    <span class="n">ap</span> <span class="o">=</span> <span class="n">a</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">a</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">total</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">while</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">itmax</span><span class="p">:</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="n">ap</span> <span class="o">+</span> <span class="mf">1.0</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">x</span> <span class="o">/</span> <span class="n">ap</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="n">total</span> <span class="o">+</span> <span class="n">delta</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">total</span><span class="p">)</span> <span class="o">*</span> <span class="n">eps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">total</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">gln</span><span class="p">),</span> <span class="n">gln</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Maximum iterations reached: </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="nb">abs</span><span class="p">(</span><span class="n">delta</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">total</span><span class="p">)</span> <span class="o">*</span> <span class="n">eps</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="gcf"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.gcf">[docs]</a><span class="k">def</span> <span class="nf">gcf</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">itmax</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.e-7</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+    <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the continued fraction approximation of the incomplete gamma</span>
+<span class="sd">    function :math:`\\gamma (a, x)` .</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        a:                  gamma function parameter</span>
+<span class="sd">        x:                  gamma function integral upper limit</span>
+<span class="sd">        itmax (optional):   maximum number of iterations in algorithm</span>
+<span class="sd">                            approximation</span>
+<span class="sd">        eps (optional):     tolerance for convergence</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple with value of the  continued fraction approximation to the</span>
+<span class="sd">        incomplete gamma function :math:`\\gamma (a, x)`, and value of the</span>
+<span class="sd">        complete gamma function :math:`\\Gamma (a)`</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        http://mail.python.org/pipermail/python-list/2000-June/671838.html</span>
+
+<span class="sd">        Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-</span>
+<span class="sd">        Square, F, Gamma, Geometric, Poisson, Student&#39;s t, and Uniform. The</span>
+<span class="sd">        Python Papers Source Codes 1:4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">gln</span> <span class="o">=</span> <span class="n">gammln</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>  <span class="c1"># complete gamma function</span>
+
+    <span class="n">gold</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">a0</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">b0</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">b1</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">fac</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">itmax</span><span class="p">:</span>
+        <span class="n">an</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="n">ana</span> <span class="o">=</span> <span class="n">an</span> <span class="o">-</span> <span class="n">a</span>
+        <span class="n">a0</span> <span class="o">=</span> <span class="p">(</span><span class="n">a1</span> <span class="o">+</span> <span class="n">a0</span> <span class="o">*</span> <span class="n">ana</span><span class="p">)</span> <span class="o">*</span> <span class="n">fac</span>
+        <span class="n">b0</span> <span class="o">=</span> <span class="p">(</span><span class="n">b1</span> <span class="o">+</span> <span class="n">b0</span> <span class="o">*</span> <span class="n">ana</span><span class="p">)</span> <span class="o">*</span> <span class="n">fac</span>
+        <span class="n">anf</span> <span class="o">=</span> <span class="n">an</span> <span class="o">*</span> <span class="n">fac</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">a0</span> <span class="o">+</span> <span class="n">anf</span> <span class="o">*</span> <span class="n">a1</span>
+        <span class="n">b1</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">b0</span> <span class="o">+</span> <span class="n">anf</span> <span class="o">*</span> <span class="n">b1</span>
+
+        <span class="k">if</span> <span class="n">a1</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">fac</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">a1</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">b1</span> <span class="o">*</span> <span class="n">fac</span>
+
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">((</span><span class="n">g</span> <span class="o">-</span> <span class="n">gold</span><span class="p">)</span> <span class="o">/</span> <span class="n">g</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">g</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">gln</span><span class="p">),</span> <span class="n">gln</span>
+
+            <span class="n">gold</span> <span class="o">=</span> <span class="n">g</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Maximum iterations reached: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">abs</span><span class="p">((</span><span class="n">g</span> <span class="o">-</span> <span class="n">gold</span><span class="p">)</span> <span class="o">/</span> <span class="n">g</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="gammln"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.ci.gammln">[docs]</a><span class="k">def</span> <span class="nf">gammln</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the complete Gamma function :math:`\\Gamma (a)` .</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        a:  gamma function parameter</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        value of the complete gamma function :math:`\\Gamma (a)`</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        NRP 6.1</span>
+
+<span class="sd">        http://mail.python.org/pipermail/python-list/2000-June/671838.html</span>
+
+<span class="sd">        Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-</span>
+<span class="sd">        Square, F, Gamma, Geometric, Poisson, Student&#39;s t, and Uniform. The</span>
+<span class="sd">        Python Papers Source Codes 1:4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">gammln_cof</span> <span class="o">=</span> <span class="p">[</span><span class="mf">76.18009173</span><span class="p">,</span> <span class="o">-</span><span class="mf">86.50532033</span><span class="p">,</span> <span class="mf">24.01409822</span><span class="p">,</span>
+                  <span class="o">-</span><span class="mf">1.231739516e0</span><span class="p">,</span> <span class="mf">0.120858003e-2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.536382e-5</span><span class="p">]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="mf">1.0</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mf">5.5</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">-</span> <span class="n">tmp</span>
+    <span class="n">ser</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mf">1.</span>
+        <span class="n">ser</span> <span class="o">=</span> <span class="n">ser</span> <span class="o">+</span> <span class="n">gammln_cof</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">/</span> <span class="n">x</span>
+
+    <span class="k">return</span> <span class="n">tmp</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.50662827465</span> <span class="o">*</span> <span class="n">ser</span><span class="p">)</span></div>
 </pre></div>
 
               </div>

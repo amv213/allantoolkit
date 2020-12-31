@@ -305,3 +305,17 @@ htotvar_edf_coefficients:
   0:  [0.938,  1.696]
   -1: [2.554,  0.974]
   -2: [3.149,  1.276]
+
+
+abramowitz_coefficients:
+  # (Correct) coefficients to calculate approximate inverse Normal cumulative
+  # distribution, for 0 < p < 0.5
+  #
+  # Abramowitz & Stegun, Handbook of Mathematical Functions, Sections
+  # 26.2.22
+
+  # coefficient: val
+  a0:  2.30753
+  a1:  0.27061
+  b1:  0.99229
+  b2:  0.04481

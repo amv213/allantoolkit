@@ -1297,6 +1297,60 @@ on Finite Differences”, Proc. 2003 PTTI Meeting , December 2003 (Eq.9)</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="allantoolkit.ci.chi2_interval_stable32">
+<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">chi2_interval_stable32</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ci</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">edf</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/ci.html#chi2_interval_stable32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.chi2_interval_stable32" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates double-sided confidence intervals with equal areas around
+the median for the Stable32’s implementation of the <span class="math notranslate nohighlight">\(\chi^2\)</span>
+inverse cumulative distribution function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ci</strong> – confidence factor for which to set confidence limits
+e.g. <cite>0.6827</cite> would set a 1-sigma confidence interval.</p></li>
+<li><p><strong>edf</strong> – degrees of freedom</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Stable32 end-points of the range that contain <code class="docutils literal notranslate"><span class="pre">100</span> <span class="pre">*</span> <span class="pre">ci</span></code> of its
+approximate <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution possible values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.ci.chi2_ppf_stable32">
+<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">chi2_ppf_stable32</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">edf</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/allantoolkit/ci.html#chi2_ppf_stable32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.chi2_ppf_stable32" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates Stable32’s implementation of the <span class="math notranslate nohighlight">\(\chi^2\)</span>
+inverse cumulative distribution function.</p>
+<dl class="simple">
+<dt>..warning::</dt><dd><p>Stable32 implementation is an approximation of the true <span class="math notranslate nohighlight">\(\chi^2\)</span>
+inverse cumulative distribution function. Moreover it’s practical
+implementation in software has a bug in the source code.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="http://www.anderswallin.net/2020/12/fun-with-chi-squared/">http://www.anderswallin.net/2020/12/fun-with-chi-squared/</a> for
+discussion</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> – lower-tail probability for which to calculate inverse cdf</p></li>
+<li><p><strong>edf</strong> – number of degrees of freedom</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>approximate <span class="math notranslate nohighlight">\(\chi^2\)</span> inverse cumulative function at p.</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Stable32 source code: CICS3.c</p>
+<p>Abramowitz &amp; Stegun, Handbook of Mathematical Functions, Sections
+26.2.22 &amp; 26.4.17</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="allantoolkit.ci.confidence_interval">
 <code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">confidence_interval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">var</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">edf</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">ci</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/ci.html#confidence_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.confidence_interval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns double-sided statistical limits on the true variance at
@@ -1349,6 +1403,82 @@ seconds.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt id="allantoolkit.ci.gammln">
+<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">gammln</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/allantoolkit/ci.html#gammln"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.gammln" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the complete Gamma function <span class="math notranslate nohighlight">\(\Gamma (a)\)</span> .</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>a</strong> – gamma function parameter</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>value of the complete gamma function <span class="math notranslate nohighlight">\(\Gamma (a)\)</span></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>NRP 6.1</p>
+<p><a class="reference external" href="http://mail.python.org/pipermail/python-list/2000-June/671838.html">http://mail.python.org/pipermail/python-list/2000-June/671838.html</a></p>
+<p>Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-
+Square, F, Gamma, Geometric, Poisson, Student’s t, and Uniform. The
+Python Papers Source Codes 1:4</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.ci.gammp">
+<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">gammp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">itmax</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/allantoolkit/ci.html#gammp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.gammp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the lower incomplete Gamma function <span class="math notranslate nohighlight">\(\gamma (a, x)\)</span> .</p>
+<p>The incomplete gamma function is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\gamma(a,x) = {1 \over \Gamma(a) }
+\int_0^x t^{a-1} e^{-t} \mathrm{dt}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Gamma(a)\)</span> is the ordinary (complete) gamma function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – gamma function parameter</p></li>
+<li><p><strong>x</strong> – gamma function integral upper limit</p></li>
+<li><p><strong>itmax</strong> – maximum number of iterations in algorithm approximation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>value of the lower incomplete gamma function <span class="math notranslate nohighlight">\(\gamma (a, x)\)</span></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>NRP 6.2</p>
+<p>Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-
+Square, F, Gamma, Geometric, Poisson, Student’s t, and Uniform. The
+Python Papers Source Codes 1:4</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.ci.gcf">
+<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">gcf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">itmax</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">200</span></em>, <em class="sig-param"><span class="n">eps</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">3e-07</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/ci.html#gcf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.gcf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the continued fraction approximation of the incomplete gamma
+function <span class="math notranslate nohighlight">\(\gamma (a, x)\)</span> .</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – gamma function parameter</p></li>
+<li><p><strong>x</strong> – gamma function integral upper limit</p></li>
+<li><p><strong>itmax</strong> (<em>optional</em>) – maximum number of iterations in algorithm
+approximation</p></li>
+<li><p><strong>eps</strong> (<em>optional</em>) – tolerance for convergence</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with value of the  continued fraction approximation to the
+incomplete gamma function <span class="math notranslate nohighlight">\(\gamma (a, x)\)</span>, and value of the
+complete gamma function <span class="math notranslate nohighlight">\(\Gamma (a)\)</span></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p><a class="reference external" href="http://mail.python.org/pipermail/python-list/2000-June/671838.html">http://mail.python.org/pipermail/python-list/2000-June/671838.html</a></p>
+<p>Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-
+Square, F, Gamma, Geometric, Poisson, Student’s t, and Uniform. The
+Python Papers Source Codes 1:4</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="allantoolkit.ci.get_error_bars">
 <code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">get_error_bars</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">var</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ci</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.683</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#get_error_bars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.get_error_bars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate non-naive variance errors. Equivalent to Stable32.</p>
@@ -1375,6 +1505,34 @@ Defaults to 1-sigma confidence intervals.</p></li>
 <dd class="field-even"><p>lower and upper bounds for variance.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.ci.gser">
+<code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">gser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">itmax</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">700</span></em>, <em class="sig-param"><span class="n">eps</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">3e-07</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/ci.html#gser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.gser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the series approximation to the incomplete gamma function
+<span class="math notranslate nohighlight">\(\gamma (a, x)\)</span> .</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – gamma function parameter</p></li>
+<li><p><strong>x</strong> – gamma function integral upper limit</p></li>
+<li><p><strong>itmax</strong> (<em>optional</em>) – maximum number of iterations in algorithm
+approximation</p></li>
+<li><p><strong>eps</strong> (<em>optional</em>) – tolerance for convergence</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with value of the series approximation to the incomplete gamma
+function <span class="math notranslate nohighlight">\(\gamma (a, x)\)</span>, and value of the complete gamma
+function <span class="math notranslate nohighlight">\(\Gamma (a)\)</span></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p><a class="reference external" href="http://mail.python.org/pipermail/python-list/2000-June/671838.html">http://mail.python.org/pipermail/python-list/2000-June/671838.html</a></p>
+<p>Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-
+Square, F, Gamma, Geometric, Poisson, Student’s t, and Uniform. The
+Python Papers Source Codes 1:4</p>
 </dd></dl>
 
 </div>

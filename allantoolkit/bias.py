@@ -363,7 +363,7 @@ def calc_bias_theobr(x: Array, rate: float) -> float:
         # Calculate ratio of AVAR to THEO1 at each equivalent taus, starting
         # from m=12 for THEO1 == m=9 for AVAR
 
-        # FIXME: for some reason replacing this loop with the official stats
+        # TODO: for some reason replacing this loop with the official stats
         #  avar function doesn't give the same results ... investigate...
 
         m = 9 + 3 * i

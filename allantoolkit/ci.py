@@ -5,6 +5,7 @@ this file is part of allantoolkit, https://github.com/aewallin/allantools
 - functions for computing equivalent degrees of freedom
 """
 
+import math
 import logging
 import numpy as np
 import scipy.special
@@ -105,6 +106,121 @@ def confidence_interval(var: float, edf: float, ci: float) -> \
     var_hi = edf * var / chi2_r
 
     return var_lo, var_hi
+
+
+# Stable32 CI functions
+
+def chi2_ppf_stable32(p: float, edf: float) -> float:
+    """Calculates Stable32's implementation of the :math:`\\chi^2`
+    inverse cumulative distribution function.
+
+    ..warning::
+        Stable32 implementation is an approximation of the true :math:`\\chi^2`
+        inverse cumulative distribution function. Moreover it's practical
+        implementation in software has a bug in the source code.
+
+    .. seealso::
+        http://www.anderswallin.net/2020/12/fun-with-chi-squared/ for
+        discussion
+
+    .. codeauthor:: Anders Wallin
+
+    Args:
+        p:      lower-tail probability for which to calculate inverse cdf
+        edf:    number of degrees of freedom
+
+    Returns:
+        approximate :math:`\\chi^2` inverse cumulative function at p.
+
+    References:
+        Stable32 source code: CICS3.c
+
+        Abramowitz & Stegun, Handbook of Mathematical Functions, Sections
+        26.2.22 & 26.4.17
+
+    """
+
+    # Number of max iterations used by Stable32 for iterative solution
+    ITMAX = 100
+
+    # Abramowitz & Stegun approximation for edf>100
+    if edf > 100:
+
+        # A&S 26.2.22:
+        # approximate inverse Normal cumulative distribution for 0 < p < 0.5
+
+        p1 = min(p, 1 - p)  # constrain to lower tail
+
+        a0, a1, b1, b2 = tables.ABRAMOWITZ_COEFFICIENTS.values()
+        a1 = 0.27601  # replace with the typo in the Stable32 source code!
+
+        t = np.sqrt(-2 * np.log(p1))
+        xp = t - (a0 + a1*t) / (1 + b1*t + b2*t**2)
+
+        # Greenhall revision depending on which interval p really was on
+        if p == 0.5:
+            xp = 0
+        elif (p - 0.5) < 0:
+            xp *= -1
+
+        # A&S 26.4.17:
+        # approximate inverse chi-squared distribution for large edf
+
+        chi2 = edf * (1 - (2/(9*edf)) + xp*np.sqrt(2/(9*edf)))**3
+
+        return chi2
+
+    # Iterative solution for edf <= 100
+    # see e.g. https://daviddeley.com/random/code.htm
+    # Press et al., Numerical Recipes
+    else:
+        p = 1 - p
+
+        x = edf + (0.5 - p) * edf * 0.5  # start value for chi squared
+
+        prob = gammp(edf / 2, float(x / 2), itmax=ITMAX)
+
+        div = 0.1
+        while abs((prob - p) / p) > 0.0001:  # accuracy criterion
+
+            sign = 1 if (prob - p > 0) else -1  # save sign of error
+
+            x += edf * (prob - p) / div  # iteration increment
+
+            if x > 0:  # make sure argument is positive
+                prob = gammp(edf / 2, (x / 2), itmax=ITMAX)
+                prob = 1 - prob
+
+            else:  # otherwise restore it & reduce increment
+                x -= edf * (prob - p) / div
+                div *= 2
+
+            if ((prob - p) / sign) < 0:  # did sign of error reverse?
+                div *= 2  # reduce increment if it did
+
+        return x
+
+
+def chi2_interval_stable32(ci: float, edf: float) -> Tuple[float, float]:
+    """Calculates double-sided confidence intervals with equal areas around
+    the median for the Stable32's implementation of the :math:`\\chi^2`
+    inverse cumulative distribution function.
+
+    Args:
+        ci:     confidence factor for which to set confidence limits
+                e.g. `0.6827` would set a 1-sigma confidence interval.
+        edf:    degrees of freedom
+
+    Returns:
+        Stable32 end-points of the range that contain ``100 * ci`` of its
+        approximate :math:`\\chi^2` distribution possible values
+    """
+
+    alpha = (1 - ci) / 2
+
+    # chi2_r, chi2_l
+    return chi2_ppf_stable32(alpha, edf), chi2_ppf_stable32(1-alpha, edf)
+
 
 # Dispatchers
 
@@ -872,3 +988,194 @@ def edf_simple(x: Array, m: int, alpha: int) -> float:
         edf = (N - 1)
 
     return edf
+
+
+########################################################################
+# Numerical recipes in python
+# from https://github.com/mauriceling/dose/blob/master/dose/copads/nrpy.py
+#
+# Copyright (c) Maurice H.T. Ling <mauriceling@acm.org>
+# Date created: 19th March 2008
+# License: Unless specified otherwise, all parts of this package, except
+# those adapted, are covered under Python Software Foundation License
+# version 2.
+
+def gammp(a: float, x: float, itmax: int) -> float:
+    """Calculates the lower incomplete Gamma function :math:`\\gamma (a, x)` .
+
+    The incomplete gamma function is defined as:
+
+    .. math::
+
+        \\gamma(a,x) = {1 \\over \\Gamma(a) }
+        \\int_0^x t^{a-1} e^{-t} \\mathrm{dt}
+
+    where :math:`\\Gamma(a)` is the ordinary (complete) gamma function.
+
+    Args:
+        a:      gamma function parameter
+        x:      gamma function integral upper limit
+        itmax:  maximum number of iterations in algorithm approximation
+
+    Returns:
+        value of the lower incomplete gamma function :math:`\\gamma (a, x)`
+
+    References:
+        NRP 6.2
+
+        Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-
+        Square, F, Gamma, Geometric, Poisson, Student's t, and Uniform. The
+        Python Papers Source Codes 1:4
+    """
+
+    if a <= 0 or x < 0:
+        raise ValueError('Bad value for a or x: %s, %s' % (a, x))
+
+    if x < a + 1:  # use series approximation
+        out = gser(a, x, itmax=itmax)[0]
+
+    else:  # use continued fraction approximation
+        out = 1.0 - gcf(a, x, itmax=itmax)[0]
+
+    return out
+
+
+def gser(a: float, x: float, itmax: int = 700, eps: float = 3.e-7) -> Tuple[
+    float, float]:
+    """Calculates the series approximation to the incomplete gamma function
+    :math:`\\gamma (a, x)` .
+
+    Args:
+        a:                  gamma function parameter
+        x:                  gamma function integral upper limit
+        itmax (optional):   maximum number of iterations in algorithm
+                            approximation
+        eps (optional):     tolerance for convergence
+
+    Returns:
+        tuple with value of the series approximation to the incomplete gamma
+        function :math:`\\gamma (a, x)`, and value of the complete gamma
+        function :math:`\\Gamma (a)`
+
+    References:
+        http://mail.python.org/pipermail/python-list/2000-June/671838.html
+
+        Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-
+        Square, F, Gamma, Geometric, Poisson, Student's t, and Uniform. The
+        Python Papers Source Codes 1:4
+    """
+
+    gln = gammln(a)  # complete gamma function
+
+    if x < 0:
+        raise ValueError('Bad value for x: %s' % a)
+
+    if x == 0:
+        return 0, 0
+
+    ap = a
+    total = 1.0 / a
+    delta = total
+    n = 1
+
+    while n <= itmax:
+        ap = ap + 1.0
+        delta = delta * x / ap
+        total = total + delta
+
+        if abs(delta) < abs(total) * eps:
+            return total * math.exp(-x + a * math.log(x) - gln), gln
+
+        n = n + 1
+
+    raise RuntimeError('Maximum iterations reached: %s, %s' % (
+        abs(delta), abs(total) * eps))
+
+
+def gcf(a: float, x: float, itmax: int = 200, eps: float = 3.e-7) -> Tuple[
+    float, float]:
+    """Calculates the continued fraction approximation of the incomplete gamma
+    function :math:`\\gamma (a, x)` .
+
+    Args:
+        a:                  gamma function parameter
+        x:                  gamma function integral upper limit
+        itmax (optional):   maximum number of iterations in algorithm
+                            approximation
+        eps (optional):     tolerance for convergence
+
+    Returns:
+        tuple with value of the  continued fraction approximation to the
+        incomplete gamma function :math:`\\gamma (a, x)`, and value of the
+        complete gamma function :math:`\\Gamma (a)`
+
+    References:
+        http://mail.python.org/pipermail/python-list/2000-June/671838.html
+
+        Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-
+        Square, F, Gamma, Geometric, Poisson, Student's t, and Uniform. The
+        Python Papers Source Codes 1:4
+    """
+
+    gln = gammln(a)  # complete gamma function
+
+    gold = 0.0
+    a0 = 1.0
+    a1 = x
+    b0 = 0.0
+    b1 = 1.0
+    fac = 1.0
+    n = 1
+    while n <= itmax:
+        an = n
+        ana = an - a
+        a0 = (a1 + a0 * ana) * fac
+        b0 = (b1 + b0 * ana) * fac
+        anf = an * fac
+        a1 = x * a0 + anf * a1
+        b1 = x * b0 + anf * b1
+
+        if a1 != 0.0:
+            fac = 1.0 / a1
+            g = b1 * fac
+
+            if abs((g - gold) / g) < eps:
+                return g * math.exp(-x + a * math.log(x) - gln), gln
+
+            gold = g
+
+        n = n + 1
+
+    raise RuntimeError('Maximum iterations reached: %s' % abs((g - gold) / g))
+
+
+def gammln(a: float) -> float:
+    """Calculates the complete Gamma function :math:`\\Gamma (a)` .
+
+    Args:
+        a:  gamma function parameter
+
+    Returns:
+        value of the complete gamma function :math:`\\Gamma (a)`
+
+    References:
+        NRP 6.1
+
+        http://mail.python.org/pipermail/python-list/2000-June/671838.html
+
+        Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-
+        Square, F, Gamma, Geometric, Poisson, Student's t, and Uniform. The
+        Python Papers Source Codes 1:4
+    """
+
+    gammln_cof = [76.18009173, -86.50532033, 24.01409822,
+                  -1.231739516e0, 0.120858003e-2, -0.536382e-5]
+    x = a - 1.0
+    tmp = x + 5.5
+    tmp = (x + 0.5) * math.log(tmp) - tmp
+    ser = 1.0
+    for j in range(6):
+        x = x + 1.
+        ser = ser + gammln_cof[j] / x
+
+    return tmp + math.log(2.50662827465 * ser)

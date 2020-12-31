@@ -106,9 +106,9 @@ fcts = [
     #pytest.param(allantoolkit.devs.mtotdev,  marks=pytest.mark.slow),
     #pytest.param(allantoolkit.devs.ttotdev, marks=pytest.mark.slow),
     #pytest.param(allantoolkit.devs.htotdev, marks=pytest.mark.slow),
-    allantoolkit.devs.theo1,
-    #allantoolkit.devs.mtie,  # FIXME: fails if CPU under load
-    #allantoolkit.devs.tierms,  # FIXME: fails if CPU under load
+    #allantoolkit.devs.theo1,
+    allantoolkit.devs.mtie,  # FIXME: fails if CPU under load
+    allantoolkit.devs.tierms,  # FIXME: fails if CPU under load
 ]
 
 
@@ -149,8 +149,6 @@ def test_dev_many_taus(data, data_type, func):
                                              test_ci=False)
 
 
-# FIXME: check why doesn't match Stable32
-@pytest.mark.skip
 @pytest.mark.parametrize('data, data_type', input_data)
 def test_fastu_mtie(data, data_type):
 

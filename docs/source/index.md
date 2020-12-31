@@ -45,8 +45,10 @@ features in this fork is here just below!
 - Bias correction for all deviation types
 - Non-naive EDF / confidence interval calculation for all deviation types
 - Basic plotting and visualisation tools
-- Fast Theo1 algorithm
+- Fast Theo1 / TheoBR algorithm
+- Fast MTIE binary decomposition algorithm
 - Many-tau tau generation
+- Fast u tau generation
 - Streamlined code architecture
 - Support for tables and constant mappings from .yaml file
 - Updated documentation and docstrings

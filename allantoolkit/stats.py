@@ -324,8 +324,10 @@ def calc_mvar(x: Array, m: int, rate: float) -> VarResult:
         used to estimate it.
 
     References:
-        Stefano Bregni "Fast Algorithms for TVAR and MTIE Computation in
-        Characterization of Network Synchronization Performance"
+        [Bregni2001]_
+        S. Bregni and S. Maccabruni, "Fast Computation of Maximum Time
+        Interval Error by Binary Decomposition", IEEE Trans. I&M, Vol. 49,
+        No. 6, Dec. 2000, pp. 1240-1244.
     """
 
     # TODO: make gap resistant and return correct number of non-NaN samples
@@ -386,7 +388,10 @@ def calc_tvar(x: Array, m: int, rate: float) -> VarResult:
         used to estimate it.
 
     References:
-        TODO: add exact reference
+        [Bregni2001]_
+        S. Bregni and S. Maccabruni, "Fast Computation of Maximum Time
+        Interval Error by Binary Decomposition", IEEE Trans. I&M, Vol. 49,
+        No. 6, Dec. 2000, pp. 1240-1244.
     """
 
     mvar, n = calc_mvar(x=x, m=m, rate=rate)
@@ -1186,7 +1191,6 @@ def calc_mtie(x: Array, m: int, rate: float = None) -> VarResult:
     return VarResult(var=var, n=x.size)
 
 
-# FIXME: check why doesn't match Stable32
 def calc_mtie_fast(x: Array, afs: Array, rate: float = None) -> VarResults:
     """Calculates the maximum time interval variance (MTIEVAR) of phase data
     at given averaging factor - using a fast binary decomposition algorithm.
@@ -1207,8 +1211,9 @@ def calc_mtie_fast(x: Array, afs: Array, rate: float = None) -> VarResults:
 
     References:
         [Bregni2001]_
-        Stefano Bregni "Fast Algorithms for TVAR and MTIE Computation in
-        Characterization of Network Synchronization Performance"
+        S. Bregni and S. Maccabruni, "Fast Computation of Maximum Time
+        Interval Error by Binary Decomposition", IEEE Trans. I&M, Vol. 49,
+        No. 6, Dec. 2000, pp. 1240-1244.
     """
 
     if not np.all(utils.is_power(z=afs+1)):
@@ -1217,13 +1222,13 @@ def calc_mtie_fast(x: Array, afs: Array, rate: float = None) -> VarResults:
                          "factors should be such that m+1 = 2^k for all "
                          "averaging factors m.")
 
-    # Max MTIE windows will be made of of 2^k_max samples
-    k_max = np.log2(max(afs)+1).astype(int)
-    ks = np.arange(1, k_max+1)  # binary algorithm needs all previous
+    N = x.size
 
-    # truncate data to 2^k_max datapoints
-    x = x[:2**k_max]
-    N = x.size  # 2^k_max
+    # Max MTIE windows will be made of of 2^k_max samples
+    k_max = np.log2(N).astype(int)
+
+    # k is an integer from 1 to log2(N).
+    ks = np.arange(1, k_max+1)
 
     # matrices to store max and min MTIE results
     A_max = np.full(shape=(k_max, N-1), fill_value=np.NaN)

@@ -23,9 +23,9 @@ Papers
        https://doi.org/10.1088/0026-1394/52/4/565
        https://arxiv.org/abs/1504.00466
 
-.. [Bregni2001] S. BREGNI, Fast Algorithms for TVAR and MTIE Computation in Characterization of
-    Network Synchronization Performance. 
-    http://home.deib.polimi.it/bregni/papers/cscc2001_fastalgo.pdf
+.. [Bregni2001] S. Bregni and S. Maccabruni, "Fast Computation of Maximum Time
+        Interval Error by Binary Decomposition", IEEE Trans. I&M, Vol. 49,
+        No. 6, Dec. 2000, pp. 1240-1244.
 
 .. .. [Dawkins2007] S. T. Dawkins, J. J. McFerran and A. N. Luiten,
        "Considerations on

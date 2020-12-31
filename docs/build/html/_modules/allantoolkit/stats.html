@@ -539,8 +539,10 @@
 <span class="sd">        used to estimate it.</span>
 
 <span class="sd">    References:</span>
-<span class="sd">        Stefano Bregni &quot;Fast Algorithms for TVAR and MTIE Computation in</span>
-<span class="sd">        Characterization of Network Synchronization Performance&quot;</span>
+<span class="sd">        [Bregni2001]_</span>
+<span class="sd">        S. Bregni and S. Maccabruni, &quot;Fast Computation of Maximum Time</span>
+<span class="sd">        Interval Error by Binary Decomposition&quot;, IEEE Trans. I&amp;M, Vol. 49,</span>
+<span class="sd">        No. 6, Dec. 2000, pp. 1240-1244.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># TODO: make gap resistant and return correct number of non-NaN samples</span>
@@ -601,7 +603,10 @@
 <span class="sd">        used to estimate it.</span>
 
 <span class="sd">    References:</span>
-<span class="sd">        TODO: add exact reference</span>
+<span class="sd">        [Bregni2001]_</span>
+<span class="sd">        S. Bregni and S. Maccabruni, &quot;Fast Computation of Maximum Time</span>
+<span class="sd">        Interval Error by Binary Decomposition&quot;, IEEE Trans. I&amp;M, Vol. 49,</span>
+<span class="sd">        No. 6, Dec. 2000, pp. 1240-1244.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">mvar</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">calc_mvar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
@@ -1401,7 +1406,6 @@
     <span class="k">return</span> <span class="n">VarResult</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">)</span></div>
 
 
-<span class="c1"># FIXME: check why doesn&#39;t match Stable32</span>
 <div class="viewcode-block" id="calc_mtie_fast"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.stats.calc_mtie_fast">[docs]</a><span class="k">def</span> <span class="nf">calc_mtie_fast</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">afs</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarResults</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Calculates the maximum time interval variance (MTIEVAR) of phase data</span>
 <span class="sd">    at given averaging factor - using a fast binary decomposition algorithm.</span>
@@ -1422,8 +1426,9 @@
 
 <span class="sd">    References:</span>
 <span class="sd">        [Bregni2001]_</span>
-<span class="sd">        Stefano Bregni &quot;Fast Algorithms for TVAR and MTIE Computation in</span>
-<span class="sd">        Characterization of Network Synchronization Performance&quot;</span>
+<span class="sd">        S. Bregni and S. Maccabruni, &quot;Fast Computation of Maximum Time</span>
+<span class="sd">        Interval Error by Binary Decomposition&quot;, IEEE Trans. I&amp;M, Vol. 49,</span>
+<span class="sd">        No. 6, Dec. 2000, pp. 1240-1244.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">is_power</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="n">afs</span><span class="o">+</span><span class="mi">1</span><span class="p">)):</span>
@@ -1432,13 +1437,13 @@
                          <span class="s2">&quot;factors should be such that m+1 = 2^k for all &quot;</span>
                          <span class="s2">&quot;averaging factors m.&quot;</span><span class="p">)</span>
 
-    <span class="c1"># Max MTIE windows will be made of of 2^k_max samples</span>
-    <span class="n">k_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">afs</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">ks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k_max</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># binary algorithm needs all previous</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
 
-    <span class="c1"># truncate data to 2^k_max datapoints</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="mi">2</span><span class="o">**</span><span class="n">k_max</span><span class="p">]</span>
-    <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>  <span class="c1"># 2^k_max</span>
+    <span class="c1"># Max MTIE windows will be made of of 2^k_max samples</span>
+    <span class="n">k_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="c1"># k is an integer from 1 to log2(N).</span>
+    <span class="n">ks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k_max</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># matrices to store max and min MTIE results</span>
     <span class="n">A_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">k_max</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>

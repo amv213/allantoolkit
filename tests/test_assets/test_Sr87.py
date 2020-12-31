@@ -106,9 +106,9 @@ fcts = [
     #pytest.param(allantoolkit.devs.mtotdev,  marks=pytest.mark.slow),
     #pytest.param(allantoolkit.devs.ttotdev, marks=pytest.mark.slow),
     #pytest.param(allantoolkit.devs.htotdev, marks=pytest.mark.slow),
-    #allantoolkit.devs.theo1,
-    allantoolkit.devs.mtie,  # FIXME: fails if CPU under load
-    allantoolkit.devs.tierms,  # FIXME: fails if CPU under load
+    allantoolkit.devs.theo1,
+    allantoolkit.devs.mtie,
+    allantoolkit.devs.tierms,
 ]
 
 
@@ -160,7 +160,7 @@ def test_fastu_mtie(data, data_type):
         fn = ASSETS_DIR / (data_type + '0') / 'fastu' / (func.__name__ +
                                                          '.txt')
 
-    allantoolkit.testutils.test_Stable32_run(data=data, func=func, rate=RATE,
+    allantoolkit.testutils.test_Stable32_run(data=X0, func=func, rate=RATE,
                                              data_type=data_type, taus='all',
                                              fn=fn, test_alpha=True,
                                              test_ci=False)

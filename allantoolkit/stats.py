@@ -1141,11 +1141,6 @@ def calc_mtie(x: Array, m: int, rate: float = None) -> VarResult:
     """Calculates the maximum time interval variance (MTIEVAR) of phase data at
     given averaging factor.
 
-    .. warning::
-        algorithm seems to give wrong results if CPU under heavy load
-
-    FIXME: implement better algorithm
-
     MTIE is calculated by moving a `m`-point window (`m` being the
     averaging time of interest) through phase (time-error) data and finding
     the difference between the maximum and minimum values at each window

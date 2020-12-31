@@ -118,6 +118,9 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         [RileyStable32Manual]_
     """
 
+    # Make copy to avoid accidental input data modifications
+    data = data.copy()
+
     # Easier to work with phase data, in units of seconds
     x = utils.input_to_phase(data=data, rate=rate, data_type=data_type,
                              normalize=True)
@@ -230,7 +233,7 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
         for i, (m, var, alpha) in enumerate(zip(afs, vars, alphas)):
 
             # Dispatch to appropriate bias calculator for this dev_type:
-            # should be function of this signature: func(x, m, alpha) -> b
+            # should be function of this signature: func(data, m, alpha) -> b
 
             bfunc = getattr(bias, 'calc_bias_' + dev_type.replace('dev', 'var'))
             b = bfunc(data=data, m=m, alpha=alpha)
@@ -821,9 +824,6 @@ def mtie(data: Array, rate: float = 1., data_type: str = "phase",
        [RileyStable32]_ (5.2.17. MTIE, pg.41-2)
     """
 
-    logger.warning("MTIE implementation might be unreliable if CPU under "
-                   "load. Apologies if that is the case.")
-
     return dev(dev_type='mtie', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)
 
@@ -858,9 +858,6 @@ def tierms(data: Array, rate: float = 1., data_type: str = "phase",
     References:
        [RileyStable32]_ (5.2.18. TIE rms, pg.42-3)
     """
-
-    logger.warning("TIERMS implementation might be unreliable if CPU under "
-                   "load. Apologies if that is the case.")
 
     return dev(dev_type='tierms', data=data, rate=rate, data_type=data_type,
                taus=taus, max_af=max_af)

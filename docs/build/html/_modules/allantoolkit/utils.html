@@ -252,6 +252,21 @@
     <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">//</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">//</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="is_power"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.is_power">[docs]</a><span class="k">def</span> <span class="nf">is_power</span><span class="p">(</span><span class="n">z</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks whether the input array is an array of powers of 2.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        z:  input array</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        boolean array flagging powers of two as ``True``.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        https://stackoverflow.com/questions/29480680/finding-if-a-number-is-a-power-of-2-using-recursion</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">z</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="decimate"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.utils.decimate">[docs]</a><span class="k">def</span> <span class="nf">decimate</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Average phase or fractional frequency data at given averaging factor.</span>
 

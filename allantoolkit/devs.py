@@ -128,6 +128,9 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     # generates [taus, afs]
     # ---------------------
 
+    # Set a flag if calculating mtie on many taus
+    flag_fastu = True if dev_type == 'mtie' and taus == 'all' else False
+
     # Build/Select averaging factors at which to calculate deviations
     taus, afs = utils.tau_generator(data=x, rate=rate, dev_type=dev_type,
                                     taus=taus, maximum_m=max_af)
@@ -142,6 +145,9 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
 
         vars, ns = stats.calc_theo1_fast(x=x, rate=rate, explode=True)
         vars, ns = vars[afs], ns[afs]  # index out only selected AFS
+
+    elif flag_fastu:  # Fast batch calculation for many-tau (Fast `u`) mtie
+        vars, ns = stats.calc_mtie_fast(x=x, afs=afs, rate=rate)
 
     else:  # individual calculations at each averaging time for everyone else
 

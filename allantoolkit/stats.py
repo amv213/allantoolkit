@@ -324,8 +324,8 @@ def calc_mvar(x: Array, m: int, rate: float) -> VarResult:
         used to estimate it.
 
     References:
-        TODO: add exact reference
-        TODO: add reference justifying loop unrolled algorithm
+        Stefano Bregni "Fast Algorithms for TVAR and MTIE Computation in
+        Characterization of Network Synchronization Performance"
     """
 
     # TODO: make gap resistant and return correct number of non-NaN samples
@@ -1186,9 +1186,8 @@ def calc_mtie(x: Array, m: int, rate: float = None) -> VarResult:
     return VarResult(var=var, n=x.size)
 
 
-# FIXME: mtie_phase_fast() is incomplete.
-# TODO: Complete and swap in for when `fastu` selected
-def calc_mtie_fast(x: Array, m: int, rate: float = None) -> VarResult:
+# FIXME: check why doesn't match Stable32
+def calc_mtie_fast(x: Array, afs: Array, rate: float = None) -> VarResults:
     """Calculates the maximum time interval variance (MTIEVAR) of phase data
     at given averaging factor - using a fast binary decomposition algorithm.
 
@@ -1197,75 +1196,68 @@ def calc_mtie_fast(x: Array, m: int, rate: float = None) -> VarResult:
 
     Args:
         x:      input phase data, in units of seconds.
-        m:      averaging factor at which to calculate variance
-        rate:   sampling rate of the input data, in Hz.
+        afs:    averaging factors at which to calculate variance. Should be
+                such that m+1 = 2^k for all averaging factors in the sequence.
+        rate:   sampling rate of the input data, in Hz. Not used here.
 
     Returns:
-        :class:`allantoolkit.stats.VarResult` NamedTuple of
-        computed variance at given averaging time, and number of samples
+        :class:`allantoolkit.stats.VarResults` NamedTuple of
+        computed variances at given averaging times, and number of samples
         used to estimate it.
 
     References:
         [Bregni2001]_
-        STEFANO BREGNI "Fast Algorithms for TVAR and MTIE Computation in
+        Stefano Bregni "Fast Algorithms for TVAR and MTIE Computation in
         Characterization of Network Synchronization Performance"
     """
 
-    raise NotImplementedError("Fast binary decomposition algorithm for MTIE "
-                              "has not been implemented yet")
+    if not np.all(utils.is_power(z=afs+1)):
+        raise ValueError("Averaging factors provided do not support MTIE "
+                         "fast binary decomposition algorithm. Averaging "
+                         "factors should be such that m+1 = 2^k for all "
+                         "averaging factors m.")
 
-    """
-    rate = float(rate)
-    phase = np.asarray(phase)
-    k_max = int(np.floor(np.log2(len(phase))))
-    phase = phase[0:pow(2, k_max)] # truncate data to 2**k_max datapoints
-    assert len(phase) == pow(2, k_max)
-    #k = 1
-    taus = [pow(2, k) for k in range(k_max)]
-    #while k <= k_max:
-    #    tau = pow(2, k)
-    #    taus.append(tau)
-        #print tau
-    #    k += 1
-    print("taus N=", len(taus), " ", taus)
-    devs = np.zeros(len(taus))
-    deverrs = np.zeros(len(taus))
-    ns = np.zeros(len(taus))
-    taus_used = np.array(taus) # [(1.0/rate)*t for t in taus]
-    # matrices to store results
-    mtie_max = np.zeros((len(phase)-1, k_max))
-    mtie_min = np.zeros((len(phase)-1, k_max))
-    for kidx in range(k_max):
-        k = kidx+1
-        imax = len(phase)-pow(2, k)+1
-        #print k, imax
-        tie = np.zeros(imax)
-        ns[kidx] = imax
-        #print np.max( tie )
-        for i in range(imax):
-            if k == 1:
-                mtie_max[i, kidx] = max(phase[i], phase[i+1])
-                mtie_min[i, kidx] = min(phase[i], phase[i+1])
-            else:
-                p = int(pow(2, k-1))
-                mtie_max[i, kidx] = max(mtie_max[i, kidx-1],
-                                        mtie_max[i+p, kidx-1])
-                mtie_min[i, kidx] = min(mtie_min[i, kidx-1],
-                                        mtie_min[i+p, kidx-1])
+    # Max MTIE windows will be made of of 2^k_max samples
+    k_max = np.log2(max(afs)+1).astype(int)
+    ks = np.arange(1, k_max+1)  # binary algorithm needs all previous
 
-        #for i in range(imax):
-            tie[i] = mtie_max[i, kidx] - mtie_min[i, kidx]
-            #print tie[i]
-        devs[kidx] = np.amax(tie) # maximum along axis
-        #print "maximum %2.4f" % devs[kidx]
-        #print np.amax( tie )
-    #for tau in taus:
-    #for
-    devs = np.array(devs)
-    print("devs N=", len(devs), " ", devs)
-    print("taus N=", len(taus_used), " ", taus_used)
-    return utils.remove_small_ns(taus_used, devs, deverrs, ns)
-    """
+    # truncate data to 2^k_max datapoints
+    x = x[:2**k_max]
+    N = x.size  # 2^k_max
+
+    # matrices to store max and min MTIE results
+    A_max = np.full(shape=(k_max, N-1), fill_value=np.NaN)
+    A_min = A_max.copy()
+
+    for k in ks:
+
+        kk = k-1  # row index
+
+        for i in range(N - 2**k + 1):
+
+            if k == 1:  # Eq. (15)
+                A_max[kk, i] = max(x[i], x[i+1])
+                A_min[kk, i] = min(x[i], x[i+1])
+
+            else:  # Eq. (16)
+                p = 2**(k - 1)
+                A_max[kk, i] = max(A_max[kk-1, i], A_max[kk-1, i+p])
+                A_min[kk, i] = min(A_min[kk-1, i], A_min[kk-1, i+p])
+
+    # Eq. (17)
+    A = A_max - A_min
+    mtie_k = np.nanmax(A, axis=1)
+
+    # Calculate number of samples each mtie was calculated on
+    ns = np.array([N - 2**k + 1 for k in ks])
+
+    # Return mtie for requested averaging factor
+    # The mtie_k array has mtie(k) at mtie[k-1]
+    # --> so mtie(m) at mtie[log2(m+1)-1]
+    mtie = mtie_k[np.log2(afs+1).astype(int) - 1]
+    ns = ns[np.log2(afs+1).astype(int) - 1]
+
+    return VarResults(vars=mtie**2, ns=ns)
 
 
 def calc_tierms(x: Array, m: int, rate: float = None) -> VarResult:

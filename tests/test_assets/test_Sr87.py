@@ -147,3 +147,22 @@ def test_dev_many_taus(data, data_type, func):
                                              data_type=data_type, taus='many',
                                              fn=fn, test_alpha=True,
                                              test_ci=False)
+
+
+# FIXME: check why doesn't match Stable32
+@pytest.mark.skip
+@pytest.mark.parametrize('data, data_type', input_data)
+def test_fastu_mtie(data, data_type):
+
+    func = allantoolkit.devs.mtie
+
+    if data_type == 'freq':
+        fn = ASSETS_DIR / data_type / 'fastu' / (func.__name__ + '.txt')
+    else:
+        fn = ASSETS_DIR / (data_type + '0') / 'fastu' / (func.__name__ +
+                                                         '.txt')
+
+    allantoolkit.testutils.test_Stable32_run(data=data, func=func, rate=RATE,
+                                             data_type=data_type, taus='all',
+                                             fn=fn, test_alpha=True,
+                                             test_ci=False)

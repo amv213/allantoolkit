@@ -343,6 +343,9 @@
     <span class="c1"># generates [taus, afs]</span>
     <span class="c1"># ---------------------</span>
 
+    <span class="c1"># Set a flag if calculating mtie on many taus</span>
+    <span class="n">flag_fastu</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">dev_type</span> <span class="o">==</span> <span class="s1">&#39;mtie&#39;</span> <span class="ow">and</span> <span class="n">taus</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span> <span class="k">else</span> <span class="kc">False</span>
+
     <span class="c1"># Build/Select averaging factors at which to calculate deviations</span>
     <span class="n">taus</span><span class="p">,</span> <span class="n">afs</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">tau_generator</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">dev_type</span><span class="o">=</span><span class="n">dev_type</span><span class="p">,</span>
                                     <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">maximum_m</span><span class="o">=</span><span class="n">max_af</span><span class="p">)</span>
@@ -357,6 +360,9 @@
 
         <span class="nb">vars</span><span class="p">,</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_theo1_fast</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">explode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="nb">vars</span><span class="p">,</span> <span class="n">ns</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">[</span><span class="n">afs</span><span class="p">],</span> <span class="n">ns</span><span class="p">[</span><span class="n">afs</span><span class="p">]</span>  <span class="c1"># index out only selected AFS</span>
+
+    <span class="k">elif</span> <span class="n">flag_fastu</span><span class="p">:</span>  <span class="c1"># Fast batch calculation for many-tau (Fast `u`) mtie</span>
+        <span class="nb">vars</span><span class="p">,</span> <span class="n">ns</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">calc_mtie_fast</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">afs</span><span class="o">=</span><span class="n">afs</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># individual calculations at each averaging time for everyone else</span>
 

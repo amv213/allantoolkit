@@ -37,6 +37,21 @@ def binom(n: int, k: int) -> int:
     return math.factorial(n) // math.factorial(k) // math.factorial(n - k)
 
 
+def is_power(z: Array) -> Array:
+    """Checks whether the input array is an array of powers of 2.
+
+    Args:
+        z:  input array
+
+    Returns:
+        boolean array flagging powers of two as ``True``.
+
+    References:
+        https://stackoverflow.com/questions/29480680/finding-if-a-number-is-a-power-of-2-using-recursion
+    """
+    return np.logical_and(np.bitwise_and(z, (z - 1)) == 0, z != 0)
+
+
 def decimate(data: Array, m: int, data_type: str) -> Array:
     """ Average phase or fractional frequency data at given averaging factor.
 

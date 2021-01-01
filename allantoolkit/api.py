@@ -521,7 +521,6 @@ class Dataset:
         ax.text(0.85, 0.9, sigma_box, horizontalalignment='left',
                 verticalalignment='top', transform=ax.transAxes)
 
-
         # Axes Parameters
         ax.set_ylim(10**np.floor(np.log10(min(self.devs))),
                     10**np.ceil(np.log10(max(self.devs))))
@@ -538,4 +537,69 @@ class Dataset:
         ax.set_xlabel("Averaging Time (s)")
 
         return ax
+
+    def plot_auto(self, m: int, max_lag: int = None) -> plt.Axes:
+        """Plots the autocorrelation function (ACF) of the current phase or
+        frequency data.
+
+        The primary purpose of the ACF is to provide insight into the
+        degree of correlation or non-whiteness of the phase or frequency
+        fluctuations, and to provide an estimate of the power law noise type.
+
+        Args:
+            m:                  averaging factor for autocorrelation
+            max_lag (optional): maximum lag at which to compute
+                                autocorrelation.
+
+        Returns:
+            plot axes
+
+        References:
+            [RileyStable32Manual]_ (Autocorrelation Function, pg.207-209)
+        """
+
+
+        # Decimate data for requested averaging factor
+        z = utils.decimate(data=self.data, m=m, data_type=self.data_type)
+
+        # Calculate autocorrelation function at each possible lag
+        # (tau=m*lag*tau_0)
+        lags = np.arange(z.size)
+        lags = lags[:max_lag+1] if max_lag is not None else lags
+        acs = np.array([noise_id.acf(z, k) for k in lags])
+
+        # Noise id of decimated data
+        p = noise_id.acf_noise_id_core(z=z, dmax=2)
+        alpha = p + 2 if self.data_type == 'phase' else p
+        noise = tables.ALPHA_TO_NAMES.get(alpha)
+
+        # Log out info
+        logger.info("\n\nAUTOCORRELATION PLOT:\n"
+                    "\tAvg Factor:      \t%i\n"
+                    "\t# Lags:          \t%i\n"
+                    "\tLag-1 ACF:       \t%.3f\n"
+                    "\tNoise:           \t%s (%i)\n", m, lags.size, acs[1],
+                    noise,
+                    alpha)
+
+        # Spawn figure
+        fig = plt.figure(figsize=(13, 8))
+        ax = plt.gca()
+
+        # Plot autocorrelation vs lag
+        ax.plot(lags, acs)
+
+        ax.axhline(0, ls='--', c='DarkGray')  # 0 level
+        ax.axvline(1, ls='--', c='DarkGray')  # lag-1 guide
+
+        # Axes Parameters
+        ax.set_title("AUTOCORRELATION")
+        ax.set_ylabel("Autocorrelation")
+        ax.set_xlabel("Lag")
+
+        ax.set_ylim(ax.get_ylim()[0], 1)
+        ax.set_xlim(0, lags[-1])
+
+        return ax
+
 

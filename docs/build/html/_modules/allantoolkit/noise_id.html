@@ -262,12 +262,16 @@
     <span class="n">z0</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="n">zbar</span>
 
     <span class="c1"># Calculate autocorrelation factor</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">z0</span><span class="p">[:</span><span class="o">-</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">z0</span><span class="p">[</span><span class="n">k</span><span class="p">:])</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">z0</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="mi">1</span>
 
-    <span class="c1"># Scale by (N-1)/N, this was suggested in one of the Stable32 manuals</span>
-    <span class="c1"># but cannot find the reference anymore. Turns out Stable32 does indeed</span>
-    <span class="c1"># do this.</span>
-    <span class="n">r</span> <span class="o">*=</span> <span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">z</span><span class="o">.</span><span class="n">size</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">z0</span><span class="p">[:</span><span class="o">-</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">z0</span><span class="p">[</span><span class="n">k</span><span class="p">:])</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">z0</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Scale by (N-1)/N, this was suggested in one of the Stable32 manuals</span>
+        <span class="c1"># but cannot find the reference anymore. Turns out Stable32 does indeed</span>
+        <span class="c1"># do this.</span>
+        <span class="n">r</span> <span class="o">*=</span> <span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">z</span><span class="o">.</span><span class="n">size</span>
 
     <span class="k">return</span> <span class="n">r</span></div>
 

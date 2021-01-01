@@ -541,6 +541,30 @@ to be plotted.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="allantoolkit.api.Dataset.plot_auto">
+<code class="sig-name descname">plot_auto</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">max_lag</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; matplotlib.axes._axes.Axes<a class="reference internal" href="_modules/allantoolkit/api.html#Dataset.plot_auto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.api.Dataset.plot_auto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the autocorrelation function (ACF) of the current phase or
+frequency data.</p>
+<p>The primary purpose of the ACF is to provide insight into the
+degree of correlation or non-whiteness of the phase or frequency
+fluctuations, and to provide an estimate of the power law noise type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> – averaging factor for autocorrelation</p></li>
+<li><p><strong>max_lag</strong> (<em>optional</em>) – maximum lag at which to compute
+autocorrelation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>plot axes</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id11"><span>[RileyStable32Manual]</span></a> (Autocorrelation Function, pg.207-209)</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="allantoolkit.api.Dataset.plot_hist">
 <code class="sig-name descname">plot_hist</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; matplotlib.axes._axes.Axes<a class="reference internal" href="_modules/allantoolkit/api.html#Dataset.plot_hist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.api.Dataset.plot_hist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots a histogram of phase or frequency data.</p>
@@ -571,7 +595,7 @@ detection and analysis, where it can provide a better average location
 estimate for a frequency jump. Repeating the reversal will restore the
 original data.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id11"><span>[RileyStable32Manual]</span></a> (Scale Function, pg.181-2)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id12"><span>[RileyStable32Manual]</span></a> (Scale Function, pg.181-2)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -592,8 +616,8 @@ frequency data.</p>
 <p># TODO: find out which custom algorithm Stable32 uses to calculate
 median, sigma, and std</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id12"><span>[RileyStable32Manual]</span></a> (Statistics Function, pg.187-8)
-<a class="reference internal" href="references.html#rileystable32" id="id13"><span>[RileyStable32]</span></a> (10.12, pg.109)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id13"><span>[RileyStable32Manual]</span></a> (Statistics Function, pg.187-8)
+<a class="reference internal" href="references.html#rileystable32" id="id14"><span>[RileyStable32]</span></a> (10.12, pg.109)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>plot axes</p>
@@ -611,7 +635,7 @@ median, sigma, and std</p>
 <code class="sig-prename descclassname">allantoolkit.bias.</code><code class="sig-name descname">calc_bias_avar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/allantoolkit/bias.html#calc_bias_avar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.bias.calc_bias_avar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates bias by which to correct AVAR results for given noise type.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id14"><span>[RileyStable32Manual]</span></a> (Table pg. 97)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id15"><span>[RileyStable32Manual]</span></a> (Table pg. 97)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -661,7 +685,7 @@ averaging factor</p></li>
 <code class="sig-prename descclassname">allantoolkit.bias.</code><code class="sig-name descname">calc_bias_hvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/allantoolkit/bias.html#calc_bias_hvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.bias.calc_bias_hvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates bias by which to correct HVAR results for given noise type.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id15"><span>[RileyStable32Manual]</span></a> (Table pg. 97)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id16"><span>[RileyStable32Manual]</span></a> (Table pg. 97)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -714,7 +738,7 @@ averaging factor</p></li>
 <code class="sig-prename descclassname">allantoolkit.bias.</code><code class="sig-name descname">calc_bias_mvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/allantoolkit/bias.html#calc_bias_mvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.bias.calc_bias_mvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates bias by which to correct MVAR results for given noise type.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id16"><span>[RileyStable32Manual]</span></a> (Table pg. 97)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id17"><span>[RileyStable32Manual]</span></a> (Table pg. 97)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -735,7 +759,7 @@ averaging factor</p></li>
 <code class="sig-prename descclassname">allantoolkit.bias.</code><code class="sig-name descname">calc_bias_oavar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/allantoolkit/bias.html#calc_bias_oavar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.bias.calc_bias_oavar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates bias by which to correct OAVAR results for given noise type.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id17"><span>[RileyStable32Manual]</span></a> (Table pg. 97)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id18"><span>[RileyStable32Manual]</span></a> (Table pg. 97)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -756,7 +780,7 @@ averaging factor</p></li>
 <code class="sig-prename descclassname">allantoolkit.bias.</code><code class="sig-name descname">calc_bias_ohvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/allantoolkit/bias.html#calc_bias_ohvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.bias.calc_bias_ohvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates bias by which to correct OHVAR results for given noise type.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id18"><span>[RileyStable32Manual]</span></a> (Table pg. 97)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id19"><span>[RileyStable32Manual]</span></a> (Table pg. 97)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -785,7 +809,7 @@ corrections should be applied to the Thêo1 deviation.</p>
 Howe,D.A. et al.
 18th European Frequency and Time Forum (EFTF 2004)
 2004 (Table 1)</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id19"><span>[RileyStable32Manual]</span></a> (Theo1 Bias, pg.80)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id20"><span>[RileyStable32Manual]</span></a> (Theo1 Bias, pg.80)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -818,7 +842,7 @@ Howe,D.A. et al.
 <p>J.A. Taylor and D.A. Howe, “Fast ThêoBR: A Method for Long Data Set
 Stability  Analysis” (Used by Stable32)</p>
 <p><a class="reference external" href="http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf">http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf</a></p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id20"><span>[RileyStable32Manual]</span></a> (TheoBR and TheoH, pg.80)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id21"><span>[RileyStable32Manual]</span></a> (TheoBR and TheoH, pg.80)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -885,7 +909,7 @@ averaging factor</p></li>
 <code class="sig-prename descclassname">allantoolkit.bias.</code><code class="sig-name descname">calc_bias_tvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/allantoolkit/bias.html#calc_bias_tvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.bias.calc_bias_tvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates bias by which to correct TVAR results for given noise type.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id21"><span>[RileyStable32Manual]</span></a> (Table pg. 97)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id22"><span>[RileyStable32Manual]</span></a> (Table pg. 97)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1534,7 +1558,7 @@ Python Papers Source Codes 1:4</p>
 <code class="sig-prename descclassname">allantoolkit.ci.</code><code class="sig-name descname">get_error_bars</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">var</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ci</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.6826894921370859</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/ci.html#get_error_bars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.ci.get_error_bars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate non-naive variance errors. Equivalent to Stable32.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id22"><span>[RileyStable32Manual]</span></a> (Confidence Intervals, pg.89)
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id23"><span>[RileyStable32Manual]</span></a> (Confidence Intervals, pg.89)
 <a class="reference external" href="http://www.wriley.com/CI2.pdf">http://www.wriley.com/CI2.pdf</a>
 <a class="reference external" href="https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf">https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20050061319.pdf</a></p>
 <dl class="field-list simple">
@@ -1671,7 +1695,7 @@ fractional frequency values averaged over the averaging time
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id23"><span>[RileyStable32]</span></a> (5.2.2. Allan Variance, pg.14-5)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id24"><span>[RileyStable32]</span></a> (5.2.2. Allan Variance, pg.14-5)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1718,7 +1742,7 @@ automatically estimated at each averaging time.</p></li>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id24"><span>[RileyStable32Manual]</span></a></p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id25"><span>[RileyStable32Manual]</span></a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -1759,7 +1783,7 @@ fractional frequency values averaged over the averaging time
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id25"><span>[RileyStable32]</span></a> (5.2.8. Hadamard Variance, pg.25-6)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id26"><span>[RileyStable32]</span></a> (5.2.8. Hadamard Variance, pg.25-6)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1797,7 +1821,7 @@ the original factional frequency data.</p>
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id26"><span>[RileyStable32]</span></a> (5.2.14. Hadamard Total Variance, pg.33-7)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id27"><span>[RileyStable32]</span></a> (5.2.14. Hadamard Total Variance, pg.33-7)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1837,7 +1861,7 @@ Allan variance is instead defined as:</p>
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id27"><span>[RileyStable32]</span></a> (5.2.5. Modified Allan Variance, pg.22-3)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id28"><span>[RileyStable32]</span></a> (5.2.5. Modified Allan Variance, pg.22-3)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1866,7 +1890,7 @@ the entire data set.</p>
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id28"><span>[RileyStable32]</span></a> (5.2.17. MTIE, pg.41-2)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id29"><span>[RileyStable32]</span></a> (5.2.17. MTIE, pg.41-2)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1904,7 +1928,7 @@ averages from triply-extended subsequences of the original phase data.</p>
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id29"><span>[RileyStable32]</span></a> (5.2.12. Modified Total Variance, pg.31-2)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id30"><span>[RileyStable32]</span></a> (5.2.12. Modified Total Variance, pg.31-2)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1939,7 +1963,7 @@ the overlapping Allan variance is instead defined as:</p>
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id30"><span>[RileyStable32]</span></a> (5.2.4. Overlapping Allan Variance, pg.21-2)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id31"><span>[RileyStable32]</span></a> (5.2.4. Overlapping Allan Variance, pg.21-2)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1979,7 +2003,7 @@ y_{i+2m} - 2y_{i+m} + y_i \right]
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id31"><span>[RileyStable32]</span></a> (5.2.9. Overlapping Hadamard Variance, pg.26-7)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id32"><span>[RileyStable32]</span></a> (5.2.9. Overlapping Hadamard Variance, pg.26-7)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2009,7 +2033,7 @@ frequency.</p>
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id32"><span>[RileyStable32]</span></a> (5.2.6. Time Variance, pg.23-4)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id33"><span>[RileyStable32]</span></a> (5.2.6. Time Variance, pg.23-4)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2056,7 +2080,7 @@ implementations in the literature use instead
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id33"><span>[RileyStable32]</span></a> (5.2.15-6. Thêo1, pg.37-41)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id34"><span>[RileyStable32]</span></a> (5.2.15-6. Thêo1, pg.37-41)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2084,7 +2108,7 @@ is the basic data sampling period, by the following expression:</p>
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id34"><span>[RileyStable32]</span></a> (5.2.18. TIE rms, pg.42-3)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id35"><span>[RileyStable32]</span></a> (5.2.18. TIE rms, pg.42-3)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2121,7 +2145,7 @@ with the original dataset.</p>
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id35"><span>[RileyStable32]</span></a> (5.2.11. Total Variance, pg.29-31)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id36"><span>[RileyStable32]</span></a> (5.2.11. Total Variance, pg.29-31)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2148,7 +2172,7 @@ fractional frequency.</p>
 <p>Function <a class="reference internal" href="#allantoolkit.devs.dev" title="allantoolkit.devs.dev"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.devs.dev()</span></code></a> for detailed usage.</p>
 </div>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id36"><span>[RileyStable32]</span></a> (5.2.13. Time Total Variance, pg.33)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id37"><span>[RileyStable32]</span></a> (5.2.13. Time Total Variance, pg.33)</p>
 </dd></dl>
 
 </div>
@@ -2250,7 +2274,7 @@ certain later time.</p>
 <p># TODO: check this gives exactly Stable32 results and maybe switch to
 Fourier method?</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id37"><span>[RileyStable32]</span></a> (5.5.3, pg.53-54)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id38"><span>[RileyStable32]</span></a> (5.5.3, pg.53-54)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2273,7 +2297,7 @@ given averaging time.</p>
 discrimination for all common power law noises for both phase and
 frequency data, including difficult cases with mixed noises.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id38"><span>[RileyStable32]</span></a> (5.5.3-6 pg.53-7)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id39"><span>[RileyStable32]</span></a> (5.5.3-6 pg.53-7)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2297,7 +2321,7 @@ and  deterministic components</p></li>
 <dd><p>Core algorithm for the lag1 autocorrelation power law noise
 identification algorithm.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id39"><span>[RileyStable32]</span></a> (5.5.6 pg.56)
+<p><a class="reference internal" href="references.html#rileystable32" id="id40"><span>[RileyStable32]</span></a> (5.5.6 pg.56)
 <a class="reference external" href="http://www.stable32.com/Auto.pdf">http://www.stable32.com/Auto.pdf</a>
 <a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.503.9864&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.503.9864&amp;rep=rep1&amp;type=pdf</a>
 Power law noise identification using the lag 1 autocorrelation
@@ -2380,9 +2404,9 @@ for M phase data points.</p></li>
 <dd><p>Noise identification pipeline, following what prescribed by Stable32.</p>
 <p class="rubric">References</p>
 <p><a class="reference external" href="http://www.wriley.com/CI2.pdf">http://www.wriley.com/CI2.pdf</a>
-<a class="reference internal" href="references.html#rileystable32manual" id="id40"><span>[RileyStable32Manual]</span></a> (Table pg. 97) (missing htotvar)
-<a class="reference internal" href="references.html#rileystable32manual" id="id41"><span>[RileyStable32Manual]</span></a> (Confidence Intervals pg. 89-93)
-<a class="reference internal" href="references.html#rileystable32" id="id42"><span>[RileyStable32]</span></a> (5.5.2-6 pg.53-7)
+<a class="reference internal" href="references.html#rileystable32manual" id="id41"><span>[RileyStable32Manual]</span></a> (Table pg. 97) (missing htotvar)
+<a class="reference internal" href="references.html#rileystable32manual" id="id42"><span>[RileyStable32Manual]</span></a> (Confidence Intervals pg. 89-93)
+<a class="reference internal" href="references.html#rileystable32" id="id43"><span>[RileyStable32]</span></a> (5.5.2-6 pg.53-7)
 Howe, Beard, Greenhall, Riley,
 A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
 32nd PTTI, 2000
@@ -2420,7 +2444,7 @@ Stable32 <cite>Sigma</cite> tool. Although in that case the kf provided here sho
 be the one averaged over /30 and not /6</p>
 <p class="rubric">References</p>
 <p><a class="reference external" href="http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf">http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf</a></p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id43"><span>[RileyStable32Manual]</span></a> (TheoBR and TheoH, pg.80)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id44"><span>[RileyStable32Manual]</span></a> (TheoBR and TheoH, pg.80)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>kf</strong> – theoBR correction factor</p>
@@ -2446,7 +2470,7 @@ tool. The kf provided here should be the standard one i.e. calculated
 over the average / 6 (See Notes)</p>
 <p class="rubric">References</p>
 <p><a class="reference external" href="http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf">http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf</a></p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id44"><span>[RileyStable32Manual]</span></a> (TheoBR and TheoH, pg.80)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id45"><span>[RileyStable32Manual]</span></a> (TheoBR and TheoH, pg.80)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>kf</strong> – theoBR correction factor</p>
@@ -2528,7 +2552,7 @@ A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
 <em class="property">class </em><code class="sig-prename descclassname">allantoolkit.noise_kasdin.</code><code class="sig-name descname">Noise</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nr</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">qd</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">b</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Generate discrete colored noise</p>
-<p>Python / Numpy implementation of <a class="reference internal" href="references.html#kasdin1992" id="id45"><span>[Kasdin1992]</span></a>:
+<p>Python / Numpy implementation of <a class="reference internal" href="references.html#kasdin1992" id="id46"><span>[Kasdin1992]</span></a>:
 Kasdin, N.J., Walter, T., “Discrete simulation of power law noise [for
 oscillator stability evaluation],” Frequency Control Symposium, 1992.
 46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992
@@ -2893,7 +2917,7 @@ Initial version 2019 July, Anders E. E. Wallin.</p>
 <em class="property">class </em><code class="sig-prename descclassname">allantoolkit.realtime.</code><code class="sig-name descname">ohdev_realtime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">afs</span><span class="o">=</span><span class="default_value">[1]</span></em>, <em class="sig-param"><span class="n">tau0</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">auto_afs</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">pts_per_decade</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/realtime.html#ohdev_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.realtime.ohdev_realtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#allantoolkit.realtime.dev_realtime" title="allantoolkit.realtime.dev_realtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">allantoolkit.realtime.dev_realtime</span></code></a></p>
 <p>Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.</p>
-<p><a class="reference internal" href="references.html#dobrogowski2007" id="id46"><span>[Dobrogowski2007]</span></a>
+<p><a class="reference internal" href="references.html#dobrogowski2007" id="id47"><span>[Dobrogowski2007]</span></a>
 Dobrogowski &amp; Kasznia
 <a class="reference external" href="https://doi.org/10.1109/FREQ.2007.4319204">https://doi.org/10.1109/FREQ.2007.4319204</a></p>
 <dl class="py method">
@@ -3203,7 +3227,7 @@ used to estimate it.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#bregni2001" id="id47"><span>[Bregni2001]</span></a>
+<p><a class="reference internal" href="references.html#bregni2001" id="id48"><span>[Bregni2001]</span></a>
 S. Bregni and S. Maccabruni, “Fast Computation of Maximum Time
 Interval Error by Binary Decomposition”, IEEE Trans. I&amp;M, Vol. 49,
 No. 6, Dec. 2000, pp. 1240-1244.</p>
@@ -3249,7 +3273,7 @@ used to estimate it.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#howe1999" id="id48"><span>[Howe1999]</span></a>
+<p><a class="reference internal" href="references.html#howe1999" id="id49"><span>[Howe1999]</span></a>
 D.A. Howe and F. Vernotte, “Generalization of the Total Variance
 Approach to the Modified Allan Variance,” Proc.
 31 st PTTI Meeting, pp. 267-276, Dec. 1999.</p>
@@ -3294,7 +3318,7 @@ used to estimate it.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#bregni2001" id="id49"><span>[Bregni2001]</span></a>
+<p><a class="reference internal" href="references.html#bregni2001" id="id50"><span>[Bregni2001]</span></a>
 S. Bregni and S. Maccabruni, “Fast Computation of Maximum Time
 Interval Error by Binary Decomposition”, IEEE Trans. I&amp;M, Vol. 49,
 No. 6, Dec. 2000, pp. 1240-1244.</p>
@@ -3494,7 +3518,7 @@ used to estimate it.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id50"><span>[RileyStable32]</span></a> (5.2.1. Standard Variance, pg.17-8)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id51"><span>[RileyStable32]</span></a> (5.2.1. Standard Variance, pg.17-8)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -3774,7 +3798,7 @@ used to estimate it.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#bregni2001" id="id51"><span>[Bregni2001]</span></a>
+<p><a class="reference internal" href="references.html#bregni2001" id="id52"><span>[Bregni2001]</span></a>
 S. Bregni and S. Maccabruni, “Fast Computation of Maximum Time
 Interval Error by Binary Decomposition”, IEEE Trans. I&amp;M, Vol. 49,
 No. 6, Dec. 2000, pp. 1240-1244.</p>
@@ -3960,8 +3984,8 @@ analysis.</p>
 errors. This happens in particular when calculating the mean of small
 values - resulting in erroneous results at the e-32 level</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id52"><span>[RileyStable32Manual]</span></a> (Drift Function, pg.191-4)</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id53"><span>[RileyStable32]</span></a> (5.18-21, pg.67-70)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id53"><span>[RileyStable32Manual]</span></a> (Drift Function, pg.191-4)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id54"><span>[RileyStable32]</span></a> (5.18-21, pg.67-70)</p>
 <p><a class="reference external" href="http://www.wriley.com/Frequency%20Drift%20Characterization%20in%20Stable32.pdf">http://www.wriley.com/Frequency%20Drift%20Characterization%20in%20Stable32.pdf</a></p>
 <p>C. A. Greenhall, “A frequency-drift estimator and its removal
 from modified Allan variance,” Proceedings of International
@@ -3995,7 +4019,7 @@ only logs drift analysis results</p></li>
 interpolated values, by first removing any leading and trailing gaps,
 and then using the two values immediately before and after any interior
 gaps to determine linearly interpolated values within the gap
-<a class="reference internal" href="references.html#rileystable32" id="id54"><span>[RileyStable32]</span></a> (pg. 107).</p>
+<a class="reference internal" href="references.html#rileystable32" id="id55"><span>[RileyStable32]</span></a> (pg. 107).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> – data array of frequency or phase measurements, with gaps
@@ -4014,7 +4038,7 @@ represented as NaNs</p>
 frequency data.</p>
 <p>TODO: check scaling of frequencies for Wn filter parameter is correct</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id55"><span>[RileyStable32Manual]</span></a> (Filter Function, pg.185-6)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id56"><span>[RileyStable32Manual]</span></a> (Filter Function, pg.185-6)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -4037,7 +4061,7 @@ frequency.</p></li>
 <dl class="py function">
 <dt id="allantoolkit.utils.frequency2fractional">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2fractional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">v0</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2fractional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2fractional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert frequency in Hz to fractional frequency <a class="reference internal" href="references.html#wikipedia" id="id56"><span>[Wikipedia]</span></a>.</p>
+<dd><p>Convert frequency in Hz to fractional frequency <a class="reference internal" href="references.html#wikipedia" id="id57"><span>[Wikipedia]</span></a>.</p>
 <div class="math notranslate nohighlight">
 \[y(t) =  ( \nu(t) - \nu_0 )  \over \nu_0\]</div>
 <dl class="field-list simple">
@@ -4061,7 +4085,7 @@ frequency of dataset.</p></li>
 arbitrary initial value), in units of second.</p>
 <p>Frequency to phase conversion is done by piecewise  integration  using
 the  averaging  time  as  the  integration  interval
-<a class="reference internal" href="references.html#rileystable32manual" id="id57"><span>[RileyStable32Manual]</span></a> (pg. 173-174):</p>
+<a class="reference internal" href="references.html#rileystable32manual" id="id58"><span>[RileyStable32Manual]</span></a> (pg. 173-174):</p>
 <div class="math notranslate nohighlight">
 \[x_{i+1} = x_i + y_i \tau\]</div>
 <p>Any gaps in the frequency data are filled to obtain phase continuity.</p>
@@ -4147,13 +4171,13 @@ indices</p>
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2frequency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#phase2frequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert phase data in units of seconds to fractional frequency data.</p>
 <p>Phase to frequency conversion is done by dividing the first differences
-of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id58"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
+of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id59"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
 <div class="math notranslate nohighlight">
 \[y_i = ( x_{i+1} - x_i ) \over \tau\]</div>
 <p>Phase to frequency conversion is straightforward for data having
 gaps. Because two phase points  are  needed  to  determine  each
 frequency  point a single phase gap will cause two frequency gaps, and a
-gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id59"><span>[RileyStable32]</span></a> (pg. 108).</p>
+gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id60"><span>[RileyStable32]</span></a> (pg. 108).</p>
 <dl class="simple">
 <dt>Params:</dt><dd><p>x:      data array of phase measurements, in seconds
 rate:   sampling rate of the input data, in Hz</p>
@@ -4234,8 +4258,8 @@ MAD is a robust statistic based on the median of the data. It is the
 median of the scaled absolute deviation of the data points from their
 median value.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id60"><span>[RileyStable32Manual]</span></a> (Check Function, pg.189-90)</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id61"><span>[RileyStable32]</span></a> (10.11, pg.108-9)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id61"><span>[RileyStable32Manual]</span></a> (Check Function, pg.189-90)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id62"><span>[RileyStable32]</span></a> (10.11, pg.108-9)</p>
 <p><a class="reference external" href="https://stackoverflow.com/questions/11686720/is-there-a-numpy-builtin-to-reject-outliers-from-a-list">https://stackoverflow.com/questions/11686720/is-there-a-numpy-builtin-to-reject-outliers-from-a-list</a></p>
 <p><a class="reference external" href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm">https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm</a></p>
 <dl class="field-list simple">
@@ -4269,7 +4293,7 @@ not set, outliers are not removed but only logged.</p></li>
 <dd><p>Scales the selected data by an additive or multiplicative factor,
 by adding a linear slope, or by reversing the data.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id62"><span>[RileyStable32Manual]</span></a> (Fill Function, pg.181-2)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id63"><span>[RileyStable32Manual]</span></a> (Fill Function, pg.181-2)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -4292,13 +4316,13 @@ which to compute statistics.</p>
 Generates a tau-list based on keywords ‘all’, ‘decade’, ‘octave’.
 Uses ‘octave’ by default if no taus= argument is given.</p>
 <p>Averaging times may be integer multiples of the data sampling interval
-<a class="reference internal" href="references.html#rileystable32" id="id63"><span>[RileyStable32]</span></a> (Pg.3):</p>
+<a class="reference internal" href="references.html#rileystable32" id="id64"><span>[RileyStable32]</span></a> (Pg.3):</p>
 <div class="math notranslate nohighlight">
 \[\tau =  m \tau_0\]</div>
 <p>where <cite>m</cite> is the averaging factor.</p>
 <p>This function implements a Stable32 stop-ratio for <cite>octave</cite> and <cite>decade</cite>
 stability runs, which automatically calculates the maximum averaging
-factor to use for the given deviation <a class="reference internal" href="references.html#rileyevolution" id="id64"><span>[RileyEvolution]</span></a> (pg.9 Table III).</p>
+factor to use for the given deviation <a class="reference internal" href="references.html#rileyevolution" id="id65"><span>[RileyEvolution]</span></a> (pg.9 Table III).</p>
 <p>If requesting averaging times for a <cite>theo1</cite> statistic, the resulting
 averaging times will be <cite>effective</cite> times tau = 0.75*tau</p>
 <p class="rubric">Notes</p>
@@ -4363,7 +4387,7 @@ factors.</p>
 <dl class="py function">
 <dt id="allantoolkit.utils.three_cornered_hat_phase">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_ab</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_bc</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_ca</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#three_cornered_hat_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Three Cornered Hat Method <a class="reference internal" href="references.html#riley3chat" id="id65"><span>[Riley3CHat]</span></a></p>
+<dd><p>Three Cornered Hat Method <a class="reference internal" href="references.html#riley3chat" id="id66"><span>[Riley3CHat]</span></a></p>
 <p>Given three clocks A, B, C, we seek to find their variances</p>
 <p><span class="math notranslate nohighlight">\(\sigma^2_A\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_B\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_C\)</span></p>
 <p>We measure three phase differences, assuming no correlation between

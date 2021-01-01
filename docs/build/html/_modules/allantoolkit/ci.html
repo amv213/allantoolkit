@@ -316,8 +316,6 @@
     <span class="c1"># chi2_interval_stable32(ci, edf, variant=True)</span>
     <span class="n">chi2_r</span><span class="p">,</span> <span class="n">chi2_l</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="n">edf</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Edf: </span><span class="si">{</span><span class="n">edf</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">chi2_r</span><span class="si">}</span><span class="s2">; </span><span class="si">{</span><span class="n">chi2_l</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
     <span class="n">var_lo</span> <span class="o">=</span> <span class="n">edf</span> <span class="o">*</span> <span class="n">var</span> <span class="o">/</span> <span class="n">chi2_l</span>
     <span class="n">var_hi</span> <span class="o">=</span> <span class="n">edf</span> <span class="o">*</span> <span class="n">var</span> <span class="o">/</span> <span class="n">chi2_r</span>
 

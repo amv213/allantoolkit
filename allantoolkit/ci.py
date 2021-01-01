@@ -101,8 +101,6 @@ def confidence_interval(var: float, edf: float, ci: float) -> \
     # chi2_interval_stable32(ci, edf, variant=True)
     chi2_r, chi2_l = scipy.stats.chi2.interval(ci, edf)
 
-    print(f"Edf: {edf} -> {chi2_r}; {chi2_l}")
-
     var_lo = edf * var / chi2_l
     var_hi = edf * var / chi2_r
 

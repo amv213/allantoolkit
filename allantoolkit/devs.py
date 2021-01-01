@@ -795,7 +795,8 @@ def theo1(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def mtie(data: Array, rate: float = 1., data_type: str = "phase",
-         taus: Taus = None, max_af: int = None) -> DevResult:
+         taus: Taus = None, max_af: int = None, alpha: int = None) -> \
+        DevResult:
     """Calculates the maximum time interval error (MTIE) of phase data. If
     fractional frequency data is provided, it is integrated to phase
     before processing.
@@ -829,7 +830,8 @@ def mtie(data: Array, rate: float = 1., data_type: str = "phase",
 
 
 def tierms(data: Array, rate: float = 1., data_type: str = "phase",
-           taus: Taus = None, max_af: int = None) -> DevResult:
+           taus: Taus = None, max_af: int = None, alpha: int = None) -> \
+        DevResult:
     """Calculates rms time interval error (TIE rms) of phase data. If
     fractional frequency data is provided, it is integrated to phase
     before processing.

@@ -44,7 +44,8 @@ features in this fork is here just below!
 - Auto noise ID for all deviation types (Lag1 ACF, B1, R(n))
 - Bias correction for all deviation types
 - Non-naive EDF / confidence interval calculation for all deviation types
-- Basic plotting and visualisation tools
+- Support for Stable32-like implementation of confidence interval calculation
+- More modern plotting and visualisation tools
 - Fast Theo1 / TheoBR algorithm
 - Fast MTIE binary decomposition algorithm
 - Many-tau tau generation

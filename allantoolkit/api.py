@@ -366,7 +366,8 @@ class Dataset:
                                 data_type=self.data_type, type=type, m=m,
                                 remove=remove)
 
-    def calc(self, dev_type: str, taus: Taus = 'octave') -> None:
+    def calc(self, dev_type: str, taus: Taus = 'octave', alpha: int = None) \
+            -> None:
         """Calculate the selected frequency stability statistic on phase or
         fractional frequency data over a range of averaging times. The
         averaging times may be selected in octave or sub-decade increments,
@@ -382,6 +383,8 @@ class Dataset:
             taus:       array of averaging times for which to compute
                         deviation. Can also be one of the keywords: `all`,
                         `many`, `octave`, `decade`.
+            alpha:      global dominant noise type. If ``None``, it is
+                        automatically estimated at each averaging time.
         """
 
         # Dispatch to correct deviation calculator
@@ -393,7 +396,7 @@ class Dataset:
 
         # Calculate statistics
         out = func(data=self.data, rate=self.rate, data_type=self.data_type,
-                   taus=taus)
+                   taus=taus, alpha=alpha)
 
         # Metadata
         self.dev_type = dev_type
@@ -559,6 +562,13 @@ class Dataset:
             [RileyStable32Manual]_ (Autocorrelation Function, pg.207-209)
         """
 
+        if m < 1 or m > self.data.size:
+            raise ValueError(f"Invalid averaging factor value: m = {m}.")
+
+        if max_lag is not None:
+            if max_lag < 1:
+                raise ValueError("Lag should be positive")
+
 
         # Decimate data for requested averaging factor
         z = utils.decimate(data=self.data, m=m, data_type=self.data_type)
@@ -625,7 +635,10 @@ class Dataset:
         """
 
         if k < 1:
-            raise ValueError("Lag should be positive")
+            raise ValueError("Lag for Lag-k scatterplot should be positive")
+
+        if m < 1 or m > self.data.size:
+            raise ValueError(f"Invalid averaging factor value: m = {m}.")
 
         # Decimate data for requested averaging factor
         z = utils.decimate(data=self.data, m=m, data_type=self.data_type)

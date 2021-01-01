@@ -9,6 +9,7 @@ import logging
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
+from matplotlib.patches import  Rectangle
 from . import utils
 from . import devs
 from . import noise_id
@@ -602,4 +603,73 @@ class Dataset:
 
         return ax
 
+    def plot_lag_scatter(self, k: int, m: int = 1) -> plt.Axes:
+        """Plots a scatter plot of the phase or frequency data plotted
+        against itself with a lag of ``k``.
 
+        The data at time :math:`t+mk\\tau_0` is plotted on the y-axis versus the
+        value at time :math:`t` on the x-axis. This plot is another way of
+        showing the degree of correlation in the data, and the slope of a
+        linear fit to these points is closely related to the lag-k
+        autocorrelation.
+
+        Args:
+            k:                  lag for which to plot correlations.
+            m:                  averaging factor at which to average data.
+
+        Returns:
+            plot axes
+
+        References:
+            [RileyStable32Manual]_ (Autocorrelation Function, pg.208)
+        """
+
+        if k < 1:
+            raise ValueError("Lag should be positive")
+
+        # Decimate data for requested averaging factor
+        z = utils.decimate(data=self.data, m=m, data_type=self.data_type)
+
+        # Lag data
+        y_lagged, y = z[k:], z[:-k]
+
+        # Fit
+        coeffs = np.polyfit(y, y_lagged, deg=1)
+        a, b = coeffs[::-1]
+        y_fit = np.polyval(coeffs, y)
+
+        # Sigma Boxes
+        mean_x, mean_y = np.nanmean(y), np.nanmean(y_lagged)
+        std_x, std_y = np.nanstd(y), np.nanstd(y_lagged)
+
+        # Log info
+        logger.info("\n\nLAG SCATTERPLOT:\n"
+                    "\tLag:             \t%i\n"
+                    "\tAvg Factor:      \t%i\n"
+                    "\tSlope:           \t%.3f\n", k, m, b)
+
+        # Spawn figure
+        fig = plt.figure(figsize=(9, 9))
+        ax = plt.gca()
+
+        # Plot data vs lagged data
+        ax.scatter(y, y_lagged, c='DarkGray', s=10)
+
+        # Plot Sigma boxes:
+        for i in range(1, 4):
+            ax.add_patch(Rectangle((mean_x-i*std_x, mean_y-i*std_y),
+                                   width=2*i*std_x,
+                                   height=2*i*std_y,
+                                   edgecolor='#646464',
+                                   linestyle='--',
+                                   facecolor='none'))
+
+        # Plot fit
+        ax.plot(y, y_fit)
+
+        # Axes Parameters
+        ax.set_title(f"LAG {k} SCATTER PLOT")
+        ax.set_ylabel(f"Lagged Data")
+        ax.set_xlabel("Data")
+
+        return ax

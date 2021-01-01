@@ -20,7 +20,7 @@ from typing import Tuple
 logger = logging.getLogger(__name__)
 
 # Confidence Intervals
-ONE_SIGMA_CI = 0.683  # scipy.special.erf(1/np.sqrt(2))
+ONE_SIGMA_CI = scipy.special.erf(1/np.sqrt(2))
 
 # shorten type hint to save some space
 Array = np.ndarray
@@ -66,7 +66,6 @@ def get_error_bars(x: Array, m: int, var: float, n: int, alpha: int,
                          f"been implemented.")
 
     edf = edf_func(x=x, m=m, alpha=alpha)
-    # edf = round(edf, 3)  # this matches stable 32
 
     # with the known EDF we get CIs
     (lo, hi) = confidence_interval(var=var, edf=edf, ci=ci)
@@ -97,10 +96,12 @@ def confidence_interval(var: float, edf: float, ci: float) -> \
         lower and upper bounds for variance.
     """
 
-    # FIXME: this doesn't give quite the same results as Stable32 (you can
-    #  check the X2 values in the `Sigma` tool). Maybe Stable32 uses a
-    #  different X2 implementation?
+    # This will not give the same bounds as Stable32, as Stable32 uses an
+    # approximate implementation. If you want to replicate Stable32, swap with
+    # chi2_interval_stable32(ci, edf, variant=True)
     chi2_r, chi2_l = scipy.stats.chi2.interval(ci, edf)
+
+    print(f"Edf: {edf} -> {chi2_r}; {chi2_l}")
 
     var_lo = edf * var / chi2_l
     var_hi = edf * var / chi2_r
@@ -110,11 +111,11 @@ def confidence_interval(var: float, edf: float, ci: float) -> \
 
 # Stable32 CI functions
 
-def chi2_ppf_stable32(p: float, edf: float) -> float:
+def chi2_ppf_stable32(p: float, edf: float, variant: bool) -> float:
     """Calculates Stable32's implementation of the :math:`\\chi^2`
     inverse cumulative distribution function.
 
-    ..warning::
+    .. warning::
         Stable32 implementation is an approximation of the true :math:`\\chi^2`
         inverse cumulative distribution function. Moreover it's practical
         implementation in software has a bug in the source code.
@@ -126,8 +127,11 @@ def chi2_ppf_stable32(p: float, edf: float) -> float:
     .. codeauthor:: Anders Wallin
 
     Args:
-        p:      lower-tail probability for which to calculate inverse cdf
-        edf:    number of degrees of freedom
+        p:          lower-tail probability for which to calculate inverse cdf
+        edf:        number of degrees of freedom
+        variant:    if ``False`` implements the Windows binary
+                    implementation of the iterative algorithm for small
+                    number of degrees of freedom
 
     Returns:
         approximate :math:`\\chi^2` inverse cumulative function at p.
@@ -178,7 +182,11 @@ def chi2_ppf_stable32(p: float, edf: float) -> float:
 
         x = edf + (0.5 - p) * edf * 0.5  # start value for chi squared
 
-        prob = gammp(edf / 2, float(x / 2), itmax=ITMAX)
+        if not variant:  # use Windows binary implementation
+            prob = CalcChiSqrProb(x, edf)
+
+        else:  # use newer function from numerical recipes
+            prob = gammp(edf / 2, float(x / 2), itmax=ITMAX)
 
         div = 0.1
         while abs((prob - p) / p) > 0.0001:  # accuracy criterion
@@ -188,7 +196,13 @@ def chi2_ppf_stable32(p: float, edf: float) -> float:
             x += edf * (prob - p) / div  # iteration increment
 
             if x > 0:  # make sure argument is positive
-                prob = gammp(edf / 2, (x / 2), itmax=ITMAX)
+
+                if not variant:  # use Windows binary implementation
+                    prob = CalcChiSqrProb(x, edf)
+
+                else:  # use newer function from numerical recipes
+                    prob = gammp(edf / 2, (x / 2), itmax=ITMAX)
+
                 prob = 1 - prob
 
             else:  # otherwise restore it & reduce increment
@@ -201,15 +215,20 @@ def chi2_ppf_stable32(p: float, edf: float) -> float:
         return x
 
 
-def chi2_interval_stable32(ci: float, edf: float) -> Tuple[float, float]:
+def chi2_interval_stable32(ci: float, edf: float, variant: bool = False) -> \
+        Tuple[float, float]:
     """Calculates double-sided confidence intervals with equal areas around
     the median for the Stable32's implementation of the :math:`\\chi^2`
     inverse cumulative distribution function.
 
     Args:
-        ci:     confidence factor for which to set confidence limits
-                e.g. `0.6827` would set a 1-sigma confidence interval.
-        edf:    degrees of freedom
+        ci:                 confidence factor for which to set confidence
+                            limits e.g. `0.6827` would set a 1-sigma
+                            confidence interval.
+        edf:                degrees of freedom
+        variant (optional): if ``False`` implements the Windows binary
+                            implementation of the iterative algorithm for small
+                            number of degrees of freedom
 
     Returns:
         Stable32 end-points of the range that contain ``100 * ci`` of its
@@ -218,8 +237,10 @@ def chi2_interval_stable32(ci: float, edf: float) -> Tuple[float, float]:
 
     alpha = (1 - ci) / 2
 
-    # chi2_r, chi2_l
-    return chi2_ppf_stable32(alpha, edf), chi2_ppf_stable32(1-alpha, edf)
+    chi2_r = chi2_ppf_stable32(alpha, edf, variant=variant)
+    chi2_l = chi2_ppf_stable32(1-alpha, edf, variant=variant)
+
+    return chi2_r, chi2_l
 
 
 # Dispatchers
@@ -1021,7 +1042,9 @@ def gammp(a: float, x: float, itmax: int) -> float:
         value of the lower incomplete gamma function :math:`\\gamma (a, x)`
 
     References:
-        NRP 6.2
+        Press, William H., Flannery, Brian P., Teukolsky, Saul A., and
+        Vetterling, William T. 1989. Numerical Recipes in Pascal. Cambridge
+        University Press, Cambridge (ISBN 978-0521375160) (Chapter 6 section 2)
 
         Ling, MHT. 2009. Compendium of Distributions, I: Beta, Binomial, Chi-
         Square, F, Gamma, Geometric, Poisson, Student's t, and Uniform. The
@@ -1159,7 +1182,9 @@ def gammln(a: float) -> float:
         value of the complete gamma function :math:`\\Gamma (a)`
 
     References:
-        NRP 6.1
+        Press, William H., Flannery, Brian P., Teukolsky, Saul A., and
+        Vetterling, William T. 1989. Numerical Recipes in Pascal. Cambridge
+        University Press, Cambridge (ISBN 978-0521375160) (Chapter 6 section 1)
 
         http://mail.python.org/pipermail/python-list/2000-June/671838.html
 
@@ -1179,3 +1204,141 @@ def gammln(a: float) -> float:
         ser = ser + gammln_cof[j] / x
 
     return tmp + math.log(2.50662827465 * ser)
+
+
+########################################################################
+# Alternative implementation of Chi-Squared function in Stable32
+# This is possibly used in the Window$ executable (?)
+#
+# Python code AW2020-12-28
+
+def CalcNormalProb(x: float) -> float:
+    """Calculates the cumulative normal distribution at x.
+
+    Args:
+        x:  input parameter
+
+    Returns:
+        cumulative normal probability at x
+
+    References:
+       Collected Algorithms from CACM, Vol. I, #209,
+       D. Ibbetson and E. Brothers, 1963.
+
+       Stable32 source code: CNP.C
+    """
+
+    if x == 0:
+        z = 0
+
+    else:
+
+        y = abs(x) / 2
+
+        if y >= 3:
+            z = 1
+
+        else:
+
+            if y < 1:
+
+                w = y * y
+                z = ((((((((0.000124818987 * w
+                            - .001075204047) * w + .005198775019) * w
+                          - .019198292004) * w + .059054035642) * w
+                        - .151968751364) * w + .319152932694) * w
+                      - .531923007300) * w + .797884560593) * y * 2.0
+
+            else:
+                y = y - 2
+                z = (((((((((((((-.000045255659 * y
+                                 + .000152529290) * y - .000019538132) * y
+                               - .000676904986) * y + .001390604284) * y
+                             - .000794620820) * y - .002034254874) * y
+                           + .006549791214) * y - .010557625006) * y
+                         + .011630447319) * y - .009279453341) * y
+                       + .005353579108) * y - .002141268741) * y
+                     + .000535310849) * y + .999936657524
+
+    if x > 0:
+        return (z + 1) / 2
+
+    else:
+        return (1 - z) / 2
+
+
+def CalcChiSqrProb(x: float, edf: float) -> float:
+    """Calculates alternative implementation of the :math:`\\chi^2` function
+    used in Stable32. This is possibly used in the Window$ executable.
+
+    Args:
+        x:      value at which to calculate chi-squared probability
+        edf:    number of degrees of freedom
+
+    Returns:
+        Stable32 window$ binary approximate :math:`\\chi^2` probability at x.
+
+    References:
+        Collected Algorithms from CACM, Vol. I, #299,
+        I.D. Hill and M.C. Pike, 1965.
+
+        Stable32 source code: CNP.C
+    """
+
+    # Check validity of input parameters
+    if (x < 0) or (edf < 1):
+        raise ValueError("Input parameter values out of bounds for Stable32 "
+                         "windows binary implementation of chi-squared "
+                         "probability function.")
+
+    # avoid O/F of exp(-0.5*x) < DBL_MIN / 2.225e-308
+    bigx = True if x > 1416 else False
+
+    f = int(edf)
+    even = True if f % 2 == 0 else False
+
+    a = .5 * x
+
+    if even or f > 2 and (not bigx):
+        y = np.exp(-a)
+
+    if even:
+        s = y
+    else:  # cumulative normal distribution
+        s = 2.0 * CalcNormalProb(-np.sqrt(x))
+
+    if f > 2:
+
+        x = (0.5 * (edf - 1.0))
+
+        z = 1 if even else 0.5
+
+        if bigx:
+
+            e = 0 if even else .572364942925
+
+            c = np.log(a)
+
+            while z <= x:
+                e = np.log(z) + e
+                s = np.exp(c * z - a - e) + s
+                z += 1
+
+            chiprob = s
+
+        else:
+
+            e = 1 if even else .564189583548 / np.sqrt(a)
+            c = 0
+
+            while z <= x:
+                e = e * a / z
+                c += e
+                z += 1
+
+        chiprob = (c * y + s)
+
+    else:
+        chiprob = s
+
+    return 1.0 - chiprob

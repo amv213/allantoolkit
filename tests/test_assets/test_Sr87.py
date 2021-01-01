@@ -127,6 +127,7 @@ def test_dev(data, data_type, func, taus):
                                              fn=fn, test_alpha=True,
                                              test_ci=False)
 
+
 # FIXME: Many-taus tests will fail because Stable32 `Run` noise estimation
 #  when many-taus is selected starts happening in an undocumented hidden way
 #  which is not the same as for other tau types, and also doesn't correspond

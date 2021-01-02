@@ -48,8 +48,11 @@ features in this fork is here just below!
 - More modern plotting and visualisation tools
 - Fast Theo1 / TheoBR algorithm
 - Fast MTIE binary decomposition algorithm
-- Many-tau tau generation
-- Fast u tau generation
+- Many-tau and Fast u tau generation
+- Streamlined noise generation, based on Kasdin & Walter algorithm
+- Support for discrete simulation of arbitrary power law noise, in 
+addition to utility functions for violet, blue, white, pink, brown, flfm and, 
+rwfm noise generation
 - Streamlined code architecture
 - Support for tables and constant mappings from .yaml file
 - Updated documentation and docstrings

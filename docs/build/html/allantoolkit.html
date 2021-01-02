@@ -272,11 +272,6 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#module-allantoolkit.noise_kasdin">
-   allantoolkit.noise_kasdin
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#module-allantoolkit.plot">
    allantoolkit.plot
   </a>
@@ -329,7 +324,7 @@
 </dl>
 <dl class="py class">
 <dt id="allantoolkit.api.Dataset">
-<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.api.</code><code class="sig-name descname">Dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/api.html#Dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.api.Dataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.api.</code><code class="sig-name descname">Dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/api.html#Dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.api.Dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Dataset class for <cite>allantoolkit</cite></p>
 <dl class="py method">
@@ -2205,86 +2200,389 @@ fractional frequency.</p>
 </div>
 <div class="section" id="module-allantoolkit.noise">
 <span id="allantoolkit-noise"></span><h2>allantoolkit.noise<a class="headerlink" href="#module-allantoolkit.noise" title="Permalink to this headline">¶</a></h2>
-<p>Allan deviation tools, Functions for generating noise
-initial version Anders Wallin, 2014 January</p>
-<p>See: <a class="reference external" href="http://en.wikipedia.org/wiki/Colors_of_noise">http://en.wikipedia.org/wiki/Colors_of_noise</a></p>
-<dl class="py function">
-<dt id="allantoolkit.noise.brown">
-<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">brown</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_points</span><span class="o">=</span><span class="default_value">1024</span></em>, <em class="sig-param"><span class="n">b2</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">fs</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#brown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.brown" title="Permalink to this definition">¶</a></dt>
-<dd><p>Brownian or random walk (diffusion) noise with 1/f^2 PSD
-(not really a color… rather Brownian or random-walk)</p>
-<p>N = number of samples
-b2 = desired PSD is b2*f^-2
-fs = sampling frequency</p>
-<p>we integrate white-noise to get Brownian noise.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="allantoolkit.noise.iterpink">
-<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">iterpink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">depth</span><span class="o">=</span><span class="default_value">20</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#iterpink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.iterpink" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate a sequence of samples of pink noise.</p>
-<p>pink noise generator
-from <a class="reference external" href="http://pydoc.net/Python/lmj.sound/0.1.1/lmj.sound.noise/">http://pydoc.net/Python/lmj.sound/0.1.1/lmj.sound.noise/</a></p>
-<p>Based on the Voss-McCartney algorithm, discussion and code examples at
-<a class="reference external" href="http://www.firstpr.com.au/dsp/pink-noise/">http://www.firstpr.com.au/dsp/pink-noise/</a></p>
+<p>Allantools Noise generator</p>
 <dl class="simple">
-<dt>depth: Use this many samples of white noise to calculate the output. A</dt><dd><p>higher  number is slower to run, but renders low frequencies with more
-correct power spectra.</p>
+<dt><strong>Authors:</strong> Julia Leute (julia.leute “at” gmail.com)</dt><dd><p>Anders Wallin (anders.e.e.wallin “at” gmail.com)
+Alvise Vianello</p>
 </dd>
 </dl>
-<p>Generates a never-ending sequence of floating-point values. Any continuous
-set of these samples will tend to have a 1/f power spectrum.</p>
+<dl class="py class">
+<dt id="allantoolkit.noise.Noise">
+<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">Noise</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">beta</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">qd</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Container for simulated power-law noise</p>
+<dl class="py method">
+<dt id="allantoolkit.noise.Noise.adev">
+<code class="sig-name descname">adev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.adev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.adev" title="Permalink to this definition">¶</a></dt>
+<dd><p>return predicted ADEV of noise-type at given tau</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="allantoolkit.noise.Noise.adev_from_qd">
+<code class="sig-name descname">adev_from_qd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.adev_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.adev_from_qd" title="Permalink to this definition">¶</a></dt>
+<dd><p>prefactor for Allan deviation for noise type defined by (qd, b,
+tau0)</p>
+<p>Colored noise generated with (qd, b, tau0) parameters will
+show an Allan variance of:</p>
+<p>AVAR = prefactor * h_a * tau^c</p>
+<p>where a = b + 2 is the slope of the frequency PSD.
+and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</p>
+<p>The relation between a, b, c is:</p>
+<table class="table">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>a</p></th>
+<th class="head"><p>b</p></th>
+<th class="head"><p>c(AVAR)</p></th>
+<th class="head"><p>c(MVAR)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>-2</p></td>
+<td><p>-4</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>-1</p></td>
+<td><p>-3</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>-2</p></td>
+<td><p>-1</p></td>
+<td><p>-1</p></td>
+</tr>
+<tr class="row-odd"><td><p>+1</p></td>
+<td><p>-1</p></td>
+<td><p>-2</p></td>
+<td><p>-2</p></td>
+</tr>
+<tr class="row-even"><td><p>+2</p></td>
+<td><p>0</p></td>
+<td><p>-2</p></td>
+<td><p>-3</p></td>
+</tr>
+</tbody>
+</table>
+<p>Coefficients from:
+S. T. Dawkins, J. J. McFerran and A. N. Luiten, “Considerations on
+the measurement of the stability of oscillators with frequency
+counters,” in IEEE Transactions on Ultrasonics, Ferroelectrics, and
+Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
+doi: 10.1109/TUFFC.2007.337</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="allantoolkit.noise.Noise.c_avar">
+<code class="sig-name descname">c_avar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.c_avar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.c_avar" title="Permalink to this definition">¶</a></dt>
+<dd><p>return tau exponent “c” for noise type.
+AVAR = prefactor * h_a * tau^c</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="allantoolkit.noise.Noise.c_mvar">
+<code class="sig-name descname">c_mvar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.c_mvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.c_mvar" title="Permalink to this definition">¶</a></dt>
+<dd><p>return tau exponent “c” for noise type.
+MVAR = prefactor * h_a * tau^c</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="allantoolkit.noise.Noise.frequency_psd_from_qd">
+<code class="sig-name descname">frequency_psd_from_qd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.frequency_psd_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.frequency_psd_from_qd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns frequency power spectral density coefficient
+<span class="math notranslate nohighlight">\(h_{\alpha}\)</span> for given noise data.</p>
+<p>The coefficient <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is related to the equivalent
+phase power spectral density coefficient <span class="math notranslate nohighlight">\(g_{\beta}\)</span>, as:</p>
+<div class="math notranslate nohighlight">
+\[h_{\alpha} = \left( 2\pi \right)^2  g_{\beta}\]</div>
+<p>such that the noise shows frequency power spectral density of:</p>
+<div class="math notranslate nohighlight">
+\[S_y(f) = h_{\alpha} f^{\alpha}\]</div>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#kasdin1992" id="id39"><span>[Kasdin1992]</span></a>
+Kasdin, N.J., Walter, T., “Discrete simulation of power law noise,
+” Frequency Control Symposium, 1992. 46th., Proceedings of the
+1992 IEEE, pp.274,283, 27-29 May 1992
+<a class="reference external" href="http://dx.doi.org/10.1109/FREQ.1992.270003">http://dx.doi.org/10.1109/FREQ.1992.270003</a> (Eq. 39)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="allantoolkit.noise.Noise.mdev">
+<code class="sig-name descname">mdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.mdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.mdev" title="Permalink to this definition">¶</a></dt>
+<dd><p>return predicted MDEV of noise-type at given tau</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="allantoolkit.noise.Noise.mdev_from_qd">
+<code class="sig-name descname">mdev_from_qd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.mdev_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.mdev_from_qd" title="Permalink to this definition">¶</a></dt>
+<dd><p>prefactor for Modified Allan deviation for noise
+type defined by (qd, b, tau0)</p>
+<p>Colored noise generated with (qd, b, tau0) parameters will
+show an Modified Allan variance of:</p>
+<p>MVAR = prefactor * h_a * tau^c</p>
+<p>where a = b + 2 is the slope of the frequency PSD.
+and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</p>
+<p>The relation between a, b, c is:</p>
+<table class="table">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>a</p></th>
+<th class="head"><p>b</p></th>
+<th class="head"><p>c(AVAR)</p></th>
+<th class="head"><p>c(MVAR)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>-2</p></td>
+<td><p>-4</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>-1</p></td>
+<td><p>-3</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>-2</p></td>
+<td><p>-1</p></td>
+<td><p>-1</p></td>
+</tr>
+<tr class="row-odd"><td><p>+1</p></td>
+<td><p>-1</p></td>
+<td><p>-2</p></td>
+<td><p>-2</p></td>
+</tr>
+<tr class="row-even"><td><p>+2</p></td>
+<td><p>0</p></td>
+<td><p>-2</p></td>
+<td><p>-3</p></td>
+</tr>
+</tbody>
+</table>
+<p>Coefficients from:
+S. T. Dawkins, J. J. McFerran and A. N. Luiten, “Considerations on
+the measurement of the stability of oscillators with frequency
+counters,” in IEEE Transactions on Ultrasonics, Ferroelectrics, and
+Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
+doi: 10.1109/TUFFC.2007.337</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="allantoolkit.noise.Noise.phase_psd_from_qd">
+<code class="sig-name descname">phase_psd_from_qd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.phase_psd_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.phase_psd_from_qd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns phase power spectral density coefficient <span class="math notranslate nohighlight">\(g_{\beta}\)</span>
+for given noise data.</p>
+<p>The coefficient <span class="math notranslate nohighlight">\(g_{\beta}\)</span> is defined for noise with
+discrete variance <span class="math notranslate nohighlight">\(Q^d\)</span> and sampling period <span class="math notranslate nohighlight">\(\tau_0\)</span> as:</p>
+<div class="math notranslate nohighlight">
+\[g_{\beta} \equiv 2 \left( 2\pi \right)^{\beta} Q^d
+\tau_0^{\beta+1}\]</div>
+<p>such that the noise shows phase power spectral density of:</p>
+<div class="math notranslate nohighlight">
+\[S_x(f) = g_{\beta} f^{\beta}\]</div>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#kasdin1992" id="id40"><span>[Kasdin1992]</span></a>
+Kasdin, N.J., Walter, T., “Discrete simulation of power law noise,
+” Frequency Control Symposium, 1992. 46th., Proceedings of the
+1992 IEEE, pp.274,283, 27-29 May 1992
+<a class="reference external" href="http://dx.doi.org/10.1109/FREQ.1992.270003">http://dx.doi.org/10.1109/FREQ.1992.270003</a> (Eq. 39)</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
-<dt id="allantoolkit.noise.numpy_psd">
-<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">numpy_psd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">f_sample</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#numpy_psd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.numpy_psd" title="Permalink to this definition">¶</a></dt>
-<dd><p>calculate power spectral density of input signal x</p>
+<dt id="allantoolkit.noise.blue">
+<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">blue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">qd</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.noise.Noise" title="allantoolkit.noise.Noise">allantoolkit.noise.Noise</a><a class="reference internal" href="_modules/allantoolkit/noise.html#blue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.blue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kasdin &amp; Walter discrete simulation of blue phase noise
+( <span class="math notranslate nohighlight">\(\propto f\)</span> ).</p>
+<p>Blue noise has phase autospectral density:</p>
+<div class="math notranslate nohighlight">
+\[S_x(f) = {h_{\alpha} \over \left( 2\pi \right)^2 } f^{\alpha - 2}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha = 3\)</span> and <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is the intensity
+coefficient.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.noise.generate_noise" title="allantoolkit.noise.generate_noise"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.noise.generate_noise()</span></code></a> for detailed usage</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.noise.brown">
+<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">brown</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">qd</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.noise.Noise" title="allantoolkit.noise.Noise">allantoolkit.noise.Noise</a><a class="reference internal" href="_modules/allantoolkit/noise.html#brown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.brown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kasdin &amp; Walter discrete simulation of brown phase noise
+( <span class="math notranslate nohighlight">\(\propto f^{-2}\)</span> ).</p>
+<p>Brown noise has phase autospectral density:</p>
+<div class="math notranslate nohighlight">
+\[S_x(f) = {h_{\alpha} \over \left( 2\pi \right)^2 } f^{\alpha - 2}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha = 0\)</span> and <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is the intensity
+coefficient.</p>
+<p>More than a color, brown noise is Brownian or random-walk noise. It can
+be obtained by integration of white noise.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.noise.generate_noise" title="allantoolkit.noise.generate_noise"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.noise.generate_noise()</span></code></a> for detailed usage</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.noise.custom">
+<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">custom</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">beta</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">qd</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.noise.Noise" title="allantoolkit.noise.Noise">allantoolkit.noise.Noise</a><a class="reference internal" href="_modules/allantoolkit/noise.html#custom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.custom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kasdin &amp; Walter discrete simulation of arbitrary phase noise
+( <span class="math notranslate nohighlight">\(\propto f^{\beta}\)</span> ).</p>
+<p>This will generate noise with phase autospectral density:</p>
+<div class="math notranslate nohighlight">
+\[S_x(f) = {h_{\alpha} \over \left( 2\pi \right)^2 } f^{\beta}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha = \beta + 2\)</span> and <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is the intensity
+coefficient.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.noise.generate_noise" title="allantoolkit.noise.generate_noise"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.noise.generate_noise()</span></code></a> for detailed usage</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.noise.flfm">
+<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">flfm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">qd</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.noise.Noise" title="allantoolkit.noise.Noise">allantoolkit.noise.Noise</a><a class="reference internal" href="_modules/allantoolkit/noise.html#flfm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.flfm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kasdin &amp; Walter discrete simulation of Flicker FM phase noise
+( <span class="math notranslate nohighlight">\(\propto f^{-3}\)</span> ).</p>
+<p>FLFM noise has phase autospectral density:</p>
+<div class="math notranslate nohighlight">
+\[S_x(f) = {h_{\alpha} \over \left( 2\pi \right)^2 } f^{\alpha - 2}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha = -1\)</span> and <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is the intensity
+coefficient.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.noise.generate_noise" title="allantoolkit.noise.generate_noise"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.noise.generate_noise()</span></code></a> for detailed usage</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.noise.generate_noise">
+<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">generate_noise</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">qd</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.noise.Noise" title="allantoolkit.noise.Noise">allantoolkit.noise.Noise</a><a class="reference internal" href="_modules/allantoolkit/noise.html#generate_noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.generate_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate timeseries of simulated discrete power law noise of given type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> – signal</p></li>
-<li><p><strong>f_sample</strong> – sampling frequency in Hz. i.e. 1/fs is the time-interval
-in seconds between datapoints</p></li>
+<li><p><strong>n</strong> – number of samples to generate</p></li>
+<li><p><strong>alpha</strong> – frequency noise power law exponent <code class="docutils literal notranslate"><span class="pre">alpha</span></code></p></li>
+<li><p><strong>qd</strong> – discrete variance of generated timeseries</p></li>
+<li><p><strong>rate</strong> – sampling rate of the output frequency noise, in Hz.</p></li>
+<li><p><strong>data_type</strong> – desired output data type. Either <code class="docutils literal notranslate"><span class="pre">phase</span></code> or <code class="docutils literal notranslate"><span class="pre">freq</span></code>.
+Defaults to <code class="docutils literal notranslate"><span class="pre">phase</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>scale fft so that output corresponds to 1-sided PSD output has units
-of [X^2/Hz] where X is the unit of x</p>
+<dd class="field-even"><p>timeseries of simulated noise</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#kasdin1992" id="id41"><span>[Kasdin1992]</span></a>
+Kasdin, N.J., Walter, T., “Discrete simulation of power law noise [for
+oscillator stability evaluation],” Frequency Control Symposium, 1992.
+46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992
+<a class="reference external" href="http://dx.doi.org/10.1109/FREQ.1992.270003">http://dx.doi.org/10.1109/FREQ.1992.270003</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="allantoolkit.noise.kasdin_generator">
+<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">kasdin_generator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nr</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">qd</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/noise.html#kasdin_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.kasdin_generator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kasdin &amp; Walter algorithm for discrete simulation of power law
+phase noise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nr</strong> – number of samples to generate. Should be a power of two.</p></li>
+<li><p><strong>alpha</strong> – frequency power law exponent <code class="docutils literal notranslate"><span class="pre">alpha</span></code> noise type to simulate.</p></li>
+<li><p><strong>qd</strong> – discrete variance of generated timeseries.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>timeseries of simulated noise</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#kasdin1992" id="id42"><span>[Kasdin1992]</span></a>
+Kasdin, N.J., Walter, T., “Discrete simulation of power law noise [for
+oscillator stability evaluation],” Frequency Control Symposium, 1992.
+46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992
+<a class="reference external" href="http://dx.doi.org/10.1109/FREQ.1992.270003">http://dx.doi.org/10.1109/FREQ.1992.270003</a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="allantoolkit.noise.pink">
-<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">pink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_points</span><span class="o">=</span><span class="default_value">1024</span></em>, <em class="sig-param"><span class="n">depth</span><span class="o">=</span><span class="default_value">80</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#pink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.pink" title="Permalink to this definition">¶</a></dt>
-<dd><p>N-length vector with (approximate) pink noise
-pink noise has 1/f PSD</p>
+<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">pink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">qd</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.noise.Noise" title="allantoolkit.noise.Noise">allantoolkit.noise.Noise</a><a class="reference internal" href="_modules/allantoolkit/noise.html#pink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.pink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kasdin &amp; Walter discrete simulation of pink phase noise
+( <span class="math notranslate nohighlight">\(\propto f^{-1}\)</span> ).</p>
+<p>Pink noise has phase autospectral density:</p>
+<div class="math notranslate nohighlight">
+\[S_x(f) = {h_{\alpha} \over \left( 2\pi \right)^2 } f^{\alpha - 2}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha = 1\)</span> and <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is the intensity
+coefficient.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.noise.generate_noise" title="allantoolkit.noise.generate_noise"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.noise.generate_noise()</span></code></a> for detailed usage</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="allantoolkit.noise.scipy_psd">
-<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">scipy_psd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">f_sample</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">nr_segments</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#scipy_psd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.scipy_psd" title="Permalink to this definition">¶</a></dt>
-<dd><p>PSD routine from scipy
-we can compare our own numpy result against this one</p>
+<dt id="allantoolkit.noise.rwfm">
+<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">rwfm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">qd</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.noise.Noise" title="allantoolkit.noise.Noise">allantoolkit.noise.Noise</a><a class="reference internal" href="_modules/allantoolkit/noise.html#rwfm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.rwfm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kasdin &amp; Walter discrete simulation of Random Walk FM phase noise
+( <span class="math notranslate nohighlight">\(\propto f^{-4}\)</span> ).</p>
+<p>RWFM noise has phase autospectral density:</p>
+<div class="math notranslate nohighlight">
+\[S_x(f) = {h_{\alpha} \over \left( 2\pi \right)^2 } f^{\alpha - 2}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha = -2\)</span> and <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is the intensity
+coefficient.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.noise.generate_noise" title="allantoolkit.noise.generate_noise"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.noise.generate_noise()</span></code></a> for detailed usage</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt id="allantoolkit.noise.violet">
-<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">violet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_points</span><span class="o">=</span><span class="default_value">1024</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#violet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.violet" title="Permalink to this definition">¶</a></dt>
-<dd><p>violet noise with f^2 PSD</p>
+<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">violet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">qd</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.noise.Noise" title="allantoolkit.noise.Noise">allantoolkit.noise.Noise</a><a class="reference internal" href="_modules/allantoolkit/noise.html#violet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.violet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kasdin &amp; Walter discrete simulation of violet phase noise
+( <span class="math notranslate nohighlight">\(\propto f^2\)</span> ).</p>
+<p>Violet noise has phase autospectral density:</p>
+<div class="math notranslate nohighlight">
+\[S_x(f) = {h_{\alpha} \over \left( 2\pi \right)^2 } f^{\alpha - 2}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha = 4\)</span> and <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is the intensity
+coefficient.</p>
+<p>It can be obtained by differentiation of white noise.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.noise.generate_noise" title="allantoolkit.noise.generate_noise"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.noise.generate_noise()</span></code></a> for detailed usage</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt id="allantoolkit.noise.white">
-<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">white</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_points</span><span class="o">=</span><span class="default_value">1024</span></em>, <em class="sig-param"><span class="n">b0</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">fs</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#white"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.white" title="Permalink to this definition">¶</a></dt>
-<dd><p>generate time series with white noise that has constant PSD = b0,
-up to the nyquist frequency fs/2
-N = number of samples
-b0 = desired power-spectral density in [X^2/Hz] where X is the unit of x
-fs = sampling frequency, i.e. 1/fs is the time-interval between datapoints</p>
-<p>the pre-factor corresponds to the area ‘box’ under the PSD-curve:
-The PSD is at ‘height’ b0 and extends from 0 Hz up to the nyquist frequency fs/2</p>
+<code class="sig-prename descclassname">allantoolkit.noise.</code><code class="sig-name descname">white</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">qd</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#allantoolkit.noise.Noise" title="allantoolkit.noise.Noise">allantoolkit.noise.Noise</a><a class="reference internal" href="_modules/allantoolkit/noise.html#white"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.white" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kasdin &amp; Walter discrete simulation of white phase noise
+( <span class="math notranslate nohighlight">\(\propto f^0\)</span> ).</p>
+<p>White noise has phase autospectral density:</p>
+<div class="math notranslate nohighlight">
+\[S_x(f) = {h_{\alpha} \over \left( 2\pi \right)^2 } f^{\alpha - 2}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha = 2\)</span> and <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is the intensity
+coefficient.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.noise.generate_noise" title="allantoolkit.noise.generate_noise"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.noise.generate_noise()</span></code></a> for detailed usage</p>
+</div>
 </dd></dl>
 
 </div>
@@ -2301,7 +2599,7 @@ certain later time.</p>
 <p># TODO: check this gives exactly Stable32 results and maybe switch to
 Fourier method?</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id39"><span>[RileyStable32]</span></a> (5.5.3, pg.53-54)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id43"><span>[RileyStable32]</span></a> (5.5.3, pg.53-54)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2324,7 +2622,7 @@ given averaging time.</p>
 discrimination for all common power law noises for both phase and
 frequency data, including difficult cases with mixed noises.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id40"><span>[RileyStable32]</span></a> (5.5.3-6 pg.53-7)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id44"><span>[RileyStable32]</span></a> (5.5.3-6 pg.53-7)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2348,7 +2646,7 @@ and  deterministic components</p></li>
 <dd><p>Core algorithm for the lag1 autocorrelation power law noise
 identification algorithm.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id41"><span>[RileyStable32]</span></a> (5.5.6 pg.56)
+<p><a class="reference internal" href="references.html#rileystable32" id="id45"><span>[RileyStable32]</span></a> (5.5.6 pg.56)
 <a class="reference external" href="http://www.stable32.com/Auto.pdf">http://www.stable32.com/Auto.pdf</a>
 <a class="reference external" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.503.9864&amp;rep=rep1&amp;type=pdf">http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.503.9864&amp;rep=rep1&amp;type=pdf</a>
 Power law noise identification using the lag 1 autocorrelation
@@ -2431,9 +2729,9 @@ for M phase data points.</p></li>
 <dd><p>Noise identification pipeline, following what prescribed by Stable32.</p>
 <p class="rubric">References</p>
 <p><a class="reference external" href="http://www.wriley.com/CI2.pdf">http://www.wriley.com/CI2.pdf</a>
-<a class="reference internal" href="references.html#rileystable32manual" id="id42"><span>[RileyStable32Manual]</span></a> (Table pg. 97) (missing htotvar)
-<a class="reference internal" href="references.html#rileystable32manual" id="id43"><span>[RileyStable32Manual]</span></a> (Confidence Intervals pg. 89-93)
-<a class="reference internal" href="references.html#rileystable32" id="id44"><span>[RileyStable32]</span></a> (5.5.2-6 pg.53-7)
+<a class="reference internal" href="references.html#rileystable32manual" id="id46"><span>[RileyStable32Manual]</span></a> (Table pg. 97) (missing htotvar)
+<a class="reference internal" href="references.html#rileystable32manual" id="id47"><span>[RileyStable32Manual]</span></a> (Confidence Intervals pg. 89-93)
+<a class="reference internal" href="references.html#rileystable32" id="id48"><span>[RileyStable32]</span></a> (5.5.2-6 pg.53-7)
 Howe, Beard, Greenhall, Riley,
 A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
 32nd PTTI, 2000
@@ -2471,7 +2769,7 @@ Stable32 <cite>Sigma</cite> tool. Although in that case the kf provided here sho
 be the one averaged over /30 and not /6</p>
 <p class="rubric">References</p>
 <p><a class="reference external" href="http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf">http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf</a></p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id45"><span>[RileyStable32Manual]</span></a> (TheoBR and TheoH, pg.80)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id49"><span>[RileyStable32Manual]</span></a> (TheoBR and TheoH, pg.80)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>kf</strong> – theoBR correction factor</p>
@@ -2497,7 +2795,7 @@ tool. The kf provided here should be the standard one i.e. calculated
 over the average / 6 (See Notes)</p>
 <p class="rubric">References</p>
 <p><a class="reference external" href="http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf">http://www.wriley.com/Fast%20Bias-Removed%20Theo1%20Calculation%20with%20R.pdf</a></p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id46"><span>[RileyStable32Manual]</span></a> (TheoBR and TheoH, pg.80)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id50"><span>[RileyStable32Manual]</span></a> (TheoBR and TheoH, pg.80)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>kf</strong> – theoBR correction factor</p>
@@ -2564,248 +2862,6 @@ A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
 <dd class="field-even"><p>identified <cite>alpha</cite> fractional frequency noise power-law exponent</p>
 </dd>
 </dl>
-</dd></dl>
-
-</div>
-<div class="section" id="module-allantoolkit.noise_kasdin">
-<span id="allantoolkit-noise-kasdin"></span><h2>allantoolkit.noise_kasdin<a class="headerlink" href="#module-allantoolkit.noise_kasdin" title="Permalink to this headline">¶</a></h2>
-<p>Allantools Noise object</p>
-<dl class="simple">
-<dt><strong>Authors:</strong> Julia Leute (julia.leute “at” gmail.com)</dt><dd><p>Anders Wallin (anders.e.e.wallin “at” gmail.com)</p>
-</dd>
-</dl>
-<dl class="py class">
-<dt id="allantoolkit.noise_kasdin.Noise">
-<em class="property">class </em><code class="sig-prename descclassname">allantoolkit.noise_kasdin.</code><code class="sig-name descname">Noise</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nr</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">qd</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">b</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Generate discrete colored noise</p>
-<p>Python / Numpy implementation of <a class="reference internal" href="references.html#kasdin1992" id="id47"><span>[Kasdin1992]</span></a>:
-Kasdin, N.J., Walter, T., “Discrete simulation of power law noise [for
-oscillator stability evaluation],” Frequency Control Symposium, 1992.
-46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992
-<a class="reference external" href="http://dx.doi.org/10.1109/FREQ.1992.270003">http://dx.doi.org/10.1109/FREQ.1992.270003</a></p>
-<dl class="field-list">
-<dt class="field-odd">Example</dt>
-<dd class="field-odd"><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="n">noise</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">Noise</span><span class="p">(</span><span class="n">nr</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span> <span class="n">qd</span><span class="o">=</span><span class="mf">1.0e-20</span><span class="p">,</span> <span class="n">b</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">noise</span><span class="o">.</span><span class="n">generateNoise</span><span class="p">()</span>
-<span class="nb">print</span> <span class="n">noise</span><span class="o">.</span><span class="n">time_series</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="allantoolkit.noise_kasdin.Noise.adev">
-<code class="sig-name descname">adev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau0</span></em>, <em class="sig-param"><span class="n">tau</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise.adev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise.adev" title="Permalink to this definition">¶</a></dt>
-<dd><p>return predicted ADEV of noise-type at given tau</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise_kasdin.Noise.adev_from_qd">
-<code class="sig-name descname">adev_from_qd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau0</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise.adev_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise.adev_from_qd" title="Permalink to this definition">¶</a></dt>
-<dd><p>prefactor for Allan deviation for noise type defined by (qd, b,
-tau0)</p>
-<p>Colored noise generated with (qd, b, tau0) parameters will
-show an Allan variance of:</p>
-<p>AVAR = prefactor * h_a * tau^c</p>
-<p>where a = b + 2 is the slope of the frequency PSD.
-and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</p>
-<p>The relation between a, b, c is:</p>
-<table class="table">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>a</p></th>
-<th class="head"><p>b</p></th>
-<th class="head"><p>c(AVAR)</p></th>
-<th class="head"><p>c(MVAR)</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>-2</p></td>
-<td><p>-4</p></td>
-<td><p>1</p></td>
-<td><p>1</p></td>
-</tr>
-<tr class="row-odd"><td><p>-1</p></td>
-<td><p>-3</p></td>
-<td><p>0</p></td>
-<td><p>0</p></td>
-</tr>
-<tr class="row-even"><td><p>0</p></td>
-<td><p>-2</p></td>
-<td><p>-1</p></td>
-<td><p>-1</p></td>
-</tr>
-<tr class="row-odd"><td><p>+1</p></td>
-<td><p>-1</p></td>
-<td><p>-2</p></td>
-<td><p>-2</p></td>
-</tr>
-<tr class="row-even"><td><p>+2</p></td>
-<td><p>0</p></td>
-<td><p>-2</p></td>
-<td><p>-3</p></td>
-</tr>
-</tbody>
-</table>
-<p>Coefficients from:
-S. T. Dawkins, J. J. McFerran and A. N. Luiten, “Considerations on
-the measurement of the stability of oscillators with frequency
-counters,” in IEEE Transactions on Ultrasonics, Ferroelectrics, and
-Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
-doi: 10.1109/TUFFC.2007.337</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise_kasdin.Noise.c_avar">
-<code class="sig-name descname">c_avar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise.c_avar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise.c_avar" title="Permalink to this definition">¶</a></dt>
-<dd><p>return tau exponent “c” for noise type.
-AVAR = prefactor * h_a * tau^c</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise_kasdin.Noise.c_mvar">
-<code class="sig-name descname">c_mvar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise.c_mvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise.c_mvar" title="Permalink to this definition">¶</a></dt>
-<dd><p>return tau exponent “c” for noise type.
-MVAR = prefactor * h_a * tau^c</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise_kasdin.Noise.frequency_psd_from_qd">
-<code class="sig-name descname">frequency_psd_from_qd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau0</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise.frequency_psd_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise.frequency_psd_from_qd" title="Permalink to this definition">¶</a></dt>
-<dd><p>return frequency power spectral density coefficient h_a
-for the noise type defined by (qd, b, tau0)</p>
-<p>Colored noise generated with (qd, b, tau0) parameters will
-show a frequency power spectral density of</p>
-<p>S_y(f) = Frequency_PSD(f) = h_a * f^a
-where the slope a comes from the phase PSD slope b:
-a = b + 2</p>
-<p>Kasdin &amp; Walter eqn (39)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise_kasdin.Noise.generateNoise">
-<code class="sig-name descname">generateNoise</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise.generateNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise.generateNoise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate noise time series based on input parameters</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>time_series</strong> – Time series with colored noise.
-len(time_series) == nr</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>np.array</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise_kasdin.Noise.mdev">
-<code class="sig-name descname">mdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau0</span></em>, <em class="sig-param"><span class="n">tau</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise.mdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise.mdev" title="Permalink to this definition">¶</a></dt>
-<dd><p>return predicted MDEV of noise-type at given tau</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise_kasdin.Noise.mdev_from_qd">
-<code class="sig-name descname">mdev_from_qd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau0</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise.mdev_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise.mdev_from_qd" title="Permalink to this definition">¶</a></dt>
-<dd><p>prefactor for Modified Allan deviation for noise
-type defined by (qd, b, tau0)</p>
-<p>Colored noise generated with (qd, b, tau0) parameters will
-show an Modified Allan variance of:</p>
-<p>MVAR = prefactor * h_a * tau^c</p>
-<p>where a = b + 2 is the slope of the frequency PSD.
-and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</p>
-<p>The relation between a, b, c is:</p>
-<table class="table">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>a</p></th>
-<th class="head"><p>b</p></th>
-<th class="head"><p>c(AVAR)</p></th>
-<th class="head"><p>c(MVAR)</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>-2</p></td>
-<td><p>-4</p></td>
-<td><p>1</p></td>
-<td><p>1</p></td>
-</tr>
-<tr class="row-odd"><td><p>-1</p></td>
-<td><p>-3</p></td>
-<td><p>0</p></td>
-<td><p>0</p></td>
-</tr>
-<tr class="row-even"><td><p>0</p></td>
-<td><p>-2</p></td>
-<td><p>-1</p></td>
-<td><p>-1</p></td>
-</tr>
-<tr class="row-odd"><td><p>+1</p></td>
-<td><p>-1</p></td>
-<td><p>-2</p></td>
-<td><p>-2</p></td>
-</tr>
-<tr class="row-even"><td><p>+2</p></td>
-<td><p>0</p></td>
-<td><p>-2</p></td>
-<td><p>-3</p></td>
-</tr>
-</tbody>
-</table>
-<p>Coefficients from:
-S. T. Dawkins, J. J. McFerran and A. N. Luiten, “Considerations on
-the measurement of the stability of oscillators with frequency
-counters,” in IEEE Transactions on Ultrasonics, Ferroelectrics, and
-Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
-doi: 10.1109/TUFFC.2007.337</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise_kasdin.Noise.phase_psd_from_qd">
-<code class="sig-name descname">phase_psd_from_qd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau0</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise.phase_psd_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise.phase_psd_from_qd" title="Permalink to this definition">¶</a></dt>
-<dd><p>return phase power spectral density coefficient g_b
-for noise-type defined by (qd, b, tau0)
-where tau0 is the interval between data points</p>
-<p>Colored noise generated with (qd, b, tau0) parameters will
-show a phase power spectral density of
-S_x(f) = Phase_PSD(f) = g_b * f^b</p>
-<p>Kasdin &amp; Walter eqn (39)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise_kasdin.Noise.set_input">
-<code class="sig-name descname">set_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nr</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">qd</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">b</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise_kasdin.html#Noise.set_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise_kasdin.Noise.set_input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set inputs after initialization</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nr</strong> (<em>integer</em>) – length of generated time-series
-number must be power of two</p></li>
-<li><p><strong>qd</strong> (<em>float</em>) – discrete variance</p></li>
-<li><p><strong>b</strong> (<em>float</em>) – <dl class="simple">
-<dt>noise type:</dt><dd><p>0 : White Phase Modulation (WPM)
--1 : Flicker Phase Modulation (FPM)
--2 : White Frequency Modulation (WFM)
--3 : Flicker Frequency Modulation (FFM)
--4 : Random Walk Frequency Modulation (RWFM)</p>
-</dd>
-</dl>
-</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -2944,7 +3000,7 @@ Initial version 2019 July, Anders E. E. Wallin.</p>
 <em class="property">class </em><code class="sig-prename descclassname">allantoolkit.realtime.</code><code class="sig-name descname">ohdev_realtime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">afs</span><span class="o">=</span><span class="default_value">[1]</span></em>, <em class="sig-param"><span class="n">tau0</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">auto_afs</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">pts_per_decade</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/realtime.html#ohdev_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.realtime.ohdev_realtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#allantoolkit.realtime.dev_realtime" title="allantoolkit.realtime.dev_realtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">allantoolkit.realtime.dev_realtime</span></code></a></p>
 <p>Overlapping Hadamard deviation in real-time from a stream of phase/frequency samples.</p>
-<p><a class="reference internal" href="references.html#dobrogowski2007" id="id48"><span>[Dobrogowski2007]</span></a>
+<p><a class="reference internal" href="references.html#dobrogowski2007" id="id51"><span>[Dobrogowski2007]</span></a>
 Dobrogowski &amp; Kasznia
 <a class="reference external" href="https://doi.org/10.1109/FREQ.2007.4319204">https://doi.org/10.1109/FREQ.2007.4319204</a></p>
 <dl class="py method">
@@ -3254,7 +3310,7 @@ used to estimate it.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#bregni2001" id="id49"><span>[Bregni2001]</span></a>
+<p><a class="reference internal" href="references.html#bregni2001" id="id52"><span>[Bregni2001]</span></a>
 S. Bregni and S. Maccabruni, “Fast Computation of Maximum Time
 Interval Error by Binary Decomposition”, IEEE Trans. I&amp;M, Vol. 49,
 No. 6, Dec. 2000, pp. 1240-1244.</p>
@@ -3300,7 +3356,7 @@ used to estimate it.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#howe1999" id="id50"><span>[Howe1999]</span></a>
+<p><a class="reference internal" href="references.html#howe1999" id="id53"><span>[Howe1999]</span></a>
 D.A. Howe and F. Vernotte, “Generalization of the Total Variance
 Approach to the Modified Allan Variance,” Proc.
 31 st PTTI Meeting, pp. 267-276, Dec. 1999.</p>
@@ -3345,7 +3401,7 @@ used to estimate it.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#bregni2001" id="id51"><span>[Bregni2001]</span></a>
+<p><a class="reference internal" href="references.html#bregni2001" id="id54"><span>[Bregni2001]</span></a>
 S. Bregni and S. Maccabruni, “Fast Computation of Maximum Time
 Interval Error by Binary Decomposition”, IEEE Trans. I&amp;M, Vol. 49,
 No. 6, Dec. 2000, pp. 1240-1244.</p>
@@ -3545,7 +3601,7 @@ used to estimate it.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id52"><span>[RileyStable32]</span></a> (5.2.1. Standard Variance, pg.17-8)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id55"><span>[RileyStable32]</span></a> (5.2.1. Standard Variance, pg.17-8)</p>
 </dd></dl>
 
 <dl class="py function">
@@ -3825,7 +3881,7 @@ used to estimate it.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#bregni2001" id="id53"><span>[Bregni2001]</span></a>
+<p><a class="reference internal" href="references.html#bregni2001" id="id56"><span>[Bregni2001]</span></a>
 S. Bregni and S. Maccabruni, “Fast Computation of Maximum Time
 Interval Error by Binary Decomposition”, IEEE Trans. I&amp;M, Vol. 49,
 No. 6, Dec. 2000, pp. 1240-1244.</p>
@@ -4011,8 +4067,8 @@ analysis.</p>
 errors. This happens in particular when calculating the mean of small
 values - resulting in erroneous results at the e-32 level</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id54"><span>[RileyStable32Manual]</span></a> (Drift Function, pg.191-4)</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id55"><span>[RileyStable32]</span></a> (5.18-21, pg.67-70)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id57"><span>[RileyStable32Manual]</span></a> (Drift Function, pg.191-4)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id58"><span>[RileyStable32]</span></a> (5.18-21, pg.67-70)</p>
 <p><a class="reference external" href="http://www.wriley.com/Frequency%20Drift%20Characterization%20in%20Stable32.pdf">http://www.wriley.com/Frequency%20Drift%20Characterization%20in%20Stable32.pdf</a></p>
 <p>C. A. Greenhall, “A frequency-drift estimator and its removal
 from modified Allan variance,” Proceedings of International
@@ -4046,7 +4102,7 @@ only logs drift analysis results</p></li>
 interpolated values, by first removing any leading and trailing gaps,
 and then using the two values immediately before and after any interior
 gaps to determine linearly interpolated values within the gap
-<a class="reference internal" href="references.html#rileystable32" id="id56"><span>[RileyStable32]</span></a> (pg. 107).</p>
+<a class="reference internal" href="references.html#rileystable32" id="id59"><span>[RileyStable32]</span></a> (pg. 107).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> – data array of frequency or phase measurements, with gaps
@@ -4065,7 +4121,7 @@ represented as NaNs</p>
 frequency data.</p>
 <p>TODO: check scaling of frequencies for Wn filter parameter is correct</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id57"><span>[RileyStable32Manual]</span></a> (Filter Function, pg.185-6)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id60"><span>[RileyStable32Manual]</span></a> (Filter Function, pg.185-6)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -4088,7 +4144,7 @@ frequency.</p></li>
 <dl class="py function">
 <dt id="allantoolkit.utils.frequency2fractional">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">frequency2fractional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">v0</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#frequency2fractional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.frequency2fractional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert frequency in Hz to fractional frequency <a class="reference internal" href="references.html#wikipedia" id="id58"><span>[Wikipedia]</span></a>.</p>
+<dd><p>Convert frequency in Hz to fractional frequency <a class="reference internal" href="references.html#wikipedia" id="id61"><span>[Wikipedia]</span></a>.</p>
 <div class="math notranslate nohighlight">
 \[y(t) =  ( \nu(t) - \nu_0 )  \over \nu_0\]</div>
 <dl class="field-list simple">
@@ -4112,7 +4168,7 @@ frequency of dataset.</p></li>
 arbitrary initial value), in units of second.</p>
 <p>Frequency to phase conversion is done by piecewise  integration  using
 the  averaging  time  as  the  integration  interval
-<a class="reference internal" href="references.html#rileystable32manual" id="id59"><span>[RileyStable32Manual]</span></a> (pg. 173-174):</p>
+<a class="reference internal" href="references.html#rileystable32manual" id="id62"><span>[RileyStable32Manual]</span></a> (pg. 173-174):</p>
 <div class="math notranslate nohighlight">
 \[x_{i+1} = x_i + y_i \tau\]</div>
 <p>Any gaps in the frequency data are filled to obtain phase continuity.</p>
@@ -4198,13 +4254,13 @@ indices</p>
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">phase2frequency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/allantoolkit/utils.html#phase2frequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.phase2frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert phase data in units of seconds to fractional frequency data.</p>
 <p>Phase to frequency conversion is done by dividing the first differences
-of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id60"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
+of the phase points by the averaging time <a class="reference internal" href="references.html#rileystable32manual" id="id63"><span>[RileyStable32Manual]</span></a> (pg. 174):</p>
 <div class="math notranslate nohighlight">
 \[y_i = ( x_{i+1} - x_i ) \over \tau\]</div>
 <p>Phase to frequency conversion is straightforward for data having
 gaps. Because two phase points  are  needed  to  determine  each
 frequency  point a single phase gap will cause two frequency gaps, and a
-gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id61"><span>[RileyStable32]</span></a> (pg. 108).</p>
+gap of N phase points causes N+1 frequency gaps <a class="reference internal" href="references.html#rileystable32" id="id64"><span>[RileyStable32]</span></a> (pg. 108).</p>
 <dl class="simple">
 <dt>Params:</dt><dd><p>x:      data array of phase measurements, in seconds
 rate:   sampling rate of the input data, in Hz</p>
@@ -4285,8 +4341,8 @@ MAD is a robust statistic based on the median of the data. It is the
 median of the scaled absolute deviation of the data points from their
 median value.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id62"><span>[RileyStable32Manual]</span></a> (Check Function, pg.189-90)</p>
-<p><a class="reference internal" href="references.html#rileystable32" id="id63"><span>[RileyStable32]</span></a> (10.11, pg.108-9)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id65"><span>[RileyStable32Manual]</span></a> (Check Function, pg.189-90)</p>
+<p><a class="reference internal" href="references.html#rileystable32" id="id66"><span>[RileyStable32]</span></a> (10.11, pg.108-9)</p>
 <p><a class="reference external" href="https://stackoverflow.com/questions/11686720/is-there-a-numpy-builtin-to-reject-outliers-from-a-list">https://stackoverflow.com/questions/11686720/is-there-a-numpy-builtin-to-reject-outliers-from-a-list</a></p>
 <p><a class="reference external" href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm">https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm</a></p>
 <dl class="field-list simple">
@@ -4320,7 +4376,7 @@ not set, outliers are not removed but only logged.</p></li>
 <dd><p>Scales the selected data by an additive or multiplicative factor,
 by adding a linear slope, or by reversing the data.</p>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id64"><span>[RileyStable32Manual]</span></a> (Fill Function, pg.181-2)</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id67"><span>[RileyStable32Manual]</span></a> (Fill Function, pg.181-2)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -4343,13 +4399,13 @@ which to compute statistics.</p>
 Generates a tau-list based on keywords ‘all’, ‘decade’, ‘octave’.
 Uses ‘octave’ by default if no taus= argument is given.</p>
 <p>Averaging times may be integer multiples of the data sampling interval
-<a class="reference internal" href="references.html#rileystable32" id="id65"><span>[RileyStable32]</span></a> (Pg.3):</p>
+<a class="reference internal" href="references.html#rileystable32" id="id68"><span>[RileyStable32]</span></a> (Pg.3):</p>
 <div class="math notranslate nohighlight">
 \[\tau =  m \tau_0\]</div>
 <p>where <cite>m</cite> is the averaging factor.</p>
 <p>This function implements a Stable32 stop-ratio for <cite>octave</cite> and <cite>decade</cite>
 stability runs, which automatically calculates the maximum averaging
-factor to use for the given deviation <a class="reference internal" href="references.html#rileyevolution" id="id66"><span>[RileyEvolution]</span></a> (pg.9 Table III).</p>
+factor to use for the given deviation <a class="reference internal" href="references.html#rileyevolution" id="id69"><span>[RileyEvolution]</span></a> (pg.9 Table III).</p>
 <p>If requesting averaging times for a <cite>theo1</cite> statistic, the resulting
 averaging times will be <cite>effective</cite> times tau = 0.75*tau</p>
 <p class="rubric">Notes</p>
@@ -4414,7 +4470,7 @@ factors.</p>
 <dl class="py function">
 <dt id="allantoolkit.utils.three_cornered_hat_phase">
 <code class="sig-prename descclassname">allantoolkit.utils.</code><code class="sig-name descname">three_cornered_hat_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_ab</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_bc</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_ca</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/allantoolkit/utils.html#three_cornered_hat_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.utils.three_cornered_hat_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Three Cornered Hat Method <a class="reference internal" href="references.html#riley3chat" id="id67"><span>[Riley3CHat]</span></a></p>
+<dd><p>Three Cornered Hat Method <a class="reference internal" href="references.html#riley3chat" id="id70"><span>[Riley3CHat]</span></a></p>
 <p>Given three clocks A, B, C, we seek to find their variances</p>
 <p><span class="math notranslate nohighlight">\(\sigma^2_A\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_B\)</span>, <span class="math notranslate nohighlight">\(\sigma^2_C\)</span></p>
 <p>We measure three phase differences, assuming no correlation between

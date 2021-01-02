@@ -10,11 +10,11 @@ expected_all = np.arange(1, 43)
 expected_octave = [1.,   2.,   4.,   8.,  16.,  32.]
 expected_decade = [1., 2., 4., 10., 20.]
 
-ab = allantoolkit.noise.white(N)
+ab = allantoolkit.noise.white(N).data
 ab = allantoolkit.utils.frequency2phase(y=ab, rate=r)
-bc = allantoolkit.noise.white(N)
+bc = allantoolkit.noise.white(N).data
 bc = allantoolkit.utils.frequency2phase(y=bc, rate=r)
-ca = allantoolkit.noise.white(N)
+ca = allantoolkit.noise.white(N).data
 ca = allantoolkit.utils.frequency2phase(y=ca, rate=r)
 
 

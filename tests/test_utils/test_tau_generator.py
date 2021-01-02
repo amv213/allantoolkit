@@ -230,7 +230,7 @@ def test_many_taus_build(dev_type):
     Expected results are taken from Stable32 Runs."""
 
     N = 200
-    y = allantoolkit.noise.white(N)
+    x = allantoolkit.noise.white(N).data
 
     # Expected many-taus for 200 samples
     expected_afs = np.array([
@@ -268,7 +268,7 @@ def test_many_taus_build(dev_type):
         expected_afs = expected_afs[expected_afs >= 10]
         expected_afs = expected_afs[expected_afs < N]
 
-    output = allantoolkit.utils.tau_generator(data=y, rate=RATE,
+    output = allantoolkit.utils.tau_generator(data=x, rate=RATE,
                                               dev_type=dev_type,
                                               taus="many")
 

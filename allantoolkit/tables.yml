@@ -95,8 +95,6 @@ alpha_to_names:
   1:  'FLPM'
   2:  'WHPM'
 
-
-
 bias_totvar:
   # Coefficient for computing normalised bias of TOTVAR in the presence of
   # FM noise

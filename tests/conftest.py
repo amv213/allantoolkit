@@ -5,8 +5,8 @@ import numpy as np
 
 @pytest.fixture
 def data():
-    """An all purpose dataset"""
-    return allantoolkit.noise.white(100)
+    """An all purpose phase dataset"""
+    return allantoolkit.noise.white(100).data
 
 
 @pytest.fixture
@@ -34,10 +34,5 @@ def data_with_only_gaps(data):
 
 @pytest.fixture
 def dataset():
-    return allantoolkit.api.Dataset(allantoolkit.noise.white(100),
+    return allantoolkit.api.Dataset(allantoolkit.noise.white(100).data,
                                     rate=1., data_type='freq')
-
-
-@pytest.fixture
-def noisegen():
-    return allantoolkit.noise_kasdin.Noise()

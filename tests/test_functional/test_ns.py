@@ -9,7 +9,7 @@ logging.getLogger('allantoolkit.testutils').setLevel("DEBUG")
 
 N = 500
 RATE = 1.
-Y = allantoolkit.noise.white(N)
+Y = allantoolkit.noise.white(N).data
 # this test asks for results at unreasonable tau-values
 # either zero, not an integer multiple of the data-interval
 # or too large, given the length of the dataset

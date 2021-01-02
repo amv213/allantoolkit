@@ -1,5 +1,5 @@
 """
-unit-tests for allantoolkit.noise_kasdin: Kasdin & Walter noise-generator
+unit-tests for Kasdin & Walter noise-generator
 """
 
 import pytest
@@ -8,17 +8,35 @@ import numpy as np
 from typing import Tuple
 
 
+def test_noise():
+    N = 500
+    # rate = 1.0
+    w = allantoolkit.noise.white(N)
+    b = allantoolkit.noise.brown(N)
+    v = allantoolkit.noise.violet(N)
+    p = allantoolkit.noise.pink(N)
+
+    # check output length
+    assert w.n == N
+    assert b.n == N
+    assert v.n == N
+    assert p.n == N
+    # check output type
+    for x in [w, b, v, p]:
+        assert type(x.data) == np.ndarray, "%s is not numpy.ndarray" % (
+            type(x.data))
+
+
 @pytest.mark.parametrize("n", range(2, 20))
-def test_timeseries_length(noisegen, n):
+def test_timeseries_length(n):
     """
         check that the time-series is of correct length
     """
     nr = pow(2, n)
-    noisegen.set_input(nr=nr)
-    noisegen.generateNoise()
-    print(nr)
-    print(len(noisegen.time_series))
-    assert len(noisegen.time_series) == nr
+
+    noise = allantoolkit.noise.white(n=nr)
+
+    assert len(noise.data) == nr
 
 
 # failing cases (b, tau, qd)
@@ -41,27 +59,26 @@ def test_adev_average_failing(noisegen, params: Tuple[int, int, float]):
 @pytest.mark.parametrize("b", [0, -1, -2, ])
 @pytest.mark.parametrize("tau", [1, 2, 3, 4, 5, 20, 30])
 @pytest.mark.parametrize("qd", [3e-15, 5e-10, 6e-9, ])  # 7e-6 2e-20
-def test_adev_average(noisegen, b, tau, qd, nr=pow(2, 16),
-                      N_averages=30, rtol=1e-1):
+def test_adev_average(b, tau, qd, nr=pow(2, 16), N_averages=30, rtol=1e-1):
     """
     check that time-series has the ADEV that we expect
     generate many time-series (N_averages)
     compute average adev from the multiple time-series
     """
 
-    noisegen.set_input(nr=nr, qd=qd, b=b)
-
     adevs = []
     for n in range(N_averages):
 
-        noisegen.generateNoise()
-        out = allantoolkit.devs.adev(
-            noisegen.time_series, taus=np.array([tau]), rate=1.0)
+        noise = allantoolkit.noise.custom(beta=b, n=nr, qd=qd, rate=1)
+
+        out = allantoolkit.devs.adev(noise.data, taus=np.array([tau]),
+                                     rate=1.0)
+
         adev_calculated = out.devs[0]
         adevs.append(adev_calculated)
 
     adev_mu = np.mean(adevs)
-    adev_predicted = noisegen.adev(tau0=1.0, tau=tau)
+    adev_predicted = noise.adev(tau=tau)
 
     print(b, tau, qd, adev_predicted, adev_mu, adev_mu/adev_predicted)
 
@@ -72,18 +89,17 @@ def test_adev_average(noisegen, b, tau, qd, nr=pow(2, 16),
 @pytest.mark.parametrize("b", [0, -1, -2, -3, -4])
 @pytest.mark.parametrize("tau", [1, 2, 3, 4, 5, 20, 30])
 @pytest.mark.parametrize("qd", [3e-15, 5e-10, 6e-9, ])  # 7e-6 2e-20
-def test_adev(noisegen, b, tau, qd):
+def test_adev(b, tau, qd):
     """
     check that time-series has the ADEV that we expect
     """
 
-    noisegen.set_input(nr=pow(2, 16), qd=qd, b=b)
-    noisegen.generateNoise()
-    out = allantoolkit.devs.adev(noisegen.time_series,
-                                 taus=np.array([tau]), rate=1.0)
+    noise = allantoolkit.noise.custom(beta=b, n=pow(2, 16), qd=qd, rate=1)
+
+    out = allantoolkit.devs.adev(noise.data, taus=np.array([tau]), rate=1)
     
     adev_calculated = out.devs[0]
-    adev_predicted = noisegen.adev(tau0=1.0, tau=tau)
+    adev_predicted = noise.adev(tau=tau)
 
     print(b, tau, qd, adev_calculated, adev_predicted,
           adev_calculated/adev_predicted)
@@ -103,17 +119,17 @@ def test_mdev_failing(noisegen, b, tau, qd):
 @pytest.mark.parametrize("b", [0, -1, ])
 @pytest.mark.parametrize("tau", [2, 4, 5, 20, 30])
 @pytest.mark.parametrize("qd", [2e-20])
-def test_mdev(noisegen, b, tau, qd):
+def test_mdev(b, tau, qd):
     """
     check that time-series has the MDEV that we expect
     """
-    noisegen.set_input(nr=pow(2, 16), qd=qd, b=b)
-    noisegen.generateNoise()
-    out = allantoolkit.devs.mdev(
-        noisegen.time_series, taus=np.array([tau]), rate=1.0)
+
+    noise = allantoolkit.noise.custom(beta=b, n=pow(2, 16), qd=qd, rate=1)
+
+    out = allantoolkit.devs.mdev(noise.data, taus=np.array([tau]), rate=1)
 
     mdev_calculated = out.devs[0]
-    mdev_predicted = noisegen.mdev(tau0=1.0, tau=tau)
+    mdev_predicted = noise.mdev(tau=tau)
 
     print(b, tau, qd, mdev_calculated, mdev_predicted,
           mdev_calculated/mdev_predicted)

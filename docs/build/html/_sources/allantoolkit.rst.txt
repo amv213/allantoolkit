@@ -61,14 +61,6 @@ allantoolkit.noise\_id
    :undoc-members:
    :show-inheritance:
 
-allantoolkit.noise\_kasdin
----------------------------------
-
-.. automodule:: allantoolkit.noise_kasdin
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 allantoolkit.plot
 ------------------------
 

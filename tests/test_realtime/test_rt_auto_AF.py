@@ -8,7 +8,7 @@ import allantoolkit as at
 
 
 n_pts = pow(2,12)
-x_series = at.noise.white(n_pts)
+x_series = at.noise.white(n_pts).data
 
 def test_oadev_rt_autoAF():
     print("time series length %d"%n_pts)

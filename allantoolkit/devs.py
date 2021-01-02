@@ -4,6 +4,7 @@ from . import ci
 from . import noise_id
 from . import bias
 from . import stats
+from . import noise
 from . import utils
 from typing import List, Tuple, NamedTuple, Union
 

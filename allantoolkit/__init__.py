@@ -8,7 +8,6 @@ import allantoolkit.ci
 import allantoolkit.bias
 import allantoolkit.api
 import allantoolkit.noise
-import allantoolkit.noise_kasdin
 import allantoolkit.plot
 import allantoolkit.realtime
 import allantoolkit.testutils

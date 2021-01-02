@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 class Dataset:
     """ Dataset class for `allantoolkit`"""
 
-    def __init__(self, data: Union[Array, str, Path], rate: float,
+    def __init__(self, data: Union[Array, str, Path], rate: float = 1.,
                  data_type: str = "phase") -> None:
         """ Initialize object with input data
 

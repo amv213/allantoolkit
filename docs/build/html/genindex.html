@@ -225,6 +225,7 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
@@ -266,13 +267,13 @@
         <li><a href="allantoolkit.html#allantoolkit.realtime.tdev_realtime.add_phase">(allantoolkit.realtime.tdev_realtime method)</a>
 </li>
       </ul></li>
-      <li><a href="allantoolkit.html#allantoolkit.noise_kasdin.Noise.adev">adev() (allantoolkit.noise_kasdin.Noise method)</a>
+      <li><a href="allantoolkit.html#allantoolkit.noise.Noise.adev">adev() (allantoolkit.noise.Noise method)</a>
 
       <ul>
         <li><a href="allantoolkit.html#allantoolkit.devs.adev">(in module allantoolkit.devs)</a>
 </li>
       </ul></li>
-      <li><a href="allantoolkit.html#allantoolkit.noise_kasdin.Noise.adev_from_qd">adev_from_qd() (allantoolkit.noise_kasdin.Noise method)</a>
+      <li><a href="allantoolkit.html#allantoolkit.noise.Noise.adev_from_qd">adev_from_qd() (allantoolkit.noise.Noise method)</a>
 </li>
       <li><a href="allantoolkit.html#allantoolkit.devs.DevResult.afs">afs (allantoolkit.devs.DevResult attribute)</a>
 
@@ -332,13 +333,6 @@
 </li>
       </ul></li>
       <li>
-    allantoolkit.noise_kasdin
-
-      <ul>
-        <li><a href="allantoolkit.html#module-allantoolkit.noise_kasdin">module</a>
-</li>
-      </ul></li>
-      <li>
     allantoolkit.plot
 
       <ul>
@@ -391,6 +385,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="allantoolkit.html#allantoolkit.utils.binom">binom() (in module allantoolkit.utils)</a>
 </li>
+      <li><a href="allantoolkit.html#allantoolkit.noise.blue">blue() (in module allantoolkit.noise)</a>
+</li>
       <li><a href="allantoolkit.html#allantoolkit.noise.brown">brown() (in module allantoolkit.noise)</a>
 </li>
   </ul></td>
@@ -399,9 +395,9 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="allantoolkit.html#allantoolkit.noise_kasdin.Noise.c_avar">c_avar() (allantoolkit.noise_kasdin.Noise method)</a>
+      <li><a href="allantoolkit.html#allantoolkit.noise.Noise.c_avar">c_avar() (allantoolkit.noise.Noise method)</a>
 </li>
-      <li><a href="allantoolkit.html#allantoolkit.noise_kasdin.Noise.c_mvar">c_mvar() (allantoolkit.noise_kasdin.Noise method)</a>
+      <li><a href="allantoolkit.html#allantoolkit.noise.Noise.c_mvar">c_mvar() (allantoolkit.noise.Noise method)</a>
 </li>
       <li><a href="allantoolkit.html#allantoolkit.api.Dataset.calc">calc() (allantoolkit.api.Dataset method)</a>
 </li>
@@ -459,10 +455,10 @@
 </li>
       <li><a href="allantoolkit.html#allantoolkit.stats.calc_hvar">calc_hvar() (in module allantoolkit.stats)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="allantoolkit.html#allantoolkit.stats.calc_mtie">calc_mtie() (in module allantoolkit.stats)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="allantoolkit.html#allantoolkit.stats.calc_mtie_fast">calc_mtie_fast() (in module allantoolkit.stats)</a>
 </li>
       <li><a href="allantoolkit.html#allantoolkit.stats.calc_mtotvar">calc_mtotvar() (in module allantoolkit.stats)</a>
@@ -523,6 +519,8 @@
 </li>
       <li><a href="allantoolkit.html#allantoolkit.api.Dataset.convert">convert() (allantoolkit.api.Dataset method)</a>
 </li>
+      <li><a href="allantoolkit.html#allantoolkit.noise.custom">custom() (in module allantoolkit.noise)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -581,11 +579,13 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="allantoolkit.html#allantoolkit.noise.flfm">flfm() (in module allantoolkit.noise)</a>
+</li>
       <li><a href="allantoolkit.html#allantoolkit.utils.frequency2fractional">frequency2fractional() (in module allantoolkit.utils)</a>
 </li>
       <li><a href="allantoolkit.html#allantoolkit.utils.frequency2phase">frequency2phase() (in module allantoolkit.utils)</a>
 </li>
-      <li><a href="allantoolkit.html#allantoolkit.noise_kasdin.Noise.frequency_psd_from_qd">frequency_psd_from_qd() (allantoolkit.noise_kasdin.Noise method)</a>
+      <li><a href="allantoolkit.html#allantoolkit.noise.Noise.frequency_psd_from_qd">frequency_psd_from_qd() (allantoolkit.noise.Noise method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -601,7 +601,7 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="allantoolkit.html#allantoolkit.noise_kasdin.Noise.generateNoise">generateNoise() (allantoolkit.noise_kasdin.Noise method)</a>
+      <li><a href="allantoolkit.html#allantoolkit.noise.generate_noise">generate_noise() (in module allantoolkit.noise)</a>
 </li>
       <li><a href="allantoolkit.html#allantoolkit.ci.get_error_bars">get_error_bars() (in module allantoolkit.ci)</a>
 </li>
@@ -631,7 +631,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="allantoolkit.html#allantoolkit.utils.is_power">is_power() (in module allantoolkit.utils)</a>
 </li>
-      <li><a href="allantoolkit.html#allantoolkit.noise.iterpink">iterpink() (in module allantoolkit.noise)</a>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="allantoolkit.html#allantoolkit.noise.kasdin_generator">kasdin_generator() (in module allantoolkit.noise)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -639,7 +645,7 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="allantoolkit.html#allantoolkit.noise_kasdin.Noise.mdev">mdev() (allantoolkit.noise_kasdin.Noise method)</a>
+      <li><a href="allantoolkit.html#allantoolkit.noise.Noise.mdev">mdev() (allantoolkit.noise.Noise method)</a>
 
       <ul>
         <li><a href="allantoolkit.html#allantoolkit.realtime.tdev_realtime.mdev">(allantoolkit.realtime.tdev_realtime method)</a>
@@ -647,7 +653,7 @@
         <li><a href="allantoolkit.html#allantoolkit.devs.mdev">(in module allantoolkit.devs)</a>
 </li>
       </ul></li>
-      <li><a href="allantoolkit.html#allantoolkit.noise_kasdin.Noise.mdev_from_qd">mdev_from_qd() (allantoolkit.noise_kasdin.Noise method)</a>
+      <li><a href="allantoolkit.html#allantoolkit.noise.Noise.mdev_from_qd">mdev_from_qd() (allantoolkit.noise.Noise method)</a>
 </li>
       <li>
     module
@@ -666,8 +672,6 @@
         <li><a href="allantoolkit.html#module-allantoolkit.noise">allantoolkit.noise</a>
 </li>
         <li><a href="allantoolkit.html#module-allantoolkit.noise_id">allantoolkit.noise_id</a>
-</li>
-        <li><a href="allantoolkit.html#module-allantoolkit.noise_kasdin">allantoolkit.noise_kasdin</a>
 </li>
         <li><a href="allantoolkit.html#module-allantoolkit.plot">allantoolkit.plot</a>
 </li>
@@ -696,14 +700,14 @@
 </li>
       <li><a href="allantoolkit.html#allantoolkit.utils.nan_helper">nan_helper() (in module allantoolkit.utils)</a>
 </li>
-      <li><a href="allantoolkit.html#allantoolkit.noise_kasdin.Noise">Noise (class in allantoolkit.noise_kasdin)</a>
+      <li><a href="allantoolkit.html#allantoolkit.noise.Noise">Noise (class in allantoolkit.noise)</a>
 </li>
       <li><a href="allantoolkit.html#allantoolkit.noise_id.noise_id">noise_id() (in module allantoolkit.noise_id)</a>
 </li>
-      <li><a href="allantoolkit.html#allantoolkit.noise_id.noise_id_theoBR">noise_id_theoBR() (in module allantoolkit.noise_id)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="allantoolkit.html#allantoolkit.noise_id.noise_id_theoBR">noise_id_theoBR() (in module allantoolkit.noise_id)</a>
+</li>
       <li><a href="allantoolkit.html#allantoolkit.noise_id.noise_id_theoBR_fixed">noise_id_theoBR_fixed() (in module allantoolkit.noise_id)</a>
 </li>
       <li><a href="allantoolkit.html#allantoolkit.api.Dataset.normalize">normalize() (allantoolkit.api.Dataset method)</a>
@@ -714,8 +718,6 @@
         <li><a href="allantoolkit.html#allantoolkit.stats.VarResults.ns">(allantoolkit.stats.VarResults attribute)</a>
 </li>
       </ul></li>
-      <li><a href="allantoolkit.html#allantoolkit.noise.numpy_psd">numpy_psd() (in module allantoolkit.noise)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -744,7 +746,7 @@
 </li>
       <li><a href="allantoolkit.html#allantoolkit.utils.phase2radians">phase2radians() (in module allantoolkit.utils)</a>
 </li>
-      <li><a href="allantoolkit.html#allantoolkit.noise_kasdin.Noise.phase_psd_from_qd">phase_psd_from_qd() (allantoolkit.noise_kasdin.Noise method)</a>
+      <li><a href="allantoolkit.html#allantoolkit.noise.Noise.phase_psd_from_qd">phase_psd_from_qd() (allantoolkit.noise.Noise method)</a>
 </li>
       <li><a href="allantoolkit.html#allantoolkit.noise.pink">pink() (in module allantoolkit.noise)</a>
 </li>
@@ -790,6 +792,8 @@
 </li>
       <li><a href="allantoolkit.html#allantoolkit.utils.rolling_grad">rolling_grad() (in module allantoolkit.utils)</a>
 </li>
+      <li><a href="allantoolkit.html#allantoolkit.noise.rwfm">rwfm() (in module allantoolkit.noise)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -804,18 +808,14 @@
         <li><a href="allantoolkit.html#allantoolkit.plot.Plot.save">(allantoolkit.plot.Plot method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="allantoolkit.html#allantoolkit.api.Dataset.scale">scale() (allantoolkit.api.Dataset method)</a>
 
       <ul>
         <li><a href="allantoolkit.html#allantoolkit.utils.scale">(in module allantoolkit.utils)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="allantoolkit.html#allantoolkit.noise.scipy_psd">scipy_psd() (in module allantoolkit.noise)</a>
-</li>
-      <li><a href="allantoolkit.html#allantoolkit.noise_kasdin.Noise.set_input">set_input() (allantoolkit.noise_kasdin.Noise method)</a>
-</li>
       <li><a href="allantoolkit.html#allantoolkit.api.Dataset.show">show() (allantoolkit.api.Dataset method)</a>
 
       <ul>

@@ -214,132 +214,539 @@
                 
   <h1>Source code for allantoolkit.noise</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Allan deviation tools, Functions for generating noise</span>
-<span class="sd">initial version Anders Wallin, 2014 January</span>
+<span class="sd">Allantools Noise generator</span>
 
-<span class="sd">See: http://en.wikipedia.org/wiki/Colors_of_noise</span>
+<span class="sd">**Authors:** Julia Leute (julia.leute &quot;at&quot; gmail.com)</span>
+<span class="sd">    Anders Wallin (anders.e.e.wallin &quot;at&quot; gmail.com)</span>
+<span class="sd">    Alvise Vianello</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">import</span> <span class="nn">scipy.signal</span>  <span class="c1"># for welch PSD</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">allantoolkit</span> <span class="kn">import</span> <span class="n">utils</span>
 
 <span class="c1"># Spawn module-level logger</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
+<span class="c1"># shorten type hint to save some space</span>
+<span class="n">Array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 
-<div class="viewcode-block" id="numpy_psd"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.numpy_psd">[docs]</a><span class="k">def</span> <span class="nf">numpy_psd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f_sample</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; calculate power spectral density of input signal x</span>
+
+<div class="viewcode-block" id="Noise"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.Noise">[docs]</a><span class="k">class</span> <span class="nc">Noise</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Container for simulated power-law noise&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">qd</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize object with input noise data</span>
+
+<span class="sd">        Input noise should have phase autospectral density</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\beta}</span>
+
+<span class="sd">        where :math:`\\alpha = \\beta + 2` and :math:`h_{\\alpha}` is the</span>
+<span class="sd">        intensity coefficient.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data:           input noise data</span>
+<span class="sd">            rate:           sampling rate of the input noise, in Hz.</span>
+<span class="sd">            data_type:      input data type. Either ``phase`` or ``freq``.</span>
+<span class="sd">            beta:           input data noise type, as its phase noise power</span>
+<span class="sd">                            law exponent ``beta``</span>
+<span class="sd">            qd:             discrete variance of input noise data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_0</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qd</span> <span class="o">=</span> <span class="n">qd</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">beta</span>
+
+<div class="viewcode-block" id="Noise.phase_psd_from_qd"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.Noise.phase_psd_from_qd">[docs]</a>    <span class="k">def</span> <span class="nf">phase_psd_from_qd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns phase power spectral density coefficient :math:`g_{\\beta}`</span>
+<span class="sd">        for given noise data.</span>
+
+<span class="sd">        The coefficient :math:`g_{\\beta}` is defined for noise with</span>
+<span class="sd">        discrete variance :math:`Q^d` and sampling period :math:`\\tau_0` as:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            g_{\\beta} \\equiv 2 \\left( 2\\pi \\right)^{\\beta} Q^d</span>
+<span class="sd">            \\tau_0^{\\beta+1}</span>
+
+<span class="sd">        such that the noise shows phase power spectral density of:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            S_x(f) = g_{\\beta} f^{\\beta}</span>
+
+<span class="sd">        References:</span>
+<span class="sd">            [Kasdin1992]_</span>
+<span class="sd">            Kasdin, N.J., Walter, T., &quot;Discrete simulation of power law noise,</span>
+<span class="sd">            &quot; Frequency Control Symposium, 1992. 46th., Proceedings of the</span>
+<span class="sd">            1992 IEEE, pp.274,283, 27-29 May 1992</span>
+<span class="sd">            http://dx.doi.org/10.1109/FREQ.1992.270003 (Eq. 39)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">qd</span><span class="o">*</span><span class="mf">2.0</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tau_0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">+</span><span class="mf">1.0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Noise.frequency_psd_from_qd"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.Noise.frequency_psd_from_qd">[docs]</a>    <span class="k">def</span> <span class="nf">frequency_psd_from_qd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns frequency power spectral density coefficient</span>
+<span class="sd">        :math:`h_{\\alpha}` for given noise data.</span>
+
+<span class="sd">        The coefficient :math:`h_{\\alpha}` is related to the equivalent</span>
+<span class="sd">        phase power spectral density coefficient :math:`g_{\\beta}`, as:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            h_{\\alpha} = \\left( 2\\pi \\right)^2  g_{\\beta}</span>
+
+<span class="sd">        such that the noise shows frequency power spectral density of:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            S_y(f) = h_{\\alpha} f^{\\alpha}</span>
+
+<span class="sd">        References:</span>
+<span class="sd">            [Kasdin1992]_</span>
+<span class="sd">            Kasdin, N.J., Walter, T., &quot;Discrete simulation of power law noise,</span>
+<span class="sd">            &quot; Frequency Control Symposium, 1992. 46th., Proceedings of the</span>
+<span class="sd">            1992 IEEE, pp.274,283, 27-29 May 1992</span>
+<span class="sd">            http://dx.doi.org/10.1109/FREQ.1992.270003 (Eq. 39)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_psd_from_qd</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span></div>
+
+<div class="viewcode-block" id="Noise.adev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.Noise.adev">[docs]</a>    <span class="k">def</span> <span class="nf">adev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; return predicted ADEV of noise-type at given tau</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adev_from_qd</span><span class="p">(</span><span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_avar</span><span class="p">()</span>
+        <span class="n">avar</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">prefactor</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">avar</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Noise.mdev"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.Noise.mdev">[docs]</a>    <span class="k">def</span> <span class="nf">mdev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; return predicted MDEV of noise-type at given tau</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdev_from_qd</span><span class="p">(</span><span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_mvar</span><span class="p">()</span>
+        <span class="n">mvar</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">prefactor</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mvar</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Noise.c_avar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.Noise.c_avar">[docs]</a>    <span class="k">def</span> <span class="nf">c_avar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; return tau exponent &quot;c&quot; for noise type.</span>
+<span class="sd">            AVAR = prefactor * h_a * tau^c</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">2.0</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">2.0</span></div>
+
+<div class="viewcode-block" id="Noise.c_mvar"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.Noise.c_mvar">[docs]</a>    <span class="k">def</span> <span class="nf">c_mvar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; return tau exponent &quot;c&quot; for noise type.</span>
+<span class="sd">            MVAR = prefactor * h_a * tau^c</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">2.0</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">3.0</span></div>
+
+<div class="viewcode-block" id="Noise.adev_from_qd"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.Noise.adev_from_qd">[docs]</a>    <span class="k">def</span> <span class="nf">adev_from_qd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; prefactor for Allan deviation for noise type defined by (qd, b,</span>
+<span class="sd">        tau0)</span>
+
+<span class="sd">        Colored noise generated with (qd, b, tau0) parameters will</span>
+<span class="sd">        show an Allan variance of:</span>
+
+<span class="sd">        AVAR = prefactor * h_a * tau^c</span>
+
+<span class="sd">        where a = b + 2 is the slope of the frequency PSD.</span>
+<span class="sd">        and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</span>
+
+<span class="sd">        The relation between a, b, c is:</span>
+
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |    a    |    b    | c(AVAR) | c(MVAR) |</span>
+<span class="sd">        +=========+=========+=========+=========+</span>
+<span class="sd">        |   -2    |   -4    |    1    |    1    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |   -1    |   -3    |    0    |    0    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |    0    |   -2    |   -1    |   -1    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |   +1    |   -1    |   -2    |   -2    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |   +2    |    0    |   -2    |   -3    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+
+<span class="sd">        Coefficients from:</span>
+<span class="sd">        S. T. Dawkins, J. J. McFerran and A. N. Luiten, &quot;Considerations on</span>
+<span class="sd">        the measurement of the stability of oscillators with frequency</span>
+<span class="sd">        counters,&quot; in IEEE Transactions on Ultrasonics, Ferroelectrics, and</span>
+<span class="sd">        Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.</span>
+<span class="sd">        doi: 10.1109/TUFFC.2007.337</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">g_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_psd_from_qd</span><span class="p">()</span>
+        <span class="n">f_h</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">tau_0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="mf">3.0</span><span class="o">*</span><span class="n">f_h</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="c1"># E, White PM, tau^-1</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.038</span><span class="o">+</span><span class="mi">3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">f_h</span><span class="o">*</span><span class="n">tau</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mf">4.0</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="c1"># D, Flicker PM, tau^-1</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c1"># C, white FM,  1/sqrt(tau)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">3</span><span class="p">:</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># B, flicker FM,  constant ADEV</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">4</span><span class="p">:</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">3.0</span> <span class="c1">#  A, RW FM, sqrt(tau)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">coeff</span><span class="o">*</span><span class="n">g_b</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Noise.mdev_from_qd"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.Noise.mdev_from_qd">[docs]</a>    <span class="k">def</span> <span class="nf">mdev_from_qd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">):</span>
+        <span class="c1"># FIXME: tau is unused here - can we remove it?</span>
+        <span class="sd">&quot;&quot;&quot; prefactor for Modified Allan deviation for noise</span>
+<span class="sd">        type defined by (qd, b, tau0)</span>
+
+<span class="sd">        Colored noise generated with (qd, b, tau0) parameters will</span>
+<span class="sd">        show an Modified Allan variance of:</span>
+
+<span class="sd">        MVAR = prefactor * h_a * tau^c</span>
+
+<span class="sd">        where a = b + 2 is the slope of the frequency PSD.</span>
+<span class="sd">        and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</span>
+
+<span class="sd">        The relation between a, b, c is:</span>
+
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |    a    |    b    | c(AVAR) | c(MVAR) |</span>
+<span class="sd">        +=========+=========+=========+=========+</span>
+<span class="sd">        |   -2    |   -4    |    1    |    1    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |   -1    |   -3    |    0    |    0    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |    0    |   -2    |   -1    |   -1    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |   +1    |   -1    |   -2    |   -2    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+<span class="sd">        |   +2    |    0    |   -2    |   -3    |</span>
+<span class="sd">        +---------+---------+---------+---------+</span>
+
+<span class="sd">        Coefficients from:</span>
+<span class="sd">        S. T. Dawkins, J. J. McFerran and A. N. Luiten, &quot;Considerations on</span>
+<span class="sd">        the measurement of the stability of oscillators with frequency</span>
+<span class="sd">        counters,&quot; in IEEE Transactions on Ultrasonics, Ferroelectrics, and</span>
+<span class="sd">        Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.</span>
+<span class="sd">        doi: 10.1109/TUFFC.2007.337</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">g_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_psd_from_qd</span><span class="p">()</span>
+        <span class="c1">#f_h = 0.5/tau0 #unused!?</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="mf">3.0</span><span class="o">/</span><span class="p">(</span><span class="mf">8.0</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="c1"># E, White PM, tau^-{3/2}</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="p">(</span><span class="mf">24.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="mf">9.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">/</span><span class="mf">8.0</span><span class="o">/</span><span class="nb">pow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="c1"># D, Flicker PM, tau^-1</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="c1"># C, white FM,  1/sqrt(tau)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">3</span><span class="p">:</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">3.0</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">11.0</span><span class="o">/</span><span class="mf">16.0</span><span class="p">)</span><span class="o">/</span><span class="mf">4.0</span><span class="p">)</span> <span class="c1"># B, flicker FM,  constant MDEV</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="o">-</span><span class="mi">4</span><span class="p">:</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="mf">11.0</span><span class="o">/</span><span class="mf">20.0</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="c1">#  A, RW FM, sqrt(tau)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">coeff</span><span class="o">*</span><span class="n">g_b</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="kasdin_generator"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.kasdin_generator">[docs]</a><span class="k">def</span> <span class="nf">kasdin_generator</span><span class="p">(</span><span class="n">nr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">qd</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Kasdin &amp; Walter algorithm for discrete simulation of power law</span>
+<span class="sd">    phase noise.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        x:          signal</span>
-<span class="sd">        f_sample:   sampling frequency in Hz. i.e. 1/fs is the time-interval</span>
-<span class="sd">                    in seconds between datapoints</span>
+<span class="sd">        nr:     number of samples to generate. Should be a power of two.</span>
+<span class="sd">        alpha:  frequency power law exponent ``alpha`` noise type to simulate.</span>
+<span class="sd">        qd:     discrete variance of generated timeseries.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        scale fft so that output corresponds to 1-sided PSD output has units</span>
-<span class="sd">        of [X^2/Hz] where X is the unit of x</span>
+<span class="sd">        timeseries of simulated noise</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [Kasdin1992]_</span>
+<span class="sd">        Kasdin, N.J., Walter, T., &quot;Discrete simulation of power law noise [for</span>
+<span class="sd">        oscillator stability evaluation],&quot; Frequency Control Symposium, 1992.</span>
+<span class="sd">        46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992</span>
+<span class="sd">        http://dx.doi.org/10.1109/FREQ.1992.270003</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">psd_of_x</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">/</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">*</span> <span class="n">f_sample</span><span class="p">))</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">f_axis</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">f_sample</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">psd_of_x</span><span class="p">))</span> <span class="c1"># frequency axis</span>
-    <span class="k">return</span> <span class="n">f_axis</span><span class="p">,</span> <span class="n">psd_of_x</span></div>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_power</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">nr</span><span class="p">])):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot simulate noise timeseries of given length &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;n = </span><span class="si">{</span><span class="n">nr</span><span class="si">}</span><span class="s2">. Length should be a power of two.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Phase noise power law exponent beta = alpha - 2</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">-</span> <span class="mi">2</span>
+
+    <span class="c1"># Fill wfb array with white noise based on given discrete variance</span>
+    <span class="n">wfb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nr</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">wfb</span><span class="p">[:</span><span class="n">nr</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">qd</span><span class="p">),</span> <span class="n">nr</span><span class="p">)</span>
+
+    <span class="c1"># Generate the hfb coefficients based on the noise type</span>
+    <span class="n">mhb</span> <span class="o">=</span> <span class="o">-</span><span class="n">b</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">hfb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nr</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">hfb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nr</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">hfb</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">nr</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">mhb</span> <span class="o">+</span> <span class="n">indices</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">indices</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">hfb</span><span class="p">[:</span><span class="n">nr</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="o">.</span><span class="n">accumulate</span><span class="p">(</span><span class="n">hfb</span><span class="p">[:</span><span class="n">nr</span><span class="p">])</span>
+
+    <span class="c1"># Perform discrete Fourier transform of wfb and hfb time series</span>
+    <span class="n">wfb_fft</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">wfb</span><span class="p">)</span>
+    <span class="n">hfb_fft</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">hfb</span><span class="p">)</span>
+
+    <span class="c1"># Perform inverse Fourier transform of the product of wfb and hfb FFTs</span>
+    <span class="n">time_series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfft</span><span class="p">(</span><span class="n">wfb_fft</span> <span class="o">*</span> <span class="n">hfb_fft</span><span class="p">)[:</span><span class="n">nr</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">time_series</span></div>
 
 
-<div class="viewcode-block" id="scipy_psd"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.scipy_psd">[docs]</a><span class="k">def</span> <span class="nf">scipy_psd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f_sample</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">nr_segments</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; PSD routine from scipy</span>
-<span class="sd">        we can compare our own numpy result against this one</span>
+<div class="viewcode-block" id="generate_noise"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.generate_noise">[docs]</a><span class="k">def</span> <span class="nf">generate_noise</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">qd</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                   <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Noise</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Generate timeseries of simulated discrete power law noise of given type.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n:          number of samples to generate</span>
+<span class="sd">        alpha:      frequency noise power law exponent ``alpha``</span>
+<span class="sd">        qd:         discrete variance of generated timeseries</span>
+<span class="sd">        rate:       sampling rate of the output frequency noise, in Hz.</span>
+<span class="sd">        data_type:  desired output data type. Either ``phase`` or ``freq``.</span>
+<span class="sd">                    Defaults to ``phase``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        timeseries of simulated noise</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        [Kasdin1992]_</span>
+<span class="sd">        Kasdin, N.J., Walter, T., &quot;Discrete simulation of power law noise [for</span>
+<span class="sd">        oscillator stability evaluation],&quot; Frequency Control Symposium, 1992.</span>
+<span class="sd">        46th., Proceedings of the 1992 IEEE, pp.274,283, 27-29 May 1992</span>
+<span class="sd">        http://dx.doi.org/10.1109/FREQ.1992.270003</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">f_axis</span><span class="p">,</span> <span class="n">psd_of_x</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">welch</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f_sample</span><span class="p">,</span> <span class="n">nperseg</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">nr_segments</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">f_axis</span><span class="p">,</span> <span class="n">psd_of_x</span></div>
+
+    <span class="k">if</span> <span class="n">data_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid data_type value: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">. Should be &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;`phase` or `freq`.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Algorithm can only generate phase datasets of length 2^k</span>
+    <span class="c1"># If want frequency data we will lose one point in conversion so add one</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;phase&#39;</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="c1"># Phase noise</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">kasdin_generator</span><span class="p">(</span><span class="n">nr</span><span class="o">=</span><span class="n">n2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">qd</span><span class="o">=</span><span class="n">qd</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">phase2frequency</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
+
+    <span class="c1"># Trim to original desired length</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">z</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">n</span>
+
+    <span class="k">return</span> <span class="n">Noise</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">alpha</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">qd</span><span class="o">=</span><span class="n">qd</span><span class="p">)</span></div>
+
+<span class="c1"># Wrappers</span>
 
 
-<div class="viewcode-block" id="white"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.white">[docs]</a><span class="k">def</span> <span class="nf">white</span><span class="p">(</span><span class="n">num_points</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">b0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; generate time series with white noise that has constant PSD = b0,</span>
-<span class="sd">        up to the nyquist frequency fs/2</span>
-<span class="sd">        N = number of samples</span>
-<span class="sd">        b0 = desired power-spectral density in [X^2/Hz] where X is the unit of x</span>
-<span class="sd">        fs = sampling frequency, i.e. 1/fs is the time-interval between datapoints</span>
+<div class="viewcode-block" id="violet"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.violet">[docs]</a><span class="k">def</span> <span class="nf">violet</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+           <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;phase&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Noise</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Kasdin &amp; Walter discrete simulation of violet phase noise</span>
+<span class="sd">    ( :math:`\\propto f^2` ).</span>
 
-<span class="sd">        the pre-factor corresponds to the area &#39;box&#39; under the PSD-curve:</span>
-<span class="sd">        The PSD is at &#39;height&#39; b0 and extends from 0 Hz up to the nyquist frequency fs/2</span>
+<span class="sd">    Violet noise has phase autospectral density:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\alpha - 2}</span>
+
+<span class="sd">    where :math:`\\alpha = 4` and :math:`h_{\\alpha}` is the intensity</span>
+<span class="sd">    coefficient.</span>
+
+<span class="sd">    It can be obtained by differentiation of white noise.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        Function :func:`allantoolkit.noise.generate_noise` for detailed usage</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">b0</span><span class="o">*</span><span class="n">fs</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_points</span><span class="p">)</span></div>
+
+    <span class="k">return</span> <span class="n">generate_noise</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">qd</span><span class="o">=</span><span class="n">qd</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="brown"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.brown">[docs]</a><span class="k">def</span> <span class="nf">brown</span><span class="p">(</span><span class="n">num_points</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">b2</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Brownian or random walk (diffusion) noise with 1/f^2 PSD</span>
-<span class="sd">        (not really a color... rather Brownian or random-walk)</span>
+<div class="viewcode-block" id="blue"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.blue">[docs]</a><span class="k">def</span> <span class="nf">blue</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+         <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;phase&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Noise</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Kasdin &amp; Walter discrete simulation of blue phase noise</span>
+<span class="sd">    ( :math:`\\propto f` ).</span>
 
-<span class="sd">        N = number of samples</span>
-<span class="sd">        b2 = desired PSD is b2*f^-2</span>
-<span class="sd">        fs = sampling frequency</span>
+<span class="sd">    Blue noise has phase autospectral density:</span>
 
-<span class="sd">        we integrate white-noise to get Brownian noise.</span>
+<span class="sd">    .. math::</span>
 
+<span class="sd">        S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\alpha - 2}</span>
+
+<span class="sd">    where :math:`\\alpha = 3` and :math:`h_{\\alpha}` is the intensity</span>
+<span class="sd">    coefficient.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        Function :func:`allantoolkit.noise.generate_noise` for detailed usage</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">fs</span><span class="p">))</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">white</span><span class="p">(</span><span class="n">num_points</span><span class="p">,</span> <span class="n">b0</span><span class="o">=</span><span class="n">b2</span><span class="o">*</span><span class="p">(</span><span class="mf">4.0</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">))</span></div>
+
+    <span class="k">return</span> <span class="n">generate_noise</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">qd</span><span class="o">=</span><span class="n">qd</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="violet"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.violet">[docs]</a><span class="k">def</span> <span class="nf">violet</span><span class="p">(</span><span class="n">num_points</span><span class="o">=</span><span class="mi">1024</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; violet noise with f^2 PSD &quot;&quot;&quot;</span>
-    <span class="c1"># diff() reduces number of points by one.</span>
-    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_points</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span></div>
+<div class="viewcode-block" id="white"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.white">[docs]</a><span class="k">def</span> <span class="nf">white</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+          <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;phase&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Noise</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Kasdin &amp; Walter discrete simulation of white phase noise</span>
+<span class="sd">    ( :math:`\\propto f^0` ).</span>
 
+<span class="sd">    White noise has phase autospectral density:</span>
 
-<div class="viewcode-block" id="pink"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.pink">[docs]</a><span class="k">def</span> <span class="nf">pink</span><span class="p">(</span><span class="n">num_points</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">80</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    N-length vector with (approximate) pink noise</span>
-<span class="sd">    pink noise has 1/f PSD</span>
+<span class="sd">    .. math::</span>
+
+<span class="sd">        S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\alpha - 2}</span>
+
+<span class="sd">    where :math:`\\alpha = 2` and :math:`h_{\\alpha}` is the intensity</span>
+<span class="sd">    coefficient.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        Function :func:`allantoolkit.noise.generate_noise` for detailed usage</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">iterpink</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_points</span><span class="p">):</span>  <span class="c1"># FIXME: num_points is unused here.</span>
-        <span class="n">a</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">)</span></div>
+
+    <span class="k">return</span> <span class="n">generate_noise</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">qd</span><span class="o">=</span><span class="n">qd</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="iterpink"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.iterpink">[docs]</a><span class="k">def</span> <span class="nf">iterpink</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generate a sequence of samples of pink noise.</span>
+<div class="viewcode-block" id="pink"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.pink">[docs]</a><span class="k">def</span> <span class="nf">pink</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+         <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;phase&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Noise</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Kasdin &amp; Walter discrete simulation of pink phase noise</span>
+<span class="sd">    ( :math:`\\propto f^{-1}` ).</span>
 
-<span class="sd">    pink noise generator</span>
-<span class="sd">    from http://pydoc.net/Python/lmj.sound/0.1.1/lmj.sound.noise/</span>
+<span class="sd">    Pink noise has phase autospectral density:</span>
 
-<span class="sd">    Based on the Voss-McCartney algorithm, discussion and code examples at</span>
-<span class="sd">    http://www.firstpr.com.au/dsp/pink-noise/</span>
+<span class="sd">    .. math::</span>
 
-<span class="sd">    depth: Use this many samples of white noise to calculate the output. A</span>
-<span class="sd">      higher  number is slower to run, but renders low frequencies with more</span>
-<span class="sd">      correct power spectra.</span>
+<span class="sd">        S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\alpha - 2}</span>
 
-<span class="sd">    Generates a never-ending sequence of floating-point values. Any continuous</span>
-<span class="sd">    set of these samples will tend to have a 1/f power spectrum.</span>
+<span class="sd">    where :math:`\\alpha = 1` and :math:`h_{\\alpha}` is the intensity</span>
+<span class="sd">    coefficient.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        Function :func:`allantoolkit.noise.generate_noise` for detailed usage</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">values</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
-    <span class="n">smooth</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
-    <span class="n">source</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
-    <span class="n">sumvals</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="k">yield</span> <span class="n">sumvals</span> <span class="o">+</span> <span class="n">smooth</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
-        <span class="c1"># advance the index by 1. if the index wraps, generate noise to use in</span>
-        <span class="c1"># the calculations, but do not update any of the pink noise values.</span>
-        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">depth</span><span class="p">:</span>
-            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">smooth</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
-            <span class="n">source</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
-            <span class="k">continue</span>
+    <span class="k">return</span> <span class="n">generate_noise</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">qd</span><span class="o">=</span><span class="n">qd</span><span class="p">)</span></div>
 
-        <span class="c1"># count trailing zeros in i</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="c1"># replace value c with a new source element</span>
-        <span class="n">sumvals</span> <span class="o">+=</span> <span class="n">source</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">values</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
-        <span class="n">values</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+<div class="viewcode-block" id="brown"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.brown">[docs]</a><span class="k">def</span> <span class="nf">brown</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+          <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;phase&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Noise</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Kasdin &amp; Walter discrete simulation of brown phase noise</span>
+<span class="sd">    ( :math:`\\propto f^{-2}` ).</span>
+
+<span class="sd">    Brown noise has phase autospectral density:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\alpha - 2}</span>
+
+<span class="sd">    where :math:`\\alpha = 0` and :math:`h_{\\alpha}` is the intensity</span>
+<span class="sd">    coefficient.</span>
+
+<span class="sd">    More than a color, brown noise is Brownian or random-walk noise. It can</span>
+<span class="sd">    be obtained by integration of white noise.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        Function :func:`allantoolkit.noise.generate_noise` for detailed usage</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">generate_noise</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">qd</span><span class="o">=</span><span class="n">qd</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="flfm"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.flfm">[docs]</a><span class="k">def</span> <span class="nf">flfm</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+         <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;phase&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Noise</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Kasdin &amp; Walter discrete simulation of Flicker FM phase noise</span>
+<span class="sd">    ( :math:`\\propto f^{-3}` ).</span>
+
+<span class="sd">    FLFM noise has phase autospectral density:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\alpha - 2}</span>
+
+<span class="sd">    where :math:`\\alpha = -1` and :math:`h_{\\alpha}` is the intensity</span>
+<span class="sd">    coefficient.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        Function :func:`allantoolkit.noise.generate_noise` for detailed usage</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">generate_noise</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">qd</span><span class="o">=</span><span class="n">qd</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="rwfm"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.rwfm">[docs]</a><span class="k">def</span> <span class="nf">rwfm</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+         <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;phase&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Noise</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Kasdin &amp; Walter discrete simulation of Random Walk FM phase noise</span>
+<span class="sd">    ( :math:`\\propto f^{-4}` ).</span>
+
+<span class="sd">    RWFM noise has phase autospectral density:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\alpha - 2}</span>
+
+<span class="sd">    where :math:`\\alpha = -2` and :math:`h_{\\alpha}` is the intensity</span>
+<span class="sd">    coefficient.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        Function :func:`allantoolkit.noise.generate_noise` for detailed usage</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">generate_noise</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">qd</span><span class="o">=</span><span class="n">qd</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="custom"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.custom">[docs]</a><span class="k">def</span> <span class="nf">custom</span><span class="p">(</span><span class="n">beta</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+           <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;phase&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Noise</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Kasdin &amp; Walter discrete simulation of arbitrary phase noise</span>
+<span class="sd">    ( :math:`\\propto f^{\\beta}` ).</span>
+
+<span class="sd">    This will generate noise with phase autospectral density:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\beta}</span>
+
+<span class="sd">    where :math:`\\alpha = \\beta + 2` and :math:`h_{\\alpha}` is the intensity</span>
+<span class="sd">    coefficient.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        Function :func:`allantoolkit.noise.generate_noise` for detailed usage</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">generate_noise</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">beta</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span>
+                          <span class="n">qd</span><span class="o">=</span><span class="n">qd</span><span class="p">)</span></div>
 </pre></div>
 
               </div>

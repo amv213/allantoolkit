@@ -5,7 +5,7 @@ import pytest
 
 N = 128
 RATE = 1.
-d = allantoolkit.noise.white(N)
+d = allantoolkit.noise.white(N).data
 d = allantoolkit.utils.frequency2phase(y=d, rate=RATE)
 
 expected_all = np.arange(1, 43)

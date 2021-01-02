@@ -18,28 +18,29 @@ Array = np.ndarray
 
 
 class Noise:
-    """Container for simulated power-law noise"""
+    """Container for simulated power-law noise
+
+    Input noise should have phase autospectral density:
+
+    .. math::
+
+        S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\beta}
+
+    where :math:`\\alpha = \\beta + 2` and :math:`h_{\\alpha}` is the
+    intensity coefficient.
+
+    Args:
+        data:           input noise data
+        rate:           sampling rate of the input noise, in Hz.
+        data_type:      input data type. Either ``phase`` or ``freq``.
+        beta:           input data noise type, as its phase noise power
+                        law exponent ``beta``
+        qd:             discrete variance of input noise data
+    """
 
     def __init__(self, data: Array, rate: float, data_type: str, beta: float,
                  qd: float):
         """Initialize object with input noise data
-
-        Input noise should have phase autospectral density
-
-        .. math::
-
-            S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\beta}
-
-        where :math:`\\alpha = \\beta + 2` and :math:`h_{\\alpha}` is the
-        intensity coefficient.
-
-        Args:
-            data:           input noise data
-            rate:           sampling rate of the input noise, in Hz.
-            data_type:      input data type. Either ``phase`` or ``freq``.
-            beta:           input data noise type, as its phase noise power
-                            law exponent ``beta``
-            qd:             discrete variance of input noise data
         """
 
         self.data = data

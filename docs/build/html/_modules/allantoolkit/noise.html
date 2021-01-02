@@ -233,28 +233,29 @@
 
 
 <div class="viewcode-block" id="Noise"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.noise.Noise">[docs]</a><span class="k">class</span> <span class="nc">Noise</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Container for simulated power-law noise&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Container for simulated power-law noise</span>
+
+<span class="sd">    Input noise should have phase autospectral density:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\beta}</span>
+
+<span class="sd">    where :math:`\\alpha = \\beta + 2` and :math:`h_{\\alpha}` is the</span>
+<span class="sd">    intensity coefficient.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:           input noise data</span>
+<span class="sd">        rate:           sampling rate of the input noise, in Hz.</span>
+<span class="sd">        data_type:      input data type. Either ``phase`` or ``freq``.</span>
+<span class="sd">        beta:           input data noise type, as its phase noise power</span>
+<span class="sd">                        law exponent ``beta``</span>
+<span class="sd">        qd:             discrete variance of input noise data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">qd</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize object with input noise data</span>
-
-<span class="sd">        Input noise should have phase autospectral density</span>
-
-<span class="sd">        .. math::</span>
-
-<span class="sd">            S_x(f) = {h_{\\alpha} \\over \\left( 2\\pi \\right)^2 } f^{\\beta}</span>
-
-<span class="sd">        where :math:`\\alpha = \\beta + 2` and :math:`h_{\\alpha}` is the</span>
-<span class="sd">        intensity coefficient.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            data:           input noise data</span>
-<span class="sd">            rate:           sampling rate of the input noise, in Hz.</span>
-<span class="sd">            data_type:      input data type. Either ``phase`` or ``freq``.</span>
-<span class="sd">            beta:           input data noise type, as its phase noise power</span>
-<span class="sd">                            law exponent ``beta``</span>
-<span class="sd">            qd:             discrete variance of input noise data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>

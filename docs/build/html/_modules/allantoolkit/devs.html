@@ -219,7 +219,6 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">noise_id</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">bias</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">stats</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">noise</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Union</span>
 
@@ -300,15 +299,16 @@
 <span class="sd">    Example:</span>
 
 <span class="sd">        .. code-block:: python</span>
-<span class="sd">            :emphasize-lines: 7</span>
+<span class="sd">            :emphasize-lines: 8</span>
 
 <span class="sd">            import allantoolkit</span>
 
-<span class="sd">            # Generate some frequency data</span>
-<span class="sd">            y = allantoolkit.noise.white(1000)</span>
+<span class="sd">            # Generate some white noise 1Hz phase data</span>
+<span class="sd">            noise = allantoolkit.noise.white(1000)</span>
+<span class="sd">            x = noise.data</span>
 
 <span class="sd">            # Compute deviation of choice (e.g. oadev)</span>
-<span class="sd">            out = allantoolkit.devs.oadev(y, rate=1., data_type=&#39;freq&#39;)</span>
+<span class="sd">            out = allantoolkit.devs.oadev(x)</span>
 
 <span class="sd">            print(out)</span>
 

@@ -4,7 +4,6 @@ from . import ci
 from . import noise_id
 from . import bias
 from . import stats
-from . import noise
 from . import utils
 from typing import List, Tuple, NamedTuple, Union
 
@@ -85,15 +84,16 @@ def dev(dev_type: str, data: Array, rate: float, data_type: str,
     Example:
 
         .. code-block:: python
-            :emphasize-lines: 7
+            :emphasize-lines: 8
 
             import allantoolkit
 
-            # Generate some frequency data
-            y = allantoolkit.noise.white(1000)
+            # Generate some white noise 1Hz phase data
+            noise = allantoolkit.noise.white(1000)
+            x = noise.data
 
             # Compute deviation of choice (e.g. oadev)
-            out = allantoolkit.devs.oadev(y, rate=1., data_type='freq')
+            out = allantoolkit.devs.oadev(x)
 
             print(out)
 

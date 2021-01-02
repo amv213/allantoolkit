@@ -227,6 +227,7 @@
 <span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span>  <span class="n">Rectangle</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">devs</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">noise</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">noise_id</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">tables</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -237,38 +238,48 @@
 <span class="c1"># shorten type hint to save some space</span>
 <span class="n">Array</span> <span class="o">=</span> <span class="n">devs</span><span class="o">.</span><span class="n">Array</span>
 <span class="n">Taus</span> <span class="o">=</span> <span class="n">devs</span><span class="o">.</span><span class="n">Taus</span>
+<span class="n">Noise</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">Noise</span>
 
 <span class="c1"># Spawn module-level logger</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.api.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Dataset class for `allantoolkit`&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Dataset class for `allantoolkit`</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
+<span class="sd">    Args:</span>
+<span class="sd">        data:       path to / array of phase data (in units of seconds) or</span>
+<span class="sd">                    fractional frequency data. Can also be a</span>
+<span class="sd">                    :py:obj:`allantoolkit.noise.Noise` object.</span>
+<span class="sd">        rate:       sampling rate of the input data, in Hz.</span>
+<span class="sd">        data_type:  input data type. Either `phase` or `freq`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Noise</span><span class="p">],</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
                  <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;phase&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Initialize object with input data</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            data:       path to / array of phase data (in units of seconds) or</span>
-<span class="sd">                        fractional frequency data.</span>
-<span class="sd">            rate:       sampling rate of the input data, in Hz.</span>
-<span class="sd">            data_type:  input data type. Either `phase` or `freq`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">data_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid data_type value: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">. &quot;</span>
                              <span class="sa">f</span><span class="s2">&quot;Should be `phase` or `freq`.&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">rate</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tau_0</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">rate</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Read data from file if a filename is provided</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">data</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">read_datafile</span><span class="p">(</span><span class="n">fn</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># If passed a Noise object, import attributes from it</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Noise</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rate</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data_type</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># else use the passed attributes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">rate</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_0</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span>
 
         <span class="c1"># &#39;live&#39; phase or frequency dataset to manipulate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>

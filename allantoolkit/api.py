@@ -12,6 +12,7 @@ from matplotlib.gridspec import GridSpec
 from matplotlib.patches import  Rectangle
 from . import utils
 from . import devs
+from . import noise
 from . import noise_id
 from . import tables
 from pathlib import Path
@@ -22,38 +23,48 @@ from scipy import signal
 # shorten type hint to save some space
 Array = devs.Array
 Taus = devs.Taus
+Noise = noise.Noise
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
 
 
 class Dataset:
-    """ Dataset class for `allantoolkit`"""
+    """ Dataset class for `allantoolkit`
 
-    def __init__(self, data: Union[Array, str, Path], rate: float = 1.,
+    Args:
+        data:       path to / array of phase data (in units of seconds) or
+                    fractional frequency data. Can also be a
+                    :py:obj:`allantoolkit.noise.Noise` object.
+        rate:       sampling rate of the input data, in Hz.
+        data_type:  input data type. Either `phase` or `freq`.
+    """
+
+    def __init__(self, data: Union[Array, str, Path, Noise], rate: float = 1.,
                  data_type: str = "phase") -> None:
-        """ Initialize object with input data
-
-        Args:
-            data:       path to / array of phase data (in units of seconds) or
-                        fractional frequency data.
-            rate:       sampling rate of the input data, in Hz.
-            data_type:  input data type. Either `phase` or `freq`.
-        """
 
         if data_type not in ['phase', 'freq']:
             raise ValueError(f"Invalid data_type value: {data_type}. "
                              f"Should be `phase` or `freq`.")
 
-        self.rate = rate
-        self.tau_0 = 1 / rate
-        self.data_type = data_type
         self.filename = None
 
         # Read data from file if a filename is provided
         if isinstance(data, str) or isinstance(data, Path):
             self.filename = data
             data = utils.read_datafile(fn=data)
+
+        # If passed a Noise object, import attributes from it
+        if isinstance(data, Noise):
+            self.rate = data.rate
+            self.data_type = data.data_type
+            data = data.data
+
+        else:  # else use the passed attributes
+            self.rate = rate
+            self.data_type = data_type
+
+        self.tau_0 = 1 / self.rate
 
         # 'live' phase or frequency dataset to manipulate
         self.data = data

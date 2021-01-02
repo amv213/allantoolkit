@@ -9,7 +9,7 @@ import logging
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
-from matplotlib.patches import  Rectangle
+from matplotlib.patches import Rectangle
 from . import utils
 from . import devs
 from . import noise
@@ -105,6 +105,25 @@ class Dataset:
         self.devs_lo = None
         self.devs = None
         self.devs_hi = None
+
+    def pop_results(self) -> devs.DevResult:
+        """Pops the stored frequency stability analysis results as a named
+        tuple. Useful to for custom data analysis and plotting,
+        and for compatibility with lower-level API programming style.
+
+        Returns:
+            frequency stability analysis results, stored in a
+            :class:`allantoolkit.devs.DevResult` NamedTuple.
+        """
+
+        if self.devs is None:
+            raise ValueError("No stability analysis results to pop. Make "
+                             "sure you have called .calc() to populate "
+                             "results first.")
+
+        return devs.DevResult(afs=self.afs, taus=self.taus, ns=self.ns,
+                              alphas=self.alphas, devs_lo=self.devs_lo,
+                              devs=self.devs, devs_hi=self.devs_hi)
 
     def convert(self, to: str, normalize: bool = True) -> 'Dataset':
         """Generates a new Dataset with data converted between phase and

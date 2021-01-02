@@ -247,12 +247,12 @@ version.</p>
 <p>You can then test your installation running the following minimal script:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
 
-<span class="c1"># Generate some frequency data</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
-<span class="n">r</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># data sampling rate, in Hz</span>
+<span class="c1"># Generate some pink noise phase data</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">data</span>
 
 <span class="c1"># Compute overlappig Allan deviation</span>
-<span class="n">out</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">devs</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;freq&#39;</span><span class="p">)</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">devs</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
 <span class="c1"># Display analysis results</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>

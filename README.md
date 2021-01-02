@@ -18,37 +18,18 @@ Github repo to check out the original project and to drop a star! 🌟
    ```python
    import allantoolkit
     
-   # Generate some frequency data
-   y = allantoolkit.noise.white(10000)
-   r = 1. # data sampling rate, in Hz
+   # Generate some pink noise phase data
+   noise = allantoolkit.noise.pink(10000)
+   x = noise.data
    
    # Compute overlappig Allan deviation
-   out = allantoolkit.devs.oadev(y, rate=r, data_type='freq')
+   out = allantoolkit.devs.oadev(x)
    
    # Display analysis results
    print(out)
    ```
 
-## 🔥 Changelog
-
-- new low-level API (based on NamedTuple)
-- fully featured object-oriented high-level API
-- Auto noise ID for all deviation types (Lag1 ACF, B1, R(n))
-- Bias correction for all deviation types
-- Non-naive EDF / confidence interval calculation for all deviation types
-- Basic plotting and visualisation tools
-- Fast Theo1 algorithm
-- Many-tau tau generation
-- Streamlined code architecture
-- Support for tables and constant mappings from .yaml file
-- Updated documentation and docstrings
-- Type hinting
-- Streamlined pytests
-- Additional tests
-- New demo test dataset based on optical lattice clock data
-- General gap resistance for most deviation types (to be tested)
-- Logging
-   
 ## 📚 Documentation
 
-To learn more about the package head over to the [official documentation](https://amv213.gitlab.io/allantoolkit)!
+To learn more about the package and all new features head over to the 
+[official documentation](https://amv213.gitlab.io/allantoolkit)!

@@ -283,9 +283,9 @@ time-interval measurement at 1 Hz from a time-interval-counter measuring the
 1PPS output of two clocks:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
 
-<span class="c1"># Generate some mock phase data</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>  <span class="c1"># frequency</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">frequency2phase</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># phase</span>
+<span class="c1"># Generate some mock pink phase data</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">pink</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> 
+<span class="n">x</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">data</span>
 
 <span class="c1"># Compute the overlapping Allan deviation (OADEV)</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">devs</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -312,8 +312,9 @@ for input phase data.</p>
 normalization and scaling is left to the user.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
 
-<span class="c1"># Generate some mock frequency data</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+<span class="c1"># Generate some mock pink frequency data</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">pink</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;freq&#39;</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">data</span>
 
 <span class="c1"># Compute the overlapping Allan deviation (OADEV)</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">devs</span><span class="o">.</span><span class="n">oadev</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;freq&#39;</span><span class="p">)</span>
@@ -338,11 +339,11 @@ re-implemented as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-<span class="c1"># Generate some mock frequency data</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">white</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+<span class="c1"># Generate some mock pink frequency data</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">pink</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;freq&#39;</span><span class="p">)</span>
 
 <span class="c1"># Store data in API wrapper</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;freq&#39;</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">noise</span><span class="p">)</span>
 
 <span class="c1"># Show raw data</span>
 <span class="n">y</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -356,6 +357,12 @@ re-implemented as follows:</p>
 <span class="c1"># Show plots</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+</div>
+<p>Note how you can feed the <code class="docutils literal notranslate"><span class="pre">Noise</span></code> object directly to the API wrapper,
+without having to explicitely set the <code class="docutils literal notranslate"><span class="pre">data_type</span></code> and data sampling <code class="docutils literal notranslate"><span class="pre">rate</span></code>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="allantoolkit.html#module-allantoolkit.api" title="allantoolkit.api"><code class="xref py py-mod docutils literal notranslate"><span class="pre">allantoolkit.api</span></code></a> for a complete list of available API methods.</p>
 </div>
 </div>
 </div>

@@ -18,12 +18,12 @@ You can then test your installation running the following minimal script:
 ```python
 import allantoolkit
 
-# Generate some frequency data
-y = allantoolkit.noise.white(10000)
-r = 1. # data sampling rate, in Hz
+# Generate some pink noise phase data
+noise = allantoolkit.noise.white(10000)
+x = noise.data
 
 # Compute overlappig Allan deviation
-out = allantoolkit.devs.oadev(y, rate=r, data_type='freq')
+out = allantoolkit.devs.oadev(x)
 
 # Display analysis results
 print(out)

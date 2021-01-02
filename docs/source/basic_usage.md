@@ -23,9 +23,9 @@ time-interval measurement at 1 Hz from a time-interval-counter measuring the
 ```python
 import allantoolkit
 
-# Generate some mock phase data
-y = allantoolkit.noise.white(10000)  # frequency
-x = allantoolkit.utils.frequency2phase(y, rate=1)  # phase
+# Generate some mock pink phase data
+noise = allantoolkit.noise.pink(10000, rate=1) 
+x = noise.data
 
 # Compute the overlapping Allan deviation (OADEV)
 out = allantoolkit.devs.oadev(x, rate=1)
@@ -55,8 +55,9 @@ normalization and scaling is left to the user.
 ```python
 import allantoolkit
 
-# Generate some mock frequency data
-y = allantoolkit.noise.white(10000)
+# Generate some mock pink frequency data
+noise = allantoolkit.noise.pink(10000, rate=1, data_type='freq')
+y = noise.data
 
 # Compute the overlapping Allan deviation (OADEV)
 out = allantoolkit.devs.oadev(y, rate=1, data_type='freq')
@@ -83,11 +84,11 @@ re-implemented as follows:
 import allantoolkit
 import matplotlib.pyplot as plt
 
-# Generate some mock frequency data
-y = allantoolkit.noise.white(10000)
+# Generate some mock pink frequency data
+noise = allantoolkit.noise.pink(10000, rate=1, data_type='freq')
 
 # Store data in API wrapper
-y = allantoolkit.api.Dataset(y, rate=1, data_type='freq')
+y = allantoolkit.api.Dataset(noise)
 
 # Show raw data
 y.show()
@@ -100,4 +101,11 @@ y.plot()
 
 # Show plots
 plt.show()
+```
+
+Note how you can feed the ``Noise`` object directly to the API wrapper, 
+without having to explicitely set the ``data_type`` and data sampling ``rate``.
+
+```{seealso}
+{mod}`allantoolkit.api` for a complete list of available API methods.
 ```

@@ -224,7 +224,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.gridspec</span> <span class="kn">import</span> <span class="n">GridSpec</span>
-<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span>  <span class="n">Rectangle</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Rectangle</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">devs</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">noise</span>
@@ -320,6 +320,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">devs_lo</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">devs</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">devs_hi</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Dataset.pop_results"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.api.Dataset.pop_results">[docs]</a>    <span class="k">def</span> <span class="nf">pop_results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">devs</span><span class="o">.</span><span class="n">DevResult</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Pops the stored frequency stability analysis results as a named</span>
+<span class="sd">        tuple. Useful to for custom data analysis and plotting,</span>
+<span class="sd">        and for compatibility with lower-level API programming style.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            frequency stability analysis results, stored in a</span>
+<span class="sd">            :class:`allantoolkit.devs.DevResult` NamedTuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">devs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No stability analysis results to pop. Make &quot;</span>
+                             <span class="s2">&quot;sure you have called .calc() to populate &quot;</span>
+                             <span class="s2">&quot;results first.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">devs</span><span class="o">.</span><span class="n">DevResult</span><span class="p">(</span><span class="n">afs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">afs</span><span class="p">,</span> <span class="n">taus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">taus</span><span class="p">,</span> <span class="n">ns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">,</span>
+                              <span class="n">alphas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alphas</span><span class="p">,</span> <span class="n">devs_lo</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">devs_lo</span><span class="p">,</span>
+                              <span class="n">devs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">devs</span><span class="p">,</span> <span class="n">devs_hi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">devs_hi</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Dataset.convert"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.api.Dataset.convert">[docs]</a>    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Dataset&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Generates a new Dataset with data converted between phase and</span>

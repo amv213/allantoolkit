@@ -247,6 +247,29 @@
 <div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.api.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Dataset class for `allantoolkit`</span>
 
+<span class="sd">    Example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+<span class="sd">            :emphasize-lines: 8</span>
+
+<span class="sd">            import allantoolkit</span>
+<span class="sd">            import matplotlib.pyplot as plt</span>
+
+<span class="sd">            # Generate some pink noise phase data sampled at 1Hz</span>
+<span class="sd">            noise = allantoolkit.noise.pink(10000)</span>
+
+<span class="sd">            # Build dataset</span>
+<span class="sd">            x = allantoolkit.api.Dataset(data=noise)</span>
+
+<span class="sd">            x.show()  # show raw data</span>
+
+<span class="sd">            # Compute deviation of choice (e.g. oadev)</span>
+<span class="sd">            x.calc(&#39;oadev&#39;)</span>
+
+<span class="sd">            x.plot()  # plot stability curve</span>
+
+<span class="sd">            plt.show()</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        data:       path to / array of phase data (in units of seconds) or</span>
 <span class="sd">                    fractional frequency data. Can also be a</span>
@@ -592,8 +615,8 @@
                                 <span class="n">data_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span>
                                 <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dataset.calc"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.api.Dataset.calc">[docs]</a>    <span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="s1">&#39;octave&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
-            <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Dataset.calc"><a class="viewcode-back" href="../../allantoolkit.html#allantoolkit.api.Dataset.calc">[docs]</a>    <span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">taus</span><span class="p">:</span> <span class="n">Taus</span> <span class="o">=</span> <span class="s1">&#39;octave&#39;</span><span class="p">,</span> <span class="n">max_af</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">alpha</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate the selected frequency stability statistic on phase or</span>
 <span class="sd">        fractional frequency data over a range of averaging times. The</span>
 <span class="sd">        averaging times may be selected in octave or sub-decade increments,</span>
@@ -609,6 +632,8 @@
 <span class="sd">            taus:       array of averaging times for which to compute</span>
 <span class="sd">                        deviation. Can also be one of the keywords: `all`,</span>
 <span class="sd">                        `many`, `octave`, `decade`.</span>
+<span class="sd">            max_af:     maximum averaging factor for which to compute</span>
+<span class="sd">                        deviation. Defaults to length of dataset.</span>
 <span class="sd">            alpha:      global dominant noise type. If ``None``, it is</span>
 <span class="sd">                        automatically estimated at each averaging time.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -622,7 +647,7 @@
 
         <span class="c1"># Calculate statistics</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
-                   <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+                   <span class="n">taus</span><span class="o">=</span><span class="n">taus</span><span class="p">,</span> <span class="n">max_af</span><span class="o">=</span><span class="n">max_af</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
 
         <span class="c1"># Metadata</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dev_type</span> <span class="o">=</span> <span class="n">dev_type</span>

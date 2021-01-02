@@ -32,6 +32,29 @@ logger = logging.getLogger(__name__)
 class Dataset:
     """ Dataset class for `allantoolkit`
 
+    Example:
+
+        .. code-block:: python
+            :emphasize-lines: 8
+
+            import allantoolkit
+            import matplotlib.pyplot as plt
+
+            # Generate some pink noise phase data sampled at 1Hz
+            noise = allantoolkit.noise.pink(10000)
+
+            # Build dataset
+            x = allantoolkit.api.Dataset(data=noise)
+
+            x.show()  # show raw data
+
+            # Compute deviation of choice (e.g. oadev)
+            x.calc('oadev')
+
+            x.plot()  # plot stability curve
+
+            plt.show()
+
     Args:
         data:       path to / array of phase data (in units of seconds) or
                     fractional frequency data. Can also be a
@@ -377,8 +400,8 @@ class Dataset:
                                 data_type=self.data_type, type=type, m=m,
                                 remove=remove)
 
-    def calc(self, dev_type: str, taus: Taus = 'octave', alpha: int = None) \
-            -> None:
+    def calc(self, dev_type: str, taus: Taus = 'octave', max_af: int = None,
+             alpha: int = None) -> None:
         """Calculate the selected frequency stability statistic on phase or
         fractional frequency data over a range of averaging times. The
         averaging times may be selected in octave or sub-decade increments,
@@ -394,6 +417,8 @@ class Dataset:
             taus:       array of averaging times for which to compute
                         deviation. Can also be one of the keywords: `all`,
                         `many`, `octave`, `decade`.
+            max_af:     maximum averaging factor for which to compute
+                        deviation. Defaults to length of dataset.
             alpha:      global dominant noise type. If ``None``, it is
                         automatically estimated at each averaging time.
         """
@@ -407,7 +432,7 @@ class Dataset:
 
         # Calculate statistics
         out = func(data=self.data, rate=self.rate, data_type=self.data_type,
-                   taus=taus, alpha=alpha)
+                   taus=taus, max_af=max_af, alpha=alpha)
 
         # Metadata
         self.dev_type = dev_type

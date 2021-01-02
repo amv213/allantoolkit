@@ -327,6 +327,26 @@
 <em class="property">class </em><code class="sig-prename descclassname">allantoolkit.api.</code><code class="sig-name descname">Dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>str<span class="p">, </span>pathlib.Path<span class="p">, </span><a class="reference internal" href="#allantoolkit.noise.Noise" title="allantoolkit.noise.Noise">allantoolkit.noise.Noise</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">rate</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'phase'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/api.html#Dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.api.Dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Dataset class for <cite>allantoolkit</cite></p>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">allantoolkit</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1"># Generate some pink noise phase data sampled at 1Hz</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">pink</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+
+<span class="c1"># Build dataset</span>
+<span class="hll"><span class="n">x</span> <span class="o">=</span> <span class="n">allantoolkit</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">noise</span><span class="p">)</span>
+</span>
+<span class="n">x</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c1"># show raw data</span>
+
+<span class="c1"># Compute deviation of choice (e.g. oadev)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="s1">&#39;oadev&#39;</span><span class="p">)</span>
+
+<span class="n">x</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>  <span class="c1"># plot stability curve</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -360,7 +380,7 @@ in the group being averaged are gaps.</p>
 
 <dl class="py method">
 <dt id="allantoolkit.api.Dataset.calc">
-<code class="sig-name descname">calc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>float<span class="p">, </span>List<span class="p">, </span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'octave'</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/allantoolkit/api.html#Dataset.calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.api.Dataset.calc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dev_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">taus</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>float<span class="p">, </span>List<span class="p">, </span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'octave'</span></em>, <em class="sig-param"><span class="n">max_af</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/allantoolkit/api.html#Dataset.calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.api.Dataset.calc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the selected frequency stability statistic on phase or
 fractional frequency data over a range of averaging times. The
 averaging times may be selected in octave or sub-decade increments,
@@ -376,6 +396,8 @@ e.g. ‘oadev’</p></li>
 <li><p><strong>taus</strong> – array of averaging times for which to compute
 deviation. Can also be one of the keywords: <cite>all</cite>,
 <cite>many</cite>, <cite>octave</cite>, <cite>decade</cite>.</p></li>
+<li><p><strong>max_af</strong> – maximum averaging factor for which to compute
+deviation. Defaults to length of dataset.</p></li>
 <li><p><strong>alpha</strong> – global dominant noise type. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, it is
 automatically estimated at each averaging time.</p></li>
 </ul>

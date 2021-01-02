@@ -50,6 +50,7 @@ class Noise:
         self.n = data.size
         self.qd = qd
         self.b = beta
+        self.alpha = beta + 2
 
     def phase_psd_from_qd(self):
         """Returns phase power spectral density coefficient :math:`g_{\\beta}`

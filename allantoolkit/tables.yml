@@ -55,8 +55,8 @@ d_order:
 
 
 alpha_to_mu:
-  # Mapping between fractional frequency noise type exponent `alpha` and
-  # phase noise type exponent `mu`
+  # Mapping between frequency power spectral density noise type exponent
+  # `alpha` and expected corresponding ADEV slope `mu`
   #
   # Howe, Beard, Greenhall, Riley,
   # A TOTAL ESTIMATOR OF THE HADAMARD FUNCTION USED FOR GPS OPERATIONS
@@ -73,6 +73,25 @@ alpha_to_mu:
   0:    -1
   1:    -2
   2:    -2
+
+
+alpha_to_mu_prime:
+  # Mapping between frequency power spectral density noise type exponent
+  # `alpha` and expected MDEV slope `mu'`
+  #
+  # S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
+  # the measurement of the stability of oscillators with frequency
+  # counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
+  # Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
+  # doi: 10.1109/TUFFC.2007.337 (Table I)
+
+
+  # alpha:  mu'
+  -2:   1
+  -1:   0
+  0:    -1
+  1:    -2
+  2:    -3
 
 
 alpha_to_names:

@@ -2278,166 +2278,27 @@ law exponent <code class="docutils literal notranslate"><span class="pre">beta</
 </dl>
 <dl class="py method">
 <dt id="allantoolkit.noise.Noise.adev">
-<code class="sig-name descname">adev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.adev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.adev" title="Permalink to this definition">¶</a></dt>
-<dd><p>return predicted ADEV of noise-type at given tau</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise.Noise.adev_from_qd">
-<code class="sig-name descname">adev_from_qd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.adev_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.adev_from_qd" title="Permalink to this definition">¶</a></dt>
-<dd><p>prefactor for Allan deviation for noise type defined by (qd, b,
-tau0)</p>
-<p>Colored noise generated with (qd, b, tau0) parameters will
-show an Allan variance of:</p>
-<p>AVAR = prefactor * h_a * tau^c</p>
-<p>where a = b + 2 is the slope of the frequency PSD.
-and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</p>
-<p>The relation between a, b, c is:</p>
-<table class="table">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>a</p></th>
-<th class="head"><p>b</p></th>
-<th class="head"><p>c(AVAR)</p></th>
-<th class="head"><p>c(MVAR)</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>-2</p></td>
-<td><p>-4</p></td>
-<td><p>1</p></td>
-<td><p>1</p></td>
-</tr>
-<tr class="row-odd"><td><p>-1</p></td>
-<td><p>-3</p></td>
-<td><p>0</p></td>
-<td><p>0</p></td>
-</tr>
-<tr class="row-even"><td><p>0</p></td>
-<td><p>-2</p></td>
-<td><p>-1</p></td>
-<td><p>-1</p></td>
-</tr>
-<tr class="row-odd"><td><p>+1</p></td>
-<td><p>-1</p></td>
-<td><p>-2</p></td>
-<td><p>-2</p></td>
-</tr>
-<tr class="row-even"><td><p>+2</p></td>
-<td><p>0</p></td>
-<td><p>-2</p></td>
-<td><p>-3</p></td>
-</tr>
-</tbody>
-</table>
-<p>Coefficients from:
-S. T. Dawkins, J. J. McFerran and A. N. Luiten, “Considerations on
-the measurement of the stability of oscillators with frequency
-counters,” in IEEE Transactions on Ultrasonics, Ferroelectrics, and
-Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
-doi: 10.1109/TUFFC.2007.337</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise.Noise.c_avar">
-<code class="sig-name descname">c_avar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.c_avar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.c_avar" title="Permalink to this definition">¶</a></dt>
-<dd><p>return tau exponent “c” for noise type.
-AVAR = prefactor * h_a * tau^c</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise.Noise.c_mvar">
-<code class="sig-name descname">c_mvar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.c_mvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.c_mvar" title="Permalink to this definition">¶</a></dt>
-<dd><p>return tau exponent “c” for noise type.
-MVAR = prefactor * h_a * tau^c</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise.Noise.frequency_psd_from_qd">
-<code class="sig-name descname">frequency_psd_from_qd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.frequency_psd_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.frequency_psd_from_qd" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns frequency power spectral density coefficient
-<span class="math notranslate nohighlight">\(h_{\alpha}\)</span> for given noise data.</p>
-<p>The coefficient <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is related to the equivalent
-phase power spectral density coefficient <span class="math notranslate nohighlight">\(g_{\beta}\)</span>, as:</p>
+<code class="sig-name descname">adev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.adev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.adev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return predicted ADEV at given averaging factor for characteristic
+noise type.</p>
+<p>The expected Allan variance for a characteristic frequency power
+spectral density noise exponent <code class="docutils literal notranslate"><span class="pre">alpha</span></code>, has the form:</p>
 <div class="math notranslate nohighlight">
-\[h_{\alpha} = \left( 2\pi \right)^2  g_{\beta}\]</div>
-<p>such that the noise shows frequency power spectral density of:</p>
-<div class="math notranslate nohighlight">
-\[S_y(f) = h_{\alpha} f^{\alpha}\]</div>
+\[\sigma_y^2(\tau) = k h_{\alpha} \tau^\mu\]</div>
+<p>where <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is the frequency power spectral
+density intensity coefficient for the given noise type, and the
+appropriate coefficients <span class="math notranslate nohighlight">\(k\)</span> and <span class="math notranslate nohighlight">\(\mu\)</span> can be found in
+the reference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>m</strong> – averaging factor at which to calculate predicted ADEV</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>predicted ADEV at given averaging factor</p>
+</dd>
+</dl>
 <p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#kasdin1992" id="id39"><span>[Kasdin1992]</span></a>
-Kasdin, N.J., Walter, T., “Discrete simulation of power law noise,
-” Frequency Control Symposium, 1992. 46th., Proceedings of the
-1992 IEEE, pp.274,283, 27-29 May 1992
-<a class="reference external" href="http://dx.doi.org/10.1109/FREQ.1992.270003">http://dx.doi.org/10.1109/FREQ.1992.270003</a> (Eq. 39)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise.Noise.mdev">
-<code class="sig-name descname">mdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.mdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.mdev" title="Permalink to this definition">¶</a></dt>
-<dd><p>return predicted MDEV of noise-type at given tau</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="allantoolkit.noise.Noise.mdev_from_qd">
-<code class="sig-name descname">mdev_from_qd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.mdev_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.mdev_from_qd" title="Permalink to this definition">¶</a></dt>
-<dd><p>prefactor for Modified Allan deviation for noise
-type defined by (qd, b, tau0)</p>
-<p>Colored noise generated with (qd, b, tau0) parameters will
-show an Modified Allan variance of:</p>
-<p>MVAR = prefactor * h_a * tau^c</p>
-<p>where a = b + 2 is the slope of the frequency PSD.
-and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a</p>
-<p>The relation between a, b, c is:</p>
-<table class="table">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>a</p></th>
-<th class="head"><p>b</p></th>
-<th class="head"><p>c(AVAR)</p></th>
-<th class="head"><p>c(MVAR)</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>-2</p></td>
-<td><p>-4</p></td>
-<td><p>1</p></td>
-<td><p>1</p></td>
-</tr>
-<tr class="row-odd"><td><p>-1</p></td>
-<td><p>-3</p></td>
-<td><p>0</p></td>
-<td><p>0</p></td>
-</tr>
-<tr class="row-even"><td><p>0</p></td>
-<td><p>-2</p></td>
-<td><p>-1</p></td>
-<td><p>-1</p></td>
-</tr>
-<tr class="row-odd"><td><p>+1</p></td>
-<td><p>-1</p></td>
-<td><p>-2</p></td>
-<td><p>-2</p></td>
-</tr>
-<tr class="row-even"><td><p>+2</p></td>
-<td><p>0</p></td>
-<td><p>-2</p></td>
-<td><p>-3</p></td>
-</tr>
-</tbody>
-</table>
-<p>Coefficients from:
-S. T. Dawkins, J. J. McFerran and A. N. Luiten, “Considerations on
+<p>S. T. Dawkins, J. J. McFerran and A. N. Luiten, “Considerations on
 the measurement of the stability of oscillators with frequency
 counters,” in IEEE Transactions on Ultrasonics, Ferroelectrics, and
 Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
@@ -2445,8 +2306,8 @@ doi: 10.1109/TUFFC.2007.337</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="allantoolkit.noise.Noise.phase_psd_from_qd">
-<code class="sig-name descname">phase_psd_from_qd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.phase_psd_from_qd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.phase_psd_from_qd" title="Permalink to this definition">¶</a></dt>
+<dt id="allantoolkit.noise.Noise.calc_g_beta">
+<code class="sig-name descname">calc_g_beta</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.calc_g_beta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.calc_g_beta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns phase power spectral density coefficient <span class="math notranslate nohighlight">\(g_{\beta}\)</span>
 for given noise data.</p>
 <p>The coefficient <span class="math notranslate nohighlight">\(g_{\beta}\)</span> is defined for noise with
@@ -2458,11 +2319,65 @@ discrete variance <span class="math notranslate nohighlight">\(Q^d\)</span> and 
 <div class="math notranslate nohighlight">
 \[S_x(f) = g_{\beta} f^{\beta}\]</div>
 <p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#kasdin1992" id="id39"><span>[Kasdin1992]</span></a>
+Kasdin, N.J., Walter, T., “Discrete simulation of power law noise,
+” Frequency Control Symposium, 1992. 46th., Proceedings of the
+1992 IEEE, pp.274,283, 27-29 May 1992
+<a class="reference external" href="http://dx.doi.org/10.1109/FREQ.1992.270003">http://dx.doi.org/10.1109/FREQ.1992.270003</a> (Eq. 39)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="allantoolkit.noise.Noise.calc_h_alpha">
+<code class="sig-name descname">calc_h_alpha</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.calc_h_alpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.calc_h_alpha" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns frequency power spectral density coefficient
+<span class="math notranslate nohighlight">\(h_{\alpha}\)</span> for given noise data.</p>
+<p>The coefficient <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is related to the corresponding
+phase power spectral density coefficient <span class="math notranslate nohighlight">\(g_{\beta}\)</span>
+( <span class="math notranslate nohighlight">\(\beta = \alpha -2\)</span> ), as:</p>
+<div class="math notranslate nohighlight">
+\[h_{\alpha} = \left( 2\pi \right)^2  g_{\beta}\]</div>
+<p>such that the noise shows frequency power spectral density of:</p>
+<div class="math notranslate nohighlight">
+\[S_y(f) = h_{\alpha} f^{\alpha}\]</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Function <a class="reference internal" href="#allantoolkit.noise.Noise.calc_g_beta" title="allantoolkit.noise.Noise.calc_g_beta"><code class="xref py py-func docutils literal notranslate"><span class="pre">allantoolkit.noise.Noise.calc_g_beta()</span></code></a></p>
+</div>
+<p class="rubric">References</p>
 <p><a class="reference internal" href="references.html#kasdin1992" id="id40"><span>[Kasdin1992]</span></a>
 Kasdin, N.J., Walter, T., “Discrete simulation of power law noise,
 ” Frequency Control Symposium, 1992. 46th., Proceedings of the
 1992 IEEE, pp.274,283, 27-29 May 1992
 <a class="reference external" href="http://dx.doi.org/10.1109/FREQ.1992.270003">http://dx.doi.org/10.1109/FREQ.1992.270003</a> (Eq. 39)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="allantoolkit.noise.Noise.mdev">
+<code class="sig-name descname">mdev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/allantoolkit/noise.html#Noise.mdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#allantoolkit.noise.Noise.mdev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return predicted MDEV at given averaging factor for characteristic
+noise type.</p>
+<p>The expected modified Allan variance for a characteristic frequency
+power spectral density noise exponent <code class="docutils literal notranslate"><span class="pre">alpha</span></code>, has the form:</p>
+<div class="math notranslate nohighlight">
+\[\sigma_y^2(\tau) = k^\prime h_{\alpha} \tau^{\mu^\prime}\]</div>
+<p>where <span class="math notranslate nohighlight">\(h_{\alpha}\)</span> is the frequency power spectral
+density intensity coefficient for the given noise type, and the
+appropriate coefficients <span class="math notranslate nohighlight">\(k^\prime\)</span> and <span class="math notranslate nohighlight">\(\mu^\prime\)</span>
+can be found in the reference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>m</strong> – averaging factor at which to calculate predicted MDEV</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>predicted MDEV at given averaging factor</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>S. T. Dawkins, J. J. McFerran and A. N. Luiten, “Considerations on
+the measurement of the stability of oscillators with frequency
+counters,” in IEEE Transactions on Ultrasonics, Ferroelectrics, and
+Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
+doi: 10.1109/TUFFC.2007.337</p>
 </dd></dl>
 
 </dd></dl>

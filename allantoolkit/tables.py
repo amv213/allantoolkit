@@ -13,6 +13,7 @@ D_ORDER = tables.get('d_order')
 
 # NOISE
 ALPHA_TO_MU = tables.get('alpha_to_mu')
+ALPHA_TO_MU_PRIME = tables.get('alpha_to_mu_prime')
 ALPHA_TO_NAMES = tables.get('alpha_to_names')
 
 # BIAS FACTORS

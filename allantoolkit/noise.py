@@ -8,7 +8,7 @@ Allantools Noise generator
 
 import logging
 import numpy as np
-from allantoolkit import utils
+from . import utils, tables
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -52,7 +52,11 @@ class Noise:
         self.b = beta
         self.alpha = beta + 2
 
-    def phase_psd_from_qd(self):
+        # Return PSD coefficients for given noise type
+        self.g = self.calc_g_beta()
+        self.h = self.calc_h_alpha()
+
+    def calc_g_beta(self):
         """Returns phase power spectral density coefficient :math:`g_{\\beta}`
         for given noise data.
 
@@ -80,12 +84,13 @@ class Noise:
 
         return self.qd*2.0*pow(2.0*np.pi, self.b)*pow(self.tau_0, self.b+1.0)
 
-    def frequency_psd_from_qd(self):
+    def calc_h_alpha(self):
         """Returns frequency power spectral density coefficient
         :math:`h_{\\alpha}` for given noise data.
 
-        The coefficient :math:`h_{\\alpha}` is related to the equivalent
-        phase power spectral density coefficient :math:`g_{\\beta}`, as:
+        The coefficient :math:`h_{\\alpha}` is related to the corresponding
+        phase power spectral density coefficient :math:`g_{\\beta}`
+        ( :math:`\\beta = \\alpha -2` ), as:
 
         .. math::
 
@@ -97,6 +102,10 @@ class Noise:
 
             S_y(f) = h_{\\alpha} f^{\\alpha}
 
+        .. seealso::
+
+            Function :func:`allantoolkit.noise.Noise.calc_g_beta`
+        
         References:
             [Kasdin1992]_
             Kasdin, N.J., Walter, T., "Discrete simulation of power law noise,
@@ -105,159 +114,115 @@ class Noise:
             http://dx.doi.org/10.1109/FREQ.1992.270003 (Eq. 39)
         """
 
-        return self.phase_psd_from_qd() * (2*np.pi)**2
+        return self.g * (2*np.pi)**2
 
-    def adev(self, tau):
-        """ return predicted ADEV of noise-type at given tau
+    def adev(self, m: int) -> float:
+        """Return predicted ADEV at given averaging factor for characteristic
+        noise type.
+
+        The expected Allan variance for a characteristic frequency power
+        spectral density noise exponent ``alpha``, has the form:
+
+        .. math::
+
+            \\sigma_y^2(\\tau) = k h_{\\alpha} \\tau^\\mu
+
+        where :math:`h_{\\alpha}` is the frequency power spectral
+        density intensity coefficient for the given noise type, and the
+        appropriate coefficients :math:`k` and :math:`\\mu` can be found in
+        the reference.
+
+        Args:
+            m:  averaging factor at which to calculate predicted ADEV
+
+        Returns:
+            predicted ADEV at given averaging factor
+
+        References:
+            S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
+            the measurement of the stability of oscillators with frequency
+            counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
+            Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
+            doi: 10.1109/TUFFC.2007.337
         """
-        prefactor = self.adev_from_qd(tau=tau)
-        c = self.c_avar()
-        avar = pow(prefactor, 2)*pow(tau, c)
+
+        # Check noise is characteristic noise type for which there is reference
+        if self.alpha not in tables.ALPHA_TO_NAMES.keys() or \
+                self.alpha in [-3, -4]:
+            raise ValueError(f"No theoretical reference for ADEV for given "
+                             f"noise type alpha = {self.alpha}")
+
+        self.alpha = int(self.alpha)
+
+        f_h = self.rate / 2  # Nyquist cutoff frequency
+
+        # Prefactors for different noise types (Table I)
+        ks = {2: (3*f_h) / (4*np.pi**2),
+              1: (1.038 + 3*np.log(2*np.pi*f_h*m*self.tau_0)) / (4*np.pi**2),
+              0: 1/2,
+              -1: 2*np.log(2),
+              -2: (2*np.pi**2) / 3}
+        k = ks[self.alpha]
+
+        # AVAR tau exponent
+        mu = tables.ALPHA_TO_MU[self.alpha]
+
+        avar = k * self.h * (m*self.tau_0)**mu
+
         return np.sqrt(avar)
 
-    def mdev(self, tau):
-        """ return predicted MDEV of noise-type at given tau
+    def mdev(self, m: int) -> float:
+        """Return predicted MDEV at given averaging factor for characteristic
+        noise type.
 
+        The expected modified Allan variance for a characteristic frequency
+        power spectral density noise exponent ``alpha``, has the form:
+
+        .. math::
+
+            \\sigma_y^2(\\tau) = k^\\prime h_{\\alpha} \\tau^{\\mu^\\prime}
+
+        where :math:`h_{\\alpha}` is the frequency power spectral
+        density intensity coefficient for the given noise type, and the
+        appropriate coefficients :math:`k^\\prime` and :math:`\\mu^\\prime`
+        can be found in the reference.
+
+        Args:
+            m:  averaging factor at which to calculate predicted MDEV
+
+        Returns:
+            predicted MDEV at given averaging factor
+
+        References:
+            S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
+            the measurement of the stability of oscillators with frequency
+            counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
+            Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
+            doi: 10.1109/TUFFC.2007.337
         """
-        prefactor = self.mdev_from_qd(tau=tau)
-        c = self.c_mvar()
-        mvar = pow(prefactor, 2)*pow(tau, c)
-        return np.sqrt(mvar)
 
-    def c_avar(self):
-        """ return tau exponent "c" for noise type.
-            AVAR = prefactor * h_a * tau^c
-        """
-        if self.b == -4:
-            return 1.0
-        elif self.b == -3:
-            return 0.0
-        elif self.b == -2:
-            return -1.0
-        elif self.b == -1:
-            return -2.0
-        elif self.b == 0:
-            return -2.0
+        # Check noise is characteristic noise type for which there is reference
+        if self.alpha not in tables.ALPHA_TO_NAMES.keys() or \
+                self.alpha in [-3, -4]:
+            raise ValueError(f"No theoretical reference for MDEV for given "
+                             f"noise type alpha = {self.alpha}")
 
-    def c_mvar(self):
-        """ return tau exponent "c" for noise type.
-            MVAR = prefactor * h_a * tau^c
-        """
-        if self.b == -4:
-            return 1.0
-        elif self.b == -3:
-            return 0.0
-        elif self.b == -2:
-            return -1.0
-        elif self.b == -1:
-            return -2.0
-        elif self.b == 0:
-            return -3.0
+        self.alpha = int(self.alpha)
 
-    def adev_from_qd(self, tau=1.0):
-        """ prefactor for Allan deviation for noise type defined by (qd, b,
-        tau0)
+        # Prefactors for different noise types (Table I)
+        k_primes = {2: 3 / (8 * np.pi ** 2),
+                    1: (3 * np.log(256/27)) / (8 * np.pi**2),
+                    0: 1 / 4,
+                    -1: 2 * np.log((33**(11/16)) / 4),
+                    -2: (11 * np.pi ** 2) / 20}
+        k_prime = k_primes[self.alpha]
 
-        Colored noise generated with (qd, b, tau0) parameters will
-        show an Allan variance of:
+        # MVAR tau exponent
+        mu_prime = tables.ALPHA_TO_MU_PRIME[self.alpha]
 
-        AVAR = prefactor * h_a * tau^c
+        avar = k_prime * self.h * (m * self.tau_0) ** mu_prime
 
-        where a = b + 2 is the slope of the frequency PSD.
-        and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a
-
-        The relation between a, b, c is:
-
-        +---------+---------+---------+---------+
-        |    a    |    b    | c(AVAR) | c(MVAR) |
-        +=========+=========+=========+=========+
-        |   -2    |   -4    |    1    |    1    |
-        +---------+---------+---------+---------+
-        |   -1    |   -3    |    0    |    0    |
-        +---------+---------+---------+---------+
-        |    0    |   -2    |   -1    |   -1    |
-        +---------+---------+---------+---------+
-        |   +1    |   -1    |   -2    |   -2    |
-        +---------+---------+---------+---------+
-        |   +2    |    0    |   -2    |   -3    |
-        +---------+---------+---------+---------+
-
-        Coefficients from:
-        S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
-        the measurement of the stability of oscillators with frequency
-        counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
-        Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
-        doi: 10.1109/TUFFC.2007.337
-
-        """
-        g_b = self.phase_psd_from_qd()
-        f_h = 0.5/self.tau_0
-
-        if self.b == 0:
-            coeff = 3.0*f_h / (4.0*pow(np.pi, 2)) # E, White PM, tau^-1
-        elif self.b == -1:
-            coeff = (1.038+3*np.log(2.0*np.pi*f_h*tau))/(4.0*pow(np.pi, 2))# D, Flicker PM, tau^-1
-        elif self.b == -2:
-            coeff = 0.5 # C, white FM,  1/sqrt(tau)
-        elif self.b == -3:
-            coeff = 2*np.log(2) # B, flicker FM,  constant ADEV
-        elif self.b == -4:
-            coeff = 2.0*pow(np.pi, 2)/3.0 #  A, RW FM, sqrt(tau)
-
-        return np.sqrt(coeff*g_b*pow(2.0*np.pi, 2))
-
-    def mdev_from_qd(self, tau: float = 1.):
-        # FIXME: tau is unused here - can we remove it?
-        """ prefactor for Modified Allan deviation for noise
-        type defined by (qd, b, tau0)
-
-        Colored noise generated with (qd, b, tau0) parameters will
-        show an Modified Allan variance of:
-
-        MVAR = prefactor * h_a * tau^c
-
-        where a = b + 2 is the slope of the frequency PSD.
-        and h_a is the frequency PSD prefactor S_y(f) = h_a * f^a
-
-        The relation between a, b, c is:
-
-        +---------+---------+---------+---------+
-        |    a    |    b    | c(AVAR) | c(MVAR) |
-        +=========+=========+=========+=========+
-        |   -2    |   -4    |    1    |    1    |
-        +---------+---------+---------+---------+
-        |   -1    |   -3    |    0    |    0    |
-        +---------+---------+---------+---------+
-        |    0    |   -2    |   -1    |   -1    |
-        +---------+---------+---------+---------+
-        |   +1    |   -1    |   -2    |   -2    |
-        +---------+---------+---------+---------+
-        |   +2    |    0    |   -2    |   -3    |
-        +---------+---------+---------+---------+
-
-        Coefficients from:
-        S. T. Dawkins, J. J. McFerran and A. N. Luiten, "Considerations on
-        the measurement of the stability of oscillators with frequency
-        counters," in IEEE Transactions on Ultrasonics, Ferroelectrics, and
-        Frequency Control, vol. 54, no. 5, pp. 918-925, May 2007.
-        doi: 10.1109/TUFFC.2007.337
-
-        """
-        g_b = self.phase_psd_from_qd()
-        #f_h = 0.5/tau0 #unused!?
-
-        if self.b == 0:
-            coeff = 3.0/(8.0*pow(np.pi, 2)) # E, White PM, tau^-{3/2}
-        elif self.b == -1:
-            coeff = (24.0*np.log(2)-9.0*np.log(3))/8.0/pow(np.pi, 2) # D, Flicker PM, tau^-1
-        elif self.b == -2:
-            coeff = 0.25 # C, white FM,  1/sqrt(tau)
-        elif self.b == -3:
-            coeff = 2.0*np.log(3.0*pow(3.0, 11.0/16.0)/4.0) # B, flicker FM,  constant MDEV
-        elif self.b == -4:
-            coeff = 11.0/20.0*pow(np.pi, 2) #  A, RW FM, sqrt(tau)
-
-        return np.sqrt(coeff*g_b*pow(2.0*np.pi, 2))
+        return np.sqrt(avar)
 
 
 def kasdin_generator(nr: int, alpha: float, qd: float) -> Array:

@@ -9,6 +9,7 @@ Allantools Noise generator
 import logging
 import numpy as np
 from . import utils, tables
+from typing import Union, List
 
 # Spawn module-level logger
 logger = logging.getLogger(__name__)
@@ -105,7 +106,7 @@ class Noise:
         .. seealso::
 
             Function :func:`allantoolkit.noise.Noise.calc_g_beta`
-        
+
         References:
             [Kasdin1992]_
             Kasdin, N.J., Walter, T., "Discrete simulation of power law noise,
@@ -115,6 +116,103 @@ class Noise:
         """
 
         return self.g * (2*np.pi)**2
+
+    def psd(self, f: Union[Array, List, float], type: str, v0: float = None) \
+            -> Union[Array, float]:
+        """Calculates desired Power Spectral Density (PSD) of the stored noise
+        data, at given fourier frequencies.
+
+        Two types of power spectral density are commonly used to describe
+        the stability of a frequency source:
+
+        - PSD of Frequency Fluctuations, in units of :math:`1/Hz` :
+
+            .. math::
+
+                S_y(f) = h_{\\alpha} f^{\\alpha}
+
+            where :math:`h_{\\alpha}` is the frequency power spectral density
+            intensity coefficient for the given frequency noise type
+            :math:`\\alpha`.
+
+        - PSD of Phase Fluctuations, in units of :math:`s^2/Hz` :
+
+            .. math::
+
+                S_x(f) = { S_y(f) \\over \\left( 2 \\pi f \\right)^2 } =
+                g_{\\beta} f^{\\beta}
+
+            where :math:`g_{\\beta}` is the phase power spectral density
+            intensity coefficient for the given phase noise type
+            :math:`\\beta = \\alpha - 2`.
+
+        Two other quantities are also commonly used to measure phase noise:
+
+        - PSD of Phase Fluctuations, in units of :math:`\\textrm{rad}^2/Hz` :
+
+            .. math::
+
+                S_{\\phi}(f) = \\left( 2 \\pi \\nu_0 \\right)^2 S_x(f)
+
+            where :math:`\\nu_0` is the carrier frequency, in Hz.
+
+        and its logarithmic equivalent, which is the most common function
+        used to specify phase noise:
+
+        - Single Sideband (SSB) Phase Noise, in units of :math:`\\textrm{dBc}/Hz` :
+
+            .. math::
+
+                SSB(f) = 10 \\log \\left[ \\frac{1}{2} S_\\phi (f) \\right]
+
+
+        All four types are available by setting ``type`` to ``freq``,
+        ``phase``, ``rad`` and ``dBc`` respectively.
+
+
+        Args:
+            f:              array of fourier or sideband frequencies at
+                            which to calculate PSD, in Hz.
+            type:           type of the PSD to be calculated. Any of ``freq``,
+                            ``phase``, ``rad``, or ``dBc``.
+            v0 (optional):  nominal carrier frequency, in Hz. Used for
+                            ``rad`` and ``dbc`` PSDs
+
+        Returns:
+            array of calculated Power Spectral Density at each sideband
+            frequency.
+
+        References:
+            [RileyStable32]_ (6.2. Power Spectral Densities, pg.79-81)
+        """
+
+        # cast list to array
+        f = np.array(f) if isinstance(f, list) else f
+
+        # Calculate Requested PSD
+        if type == 'freq':  # S_y(f) [1/Hz]
+
+            return self.h * f**self.alpha
+
+        elif type == 'phase':  # S_x(f) [s^2/Hz]
+
+            return self.g * f**self.b
+
+        elif type == 'rad':  # S_phi(f) [rad^2/Hz]
+
+            if v0 is None:
+                raise ValueError("Please provide the carrier frequency value "
+                                 "v0 to calculate the power spectral density.")
+
+            return (2*np.pi*v0)**2 * self.psd(f=f, type='phase', v0=v0)
+
+        elif type == 'dBc':  # £(f) [dBc/Hz]
+
+            return 10 * np.log10(self.psd(f=f, type='rad', v0=v0)/2)
+
+        else:
+            raise ValueError(f"Power Specteal Density type ({type}) not "
+                             f"recognised.")
 
     def adev(self, m: int) -> float:
         """Return predicted ADEV at given averaging factor for characteristic

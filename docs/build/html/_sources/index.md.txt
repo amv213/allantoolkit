@@ -15,7 +15,7 @@ project and to drop a star! 🌟
 This fork was born in an effort to implement some key missing features: 
 automatic noise identification for all frequency stability analysis types, 
 bias correction for all biased frequency stability analysis types, and 
-calculation of confidence intervals based on $\\chi^2$ statistics. These 
+calculation of confidence intervals based on chi-squared statistics. These 
 features have now all been implemented, but would benefit from further 
 testing before being released.
 
@@ -81,7 +81,7 @@ rwfm noise generation
    >import allantoolkit
    > 
    ># Generate some pink noise phase data
-   >noise = allantoolkit.noise.white(10000)
+   >noise = allantoolkit.noise.pink(10000)
    >x = noise.data
    >
    ># Compute overlappig Allan deviation

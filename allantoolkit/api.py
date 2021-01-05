@@ -81,11 +81,13 @@ class Dataset:
         if isinstance(data, Noise):
             self.rate = data.rate
             self.data_type = data.data_type
+            self.alpha = data.alpha  # fix noise type to Noise type
             data = data.data
 
         else:  # else use the passed attributes
             self.rate = rate
             self.data_type = data_type
+            self.alpha = None  # allow for auto-id of noise type
 
         self.tau_0 = 1 / self.rate
 
@@ -427,20 +429,25 @@ class Dataset:
         or at every (or almost) possible tau out to a reasonable fraction of
         the record length.
 
-        References:
-            [RileyStable32Manual]_ (Run Function, pg.237-242)
-
         Args:
             dev_type:   name of the :mod:`allantoolkit` function to evaluate
                         e.g. 'oadev'
             taus:       array of averaging times for which to compute
-                        deviation. Can also be one of the keywords: `all`,
-                        `many`, `octave`, `decade`.
+                        deviation. Can also be one of the keywords: ``all``,
+                        ``many``, ``octave``, ``decade``.
             max_af:     maximum averaging factor for which to compute
                         deviation. Defaults to length of dataset.
             alpha:      global dominant noise type. If ``None``, it is
                         automatically estimated at each averaging time.
+                        Parameter has no effect if calculating deviation for
+                        :obj:`allantoolkit.noise.Noise` data.
+
+        References:
+            [RileyStable32Manual]_ (Run Function, pg.237-242)
         """
+
+        # If raw data is known Noise data, fix noise type to known one
+        alpha = self.alpha if self.alpha is not None else alpha
 
         # Dispatch to correct deviation calculator
         try:

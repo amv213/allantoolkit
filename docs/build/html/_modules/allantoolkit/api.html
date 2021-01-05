@@ -296,11 +296,13 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Noise</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rate</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data_type</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">alpha</span>  <span class="c1"># fix noise type to Noise type</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span>
 
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># else use the passed attributes</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">rate</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># allow for auto-id of noise type</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tau_0</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span>
 
@@ -642,20 +644,25 @@
 <span class="sd">        or at every (or almost) possible tau out to a reasonable fraction of</span>
 <span class="sd">        the record length.</span>
 
-<span class="sd">        References:</span>
-<span class="sd">            [RileyStable32Manual]_ (Run Function, pg.237-242)</span>
-
 <span class="sd">        Args:</span>
 <span class="sd">            dev_type:   name of the :mod:`allantoolkit` function to evaluate</span>
 <span class="sd">                        e.g. &#39;oadev&#39;</span>
 <span class="sd">            taus:       array of averaging times for which to compute</span>
-<span class="sd">                        deviation. Can also be one of the keywords: `all`,</span>
-<span class="sd">                        `many`, `octave`, `decade`.</span>
+<span class="sd">                        deviation. Can also be one of the keywords: ``all``,</span>
+<span class="sd">                        ``many``, ``octave``, ``decade``.</span>
 <span class="sd">            max_af:     maximum averaging factor for which to compute</span>
 <span class="sd">                        deviation. Defaults to length of dataset.</span>
 <span class="sd">            alpha:      global dominant noise type. If ``None``, it is</span>
 <span class="sd">                        automatically estimated at each averaging time.</span>
+<span class="sd">                        Parameter has no effect if calculating deviation for</span>
+<span class="sd">                        :obj:`allantoolkit.noise.Noise` data.</span>
+
+<span class="sd">        References:</span>
+<span class="sd">            [RileyStable32Manual]_ (Run Function, pg.237-242)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># If raw data is known Noise data, fix noise type to known one</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">alpha</span>
 
         <span class="c1"># Dispatch to correct deviation calculator</span>
         <span class="k">try</span><span class="p">:</span>

@@ -386,23 +386,25 @@ fractional frequency data over a range of averaging times. The
 averaging times may be selected in octave or sub-decade increments,
 or at every (or almost) possible tau out to a reasonable fraction of
 the record length.</p>
-<p class="rubric">References</p>
-<p><a class="reference internal" href="references.html#rileystable32manual" id="id2"><span>[RileyStable32Manual]</span></a> (Run Function, pg.237-242)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dev_type</strong> – name of the <a class="reference internal" href="#module-allantoolkit" title="allantoolkit"><code class="xref py py-mod docutils literal notranslate"><span class="pre">allantoolkit</span></code></a> function to evaluate
 e.g. ‘oadev’</p></li>
 <li><p><strong>taus</strong> – array of averaging times for which to compute
-deviation. Can also be one of the keywords: <cite>all</cite>,
-<cite>many</cite>, <cite>octave</cite>, <cite>decade</cite>.</p></li>
+deviation. Can also be one of the keywords: <code class="docutils literal notranslate"><span class="pre">all</span></code>,
+<code class="docutils literal notranslate"><span class="pre">many</span></code>, <code class="docutils literal notranslate"><span class="pre">octave</span></code>, <code class="docutils literal notranslate"><span class="pre">decade</span></code>.</p></li>
 <li><p><strong>max_af</strong> – maximum averaging factor for which to compute
 deviation. Defaults to length of dataset.</p></li>
 <li><p><strong>alpha</strong> – global dominant noise type. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, it is
-automatically estimated at each averaging time.</p></li>
+automatically estimated at each averaging time.
+Parameter has no effect if calculating deviation for
+<a class="reference internal" href="#allantoolkit.noise.Noise" title="allantoolkit.noise.Noise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allantoolkit.noise.Noise</span></code></a> data.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<p><a class="reference internal" href="references.html#rileystable32manual" id="id2"><span>[RileyStable32Manual]</span></a> (Run Function, pg.237-242)</p>
 </dd></dl>
 
 <dl class="py method">
